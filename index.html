@@ -460,7 +460,7 @@ canvas{width:100%;height:100%}
           <div class="more-row" onclick="doLogout()"><div class="more-row-icon" style="background:var(--red-bg)">🚪</div><div class="more-row-text"><h5>Sign Out</h5><p></p></div><span class="more-row-arrow">›</span></div>
         </div>
         <div class="more-section">
-          <div class="more-row" onclick="window.open('mailto:asterixcomltd@gmail.com')"><div class="more-row-icon" style="background:var(--surface2)">✉️</div><div class="more-row-text"><h5>Email Us</h5><p>asterixcomltd@gmail.com</p></div><span class="more-row-arrow">›</span></div>
+          <div class="more-row" onclick="window.open('mailto:asterixcomltd@gmail.com')"><div class="more-row-icon" style="background:var(--surface2)">✉️</div><div class="more-row-text"><h5>Email Us</h5><p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="69081a1d0c1b00110a0604051d0d290e04080005470a0604">[email&#160;protected]</a></p></div><span class="more-row-arrow">›</span></div>
           <div class="more-row" onclick="window.open('https://t.me/asterix_trading_signal_hub','_blank')"><div class="more-row-icon" style="background:#e8f4fd">✈️</div><div class="more-row-text"><h5>Telegram Community</h5><p>t.me/asterix_trading_signal_hub</p></div><span class="more-row-arrow">›</span></div>
           <div class="more-row" onclick="window.open('https://twitter.com/Asterix_Abdin','_blank')"><div class="more-row-icon" style="background:#f0f0f0">𝕏</div><div class="more-row-text"><h5>Follow on X</h5><p>@Asterix_Abdin</p></div><span class="more-row-arrow">›</span></div>
         </div>
@@ -488,7 +488,7 @@ canvas{width:100%;height:100%}
       </div>
       <input type="file" id="avatar-upload" accept="image/*" style="display:none" onchange="handleAvatarChange(event)">
       <div class="profile-name" id="profile-name-display">User</div>
-      <div class="profile-email" id="profile-email-display">user@example.com</div>
+      <div class="profile-email" id="profile-email-display"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2b5e584e596b4e534a465b474e05484446">[email&#160;protected]</a></div>
       <span class="badge-status badge-free" id="profile-plan-badge">FREE PLAN</span>
     </div>
     <div class="profile-stats">
@@ -686,7 +686,7 @@ canvas{width:100%;height:100%}
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ============ STATE ============
 // ════════════════════════════════════════════════════════════════
 // LIVE SIGNAL SOURCE — GitHub Gist (public)
@@ -702,7 +702,7 @@ canvas{width:100%;height:100%}
 //   4. Add GH_PAT + GIST_ID secrets to your gwp-bots repo
 // ════════════════════════════════════════════════════════════════
 const GIST_USER = 'asterixcomltd';          // your GitHub username
-const GIST_ID   = "https://gist.github.com/asterixcomltd/a4caaf2993eea50322f31478391743b0.js"; // 32-char hex Gist ID
+const GIST_ID   = "a4caaf2993eea50322f31478391743b0"; // 32-char hex Gist ID
 
 let signalsData = [];
 let appState = { user:null, isPremium:false, lang:'en', avatarDataURL:null };
@@ -1309,9 +1309,39 @@ function candleCall(dir){
   const open=last.close,close=open+(Math.random()-.48)*12;
   const realDir=close>=open?'LONG':'SHORT';
   const win=realDir===dir;
-  candleHistory.push({open,close,high:Math.max(open,close)+Math.random()*6,low:Math.min(open,close)-Math.random()*6});
+  candleHistory.push({open,close,high:Math.max(open,close)+Math.random()*8,low:Math.min(open,close)-Math.random()*8});
   drawCandles();
-  if(win){gameState.balance+=bet*2;updateBalanceDisplays();}
-  const msg=document.getElementById('candle-msg');msg.style.display='block';
-  msg.className=`game-msg ${win?'msg-win':'msg-lose'}`;
-  msg.textContent=win?`✅ Correct! ${close>=open?'📈 LON
+  const msg=document.getElementById('candle-msg');
+  msg.style.display='block';
+  if(win){
+    const winnings=Math.floor(bet*1.8);
+    gameState.balance+=winnings;
+    updateBalanceDisplays();
+    msg.className='game-msg msg-win';
+    msg.textContent=`✅ ${dir} correct! +${winnings} ATX (1.8x)`;
+  } else {
+    msg.className='game-msg msg-lose';
+    msg.textContent=`❌ ${dir} was wrong — next candle was ${realDir}. Lost ${bet} ATX`;
+  }
+}
+
+// ============ INIT APP ============
+function initApp() {
+  buildTicker();
+  fetchSignalsFromSheet();
+  renderNews();
+  renderCourses('ict');
+  updateBalanceDisplays();
+  // Hide premium banner and ads for premium users
+  const banner = document.getElementById('home-premium-banner');
+  if (banner) banner.style.display = appState.isPremium ? 'none' : 'block';
+  document.querySelectorAll('.ad-slot').forEach(ad => {
+    if (appState.isPremium) ad.classList.add('hidden');
+  });
+  // Show Gist ID in status panel
+  const gistEl = document.getElementById('status-gist-id');
+  if (gistEl) gistEl.textContent = GIST_ID;
+}
+</script>
+</body>
+</html>
