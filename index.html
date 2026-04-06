@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Asterix.COM — Ghost Wick Protocol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f6f2;--surface:#ffffff;--surface2:#f0ede8;--border:#e8e4dc;
+  --text:#1a1814;--text2:#6b6560;--text3:#9e9890;
+  --gold:#c9a84c;--gold2:#e8c96a;--gold-bg:#fdf8ee;
+  --green:#2d7a4f;--green-bg:#edf7f2;--red:#c0392b;--red-bg:#fdf0ee;
+  --blue:#2563eb;--blue-bg:#eff6ff;--premium:#7c3aed;--premium-bg:#f5f3ff;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.04);
+  --shadow-lg:0 8px 30px rgba(0,0,0,.10);--radius:16px;--radius-sm:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;backdrop-filter:blur(3px)}
+.overlay.active{display:flex;align-items:flex-end;justify-content:center}
+.overlay.center{align-items:center}
+.modal{background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:28px 24px 40px;animation:slideUp .28s ease}
+.modal.centered{border-radius:24px;margin:16px;animation:fadeScale .22s ease}
+@keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fadeScale{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
+.modal h2{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;margin-bottom:4px}
+.modal p.sub{color:var(--text2);font-size:.875rem;margin-bottom:20px}
+.modal-close{position:absolute;top:16px;right:20px;width:32px;height:32px;border:none;background:var(--surface2);border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;color:var(--text2)}
+#auth-screen{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.auth-logo-icon{width:48px;height:48px;background:var(--text);border-radius:14px;display:flex;align-items:center;justify-content:center}
+.auth-logo-icon span{color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.25rem}
+.auth-logo h1{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700}
+.auth-tagline{color:var(--text2);font-size:.875rem;margin-bottom:32px;text-align:center}
+.auth-card{background:var(--surface);border-radius:24px;padding:28px 24px;width:100%;max-width:400px;box-shadow:var(--shadow-lg)}
+.auth-tabs{display:flex;background:var(--surface2);border-radius:12px;padding:4px;margin-bottom:24px}
+.auth-tab{flex:1;padding:9px;text-align:center;border:none;background:none;border-radius:9px;font-size:.9rem;font-weight:500;cursor:pointer;color:var(--text2);transition:.2s}
+.auth-tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.inp-group{margin-bottom:14px}
+.inp-group label{display:block;font-size:.8rem;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.inp-group input,.inp-group select{width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:.95rem;font-family:inherit;background:var(--bg);color:var(--text);outline:none;transition:.2s}
+.inp-group input:focus,.inp-group select:focus{border-color:var(--gold);background:var(--surface)}
+.btn-primary{width:100%;padding:14px;background:var(--text);color:#fff;border:none;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer;transition:.15s;font-family:inherit}
+.btn-primary:hover{opacity:.88}
+.btn-gold{background:var(--gold)}
+.btn-google{width:100%;padding:13px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;font-size:.9rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;font-family:inherit;color:var(--text);transition:.15s}
+.btn-google:hover{background:var(--surface2)}
+.divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--text3);font-size:.8rem}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.forgot-link{text-align:center;margin-top:12px}
+.forgot-link a{color:var(--gold);font-size:.85rem;text-decoration:none}
+.lang-row{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.lang-row label{font-size:.8rem;color:var(--text2);font-weight:500}
+.lang-row select{padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--surface);color:var(--text);outline:none}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;display:none}
+.topbar{height:60px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;position:relative}
+.topbar-logo{display:flex;align-items:center;gap:8px;flex:1}
+.topbar-logo-icon{width:34px;height:34px;background:var(--text);border-radius:9px;display:flex;align-items:center;justify-content:center}
+.topbar-logo-icon span{color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.85rem}
+.topbar-logo h1{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:700}
+.live-badge{display:flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green);padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:600}
+.live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.avatar-btn{width:36px;height:36px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;color:#fff;font-family:'Space Grotesk',sans-serif;flex-shrink:0}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.page{display:none;padding-bottom:80px}
+.page.active{display:block}
+.ticker-wrap{background:var(--text);overflow:hidden;height:36px;display:flex;align-items:center}
+.ticker{display:flex;gap:0;animation:ticker 28s linear infinite;white-space:nowrap}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tick-item{display:inline-flex;align-items:center;gap:6px;padding:0 20px;font-size:.75rem;font-weight:500;color:#fff}
+.tick-up{color:#4ade80}.tick-down{color:#f87171}
+.hero{padding:20px 16px 0}
+.hero-card{background:var(--text);border-radius:20px;padding:20px;color:#fff;position:relative;overflow:hidden}
+.hero-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(201,168,76,.25) 0%,transparent 60%)}
+.hero-label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6;margin-bottom:4px}
+.hero-title{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;line-height:1.2;margin-bottom:12px}
+.hero-title span{color:var(--gold2)}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px}
+.hero-stat{background:rgba(255,255,255,.08);border-radius:12px;padding:12px}
+.hero-stat-val{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:var(--gold2)}
+.hero-stat-lbl{font-size:.7rem;opacity:.6;margin-top:2px}
+.section{padding:20px 16px 0}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700}
+.section-link{color:var(--gold);font-size:.82rem;font-weight:500;cursor:pointer}
+.signal-card{background:var(--surface);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);border:1px solid var(--border);position:relative}
+.signal-card.premium-locked::after{content:'🔒 PREMIUM';position:absolute;inset:0;background:rgba(255,255,255,.9);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--premium);font-size:.85rem;letter-spacing:.06em;backdrop-filter:blur(2px)}
+.sig-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sig-pair{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700}
+.sig-badge{padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:700;letter-spacing:.04em}
+.badge-long{background:var(--green-bg);color:var(--green)}
+.badge-short{background:var(--red-bg);color:var(--red)}
+.sig-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.sig-cell{background:var(--surface2);border-radius:8px;padding:8px 10px}
+.sig-cell-label{font-size:.68rem;color:var(--text3);font-weight:600;text-transform:uppercase;margin-bottom:2px}
+.sig-cell-val{font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:500}
+.score-bar-wrap{margin-top:6px}
+.score-bar-label{display:flex;justify-content:space-between;font-size:.75rem;color:var(--text2);margin-bottom:4px}
+.score-bar{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.score-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .8s ease}
+.sig-bots{display:flex;gap:8px;margin-top:10px}
+.bot-link{flex:1;padding:8px;background:var(--blue-bg);color:var(--blue);border:none;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;display:block}
+.referral-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ref-card{background:var(--surface);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.ref-card-logo{font-size:1.5rem;margin-bottom:8px}
+.ref-card h4{font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:700;margin-bottom:4px}
+.ref-card p{font-size:.75rem;color:var(--text2);margin-bottom:12px}
+.ref-card a{display:block;padding:9px;background:var(--gold);color:#fff;border-radius:8px;font-size:.78rem;font-weight:700;text-align:center;text-decoration:none;transition:.15s}
+.ref-card a:hover{opacity:.88}
+.courses-tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px}
+.course-tab{padding:8px 16px;border:1.5px solid var(--border);border-radius:20px;font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap;background:var(--surface);color:var(--text2);transition:.2s;flex-shrink:0}
+.course-tab.active{background:var(--text);color:#fff;border-color:var(--text)}
+.course-card{background:var(--surface);border-radius:var(--radius);padding:18px;margin-bottom:12px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.course-card.premium{border-color:var(--premium);background:var(--premium-bg)}
+.course-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.course-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.course-icon.ict{background:#e8f4fd}.course-icon.smc{background:#fdf3e8}.course-icon.gwp{background:var(--gold-bg)}.course-icon.prem{background:var(--premium-bg)}
+.course-meta h4{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:2px}
+.course-meta p{font-size:.78rem;color:var(--text2)}
+.course-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:700;margin-bottom:8px}
+.course-badge.free{background:var(--green-bg);color:var(--green)}
+.course-badge.premium{background:var(--premium-bg);color:var(--premium)}
+.course-body{font-size:.875rem;color:var(--text2);line-height:1.6;margin-bottom:12px}
+.course-illus{background:var(--surface2);border-radius:10px;padding:14px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text2);white-space:pre-wrap}
+.course-expand-btn{background:none;border:1.5px solid var(--border);border-radius:8px;padding:8px 16px;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--text2);font-family:inherit;transition:.15s}
+.course-expand-btn:hover{border-color:var(--gold);color:var(--gold)}
+.course-content{display:none;margin-top:10px}
+.course-content.open{display:block}
+.premium-banner{background:linear-gradient(135deg,#1a1814 0%,#2d2418 100%);border-radius:20px;padding:20px;margin:20px 16px 0;position:relative;overflow:hidden}
+.premium-banner::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(201,168,76,.35) 0%,transparent 70%)}
+.premium-banner h3{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:4px}
+.premium-banner .price{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;color:var(--gold2);margin-bottom:8px}
+.premium-banner .price span{font-size:.85rem;opacity:.7}
+.premium-features{list-style:none;margin-bottom:16px}
+.premium-features li{color:rgba(255,255,255,.8);font-size:.82rem;padding:3px 0;display:flex;align-items:center;gap:7px}
+.premium-features li::before{content:'✦';color:var(--gold2);font-size:.7rem}
+.btn-upgrade{background:var(--gold);color:#fff;border:none;border-radius:12px;padding:13px 20px;font-size:.9rem;font-weight:700;cursor:pointer;width:100%;font-family:inherit;transition:.15s}
+.btn-upgrade:hover{background:var(--gold2)}
+.games-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.game-card{background:var(--surface);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border:1px solid var(--border);cursor:pointer;transition:.15s}
+.game-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.game-icon{font-size:2rem;margin-bottom:8px}
+.game-card h4{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:4px}
+.game-card p{font-size:.75rem;color:var(--text2);margin-bottom:12px}
+.btn-play{width:100%;padding:10px;border:none;border-radius:10px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit}
+.leaderboard{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden}
+.lb-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{width:28px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.9rem;color:var(--text2);text-align:center}
+.lb-rank.gold{color:#f59e0b}
+.lb-avatar{width:36px;height:36px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0}
+.lb-name{flex:1;font-weight:600;font-size:.9rem}
+.lb-country{font-size:.75rem;color:var(--text3)}
+.lb-score{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--green);font-size:.9rem}
+.lb-mult{font-size:.75rem;color:var(--text2);text-align:right}
+.news-card{background:var(--surface);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.news-tag{display:inline-block;padding:2px 8px;background:var(--gold-bg);color:var(--gold);border-radius:6px;font-size:.68rem;font-weight:700;margin-bottom:6px;text-transform:uppercase}
+.news-card h4{font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:700;margin-bottom:6px;line-height:1.35}
+.news-card p{font-size:.8rem;color:var(--text2);line-height:1.55;margin-bottom:8px}
+.news-meta{font-size:.72rem;color:var(--text3)}
+.more-section{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden;margin-bottom:16px}
+.more-row{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--border);cursor:pointer;transition:.12s}
+.more-row:last-child{border-bottom:none}
+.more-row:hover{background:var(--surface2)}
+.more-row-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.more-row-text{flex:1}
+.more-row-text h5{font-weight:600;font-size:.9rem;margin-bottom:1px}
+.more-row-text p{font-size:.75rem;color:var(--text2)}
+.more-row-arrow{color:var(--text3);font-size:.85rem}
+.bottom-nav{height:64px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;flex-shrink:0;position:relative}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;cursor:pointer;border:none;background:none;color:var(--text3);transition:.15s}
+.nav-item.active{color:var(--gold)}
+.nav-icon{font-size:1.2rem;line-height:1}
+.nav-label{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.profile-avatar-big{width:80px;height:80px;border-radius:50%;background:var(--gold);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;color:#fff;cursor:pointer;position:relative;font-family:'Space Grotesk',sans-serif}
+.profile-avatar-big .edit-overlay{position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s;font-size:.8rem;color:#fff}
+.profile-avatar-big:hover .edit-overlay{opacity:1}
+.profile-name{text-align:center;font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:2px}
+.profile-email{text-align:center;font-size:.82rem;color:var(--text2);margin-bottom:16px}
+.profile-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px}
+.profile-stat{background:var(--surface2);border-radius:10px;padding:12px;text-align:center}
+.profile-stat-val{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1rem;color:var(--gold)}
+.profile-stat-lbl{font-size:.68rem;color:var(--text2);margin-top:2px}
+.profile-field{margin-bottom:14px}
+.profile-field label{display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:5px}
+.profile-field input{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:inherit;background:var(--bg);color:var(--text);outline:none}
+.badge-status{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:700;margin-bottom:16px}
+.badge-free{background:var(--surface2);color:var(--text2)}
+.badge-premium{background:var(--premium-bg);color:var(--premium)}
+.game-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:300;flex-direction:column}
+.game-screen.open{display:flex}
+.game-topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px}
+.game-back{border:none;background:var(--surface2);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem}
+.game-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1rem;flex:1}
+.game-balance{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--gold);font-weight:600}
+.game-body{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.game-canvas-wrap{background:var(--surface);border-radius:16px;overflow:hidden;aspect-ratio:16/9}
+canvas{width:100%;height:100%}
+.game-controls{background:var(--surface);border-radius:16px;padding:16px}
+.bet-row{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.bet-inp{flex:1;padding:11px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:'JetBrains Mono',monospace;background:var(--bg);color:var(--text);outline:none}
+.bet-btn{padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.8rem;font-weight:700;cursor:pointer;background:var(--surface2);color:var(--text);font-family:inherit}
+.action-btn{width:100%;padding:13px;border:none;border-radius:12px;font-size:.95rem;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:.15s}
+.action-btn.go{background:var(--green);color:#fff}
+.action-btn.cashout{background:var(--gold);color:#fff}
+.action-btn.stop{background:var(--red);color:#fff}
+.game-msg{text-align:center;padding:10px;border-radius:10px;font-weight:700;font-size:.9rem}
+.msg-win{background:var(--green-bg);color:var(--green)}
+.msg-lose{background:var(--red-bg);color:var(--red)}
+.mines-grid{display:grid;gap:6px;margin:12px 0}
+.mine-cell{aspect-ratio:1;border:1.5px solid var(--border);border-radius:10px;background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:.12s}
+.mine-cell:hover:not(.revealed):not(.mine-hit){background:var(--gold-bg);border-color:var(--gold)}
+.mine-cell.safe{background:var(--green-bg);border-color:var(--green)}
+.mine-cell.mine-hit{background:var(--red-bg);border-color:var(--red)}
+.reset-sent{background:var(--green-bg);color:var(--green);border-radius:10px;padding:12px;font-size:.85rem;font-weight:500;text-align:center;margin-top:12px}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:#fff;padding:10px 20px;border-radius:20px;font-size:.85rem;font-weight:500;z-index:999;opacity:0;transition:.25s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.payment-options{display:grid;gap:10px;margin-top:16px}
+.payment-opt{display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:.15s;text-decoration:none;color:var(--text)}
+.payment-opt:hover{border-color:var(--gold);background:var(--gold-bg)}
+.payment-opt-icon{font-size:1.5rem;width:40px;text-align:center}
+.payment-opt-text h5{font-weight:700;font-size:.9rem;margin-bottom:1px}
+.payment-opt-text p{font-size:.75rem;color:var(--text2)}
+.ad-slot{background:var(--surface2);border:1px dashed var(--border);border-radius:12px;padding:16px;text-align:center;color:var(--text3);font-size:.75rem;margin:16px;display:flex;align-items:center;justify-content:center;min-height:80px}
+.ad-slot.hidden{display:none}
+/* Live signal refresh indicator */
+.signal-refresh{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--text3)}
+.signal-refresh-dot{width:5px;height:5px;background:var(--green);border-radius:50%;animation:pulse 1.4s infinite}
+
+/* ── ENHANCEMENTS ── */
+.grade-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:800;letter-spacing:.04em;margin-left:6px}
+.grade-astar{background:#fef9c3;color:#b45309}
+.grade-aplus{background:#dcfce7;color:#166534}
+.grade-a{background:#dbeafe;color:#1e40af}
+.grade-b{background:#f3e8ff;color:#6b21a8}
+.sig-status-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.live-source-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:10px;font-size:.68rem;font-weight:700}
+.live-source-badge.live{background:var(--green-bg);color:var(--green)}
+.live-source-badge.demo{background:#fff8e1;color:#b45309}
+.refresh-btn{background:none;border:1.5px solid var(--border);border-radius:8px;padding:5px 12px;font-size:.75rem;font-weight:600;cursor:pointer;color:var(--text2);font-family:inherit;display:flex;align-items:center;gap:5px;transition:.15s}
+.refresh-btn:hover{border-color:var(--gold);color:var(--gold)}
+.refresh-btn.spinning .spin-icon{display:inline-block;animation:spin .7s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.status-card{background:var(--surface);border-radius:var(--radius);padding:16px;margin:0 16px 16px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.status-card h4{font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.status-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:.8rem}
+.status-row:last-child{border-bottom:none}
+.status-label{color:var(--text2)}
+.status-val{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:600;color:var(--text)}
+.status-ok{color:var(--green);font-weight:700}
+.status-warn{color:#b45309;font-weight:700}
+.arch-pill{display:inline-block;background:var(--gold-bg);color:var(--gold);border-radius:6px;padding:1px 7px;font-size:.7rem;font-weight:700;white-space:nowrap}
+.nav-badge{position:absolute;top:-3px;right:-3px;background:var(--red);color:#fff;border-radius:8px;font-size:.55rem;font-weight:800;padding:1px 4px;min-width:14px;text-align:center;display:none}
+.nav-badge.show{display:block}
+.nav-item{position:relative}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- ============ AUTH SCREEN ============ -->
+<div id="auth-screen">
+  <div class="auth-logo">
+    <div class="auth-logo-icon"><span>A</span></div>
+    <h1>Asterix.COM</h1>
+  </div>
+  <p class="auth-tagline">Ghost Wick Protocol · Institutional Trading Signals</p>
+  <div class="auth-card">
+    <div class="lang-row">
+      <label>🌐 Language:</label>
+      <select id="auth-lang" onchange="setLang(this.value)">
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+        <option value="pt">Português</option>
+        <option value="ar">العربية</option>
+      </select>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+    <button class="btn-google" onclick="loginWithGoogle()">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20H24v8h11.3C33.6 33.6 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.7-8 19.7-20 0-1.3-.1-2.7-.1-4z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.2 19 12 24 12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C34.1 6.5 29.3 4 24 4 16.3 4 9.7 8.5 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5l-6.2-5.2C29.4 35.5 26.8 36 24 36c-5.3 0-9.6-3.4-11.3-8l-6.5 5C9.8 39.5 16.4 44 24 44z"/><path fill="#1976D2" d="M43.6 20H24v8h11.3c-.9 2.5-2.6 4.6-4.8 6l6.2 5.2C40.8 36.1 44 30.5 44 24c0-1.3-.1-2.7-.4-4z"/></svg>
+      Continue with Google
+    </button>
+    <div class="divider">or</div>
+    <div id="login-form">
+      <div class="inp-group"><label>Email</label><input type="email" id="login-email" placeholder="you@email.com"></div>
+      <div class="inp-group"><label>Password</label><input type="password" id="login-pw" placeholder="••••••••"></div>
+      <button class="btn-primary" onclick="doLogin()">Sign In</button>
+      <div class="forgot-link"><a href="#" onclick="showForgot()">Forgot password?</a></div>
+    </div>
+    <div id="signup-form" style="display:none">
+      <div class="inp-group"><label>Full Name</label><input type="text" id="signup-name" placeholder="Your name"></div>
+      <div class="inp-group"><label>Email</label><input type="email" id="signup-email" placeholder="you@email.com"></div>
+      <div class="inp-group"><label>Password</label><input type="password" id="signup-pw" placeholder="Min 8 characters"></div>
+      <div class="inp-group"><label>Country</label>
+        <select id="signup-country">
+          <option value="GH">🇬🇭 Ghana</option><option value="NG">🇳🇬 Nigeria</option>
+          <option value="ZA">🇿🇦 South Africa</option><option value="KE">🇰🇪 Kenya</option>
+          <option value="FR">🇫🇷 France</option><option value="US">🇺🇸 United States</option>
+          <option value="GB">🇬🇧 United Kingdom</option><option value="OTHER">🌍 Other</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="doSignup()">Create Account</button>
+    </div>
+    <div id="forgot-form" style="display:none">
+      <p style="font-size:.85rem;color:var(--text2);margin-bottom:14px">Enter your email and we'll send a reset link.</p>
+      <div class="inp-group"><label>Email</label><input type="email" id="forgot-email" placeholder="you@email.com"></div>
+      <button class="btn-primary" onclick="sendReset()">Send Reset Link</button>
+      <div id="reset-sent" style="display:none" class="reset-sent">✅ Reset link sent! Check your inbox.</div>
+      <div class="forgot-link" style="margin-top:10px"><a href="#" onclick="showForgot(false)">← Back to Sign In</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MAIN APP ============ -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="topbar-logo-icon"><span>A</span></div>
+      <h1>Asterix.COM</h1>
+    </div>
+    <div class="live-badge"><span class="live-dot"></span> LIVE</div>
+    <button class="avatar-btn" id="avatar-btn" onclick="openProfile()">A</button>
+  </div>
+  <div class="content">
+    <div class="ticker-wrap"><div class="ticker" id="ticker"></div></div>
+
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+      <div class="hero">
+        <div class="hero-card">
+          <div class="hero-label">Ghost Wick Protocol™</div>
+          <div class="hero-title">Institutional <span>Precision</span><br>Trading Signals</div>
+          <div class="hero-stats">
+            <div class="hero-stat"><div class="hero-stat-val">97%</div><div class="hero-stat-lbl">Accuracy</div></div>
+            <div class="hero-stat"><div class="hero-stat-val" id="hero-member-count">2,847</div><div class="hero-stat-lbl">Members</div></div>
+            <div class="hero-stat"><div class="hero-stat-val">1.8:1</div><div class="hero-stat-lbl">R:R Ratio</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="premium-banner" id="home-premium-banner">
+        <h3>Upgrade to Premium ✦</h3>
+        <div class="price">$12.99<span>/month</span></div>
+        <ul class="premium-features">
+          <li>2–3 high-probability signals daily</li>
+          <li>Zero ads — clean experience</li>
+          <li>Advanced ICT, SMC & GWP courses</li>
+          <li>Priority Liquidity Trap alerts</li>
+          <li>4H close confirmation alerts</li>
+          <li>Liquidation price warnings</li>
+        </ul>
+        <button class="btn-upgrade" onclick="openUpgrade()">Upgrade Now — $12.99/mo</button>
+      </div>
+      <div class="section">
+        <div class="section-header"><div class="section-title">💰 Start Trading</div></div>
+        <div class="referral-grid">
+          <div class="ref-card"><div class="ref-card-logo">🟡</div><h4>ByBit</h4><p>Up to $30,000 welcome bonus</p><a href="https://www.bybit.com/invite?ref=ASTERIX" target="_blank">Join ByBit →</a></div>
+          <div class="ref-card"><div class="ref-card-logo">🟢</div><h4>KuCoin</h4><p>10% fee discount forever</p><a href="https://www.kucoin.com/r/ASTERIX" target="_blank">Join KuCoin →</a></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">Latest Signals</div>
+          <span class="section-link" onclick="navTo('signals')">See all →</span>
+        </div>
+        <div id="home-signals-preview"></div>
+      </div>
+      <div class="ad-slot" id="ad-home">📢 Advertisement — <a href="#" onclick="openUpgrade()" style="color:var(--gold);margin-left:4px">Go Premium to remove ads</a></div>
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">Market News</div>
+          <span class="section-link" onclick="navTo('news')">See all →</span>
+        </div>
+        <div id="home-news-preview"></div>
+      </div>
+    </div>
+
+    <!-- SIGNALS -->
+    <div class="page" id="page-signals">
+      <div class="section" style="padding-top:16px">
+        <div class="section-header">
+          <div class="section-title">🎯 GWP Signals</div>
+          <button class="refresh-btn" id="refresh-btn" onclick="manualRefresh()">
+            <span class="spin-icon">↻</span><span id="signal-last-update">Fetching...</span>
+          </button>
+        </div>
+        <div id="sig-source-row" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <span id="sig-live-badge" class="live-source-badge demo">⏳ Waiting for bot...</span>
+          <span style="font-size:.72rem;color:var(--text3)">Auto-refresh every 60s</span>
+        </div>
+        <div id="signals-list"></div>
+        <div class="ad-slot" id="ad-signals">📢 Advertisement — <a href="#" onclick="openUpgrade()" style="color:var(--gold);margin-left:4px">Remove ads</a></div>
+      </div>
+    </div>
+
+    <!-- GAMES -->
+    <div class="page" id="page-games">
+      <div class="section" style="padding-top:16px">
+        <div class="section-header">
+          <div class="section-title">🎮 Arcade</div>
+          <span class="section-link" style="font-family:'JetBrains Mono',monospace;color:var(--gold)">⚡ <span id="atx-balance">1,000</span> ATX</span>
+        </div>
+        <div class="section-header" style="margin-top:4px"><div class="section-title" style="font-size:.85rem;color:var(--text2)">WEEKLY TOP</div></div>
+        <div class="leaderboard" style="margin-bottom:16px">
+          <div class="lb-row"><div class="lb-rank gold">#1</div><div class="lb-avatar">CK</div><div class="lb-name">CryptoKwame<div class="lb-country">GH</div></div><div><div class="lb-score">+6,820 ATX</div><div class="lb-mult">18.44x</div></div></div>
+          <div class="lb-row"><div class="lb-rank">🏆</div><div class="lb-avatar">A</div><div class="lb-name">Asterix.COM<div class="lb-country">Official</div></div><div><div class="lb-score">+4,200 ATX</div><div class="lb-mult">12.10x</div></div></div>
+          <div class="lb-row"><div class="lb-rank">#3</div><div class="lb-avatar">TN</div><div class="lb-name">TradingNana<div class="lb-country">NG</div></div><div><div class="lb-score">+3,140 ATX</div><div class="lb-mult">9.88x</div></div></div>
+          <div class="lb-row"><div class="lb-rank">#4</div><div class="lb-avatar">DK</div><div class="lb-name">DeFiKofi<div class="lb-country">GH</div></div><div><div class="lb-score">+2,010 ATX</div><div class="lb-mult">7.22x</div></div></div>
+          <div class="lb-row"><div class="lb-rank">#5</div><div class="lb-avatar">CM</div><div class="lb-name">CoinMaestro<div class="lb-country">ZA</div></div><div><div class="lb-score">+980 ATX</div><div class="lb-mult">5.60x</div></div></div>
+        </div>
+        <div class="games-grid">
+          <div class="game-card" onclick="openGame('crash')"><div class="game-icon">🚀</div><h4>Crash</h4><p>Cash out before it crashes</p><button class="btn-play" style="background:#22c55e;color:#fff">Play</button></div>
+          <div class="game-card" onclick="openGame('mines')"><div class="game-icon">💣</div><h4>Mines</h4><p>Reveal tiles, avoid mines</p><button class="btn-play" style="background:#ef4444;color:#fff">Play</button></div>
+          <div class="game-card" onclick="openGame('plinko')"><div class="game-icon">🎯</div><h4>Plinko</h4><p>Drop the ball, hit multiplier</p><button class="btn-play" style="background:var(--gold);color:#fff">Play</button></div>
+          <div class="game-card" onclick="openGame('candle')"><div class="game-icon">🕯️</div><h4>Candle Call</h4><p>Predict LONG or SHORT</p><button class="btn-play" style="background:#8b5cf6;color:#fff">Play</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEWS -->
+    <div class="page" id="page-news">
+      <div class="section" style="padding-top:16px">
+        <div class="section-header"><div class="section-title">📰 Market Intelligence</div></div>
+        <div id="news-list"></div>
+      </div>
+    </div>
+
+    <!-- MORE -->
+    <div class="page" id="page-more">
+      <div class="section" style="padding-top:16px">
+        <div class="section-header"><div class="section-title">📚 Trading Academy</div></div>
+        <div class="courses-tabs" id="courses-tabs">
+          <button class="course-tab active" onclick="switchCourseTab('ict',this)">ICT</button>
+          <button class="course-tab" onclick="switchCourseTab('smc',this)">SMC</button>
+          <button class="course-tab" onclick="switchCourseTab('gwp',this)">GWP</button>
+          <button class="course-tab" onclick="switchCourseTab('advanced',this)">⭐ Advanced</button>
+        </div>
+        <div id="courses-content"></div>
+      </div>
+      <div class="section">
+        <div class="section-header"><div class="section-title">⚙️ Settings</div></div>
+        <div class="more-section">
+          <div class="more-row" onclick="openProfile()"><div class="more-row-icon" style="background:var(--gold-bg)">👤</div><div class="more-row-text"><h5>My Profile</h5><p>Edit info, change picture</p></div><span class="more-row-arrow">›</span></div>
+          <div class="more-row" onclick="openUpgrade()"><div class="more-row-icon" style="background:var(--premium-bg)">⭐</div><div class="more-row-text"><h5>Upgrade to Premium</h5><p>$12.99/month — unlock everything</p></div><span class="more-row-arrow">›</span></div>
+          <div class="more-row" onclick="openLangModal()"><div class="more-row-icon" style="background:var(--blue-bg)">🌐</div><div class="more-row-text"><h5>Language</h5><p id="current-lang-label">English</p></div><span class="more-row-arrow">›</span></div>
+          <div class="more-row" onclick="showToast('Referral link copied!')"><div class="more-row-icon" style="background:var(--green-bg)">🔗</div><div class="more-row-text"><h5>Referral Program</h5><p>Earn ATX for every invite</p></div><span class="more-row-arrow">›</span></div>
+          <div class="more-row" onclick="openAboutGWP()"><div class="more-row-icon" style="background:var(--gold-bg)">🧠</div><div class="more-row-text"><h5>What is GWP?</h5><p>Ghost Wick Protocol explained</p></div><span class="more-row-arrow">›</span></div>
+          <div class="more-row" onclick="openSystemStatus()"><div class="more-row-icon" style="background:var(--green-bg)">⚡</div><div class="more-row-text"><h5>System Status</h5><p>Frontend · Bots · Live Sheet bridge</p></div><span class="more-row-arrow">›</span></div>
+          <div class="more-row" onclick="doLogout()"><div class="more-row-icon" style="background:var(--red-bg)">🚪</div><div class="more-row-text"><h5>Sign Out</h5><p></p></div><span class="more-row-arrow">›</span></div>
+        </div>
+        <div class="more-section">
+          <div class="more-row" onclick="window.open('mailto:asterixcomltd@gmail.com')"><div class="more-row-icon" style="background:var(--surface2)">✉️</div><div class="more-row-text"><h5>Email Us</h5><p>asterixcomltd@gmail.com</p></div><span class="more-row-arrow">›</span></div>
+          <div class="more-row" onclick="window.open('https://t.me/asterix_trading_signal_hub','_blank')"><div class="more-row-icon" style="background:#e8f4fd">✈️</div><div class="more-row-text"><h5>Telegram Community</h5><p>t.me/asterix_trading_signal_hub</p></div><span class="more-row-arrow">›</span></div>
+          <div class="more-row" onclick="window.open('https://twitter.com/Asterix_Abdin','_blank')"><div class="more-row-icon" style="background:#f0f0f0">𝕏</div><div class="more-row-text"><h5>Follow on X</h5><p>@Asterix_Abdin</p></div><span class="more-row-arrow">›</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-item active" onclick="navTo('home')" id="nav-home"><span class="nav-icon">⊞</span><span class="nav-label">Home</span></button>
+    <button class="nav-item" onclick="navTo('signals')" id="nav-signals"><span class="nav-icon">📡</span><span class="nav-label">Signals</span><span class="nav-badge" id="signals-nav-badge">0</span></button>
+    <button class="nav-item" onclick="navTo('games')" id="nav-games"><span class="nav-icon">🎮</span><span class="nav-label">Games</span></button>
+    <button class="nav-item" onclick="navTo('news')" id="nav-news"><span class="nav-icon">📰</span><span class="nav-label">News</span></button>
+    <button class="nav-item" onclick="navTo('more')" id="nav-more"><span class="nav-icon">⋯</span><span class="nav-label">More</span></button>
+  </div>
+</div>
+
+<!-- ============ MODALS ============ -->
+<div class="overlay" id="profile-overlay" onclick="closeOverlay('profile-overlay')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;margin-bottom:4px">
+      <div class="profile-avatar-big" id="profile-avatar-big" onclick="triggerAvatarUpload()">
+        <span id="profile-avatar-letter">A</span>
+        <div class="edit-overlay">📷 Change</div>
+      </div>
+      <input type="file" id="avatar-upload" accept="image/*" style="display:none" onchange="handleAvatarChange(event)">
+      <div class="profile-name" id="profile-name-display">User</div>
+      <div class="profile-email" id="profile-email-display">user@example.com</div>
+      <span class="badge-status badge-free" id="profile-plan-badge">FREE PLAN</span>
+    </div>
+    <div class="profile-stats">
+      <div class="profile-stat"><div class="profile-stat-val" id="ps-signals">0</div><div class="profile-stat-lbl">Signals</div></div>
+      <div class="profile-stat"><div class="profile-stat-val" id="ps-atx">1,000</div><div class="profile-stat-lbl">ATX</div></div>
+      <div class="profile-stat"><div class="profile-stat-val" id="ps-days">1</div><div class="profile-stat-lbl">Days</div></div>
+    </div>
+    <div class="profile-field"><label>Display Name</label><input type="text" id="pf-name" placeholder="Your name"></div>
+    <div class="profile-field"><label>Email</label><input type="email" id="pf-email" placeholder="your@email.com"></div>
+    <div class="profile-field"><label>Country</label>
+      <select id="pf-country" style="width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;background:var(--bg);color:var(--text);outline:none;">
+        <option>🇬🇭 Ghana</option><option>🇳🇬 Nigeria</option><option>🇿🇦 South Africa</option><option>🇰🇪 Kenya</option><option>🌍 Other</option>
+      </select>
+    </div>
+    <button class="btn-primary" style="margin-bottom:10px" onclick="saveProfile()">Save Changes</button>
+    <button class="btn-primary" style="background:var(--premium)" onclick="openUpgrade()">⭐ Upgrade to Premium</button>
+  </div>
+</div>
+
+<div class="overlay center" id="upgrade-overlay" onclick="closeOverlay('upgrade-overlay')">
+  <div class="modal centered" onclick="event.stopPropagation()" style="position:relative">
+    <button class="modal-close" onclick="closeOverlay('upgrade-overlay')">✕</button>
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-size:2rem;margin-bottom:8px">✦</div>
+      <h2>Asterix Premium</h2>
+      <p class="sub">Unlock the full power of GWP</p>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:800;color:var(--gold)">$12.99<span style="font-size:1rem;color:var(--text2);font-weight:400">/month</span></div>
+    </div>
+    <ul class="premium-features" style="margin-bottom:20px">
+      <li style="color:var(--text)">2–3 high-probability daily signals</li>
+      <li style="color:var(--text)">Zero ads — completely clean interface</li>
+      <li style="color:var(--text)">Advanced ICT, SMC & GWP deep courses</li>
+      <li style="color:var(--text)">Priority Liquidity Trap alerts</li>
+      <li style="color:var(--text)">4H close confirmation alerts</li>
+      <li style="color:var(--text)">Liquidation price warnings</li>
+      <li style="color:var(--text)">Early access to new features</li>
+    </ul>
+    <p style="font-size:.8rem;color:var(--text2);text-align:center;margin-bottom:12px">Choose your payment method:</p>
+    <div class="payment-options">
+      <a class="payment-opt" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Pay via Telegram</h5><p>Send payment proof to @Asterix_Abdin</p></div><span>›</span></a>
+      <a class="payment-opt" href="https://pay.google.com" target="_blank"><span class="payment-opt-icon">💳</span><div class="payment-opt-text"><h5>Google Pay</h5><p>Fast, secure payment</p></div><span>›</span></a>
+      <a class="payment-opt" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>Crypto Payment</h5><p>BTC, USDT, ETH accepted</p></div><span>›</span></a>
+    </div>
+  </div>
+</div>
+
+<div class="overlay center" id="lang-overlay" onclick="closeOverlay('lang-overlay')">
+  <div class="modal centered" onclick="event.stopPropagation()" style="position:relative">
+    <button class="modal-close" onclick="closeOverlay('lang-overlay')">✕</button>
+    <h2>🌐 Language</h2><p class="sub">Choose your preferred language</p>
+    <div style="display:grid;gap:8px">
+      <button onclick="setLang('en');closeOverlay('lang-overlay')" class="btn-primary" style="background:var(--surface2);color:var(--text)">🇬🇧 English</button>
+      <button onclick="setLang('fr');closeOverlay('lang-overlay')" class="btn-primary" style="background:var(--surface2);color:var(--text)">🇫🇷 Français</button>
+      <button onclick="setLang('es');closeOverlay('lang-overlay')" class="btn-primary" style="background:var(--surface2);color:var(--text)">🇪🇸 Español</button>
+      <button onclick="setLang('pt');closeOverlay('lang-overlay')" class="btn-primary" style="background:var(--surface2);color:var(--text)">🇧🇷 Português</button>
+      <button onclick="setLang('ar');closeOverlay('lang-overlay')" class="btn-primary" style="background:var(--surface2);color:var(--text)">🇸🇦 العربية</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="gwp-overlay" onclick="closeOverlay('gwp-overlay')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h2>🧠 Ghost Wick Protocol</h2>
+    <p class="sub">The 5-Pillar Institutional Method</p>
+    <div style="font-size:.875rem;color:var(--text2);line-height:1.7">
+      <p>The <strong>Ghost Wick Protocol (GWP)</strong> is a proprietary trading methodology designed to identify institutional footprints left inside price wicks.</p><br>
+      <p><strong>The 5 Pillars:</strong></p>
+      <div class="course-illus">1️⃣ Ghost Wick Detection
+   → Wick ≥ 60% of candle body
+   → Confirms institutional sweep
+
+2️⃣ Liquidity Trap Identification
+   → Price spikes beyond key level
+   → Reverses within 2 candles
+
+3️⃣ Market Structure Break (MSB)
+   → Higher High / Lower Low
+   → Confirms directional bias
+
+4️⃣ Order Block Confluence
+   → Supply/Demand zones align
+   → Volume confirmation
+
+5️⃣ Kelly Risk Sizing
+   → 1.8:1 R:R minimum
+   → Max 2% account risk</div>
+      <p>When all 5 pillars align, a <strong>GWP signal</strong> fires with 97% historical accuracy.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ GAME SCREENS ============ -->
+<div class="game-screen" id="game-crash">
+  <div class="game-topbar"><button class="game-back" onclick="closeGame('crash')">←</button><div class="game-title">🚀 Crash</div><div class="game-balance">⚡ <span class="atx-display">1000</span> ATX</div></div>
+  <div class="game-body">
+    <div class="game-canvas-wrap"><canvas id="crash-canvas"></canvas></div>
+    <div class="game-controls">
+      <div class="bet-row">
+        <input class="bet-inp" id="crash-bet" type="number" value="50" min="10">
+        <button class="bet-btn" onclick="document.getElementById('crash-bet').value=Math.min(+document.getElementById('crash-bet').value*2,gameState.balance)">×2</button>
+        <button class="bet-btn" onclick="document.getElementById('crash-bet').value=Math.floor(gameState.balance/2)">½</button>
+      </div>
+      <button class="action-btn go" id="crash-btn" onclick="crashAction()">🚀 Place Bet</button>
+      <div id="crash-msg" class="game-msg" style="margin-top:10px;display:none"></div>
+    </div>
+  </div>
+</div>
+
+<div class="game-screen" id="game-mines">
+  <div class="game-topbar"><button class="game-back" onclick="closeGame('mines')">←</button><div class="game-title">💣 Mines</div><div class="game-balance">⚡ <span class="atx-display">1000</span> ATX</div></div>
+  <div class="game-body">
+    <div class="game-controls">
+      <div class="bet-row">
+        <input class="bet-inp" id="mines-bet" type="number" value="50" min="10">
+        <input class="bet-inp" id="mines-count" type="number" value="3" min="1" max="20" style="max-width:80px">
+        <span style="font-size:.75rem;color:var(--text2);white-space:nowrap">mines</span>
+      </div>
+      <button class="action-btn go" id="mines-start-btn" onclick="startMines()">💣 Start Game</button>
+    </div>
+    <div class="mines-grid" id="mines-grid" style="grid-template-columns:repeat(5,1fr)"></div>
+    <div class="game-controls" id="mines-cashout-area" style="display:none">
+      <div id="mines-mult" style="text-align:center;font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;color:var(--gold);margin-bottom:10px">1.00x</div>
+      <button class="action-btn cashout" onclick="cashoutMines()">💰 Cash Out</button>
+    </div>
+    <div id="mines-msg" class="game-msg" style="display:none"></div>
+  </div>
+</div>
+
+<div class="game-screen" id="game-plinko">
+  <div class="game-topbar"><button class="game-back" onclick="closeGame('plinko')">←</button><div class="game-title">🎯 Plinko</div><div class="game-balance">⚡ <span class="atx-display">1000</span> ATX</div></div>
+  <div class="game-body">
+    <div class="game-canvas-wrap"><canvas id="plinko-canvas"></canvas></div>
+    <div class="game-controls">
+      <div class="bet-row">
+        <input class="bet-inp" id="plinko-bet" type="number" value="50" min="10">
+        <button class="bet-btn" onclick="document.getElementById('plinko-bet').value=Math.min(+document.getElementById('plinko-bet').value*2,gameState.balance)">×2</button>
+        <button class="bet-btn" onclick="document.getElementById('plinko-bet').value=Math.floor(gameState.balance/2)">½</button>
+      </div>
+      <button class="action-btn go" onclick="dropPlinko()">🎯 Drop Ball</button>
+      <div id="plinko-msg" class="game-msg" style="margin-top:10px;display:none"></div>
+    </div>
+  </div>
+</div>
+
+<div class="game-screen" id="game-candle">
+  <div class="game-topbar"><button class="game-back" onclick="closeGame('candle')">←</button><div class="game-title">🕯️ Candle Call</div><div class="game-balance">⚡ <span class="atx-display">1000</span> ATX</div></div>
+  <div class="game-body">
+    <div class="game-canvas-wrap"><canvas id="candle-canvas"></canvas></div>
+    <div class="game-controls">
+      <div class="bet-row"><input class="bet-inp" id="candle-bet" type="number" value="50" min="10"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button class="action-btn go" onclick="candleCall('LONG')">📈 LONG</button>
+        <button class="action-btn stop" onclick="candleCall('SHORT')">📉 SHORT</button>
+      </div>
+      <div id="candle-msg" class="game-msg" style="margin-top:10px;display:none"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SYSTEM STATUS MODAL -->
+<div class="overlay" id="status-overlay" onclick="closeOverlay('status-overlay')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h2>⚡ System Architecture</h2>
+    <p class="sub">How the app stays connected to the bots</p>
+
+    <div class="status-card" style="background:var(--gold-bg);border-color:var(--gold);margin:0 0 12px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.75rem;line-height:1.9;color:var(--text)">
+        <span style="color:var(--gold);font-weight:800">BOTS (GitHub Actions — Node.js)</span><br>
+        &nbsp;&nbsp;↓ write altcoin/forex_signals.json<br>
+        <span style="color:var(--blue);font-weight:800">GITHUB GIST (public JSON bridge)</span><br>
+        &nbsp;&nbsp;↓ raw URL fetch (no auth needed)<br>
+        <span style="color:var(--green);font-weight:800">FRONTEND (Vercel)</span><br>
+        &nbsp;&nbsp;↓ merges + renders live signals<br>
+        <span style="color:var(--premium);font-weight:800">TELEGRAM (@asterix5pillar_bot / @AsterixInstBot)</span>
+      </div>
+    </div>
+
+    <div class="status-row"><span class="status-label">🌐 Frontend hosting</span><span class="status-val arch-pill">Vercel</span></div>
+    <div class="status-row"><span class="status-label">🤖 Bot hosting</span><span class="status-val arch-pill">GitHub Actions</span></div>
+    <div class="status-row"><span class="status-label">🗄️ Bridge / DB</span><span class="status-val arch-pill">GitHub Gist (public)</span></div>
+    <div class="status-row"><span class="status-label">🔑 Gist ID</span><span class="status-val" style="font-size:.65rem" id="status-gist-id">see index.html</span></div>
+    <div class="status-row"><span class="status-label">🔁 Bot scan interval</span><span class="status-val">Every 30 min</span></div>
+    <div class="status-row"><span class="status-label">🔄 App auto-refresh</span><span class="status-val">Every 60 s</span></div>
+
+    <div style="background:var(--green-bg);border-radius:10px;padding:12px;margin-top:14px;font-size:.8rem;color:var(--green)">
+      <strong>✅ Zero-config reads:</strong> The Gist is public — no API key needed in the frontend. The bots use a GH_PAT secret (gist scope) stored in GitHub Actions secrets to push updates.
+    </div>
+
+    <div style="background:var(--blue-bg);border-radius:10px;padding:12px;margin-top:8px;font-size:.8rem;color:var(--blue)">
+      <strong>ℹ️ Setup:</strong> Create a public Gist with <code>altcoin_signals.json</code> and <code>forex_signals.json</code> (both starting as <code>[]</code>). Add <strong>GIST_ID</strong> + <strong>GH_PAT</strong> to gwp-bots repo secrets.
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ STATE ============
+// ════════════════════════════════════════════════════════════════
+// LIVE SIGNAL SOURCE — GitHub Gist (public)
+// Both bots write their signals file → YAML pushes to this Gist →
+// Dashboard fetches both files, merges by timestamp, renders live.
+//
+// HOW TO SET UP (one-time):
+//   1. gist.github.com → New gist → Public
+//      File 1: altcoin_signals.json  content: []
+//      File 2: forex_signals.json    content: []
+//   2. Copy the Gist ID from the URL (32-char hex after your username)
+//   3. Paste it below as GIST_ID
+//   4. Add GH_PAT + GIST_ID secrets to your gwp-bots repo
+// ════════════════════════════════════════════════════════════════
+const GIST_USER = 'asterixcomltd';          // your GitHub username
+const GIST_ID   = 'PASTE_YOUR_GIST_ID_HERE'; // 32-char hex Gist ID
+
+let signalsData = [];
+let appState = { user:null, isPremium:false, lang:'en', avatarDataURL:null };
+const gameState = { balance:1000 };
+
+// ============ LIVE SIGNALS FROM GITHUB GIST ============
+async function fetchSignalsFromSheet() {
+  try {
+    const t   = Date.now(); // cache-bust query param
+    const base = `https://gist.githubusercontent.com/${GIST_USER}/${GIST_ID}/raw`;
+
+    const [ar, fr] = await Promise.allSettled([
+      fetch(`${base}/altcoin_signals.json?t=${t}`),
+      fetch(`${base}/forex_signals.json?t=${t}`)
+    ]);
+
+    let altcoin = [], forex = [];
+    if (ar.status === 'fulfilled' && ar.value.ok) {
+      try { altcoin = await ar.value.json(); } catch(e) {}
+    }
+    if (fr.status === 'fulfilled' && fr.value.ok) {
+      try { forex = await fr.value.json(); } catch(e) {}
+    }
+
+    // Merge both arrays, sort newest-first, keep top 20
+    const merged = [...altcoin, ...forex]
+      .filter(s => s && s.pair)
+      .sort((a, b) => (b.ts || 0) - (a.ts || 0))
+      .slice(0, 20);
+
+    if (!merged.length) {
+      renderFallbackSignals();
+      return;
+    }
+
+    signalsData = merged.map((s, i) => ({
+      pair   : s.pair    || 'BTC/USDT',
+      dir    : s.dir     || 'LONG',
+      entry  : s.entry   || '0',
+      sl     : s.sl      || '0',
+      tp     : s.tp      || s.tp1 || '0',
+      tp1    : s.tp1     || s.tp  || '0',
+      tp3    : s.tp3     || s.tp  || '0',
+      score  : s.score   || 80,
+      tf     : s.tf      || '4H',
+      grade  : s.grade   || '',
+      rr     : s.rr      || '',
+      bot    : s.bot     || '',
+      time   : s.time    || '--:--',
+      premium: i >= 2
+    }));
+
+    const now = new Date();
+    const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+    const el = document.getElementById('signal-last-update');
+    if (el) el.textContent = 'Updated ' + timeStr;
+
+    setSignalSourceBadge(true, signalsData.length);
+    renderSignals();
+    renderHomePreview();
+
+  } catch(e) {
+    console.log('Gist fetch error:', e);
+    renderFallbackSignals();
+  }
+}
+
+function renderFallbackSignals() {
+  // Show while waiting for first bot signal
+  signalsData = [
+    { pair:'BTC/USDT', dir:'LONG',  entry:'67,400', sl:'66,800', tp:'68,900', score:94, tf:'4H', time:'--:--', premium:false },
+    { pair:'ETH/USDT', dir:'LONG',  entry:'3,480',  sl:'3,420',  tp:'3,600',  score:91, tf:'4H', time:'--:--', premium:false },
+    { pair:'SOL/USDT', dir:'SHORT', entry:'145.0',  sl:'147.5',  tp:'140.2',  score:88, tf:'1H', time:'--:--', premium:true  },
+    { pair:'XAU/USD',  dir:'LONG',  entry:'2,295',  sl:'2,278',  tp:'2,335',  score:96, tf:'4H', time:'--:--', premium:true  },
+  ];
+  const el = document.getElementById('signal-last-update');
+  if(el) el.textContent = 'Waiting for bot...';
+  setSignalSourceBadge(false, 0);
+  renderSignals();
+  renderHomePreview();
+}
+
+
+// ─── Signal source badge ───────────────────────────────────────────────────
+function setSignalSourceBadge(isLive, count) {
+  const badge = document.getElementById('sig-live-badge');
+  if (!badge) return;
+  if (isLive) {
+    badge.className = 'live-source-badge live';
+    badge.textContent = '● LIVE — ' + count + ' signal' + (count !== 1 ? 's' : '') + ' from sheet';
+  } else {
+    badge.className = 'live-source-badge demo';
+    badge.textContent = '⏳ Waiting for bot signal...';
+  }
+  // Update nav badge
+  const nb = document.getElementById('signals-nav-badge');
+  if (nb && isLive && count > 0) { nb.textContent = count; nb.classList.add('show'); }
+  else if (nb) nb.classList.remove('show');
+}
+
+// ─── Manual refresh ────────────────────────────────────────────────────────
+async function manualRefresh() {
+  const btn = document.getElementById('refresh-btn');
+  if (btn) btn.classList.add('spinning');
+  await fetchSignalsFromSheet();
+  if (btn) { btn.classList.remove('spinning'); }
+}
+
+// ─── System status modal ───────────────────────────────────────────────────
+function openSystemStatus() { openOverlay('status-overlay', true); }
+
+// Auto-refresh every 60 seconds
+setInterval(fetchSignalsFromSheet, 60000);
+
+// ============ RENDER SIGNALS ============
+function renderSignals() {
+  const container = document.getElementById('signals-list');
+  if (!container) return;
+  if (signalsData.length === 0) { container.innerHTML = '<p style="text-align:center;color:var(--text2);padding:20px">No signals yet. Bot scans every 5 minutes.</p>'; return; }
+
+  let html = '';
+  signalsData.forEach((s, i) => {
+    const locked = s.premium && !appState.isPremium;
+    // Use grade from bot if available, else derive from score
+    const gradeLabel = s.grade ? s.grade.split(' ')[0] : (s.score>=90?'A+★':s.score>=80?'A+':s.score>=70?'A':'B+');
+    const grade = gradeLabel;
+    const gradeClass = s.score>=90?'grade-astar':s.score>=80?'grade-aplus':s.score>=70?'grade-a':'grade-b';
+    html += `<div class="signal-card ${locked?'premium-locked':''}">
+      <div class="sig-top">
+        <div><div class="sig-pair">${s.pair}<span class="grade-badge ${gradeClass}">${grade}</span></div><span style="font-size:.72rem;color:var(--text3)">${s.tf} · ${s.time} UTC</span></div>
+        <span class="sig-badge ${s.dir==='LONG'?'badge-long':'badge-short'}">${s.dir}</span>
+      </div>
+      <div class="sig-row">
+        <div class="sig-cell"><div class="sig-cell-label">Entry</div><div class="sig-cell-val">${s.entry}</div></div>
+        <div class="sig-cell"><div class="sig-cell-label">Stop Loss</div><div class="sig-cell-val" style="color:var(--red)">${s.sl}</div></div>
+        <div class="sig-cell"><div class="sig-cell-label">Take Profit</div><div class="sig-cell-val" style="color:var(--green)">${s.tp}</div></div>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>GWP Score</span><span style="font-weight:700;color:var(--gold)">${s.score}%</span></div>
+        <div class="score-bar"><div class="score-fill" style="width:${s.score}%"></div></div>
+      </div>
+      <div class="sig-bots">
+        <a class="bot-link" href="https://t.me/asterix5pillar_bot" target="_blank">📡 @asterix5pillar_bot</a>
+        <a class="bot-link" href="https://t.me/AsterixInstBot" target="_blank">⚡ @AsterixInstBot</a>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+  const countEl = document.getElementById('ps-signals');
+  if(countEl) countEl.textContent = signalsData.length;
+}
+
+function renderHomePreview() {
+  const preview = document.getElementById('home-signals-preview');
+  if(!preview || signalsData.length === 0) return;
+  let html = '';
+  signalsData.slice(0,2).forEach(s => {
+    html += `<div class="signal-card">
+      <div class="sig-top"><div><div class="sig-pair">${s.pair}</div></div><span class="sig-badge ${s.dir==='LONG'?'badge-long':'badge-short'}">${s.dir}</span></div>
+      <div class="sig-row">
+        <div class="sig-cell"><div class="sig-cell-label">Entry</div><div class="sig-cell-val">${s.entry}</div></div>
+        <div class="sig-cell"><div class="sig-cell-label">SL</div><div class="sig-cell-val" style="color:var(--red)">${s.sl}</div></div>
+        <div class="sig-cell"><div class="sig-cell-label">TP</div><div class="sig-cell-val" style="color:var(--green)">${s.tp}</div></div>
+      </div>
+    </div>`;
+  });
+  preview.innerHTML = html;
+}
+
+// ============ AUTH ============
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('login-form').style.display  = tab==='login'  ? 'block':'none';
+  document.getElementById('signup-form').style.display = tab==='signup' ? 'block':'none';
+  document.getElementById('forgot-form').style.display = 'none';
+}
+function showForgot(show=true) {
+  document.getElementById('login-form').style.display  = show?'none':'block';
+  document.getElementById('forgot-form').style.display = show?'block':'none';
+}
+function sendReset() {
+  const email = document.getElementById('forgot-email').value;
+  if(!email) return showToast('Enter your email first');
+  document.getElementById('reset-sent').style.display='block';
+  showToast('Reset link sent to '+email);
+}
+function doLogin() {
+  const email=document.getElementById('login-email').value;
+  const pw=document.getElementById('login-pw').value;
+  if(!email||!pw) return showToast('Fill all fields');
+  loginUser({name:email.split('@')[0],email});
+}
+function doSignup() {
+  const name=document.getElementById('signup-name').value;
+  const email=document.getElementById('signup-email').value;
+  const pw=document.getElementById('signup-pw').value;
+  if(!name||!email||!pw) return showToast('Fill all fields');
+  if(pw.length<8) return showToast('Password min 8 characters');
+  loginUser({name,email});
+}
+function loginWithGoogle() { loginUser({name:'Google User',email:'user@gmail.com',google:true}); }
+function loginUser(user) {
+  appState.user=user;
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  const letter=(user.name||'U')[0].toUpperCase();
+  document.getElementById('avatar-btn').textContent=letter;
+  document.getElementById('profile-avatar-letter').textContent=letter;
+  document.getElementById('profile-name-display').textContent=user.name;
+  document.getElementById('profile-email-display').textContent=user.email;
+  document.getElementById('pf-name').value=user.name;
+  document.getElementById('pf-email').value=user.email;
+  document.getElementById('ps-days').textContent=1;
+  initApp();
+  showToast('Welcome, '+user.name+'! 🎉');
+}
+function doLogout() {
+  appState.user=null;
+  document.getElementById('app').style.display='none';
+  document.getElementById('auth-screen').style.display='flex';
+  navTo('home');
+}
+
+// ============ LANGUAGE ============
+const i18n={
+  en:{home:'Home',signals:'Signals',games:'Games',news:'News',more:'More'},
+  fr:{home:'Accueil',signals:'Signaux',games:'Jeux',news:'Actualités',more:'Plus'},
+  es:{home:'Inicio',signals:'Señales',games:'Juegos',news:'Noticias',more:'Más'},
+  pt:{home:'Início',signals:'Sinais',games:'Jogos',news:'Notícias',more:'Mais'},
+  ar:{home:'الرئيسية',signals:'إشارات',games:'ألعاب',news:'أخبار',more:'المزيد'}
+};
+function setLang(lang) {
+  appState.lang=lang;
+  const t=i18n[lang]||i18n.en;
+  ['home','signals','games','news','more'].forEach(l=>{
+    const el=document.querySelector(`#nav-${l} .nav-label`);
+    if(el) el.textContent=t[l];
+  });
+  const lbl={en:'English',fr:'Français',es:'Español',pt:'Português',ar:'العربية'};
+  const cl=document.getElementById('current-lang-label');
+  if(cl) cl.textContent=lbl[lang]||'English';
+  document.getElementById('auth-lang').value=lang;
+  if(lang==='ar') document.body.setAttribute('dir','rtl');
+  else document.body.removeAttribute('dir');
+}
+function openLangModal(){openOverlay('lang-overlay');}
+
+// ============ NAVIGATION ============
+function navTo(page) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.getElementById('nav-'+page).classList.add('active');
+  if(page==='more')    renderCourses('ict');
+  if(page==='news')    renderNews();
+  if(page==='signals') { fetchSignalsFromSheet(); }
+}
+
+// ============ OVERLAYS ============
+function openOverlay(id,center=false){const el=document.getElementById(id);el.classList.add('active');if(center)el.classList.add('center');}
+function closeOverlay(id){document.getElementById(id).classList.remove('active');}
+function openProfile(){openOverlay('profile-overlay');}
+function openUpgrade(){openOverlay('upgrade-overlay',true);}
+function openAboutGWP(){openOverlay('gwp-overlay');}
+
+// ============ PROFILE ============
+function saveProfile() {
+  appState.user.name=document.getElementById('pf-name').value;
+  appState.user.email=document.getElementById('pf-email').value;
+  document.getElementById('profile-name-display').textContent=appState.user.name;
+  document.getElementById('profile-email-display').textContent=appState.user.email;
+  const l=(appState.user.name||'U')[0].toUpperCase();
+  document.getElementById('avatar-btn').textContent=l;
+  if(!appState.avatarDataURL) document.getElementById('profile-avatar-letter').textContent=l;
+  closeOverlay('profile-overlay');
+  showToast('Profile saved ✓');
+}
+function triggerAvatarUpload(){document.getElementById('avatar-upload').click();}
+function handleAvatarChange(e) {
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    appState.avatarDataURL=ev.target.result;
+    const big=document.getElementById('profile-avatar-big');
+    big.style.backgroundImage=`url(${ev.target.result})`;
+    big.style.backgroundSize='cover';
+    big.style.backgroundPosition='center';
+    document.getElementById('profile-avatar-letter').style.display='none';
+    const btn=document.getElementById('avatar-btn');
+    btn.style.backgroundImage=`url(${ev.target.result})`;
+    btn.style.backgroundSize='cover';
+    btn.textContent='';
+    showToast('Profile picture updated ✓');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ============ TICKER ============
+const tickerData=[
+  {s:'BTC/USDT',p:'68,240',c:'+2.14%',up:true},{s:'ETH/USDT',p:'3,520',c:'+1.87%',up:true},
+  {s:'SOL/USDT',p:'142.5',c:'-0.54%',up:false},{s:'DEXE/USDT',p:'12.80',c:'+5.20%',up:true},
+  {s:'UNI/USDT',p:'9.14',c:'+0.88%',up:true},{s:'AVAX/USDT',p:'36.50',c:'-1.22%',up:false},
+  {s:'SUSHI/USDT',p:'1.82',c:'+3.41%',up:true},{s:'XAU/USD',p:'2,310',c:'+0.30%',up:true},
+  {s:'EUR/USD',p:'1.0821',c:'-0.12%',up:false},{s:'GBP/USD',p:'1.2634',c:'+0.08%',up:true},
+];
+function buildTicker(){
+  const wrap=document.getElementById('ticker');
+  let html='';
+  [...tickerData,...tickerData].forEach(t=>{
+    html+=`<span class="tick-item">${t.s} <strong style="color:#fff">${t.p}</strong> <span class="${t.up?'tick-up':'tick-down'}">${t.c}</span></span>`;
+  });
+  wrap.innerHTML=html;
+}
+
+// ============ COURSES ============
+const coursesData={
+  ict:[
+    {title:'ICT 101 — What is ICT?',icon:'📐',body:'ICT (Inner Circle Trader) focuses on understanding how large institutions move price — not on indicators.',illus:`Market Maker Model:\n  Accumulation → Manipulation → Distribution\n  \n  Retail trader sees: breakout\n  Smart money does: liquidity sweep`,detail:'ICT teaches that price is engineered by institutions to hunt retail stop losses before the real move begins.',badge:'free'},
+    {title:'ICT 102 — Fair Value Gaps (FVG)',icon:'📊',body:'A Fair Value Gap is a 3-candle imbalance where price moved so fast it left an unfilled gap.',illus:`3-Candle FVG:\n  Candle 1 ──┐\n  Candle 2     GAP (imbalance)\n  Candle 3 ──┘`,detail:'Mark the area between Candle 1 high and Candle 3 low (bearish FVG). Price often returns to fill these zones.',badge:'free'},
+    {title:'ICT 103 — Order Blocks',icon:'🧱',body:'Order Blocks are the last bullish/bearish candle before a significant move.',illus:`Bullish OB:\n  ████ ← Last bearish candle\n  ████   before explosive up-move`,detail:'Mark the body of the last bearish candle before a strong bullish move. These zones provide high R:R entries.',badge:'free'},
+    {title:'ICT 104 — Liquidity & Stop Hunts',icon:'🎯',body:'Banks need liquidity to fill massive orders. They engineer price to sweep stop areas before reversing.',illus:`Equal Highs (Buy-Side Liquidity):\n  ─────────── ←← Banks target this\n  ████  ████\n  Price sweeps, grabs stops, reverses DOWN`,detail:'Identify equal highs and equal lows — these are liquidity pools. A quick spike through and reversal = liquidity sweep.',badge:'free'},
+    {title:'ICT 105 — Kill Zones',icon:'⏰',body:'ICT identifies specific time windows where institutions are most active.',illus:`London Open KZ: 02:00–05:00 NY\n  → Reversals & breakouts\n\nNY AM KZ: 08:30–11:00 NY\n  → Highest probability moves`,detail:'Trade primarily during Kill Zones. Avoid lunch hours (12:00–13:30 NY).',badge:'free'},
+    {title:'ICT 106 — Power of 3 (AMD)',icon:'🔄',body:'Every day follows: Accumulation, Manipulation (stop hunt), Distribution (real move).',illus:`AMD Cycle:\n  ACCUMULATION (Asian)\n  MANIPULATION → spike\n  DISTRIBUTION → real direction`,detail:'Wait for the manipulation sweep before entering. The real move comes after the stop hunt.',badge:'free'},
+  ],
+  smc:[
+    {title:'SMC 101 — Overview',icon:'🏦',body:'SMC focuses on understanding where institutional players are positioned in the market.',illus:`SMC Framework:\n  Market Structure → Bias\n  Supply & Demand  → Entry zones\n  Liquidity        → Where price goes`,detail:'SMC traders identify whether the market is bullish or bearish, find aligned zones, wait for liquidity to be taken.',badge:'free'},
+    {title:'SMC 102 — BOS & CHoCH',icon:'📈',body:'A Break of Structure (BOS) confirms trend continuation. A Change of Character (CHoCH) signals reversal.',illus:`BULLISH:\n  HH ──────── ← new high\n     HL ──── ← higher low\n     ↑ BOS confirmed`,detail:'When price breaks a previous Higher Low, it creates a CHoCH — institutions may be switching sides.',badge:'free'},
+    {title:'SMC 103 — Supply & Demand',icon:'⚖️',body:'Supply zones are where institutions sold heavily. Demand zones are where they bought.',illus:`DEMAND ZONE:\n     ↑↑↑↑ strong buy\n  ────────────\n  ▓▓▓▓▓▓▓▓▓▓ ← Zone`,detail:'The strongest zones are fresh (untested), created with explosive candles, aligned with market structure.',badge:'free'},
+    {title:'SMC 104 — Inducement',icon:'🎣',body:'Before reaching a Supply/Demand zone, price makes a fake move to clear weak positions.',illus:`Inducement pattern:\n  ▓▓▓▓▓▓▓▓▓▓ DEMAND ZONE\n       ↓ spike (inducement)\n  ▓▓▓▓↓▓▓▓▓▓\n       ↑↑↑↑ REAL MOVE`,detail:'Wait for price to sweep below a Demand zone before entering long. The sweep clears weak longs.',badge:'free'},
+    {title:'SMC 105 — MMXM Model',icon:'🧩',body:'The Market Maker Model shows how price cycles from one liquidity pool to another.',illus:`BSL ──────── (Buy-Side)\n     ↑ expansion\n  OB ████████\n     ↓ expansion  \n  SSL ──────── (Sell-Side)`,detail:'Price moves from sell-side to buy-side liquidity (or vice versa), respecting Order Blocks along the way.',badge:'free'},
+    {title:'SMC 106 — Entry & Risk',icon:'🎯',body:'SMC entry models combine structure, zone, inducement, and confirmation.',illus:`Checklist:\n  ✅ Structure bias\n  ✅ S/D zone\n  ✅ Inducement taken\n  ✅ CHoCH on LTF\n  ✅ Min 2:1 R:R\n  ✅ Max 2% risk`,detail:'Never enter without all criteria met. Stop loss goes beyond inducement low/high — never at zone edge.',badge:'free'},
+  ],
+  gwp:[
+    {title:'GWP 101 — What is the Ghost Wick?',icon:'👻',body:'The Ghost Wick is where institutions leave their footprint inside a wick — sweeping liquidity before reversing.',illus:`Ghost Wick:\n  ─────── ← long wick (≥60% of range)\n      ┃    body\n      ─`,detail:'A Ghost Wick occurs when the wick is ≥60% of total candle range. The wick swept liquidity, body shows rejection.',badge:'free'},
+    {title:'GWP 102 — Liquidity Trap',icon:'🪤',body:'Price fakes through a key level only to reverse aggressively within 1-2 candles.',illus:`Bull Trap:\n  KEY RESISTANCE ──────────────\n                     ↑ fake break\n                  ████\n                     ↓↓↓↓ reversal`,detail:'When price closes back below the key level within 2 candles, the trap is confirmed. Enter on the rejection.',badge:'free'},
+    {title:'GWP 103 — 5-Pillar Confluence',icon:'🏛️',body:'A GWP signal only triggers when ALL 5 pillars align — this gives the 97% accuracy.',illus:`[1] Ghost Wick ✓\n[2] Liquidity Trap ✓\n[3] Market Structure Break ✓\n[4] Order Block alignment ✓\n[5] Kelly R:R ≥ 1.8:1 ✓\n\nALL 5 = SIGNAL FIRES 🔥`,detail:'Each pillar alone: 60-70% win rate. All five together: 97%. Quality over quantity.',badge:'free'},
+    {title:'GWP 104 — Liquidity SL Rule',icon:'🛡️',body:'SL must go BEYOND the swing that created the Ghost Wick — never at the wick tip.',illus:`WRONG: SL at wick tip ❌\nCORRECT: SL beyond swing ✓\n\nSL = Swing Low/High ± 5-10 pips`,detail:'Institutions know where wick-tip stops are. They sweep them before the real move.',badge:'free'},
+    {title:'GWP 105 — Kelly Risk Sizing',icon:'📏',body:'GWP uses the Kelly Criterion to determine optimal position sizing.',illus:`f = (p×b - q) / b\np=0.97, b=1.8\nf = 95.3% → Capped at 2% max`,detail:'The raw Kelly suggests 95%. GWP caps at 2% per trade. Score 90+: risk 2%. Score 80-89: risk 1%.',badge:'free'},
+    {title:'GWP 106 — Bot Automation',icon:'🤖',body:'GWP signals are automated via two bots running on GitHub Actions (Node.js 22).',illus:`Bot 1: ASTERIX_5PILLAR_BOT\nPairs: BTC, ETH, SOL, DEXE, UNI, AVAX, SUSHI\n\nBot 2: ASTERIX_PRECISION_BOT\nPairs: Crypto + XAU/USD, EUR/USD, GBP/USD`,detail:'Both bots scan every 30 minutes across 4H/1H/15M, check all GWP pillars, and publish signals to a GitHub Gist read by this app.',badge:'free'},
+  ],
+  advanced:[
+    {title:'[PREMIUM] Advanced ICT — Institutional Flow',icon:'🔬',body:'Deep dive into how central banks, hedge funds, and primary dealers move markets.',badge:'premium'},
+    {title:'[PREMIUM] Advanced SMC — Custom MMXM Mapping',icon:'🗺️',body:'Map full market maker cycles across multiple timeframes simultaneously.',badge:'premium'},
+    {title:'[PREMIUM] Advanced GWP — Ghost Wick Patterns Vol.2',icon:'💎',body:'The 7 rare Ghost Wick variants that produce 99%+ accuracy.',badge:'premium'},
+    {title:'[PREMIUM] Portfolio Risk Management',icon:'🏗️',body:'Full portfolio-level risk framework: correlation hedging, drawdown limits, recovery protocols.',badge:'premium'},
+    {title:'[PREMIUM] Backtesting & Journaling System',icon:'📓',body:'Build a systematic backtesting framework and journal trades scientifically.',badge:'premium'},
+    {title:'[PREMIUM] Live Trade Reviews',icon:'🎬',body:'Monthly live trade review sessions with annotated charts.',badge:'premium'},
+  ]
+};
+
+function switchCourseTab(tab,btn){
+  document.querySelectorAll('.course-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderCourses(tab);
+}
+function renderCourses(tab){
+  const container=document.getElementById('courses-content');
+  if(!container) return;
+  const data=coursesData[tab]||[];
+  let html='';
+  data.forEach((c,i)=>{
+    const isPrem=c.badge==='premium';
+    const locked=isPrem&&!appState.isPremium;
+    html+=`<div class="course-card ${isPrem?'premium':''}">
+      <div class="course-header">
+        <div class="course-icon ${tab==='advanced'?'prem':tab}">${c.icon}</div>
+        <div class="course-meta"><h4>${c.title}</h4><p>${c.body.substring(0,60)}...</p></div>
+      </div>
+      <span class="course-badge ${c.badge}">${isPrem?'⭐ PREMIUM':'FREE'}</span>
+      ${locked?`<div style="background:var(--premium-bg);border-radius:10px;padding:12px;text-align:center"><p style="font-size:.82rem;color:var(--premium);font-weight:600">🔒 Premium only</p><button class="btn-primary" style="background:var(--premium);margin-top:8px;padding:10px" onclick="openUpgrade()">Upgrade $12.99/mo</button></div>`:`
+      <div class="course-body">${c.body}</div>
+      ${c.illus?`<div class="course-illus">${c.illus}</div>`:''}
+      ${c.detail?`<button class="course-expand-btn" onclick="toggleCourse(this)">Read more ↓</button><div class="course-content"><p style="font-size:.875rem;color:var(--text2);line-height:1.7">${c.detail}</p></div>`:''}`}
+    </div>`;
+  });
+  container.innerHTML=html;
+}
+function toggleCourse(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.textContent=c.classList.contains('open')?'Show less ↑':'Read more ↓';
+}
+
+// ============ NEWS ============
+const newsData=[
+  {tag:'BITCOIN',title:'BTC Breaks $68K — Analysts Target $72K',body:'Bitcoin surged past $68,000 after a significant liquidity sweep below $65K. On-chain data shows whale accumulation, consistent with GWP Liquidity Trap patterns.',time:'2h ago'},
+  {tag:'ETHEREUM',title:'ETH Accumulation Phase — ETF Inflows Record High',body:'Ethereum spot ETFs recorded highest single-day inflows since launch. The asset shows textbook Order Block behavior at $3,400.',time:'4h ago'},
+  {tag:'GOLD',title:'XAU/USD Approaches All-Time High at $2,350',body:'Gold continues its institutional accumulation phase. Ghost Wick detected at $2,278 on the daily chart — one of the clearest GWP setups this quarter.',time:'6h ago'},
+  {tag:'MACRO',title:'Fed Minutes Signal Rate Cut Timeline Uncertainty',body:'Federal Reserve minutes revealed ongoing disagreement on rate cuts. Higher-for-longer expectations weigh on risk assets, though BTC shows relative strength.',time:'8h ago'},
+  {tag:'DEFI',title:'DEXE Protocol Surges 18% — Governance Proposal Passes',body:'DEXE rallied sharply after a major governance proposal passed. GWP bot detected a Liquidity Trap at $11.90 before the surge.',time:'12h ago'},
+];
+function renderNews(limit=null){
+  const container=document.getElementById('news-list');
+  const preview=document.getElementById('home-news-preview');
+  const data=limit?newsData.slice(0,limit):newsData;
+  let html='';
+  data.forEach(n=>{html+=`<div class="news-card"><span class="news-tag">${n.tag}</span><h4>${n.title}</h4><p>${n.body}</p><div class="news-meta">⏱ ${n.time}</div></div>`;});
+  if(container) container.innerHTML=html;
+  if(preview){
+    let ph='';
+    newsData.slice(0,2).forEach(n=>{ph+=`<div class="news-card"><span class="news-tag">${n.tag}</span><h4>${n.title}</h4><div class="news-meta">⏱ ${n.time}</div></div>`;});
+    preview.innerHTML=ph;
+  }
+}
+
+// ============ TOAST ============
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ============ GAME STATE ============
+function updateBalanceDisplays(){
+  document.querySelectorAll('.atx-display').forEach(el=>el.textContent=gameState.balance);
+  document.getElementById('atx-balance').textContent=gameState.balance.toLocaleString();
+  document.getElementById('ps-atx').textContent=gameState.balance.toLocaleString();
+}
+function openGame(name){
+  document.getElementById('game-'+name).classList.add('open');
+  updateBalanceDisplays();
+  if(name==='crash') initCrash();
+  if(name==='plinko') initPlinko();
+  if(name==='candle') initCandle();
+  if(name==='mines') initMinesGrid();
+}
+function closeGame(name){document.getElementById('game-'+name).classList.remove('open');updateBalanceDisplays();}
+
+// ============ CRASH GAME ============
+let crashCtx,crashAnim,crashMult=1.0,crashRunning=false,crashBet=0,crashCashedOut=false;
+function initCrash(){
+  const canvas=document.getElementById('crash-canvas');
+  canvas.width=canvas.offsetWidth*window.devicePixelRatio;
+  canvas.height=canvas.offsetHeight*window.devicePixelRatio;
+  crashCtx=canvas.getContext('2d');drawCrashIdle();
+}
+function drawCrashIdle(){
+  if(!crashCtx) return;
+  const c=crashCtx,w=c.canvas.width,h=c.canvas.height;
+  c.clearRect(0,0,w,h);c.fillStyle='#1a1814';c.fillRect(0,0,w,h);
+  c.fillStyle='#c9a84c';c.font=`bold ${w*0.07}px Space Grotesk,sans-serif`;
+  c.textAlign='center';c.fillText('1.00x',w/2,h/2);
+  c.fillStyle='rgba(255,255,255,.4)';c.font=`${w*0.035}px DM Sans,sans-serif`;
+  c.fillText('Place your bet and launch 🚀',w/2,h*0.65);
+}
+function crashAction(){
+  const btn=document.getElementById('crash-btn'),msg=document.getElementById('crash-msg');
+  if(crashRunning&&!crashCashedOut){
+    crashCashedOut=true;cancelAnimationFrame(crashAnim);
+    const winnings=Math.floor(crashBet*crashMult);
+    gameState.balance+=winnings;updateBalanceDisplays();
+    btn.className='action-btn go';btn.textContent='🚀 Place Bet';
+    msg.style.display='block';msg.className='game-msg msg-win';
+    msg.textContent=`Cashed out at ${crashMult.toFixed(2)}x! +${winnings} ATX`;crashRunning=false;return;
+  }
+  crashBet=parseInt(document.getElementById('crash-bet').value)||50;
+  if(crashBet>gameState.balance) return showToast('Insufficient balance');
+  gameState.balance-=crashBet;updateBalanceDisplays();
+  msg.style.display='none';crashMult=1.0;crashRunning=true;crashCashedOut=false;
+  btn.className='action-btn cashout';btn.textContent='💰 Cash Out';
+  const crashPoint=1+Math.random()*8+Math.random()*Math.random()*10;
+  let startTime=null;
+  function frame(ts){
+    if(!startTime) startTime=ts;
+    const elapsed=(ts-startTime)/1000;
+    crashMult=Math.pow(1.06,elapsed*10);
+    const c=crashCtx,w=c.canvas.width,h=c.canvas.height;
+    c.clearRect(0,0,w,h);c.fillStyle='#1a1814';c.fillRect(0,0,w,h);
+    const prog=Math.min(crashMult/crashPoint,1);
+    c.beginPath();c.moveTo(w*0.05,h*0.85);
+    c.quadraticCurveTo(w*0.4,h*(0.85-prog*0.7),w*0.95,h*(0.85-prog*0.7));
+    c.strokeStyle='#c9a84c';c.lineWidth=3;c.stroke();
+    c.font=`${w*0.06}px serif`;c.fillText('🚀',w*0.95-20,h*(0.85-prog*0.7));
+    c.fillStyle='#e8c96a';c.font=`bold ${w*0.09}px Space Grotesk,sans-serif`;c.textAlign='center';
+    c.fillText(crashMult.toFixed(2)+'x',w/2,h/2);
+    if(crashMult>=crashPoint){
+      crashRunning=false;c.fillStyle='rgba(192,57,43,.85)';c.fillRect(0,0,w,h);
+      c.fillStyle='#fff';c.font=`bold ${w*0.08}px Space Grotesk,sans-serif`;
+      c.fillText('CRASHED at '+crashMult.toFixed(2)+'x',w/2,h/2);
+      btn.className='action-btn go';btn.textContent='🚀 Place Bet';
+      msg.style.display='block';msg.className='game-msg msg-lose';
+      msg.textContent=`Crashed at ${crashMult.toFixed(2)}x. Lost ${crashBet} ATX`;return;
+    }
+    if(crashRunning) crashAnim=requestAnimationFrame(frame);
+  }
+  crashAnim=requestAnimationFrame(frame);
+}
+
+// ============ MINES GAME ============
+let minesActive=false,minesGrid=[],minesRevealed=0,minesMult=1.0,minesCount=3,minesBet=0;
+function initMinesGrid(){
+  const grid=document.getElementById('mines-grid');grid.innerHTML='';
+  for(let i=0;i<25;i++){const cell=document.createElement('div');cell.className='mine-cell';cell.onclick=()=>revealCell(i);grid.appendChild(cell);}
+}
+function startMines(){
+  minesBet=parseInt(document.getElementById('mines-bet').value)||50;
+  minesCount=Math.min(parseInt(document.getElementById('mines-count').value)||3,20);
+  if(minesBet>gameState.balance) return showToast('Insufficient balance');
+  gameState.balance-=minesBet;updateBalanceDisplays();
+  minesRevealed=0;minesMult=1.0;minesActive=true;minesGrid=Array(25).fill(false);
+  let placed=0;while(placed<minesCount){const r=Math.floor(Math.random()*25);if(!minesGrid[r]){minesGrid[r]=true;placed++;}}
+  document.getElementById('mines-start-btn').textContent='New Game';
+  document.getElementById('mines-cashout-area').style.display='block';
+  document.getElementById('mines-msg').style.display='none';
+  initMinesGrid();
+}
+function revealCell(i){
+  if(!minesActive) return;
+  const cells=document.querySelectorAll('.mine-cell');const cell=cells[i];
+  if(cell.classList.contains('revealed')||cell.classList.contains('mine-hit')) return;
+  if(minesGrid[i]){
+    cell.classList.add('mine-hit');cell.textContent='💣';minesActive=false;
+    document.getElementById('mines-cashout-area').style.display='none';
+    const msg=document.getElementById('mines-msg');msg.style.display='block';msg.className='game-msg msg-lose';
+    msg.textContent=`💥 Mine hit! Lost ${minesBet} ATX.`;
+    minesGrid.forEach((m,idx)=>{if(m){cells[idx].textContent='💣';cells[idx].classList.add('mine-hit');}});
+  } else {
+    cell.classList.add('safe','revealed');cell.textContent='💎';minesRevealed++;
+    const safeCells=25-minesCount;
+    minesMult=Math.round((1+minesRevealed*(minesCount/safeCells))*100)/100;
+    document.getElementById('mines-mult').textContent=minesMult.toFixed(2)+'x';
+  }
+}
+function cashoutMines(){
+  if(!minesActive) return;minesActive=false;
+  const winnings=Math.floor(minesBet*minesMult);gameState.balance+=winnings;updateBalanceDisplays();
+  document.getElementById('mines-cashout-area').style.display='none';
+  const msg=document.getElementById('mines-msg');msg.style.display='block';msg.className='game-msg msg-win';
+  msg.textContent=`💰 Cashed out at ${minesMult.toFixed(2)}x! +${winnings} ATX`;
+}
+
+// ============ PLINKO GAME ============
+let plinkoCtx;
+function initPlinko(){
+  const canvas=document.getElementById('plinko-canvas');
+  canvas.width=canvas.offsetWidth*window.devicePixelRatio;canvas.height=canvas.offsetHeight*window.devicePixelRatio;
+  plinkoCtx=canvas.getContext('2d');drawPlinkoBoard();
+}
+function drawPlinkoBoard(){
+  if(!plinkoCtx) return;
+  const c=plinkoCtx,w=c.canvas.width,h=c.canvas.height;
+  c.clearRect(0,0,w,h);c.fillStyle='#1a1814';c.fillRect(0,0,w,h);
+  for(let r=0;r<8;r++){for(let col=0;col<9;col++){
+    const x=w*(col/(9-1))*0.8+w*0.1-(r%2===0?0:w*0.04);const y=h*0.12+r*(h*0.75/8);
+    c.beginPath();c.arc(x,y,w*0.015,0,Math.PI*2);c.fillStyle='rgba(201,168,76,.6)';c.fill();
+  }}
+  ['0.2x','0.5x','1x','2x','5x','2x','1x','0.5x','0.2x'].forEach((m,i)=>{
+    const x=w*(i/8)*0.8+w*0.1;
+    c.fillStyle=i===4?'#e8c96a':i===3||i===5?'#c9a84c':'rgba(255,255,255,.5)';
+    c.font=`bold ${w*0.03}px Space Grotesk,sans-serif`;c.textAlign='center';c.fillText(m,x,h*0.92);
+  });
+}
+function dropPlinko(){
+  const bet=parseInt(document.getElementById('plinko-bet').value)||50;
+  if(bet>gameState.balance) return showToast('Insufficient balance');
+  gameState.balance-=bet;updateBalanceDisplays();
+  const mults=[0.2,0.5,1,2,5,2,1,0.5,0.2],weights=[5,10,15,20,25,20,15,10,5];
+  let rand=Math.random()*125,idx=0,cum=0;
+  for(let i=0;i<weights.length;i++){cum+=weights[i];if(rand<=cum){idx=i;break;}}
+  const mult=mults[idx],winnings=Math.floor(bet*mult);
+  gameState.balance+=winnings;updateBalanceDisplays();
+  const msg=document.getElementById('plinko-msg');msg.style.display='block';
+  if(winnings>=bet){msg.className='game-msg msg-win';msg.textContent=`🎯 ${mult}x — Won ${winnings} ATX!`;}
+  else{msg.className='game-msg msg-lose';msg.textContent=`${mult}x — Got ${winnings} ATX`;}
+}
+
+// ============ CANDLE CALL GAME ============
+let candleCtx,candleHistory=[];
+function initCandle(){
+  const canvas=document.getElementById('candle-canvas');
+  canvas.width=canvas.offsetWidth*window.devicePixelRatio;canvas.height=canvas.offsetHeight*window.devicePixelRatio;
+  candleCtx=canvas.getContext('2d');
+  if(!candleHistory.length) for(let i=0;i<15;i++){
+    const open=Math.random()*100+50,close=open+(Math.random()-.48)*15;
+    candleHistory.push({open,close,high:Math.max(open,close)+Math.random()*8,low:Math.min(open,close)-Math.random()*8});
+  }
+  drawCandles();
+}
+function drawCandles(){
+  if(!candleCtx) return;
+  const c=candleCtx,w=c.canvas.width,h=c.canvas.height;
+  c.clearRect(0,0,w,h);c.fillStyle='#1a1814';c.fillRect(0,0,w,h);
+  const data=candleHistory.slice(-12);
+  const allP=data.flatMap(d=>[d.high,d.low]),minP=Math.min(...allP),maxP=Math.max(...allP),range=maxP-minP||10;
+  const candleW=w/data.length*0.5,gap=w/data.length;
+  data.forEach((d,i)=>{
+    const x=i*gap+gap*0.25,yO=h*0.85-(d.open-minP)/range*(h*0.75),yC=h*0.85-(d.close-minP)/range*(h*0.75);
+    const yH=h*0.85-(d.high-minP)/range*(h*0.75),yL=h*0.85-(d.low-minP)/range*(h*0.75);
+    const bull=d.close>=d.open;
+    c.strokeStyle=bull?'#22c55e':'#ef4444';c.lineWidth=1;
+    c.beginPath();c.moveTo(x+candleW/2,yH);c.lineTo(x+candleW/2,yL);c.stroke();
+    c.fillStyle=bull?'#22c55e':'#ef4444';
+    c.fillRect(x,Math.min(yO,yC),candleW,Math.abs(yC-yO)||2);
+  });
+  c.fillStyle='rgba(201,168,76,.3)';c.fillRect(w-gap*0.75,h*0.1,gap*0.5,h*0.75);
+  c.fillStyle='#c9a84c';c.font=`bold ${w*0.04}px Space Grotesk,sans-serif`;c.textAlign='center';c.fillText('?',w-gap*0.5,h*0.55);
+}
+function candleCall(dir){
+  const bet=parseInt(document.getElementById('candle-bet').value)||50;
+  if(bet>gameState.balance) return showToast('Insufficient balance');
+  gameState.balance-=bet;updateBalanceDisplays();
+  const last=candleHistory[candleHistory.length-1];
+  const open=last.close,close=open+(Math.random()-.48)*12;
+  const realDir=close>=open?'LONG':'SHORT';
+  const win=realDir===dir;
+  candleHistory.push({open,close,high:Math.max(open,close)+Math.random()*6,low:Math.min(open,close)-Math.random()*6});
+  drawCandles();
+  if(win){gameState.balance+=bet*2;updateBalanceDisplays();}
+  const msg=document.getElementById('candle-msg');msg.style.display='block';
+  msg.className=`game-msg ${win?'msg-win':'msg-lose'}`;
+  msg.textContent=win?`✅ Correct! ${close>=open?'📈 LON
