@@ -845,13 +845,13 @@ setInterval(fetchSignalsFromSheet, 60000);
 function renderSignals() {
   const container = document.getElementById('signals-list');
   if (!container) return;
-  if (signalsData.length === 0) { container.innerHTML = '<p style="text-align:center;color:var(--text2);padding:20px">No signals yet. Bot scans every 5 minutes.</p>'; return; }
+  if (signalsData.length === 0) {
+    container.innerHTML = '<p style="text-align:center;color:var(--text2);padding:20px">No signals yet. Bot scans every 30 minutes.</p>';
+    return;
+  }
 
   let html = '';
   signalsData.forEach((s, i) => {
-    const locked = s.premium && !appState.isPremium;
-    // Use grade from bot if available, else derive from score
-    // Grade: bots send 'A+ ELITE', 'A SOLID', 'A+ SUPREME', etc.
     let gradeLabel;
     if (s.grade) {
       const g = s.grade.toUpperCase();
@@ -864,32 +864,60 @@ function renderSignals() {
     }
     const grade = gradeLabel;
     const gradeClass = s.score>=90?'grade-astar':s.score>=80?'grade-aplus':s.score>=70?'grade-a':'grade-b';
-    html += `<div class="signal-card ${locked?'premium-locked':''}">
-      <div class="sig-top">
-        <div>
-          <div class="sig-pair">${s.pair}<span class="grade-badge ${gradeClass}">${grade}</span></div>
-          <span style="font-size:.72rem;color:var(--text3)">${s.tf} · ${s.time}${s.conviction ? ' · ⚡'+s.conviction+'/105' : ''}</span>
+    const botHandle = s.bot==='forex' ? 'gwp_forex_bot' : 'gwp_altcoin_bot';
+    const botEmoji  = s.bot==='forex' ? '🔴' : '🟡';
+    const staleMs   = Date.now() - (s.ts || 0);
+    const staleHrs  = staleMs / 3600000;
+    const ageLabel  = s.ts ? (staleHrs < 1 ? 'just now' : staleHrs < 24 ? Math.floor(staleHrs)+'h ago' : Math.floor(staleHrs/24)+'d ago') : s.time;
+
+    if (i < 2) {
+      // ── FULL SIGNAL CARD (top 2 only) ────────────────────────────────
+      html += `<div class="signal-card">
+        <div class="sig-top">
+          <div>
+            <div class="sig-pair">${s.pair}<span class="grade-badge ${gradeClass}">${grade}</span></div>
+            <span style="font-size:.72rem;color:var(--text3)">${s.tf} · ${ageLabel}${s.rr ? ' · R:R '+s.rr : ''}</span>
+          </div>
+          <span class="sig-badge ${s.dir==='LONG'?'badge-long':'badge-short'}">${s.dir}</span>
         </div>
-        <span class="sig-badge ${s.dir==='LONG'?'badge-long':'badge-short'}">${s.dir}</span>
-      </div>
-      <div class="sig-row">
-        <div class="sig-cell"><div class="sig-cell-label">Entry</div><div class="sig-cell-val">${s.entry}</div></div>
-        <div class="sig-cell"><div class="sig-cell-label">Stop Loss</div><div class="sig-cell-val" style="color:var(--red)">${s.sl}</div></div>
-        <div class="sig-cell"><div class="sig-cell-label">TP1</div><div class="sig-cell-val" style="color:var(--green)">${s.tp1||s.tp}</div></div>
-      </div>
-      ${s.tp3 && s.tp3 !== s.tp ? `<div class="sig-row" style="margin-top:4px">
-        <div class="sig-cell" style="grid-column:span 1"><div class="sig-cell-label">TP2</div><div class="sig-cell-val" style="color:var(--green)">${s.tp}</div></div>
-        <div class="sig-cell" style="grid-column:span 2"><div class="sig-cell-label">TP3 🏆 Runner</div><div class="sig-cell-val" style="color:var(--green)">${s.tp3}</div></div>
-      </div>` : ''}
-      <div class="score-bar-wrap">
-        <div class="score-bar-label"><span>GWP Score</span><span style="font-weight:700;color:var(--gold)">${s.score}%</span></div>
-        <div class="score-bar"><div class="score-fill" style="width:${s.score}%"></div></div>
-      </div>
-      <div class="sig-bots">
-        <a class="bot-link" href="https://t.me/gwp_altcoin_bot" target="_blank">🟡 @gwp_altcoin_bot</a>
-        <a class="bot-link" href="https://t.me/gwp_forex_bot" target="_blank">🔴 @gwp_forex_bot</a>
-      </div>
-    </div>`;
+        <div class="sig-row">
+          <div class="sig-cell"><div class="sig-cell-label">Entry</div><div class="sig-cell-val">${s.entry}</div></div>
+          <div class="sig-cell"><div class="sig-cell-label">Stop Loss</div><div class="sig-cell-val" style="color:var(--red)">${s.sl}</div></div>
+          <div class="sig-cell"><div class="sig-cell-label">TP1</div><div class="sig-cell-val" style="color:var(--green)">${s.tp1||s.tp}</div></div>
+        </div>
+        ${s.tp3 && s.tp3 !== s.tp ? `<div class="sig-row" style="margin-top:4px">
+          <div class="sig-cell"><div class="sig-cell-label">TP2</div><div class="sig-cell-val" style="color:var(--green)">${s.tp}</div></div>
+          <div class="sig-cell" style="grid-column:span 2"><div class="sig-cell-label">TP3 🏆 Runner</div><div class="sig-cell-val" style="color:var(--green)">${s.tp3}</div></div>
+        </div>` : ''}
+        <div class="score-bar-wrap">
+          <div class="score-bar-label"><span>GWP Score</span><span style="font-weight:700;color:var(--gold)">${s.score}%</span></div>
+          <div class="score-bar"><div class="score-fill" style="width:${s.score}%"></div></div>
+        </div>
+        <div class="sig-bots">
+          <a class="bot-link" href="https://t.me/gwp_altcoin_bot" target="_blank">🟡 @gwp_altcoin_bot</a>
+          <a class="bot-link" href="https://t.me/gwp_forex_bot" target="_blank">🔴 @gwp_forex_bot</a>
+        </div>
+      </div>`;
+    } else {
+      // ── COMPACT ROW (signal 3+) — pair + direction only, setups hidden ─
+      html += `<div class="signal-card" style="padding:11px 16px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:8px;min-width:0">
+            <span style="font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700">${s.pair}</span>
+            <span class="grade-badge ${gradeClass}" style="font-size:.63rem;padding:2px 6px">${grade}</span>
+            <span style="font-size:.72rem;color:var(--text3)">${s.tf}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+            <span style="font-size:.7rem;color:var(--text3)">${ageLabel}</span>
+            <span class="sig-badge ${s.dir==='LONG'?'badge-long':'badge-short'}" style="font-size:.68rem">${s.dir}</span>
+          </div>
+        </div>
+        <div style="margin-top:5px;font-size:.7rem;color:var(--text3)">
+          Full setup on Telegram →
+          <a href="https://t.me/${botHandle}" target="_blank" style="color:var(--gold);font-weight:600;text-decoration:none">${botEmoji} @${botHandle}</a>
+        </div>
+      </div>`;
+    }
   });
   container.innerHTML = html;
   const countEl = document.getElementById('ps-signals');
