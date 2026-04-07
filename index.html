@@ -753,12 +753,12 @@ async function fetchSignalsFromSheet() {
       return;
     }
 
-    signalsData = merged.map((s, i) => {
-      // Normalize score: bots send 0-8 scale (e.g. 6.5) → convert to 0-100
+    // ── Normalize helper ──────────────────────────────────────────────────────
+    function normalizeSignal(s, slotIndex) {
       let rawScore = s.score || s.conviction || 80;
       let normScore;
-      if (rawScore <= 10)       normScore = Math.round(rawScore * 12.5);      // 0-8  → 0-100
-      else if (rawScore <= 105) normScore = Math.round(rawScore / 105 * 100); // conviction 0-105 → %
+      if (rawScore <= 10)       normScore = Math.round(rawScore * 12.5);
+      else if (rawScore <= 105) normScore = Math.round(rawScore / 105 * 100);
       else                      normScore = Math.min(rawScore, 100);
       return {
         pair      : s.pair   || s.symbol || 'BTC/USDT',
@@ -775,9 +775,48 @@ async function fetchSignalsFromSheet() {
         rr        : s.rr     || '',
         bot       : s.bot    || '',
         time      : s.time   || '--:--',
-        premium   : i >= 2
+        premium   : slotIndex >= 2
       };
-    });
+    }
+
+    // ── RULE: slot 0 = best CRYPTO, slot 1 = best FOREX, slots 2-4 = mixed ──
+    // "Best" = highest score among most-recent signals of that type
+    const cryptoPool = merged.filter(s => (s.bot || '') === 'crypto');
+    const forexPool  = merged.filter(s => (s.bot || '') === 'forex');
+
+    // Pick top of each type (already sorted newest-first; pick highest score within top-5)
+    const pickBest = pool => {
+      if (!pool.length) return null;
+      const candidates = pool.slice(0, 5);
+      return candidates.reduce((best, s) => {
+        const sc = s.score || s.conviction || 0;
+        const bsc = best.score || best.conviction || 0;
+        return sc > bsc ? s : best;
+      }, candidates[0]);
+    };
+
+    const topCrypto = pickBest(cryptoPool);
+    const topForex  = pickBest(forexPool);
+
+    // Remaining pool: exclude the two selected, take up to 3 (mixed, newest-first)
+    const usedSet = new Set([topCrypto, topForex].filter(Boolean));
+    const rest = merged.filter(s => !usedSet.has(s)).slice(0, 3);
+
+    // Build ordered list: [crypto, forex, ...rest] — handle missing types gracefully
+    let ordered = [];
+    if (topCrypto && topForex) {
+      ordered = [topCrypto, topForex, ...rest];
+    } else if (topCrypto) {
+      // No forex signals yet: fill slot 1 from rest
+      ordered = [topCrypto, ...rest].slice(0, 5);
+    } else if (topForex) {
+      // No crypto signals yet: fill slot 0 from rest
+      ordered = [topForex, ...rest].slice(0, 5);
+    } else {
+      ordered = rest.slice(0, 5);
+    }
+
+    signalsData = ordered.slice(0, 5).map((s, i) => normalizeSignal(s, i));
 
     const now = new Date();
     const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
@@ -795,12 +834,17 @@ async function fetchSignalsFromSheet() {
 }
 
 function renderFallbackSignals() {
-  // Show while waiting for first bot signal
+  // Show while waiting for first bot signal.
+  // RULE: slot 0 = CRYPTO (full), slot 1 = FOREX (full), slots 2-4 = mixed compact
   signalsData = [
-    { pair:'BTC/USDT', dir:'LONG',  entry:'67,400', sl:'66,800', tp:'68,900', score:94, tf:'4H', time:'--:--', premium:false },
-    { pair:'ETH/USDT', dir:'LONG',  entry:'3,480',  sl:'3,420',  tp:'3,600',  score:91, tf:'4H', time:'--:--', premium:false },
-    { pair:'SOL/USDT', dir:'SHORT', entry:'145.0',  sl:'147.5',  tp:'140.2',  score:88, tf:'1H', time:'--:--', premium:true  },
-    { pair:'XAU/USD',  dir:'LONG',  entry:'2,295',  sl:'2,278',  tp:'2,335',  score:96, tf:'4H', time:'--:--', premium:true  },
+    // ── SLOT 1 — CRYPTO full ───────────────────────────────────────────────
+    { pair:'BTC/USDT', dir:'LONG',  entry:'67,400', sl:'66,800', tp:'68,900', tp1:'68,900', tp3:'71,200',  score:94, tf:'4H', time:'--:--', bot:'crypto', grade:'A+ ELITE', rr:'2.2', premium:false },
+    // ── SLOT 2 — FOREX full ────────────────────────────────────────────────
+    { pair:'XAU/USD',  dir:'LONG',  entry:'2,295',  sl:'2,278',  tp:'2,335',  tp1:'2,318',  tp3:'2,390',   score:96, tf:'4H', time:'--:--', bot:'forex',  grade:'A+★ SUPREME', rr:'3.1', premium:false },
+    // ── SLOTS 3-5 — compact mixed ──────────────────────────────────────────
+    { pair:'ETH/USDT', dir:'SHORT', entry:'2,135',  sl:'2,171',  tp:'2,030',  tp1:'2,083',  tp3:'1,820',   score:86, tf:'4H', time:'--:--', bot:'crypto', grade:'A SOLID',   rr:'2.9', premium:true  },
+    { pair:'EUR/USD',  dir:'SHORT', entry:'1.0812', sl:'1.0845', tp:'1.0762', tp1:'1.0762', tp3:'1.0680',  score:78, tf:'1H', time:'--:--', bot:'forex',  grade:'A SOLID',   rr:'1.8', premium:true  },
+    { pair:'SOL/USDT', dir:'SHORT', entry:'82.17',  sl:'83.70',  tp:'78.45',  tp1:'80.31',  tp3:'71.02',   score:88, tf:'1H', time:'--:--', bot:'crypto', grade:'A+ ELITE',  rr:'2.4', premium:true  },
   ];
   const el = document.getElementById('signal-last-update');
   if(el) el.textContent = 'Waiting for bot...';
@@ -871,7 +915,11 @@ function renderSignals() {
     const ageLabel  = s.ts ? (staleHrs < 1 ? 'just now' : staleHrs < 24 ? Math.floor(staleHrs)+'h ago' : Math.floor(staleHrs/24)+'d ago') : s.time;
 
     if (i < 2) {
-      // ── FULL SIGNAL CARD (top 2 only) ────────────────────────────────
+      // ── FULL SIGNAL CARD (slot 0 = crypto, slot 1 = forex) ───────────────
+      const primaryHandle = s.bot==='forex' ? 'gwp_forex_bot'  : 'gwp_crypto_bot';
+      const primaryEmoji  = s.bot==='forex' ? '🔴' : '🟡';
+      const secondHandle  = s.bot==='forex' ? 'gwp_crypto_bot' : 'gwp_forex_bot';
+      const secondEmoji   = s.bot==='forex' ? '🟡' : '🔴';
       html += `<div class="signal-card">
         <div class="sig-top">
           <div>
@@ -894,8 +942,8 @@ function renderSignals() {
           <div class="score-bar"><div class="score-fill" style="width:${s.score}%"></div></div>
         </div>
         <div class="sig-bots">
-          <a class="bot-link" href="https://t.me/gwp_crypto_bot" target="_blank">🟡 @gwp_crypto_bot</a>
-          <a class="bot-link" href="https://t.me/gwp_forex_bot" target="_blank">🔴 @gwp_forex_bot</a>
+          <a class="bot-link" href="https://t.me/${primaryHandle}" target="_blank">${primaryEmoji} @${primaryHandle}</a>
+          <a class="bot-link" href="https://t.me/${secondHandle}" target="_blank">${secondEmoji} @${secondHandle}</a>
         </div>
       </div>`;
     } else {
