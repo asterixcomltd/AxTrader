@@ -367,7 +367,7 @@ canvas{width:100%;height:100%}
         <div class="referral-grid">
           <div class="ref-card"><div class="ref-card-logo">🟡</div><h4>ByBit</h4><p>Up to $30,000 welcome bonus</p><a href="https://www.bybit.com/invite?ref=ASTERIX" target="_blank">Join ByBit →</a></div>
           <div class="ref-card"><div class="ref-card-logo">🟢</div><h4>KuCoin</h4><p>10% fee discount forever</p><a href="https://www.kucoin.com/r/ASTERIX" target="_blank">Join KuCoin →</a></div>
-          <div class="ref-card"><div class="ref-card-logo">🟡</div><h4>Altcoin Bot</h4><p>Live GWP altcoin signals on Telegram</p><a href="https://t.me/gwp_altcoin_bot" target="_blank">@gwp_altcoin_bot →</a></div>
+          <div class="ref-card"><div class="ref-card-logo">🟡</div><h4>Crypto Bot</h4><p>Live GWP crypto signals on Telegram</p><a href="https://t.me/gwp_crypto_bot" target="_blank">@gwp_crypto_bot →</a></div>
           <div class="ref-card"><div class="ref-card-logo">🔴</div><h4>Forex Bot</h4><p>Live GWP forex &amp; gold signals</p><a href="https://t.me/gwp_forex_bot" target="_blank">@gwp_forex_bot →</a></div>
         </div>
       </div>
@@ -463,7 +463,7 @@ canvas{width:100%;height:100%}
         </div>
         <div class="more-section">
           <div class="more-row" onclick="window.open('mailto:asterixcomltd@gmail.com')"><div class="more-row-icon" style="background:var(--surface2)">✉️</div><div class="more-row-text"><h5>Email Us</h5><p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="69081a1d0c1b00110a0604051d0d290e04080005470a0604">[email&#160;protected]</a></p></div><span class="more-row-arrow">›</span></div>
-          <div class="more-row" onclick="window.open('https://t.me/gwp_altcoin_bot','_blank')"><div class="more-row-icon" style="background:#fdf8ee">🟡</div><div class="more-row-text"><h5>Altcoin Signals Bot</h5><p>@gwp_altcoin_bot — BTC, ETH, SOL…</p></div><span class="more-row-arrow">›</span></div>
+          <div class="more-row" onclick="window.open('https://t.me/gwp_crypto_bot','_blank')"><div class="more-row-icon" style="background:#fdf8ee">🟡</div><div class="more-row-text"><h5>Crypto Signals Bot</h5><p>@gwp_crypto_bot — BTC, ETH, SOL…</p></div><span class="more-row-arrow">›</span></div>
           <div class="more-row" onclick="window.open('https://t.me/gwp_forex_bot','_blank')"><div class="more-row-icon" style="background:#fdf0ee">🔴</div><div class="more-row-text"><h5>Forex Signals Bot</h5><p>@gwp_forex_bot — XAU, EUR, GBP…</p></div><span class="more-row-arrow">›</span></div>
           <div class="more-row" onclick="window.open('https://t.me/asterix_trading_signal_hub','_blank')"><div class="more-row-icon" style="background:#e8f4fd">✈️</div><div class="more-row-text"><h5>Telegram Community</h5><p>t.me/asterix_trading_signal_hub</p></div><span class="more-row-arrow">›</span></div>
           <div class="more-row" onclick="window.open('https://twitter.com/Asterix_Abdin','_blank')"><div class="more-row-icon" style="background:#f0f0f0">𝕏</div><div class="more-row-text"><h5>Follow on X</h5><p>@Asterix_Abdin</p></div><span class="more-row-arrow">›</span></div>
@@ -664,12 +664,12 @@ canvas{width:100%;height:100%}
     <div class="status-card" style="background:var(--gold-bg);border-color:var(--gold);margin:0 0 12px">
       <div style="font-family:'JetBrains Mono',monospace;font-size:.75rem;line-height:1.9;color:var(--text)">
         <span style="color:var(--gold);font-weight:800">BOTS (GitHub Actions — Node.js)</span><br>
-        &nbsp;&nbsp;↓ write altcoin/forex_signals.json<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;↓ write crypto/forex_signals.json<br>
         <span style="color:var(--blue);font-weight:800">GITHUB GIST (public JSON bridge)</span><br>
         &nbsp;&nbsp;↓ raw URL fetch (no auth needed)<br>
         <span style="color:var(--green);font-weight:800">FRONTEND (Vercel)</span><br>
         &nbsp;&nbsp;↓ merges + renders live signals<br>
-        <span style="color:var(--premium);font-weight:800">TELEGRAM (@gwp_altcoin_bot / @gwp_forex_bot)</span>
+        <span style="color:var(--premium);font-weight:800">TELEGRAM (@gwp_crypto_bot / @gwp_forex_bot)</span>
       </div>
     </div>
 
@@ -685,7 +685,7 @@ canvas{width:100%;height:100%}
     </div>
 
     <div style="background:var(--blue-bg);border-radius:10px;padding:12px;margin-top:8px;font-size:.8rem;color:var(--blue)">
-      <strong>ℹ️ Setup:</strong> Create a public Gist with <code>altcoin_signals.json</code> and <code>forex_signals.json</code> (both starting as <code>[]</code>). Add <strong>GIST_ID</strong> + <strong>GH_PAT</strong> to gwp-bots repo secrets.
+      <strong>ℹ️ Setup:</strong> Create a public Gist with <code>crypto_signals.json</code> and <code>forex_signals.json</code> (both starting as <code>[]</code>). Add <strong>GIST_ID</strong> + <strong>GH_PAT</strong> to gwp-bots repo secrets.
     </div>
   </div>
 </div>
@@ -699,7 +699,7 @@ canvas{width:100%;height:100%}
 //
 // HOW TO SET UP (one-time):
 //   1. gist.github.com → New gist → Public
-//      File 1: altcoin_signals.json  content: []
+//      File 1: crypto_signals.json  content: []
 //      File 2: forex_signals.json    content: []
 //   2. Copy the Gist ID from the URL (32-char hex after your username)
 //   3. Paste it below as GIST_ID
@@ -714,7 +714,7 @@ const gameState = { balance:1000 };
 
 // ============ LIVE SIGNALS FROM GITHUB GIST ============
 // Gist raw URL: https://gist.githubusercontent.com/USER/GIST_ID/raw/FILENAME
-// Bot writes: altcoin_signals.json + forex_signals.json to this Gist every 30min
+// Bot writes: crypto_signals.json + forex_signals.json to this Gist every 30min
 async function fetchSignalsFromSheet() {
   try {
     const t    = Date.now();
@@ -722,16 +722,16 @@ async function fetchSignalsFromSheet() {
 
     // Try fetching both signal files in parallel
     const [ar, fr] = await Promise.allSettled([
-      fetch(`${base}/altcoin_signals.json?t=${t}`),
+      fetch(`${base}/crypto_signals.json?t=${t}`),
       fetch(`${base}/forex_signals.json?t=${t}`)
     ]);
 
-    let altcoin = [], forex = [];
+    let crypto = [], forex = [];
     if (ar.status === 'fulfilled' && ar.value.ok) {
       try {
         const txt = await ar.value.text();
-        altcoin = JSON.parse(txt);
-      } catch(e) { console.warn('altcoin parse fail', e); }
+        crypto = JSON.parse(txt);
+      } catch(e) { console.warn('crypto parse fail', e); }
     }
     if (fr.status === 'fulfilled' && fr.value.ok) {
       try {
@@ -741,7 +741,7 @@ async function fetchSignalsFromSheet() {
     }
 
     // Merge both arrays, sort newest-first, keep top 20
-    const merged = [...(Array.isArray(altcoin)?altcoin:[]), ...(Array.isArray(forex)?forex:[])]
+    const merged = [...(Array.isArray(crypto)?crypto:[]), ...(Array.isArray(forex)?forex:[])]
       .filter(s => s && (s.pair || s.symbol))
       .map(s => { if (!s.pair && s.symbol) s.pair = s.symbol; return s; })
       .sort((a, b) => (b.ts || b.timestamp || 0) - (a.ts || a.timestamp || 0))
@@ -864,7 +864,7 @@ function renderSignals() {
     }
     const grade = gradeLabel;
     const gradeClass = s.score>=90?'grade-astar':s.score>=80?'grade-aplus':s.score>=70?'grade-a':'grade-b';
-    const botHandle = s.bot==='forex' ? 'gwp_forex_bot' : 'gwp_altcoin_bot';
+    const botHandle = s.bot==='forex' ? 'gwp_forex_bot' : 'gwp_crypto_bot';
     const botEmoji  = s.bot==='forex' ? '🔴' : '🟡';
     const staleMs   = Date.now() - (s.ts || 0);
     const staleHrs  = staleMs / 3600000;
@@ -894,7 +894,7 @@ function renderSignals() {
           <div class="score-bar"><div class="score-fill" style="width:${s.score}%"></div></div>
         </div>
         <div class="sig-bots">
-          <a class="bot-link" href="https://t.me/gwp_altcoin_bot" target="_blank">🟡 @gwp_altcoin_bot</a>
+          <a class="bot-link" href="https://t.me/gwp_crypto_bot" target="_blank">🟡 @gwp_crypto_bot</a>
           <a class="bot-link" href="https://t.me/gwp_forex_bot" target="_blank">🔴 @gwp_forex_bot</a>
         </div>
       </div>`;
