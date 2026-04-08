@@ -475,10 +475,10 @@ canvas{width:100%;height:100%}
   </div>
 
   <div class="bottom-nav">
-    <button class="nav-item active" onclick="navTo('home')" id="nav-home"><span class="nav-icon">⊞</span><span class="nav-label">Home</span></button>
     <button class="nav-item" onclick="navTo('signals')" id="nav-signals"><span class="nav-icon">📡</span><span class="nav-label">Signals</span><span class="nav-badge" id="signals-nav-badge">0</span></button>
-    <button class="nav-item" onclick="navTo('games')" id="nav-games"><span class="nav-icon">🎮</span><span class="nav-label">Games</span></button>
     <button class="nav-item" onclick="navTo('news')" id="nav-news"><span class="nav-icon">📰</span><span class="nav-label">News</span></button>
+    <button class="nav-item active" onclick="navTo('home')" id="nav-home"><span class="nav-icon">⊞</span><span class="nav-label">Home</span></button>
+    <button class="nav-item" onclick="navTo('games')" id="nav-games"><span class="nav-icon">🎮</span><span class="nav-label">Games</span></button>
     <button class="nav-item" onclick="navTo('more')" id="nav-more"><span class="nav-icon">⋯</span><span class="nav-label">More</span></button>
   </div>
 </div>
@@ -1113,21 +1113,87 @@ function handleAvatarChange(e) {
   reader.readAsDataURL(file);
 }
 
-// ============ TICKER ============
-const tickerData=[
-  {s:'BTC/USDT',p:'68,240',c:'+2.14%',up:true},{s:'ETH/USDT',p:'3,520',c:'+1.87%',up:true},
-  {s:'SOL/USDT',p:'142.5',c:'-0.54%',up:false},{s:'DEXE/USDT',p:'12.80',c:'+5.20%',up:true},
-  {s:'UNI/USDT',p:'9.14',c:'+0.88%',up:true},{s:'AVAX/USDT',p:'36.50',c:'-1.22%',up:false},
-  {s:'SUSHI/USDT',p:'1.82',c:'+3.41%',up:true},{s:'XAU/USD',p:'2,310',c:'+0.30%',up:true},
-  {s:'EUR/USD',p:'1.0821',c:'-0.12%',up:false},{s:'GBP/USD',p:'1.2634',c:'+0.08%',up:true},
-];
-function buildTicker(){
-  const wrap=document.getElementById('ticker');
-  let html='';
-  [...tickerData,...tickerData].forEach(t=>{
-    html+=`<span class="tick-item">${t.s} <strong style="color:#fff">${t.p}</strong> <span class="${t.up?'tick-up':'tick-down'}">${t.c}</span></span>`;
+// ============ LIVE TICKER ============
+// CoinGecko (crypto+gold proxy) + Frankfurter (forex) — free, no key, CORS-friendly
+const CG_IDS = {
+  'bitcoin':            'BTC/USDT',
+  'ethereum':           'ETH/USDT',
+  'solana':             'SOL/USDT',
+  'avalanche-2':        'AVAX/USDT',
+  'uniswap':            'UNI/USDT',
+  'dexe':               'DEXE/USDT',
+  'sushi':              'SUSHI/USDT',
+  'chainlink':          'LINK/USDT',
+  'injective-protocol': 'INJ/USDT',
+  'arbitrum':           'ARB/USDT',
+  'pax-gold':           'XAU/USD',
+};
+let _tickerItems = [];
+
+function _fmtP(p) {
+  if (p >= 10000) return p.toLocaleString('en-US', {maximumFractionDigits:0});
+  if (p >= 100)   return p.toFixed(2);
+  if (p >= 1)     return p.toFixed(3);
+  return p.toFixed(4);
+}
+
+function _renderTicker(items) {
+  const wrap = document.getElementById('ticker');
+  if (!wrap || !items.length) return;
+  let html = '';
+  [...items, ...items].forEach(t => {
+    html += '<span class="tick-item">' + t.s +
+      ' <strong style="color:#fff">' + t.p + '</strong>' +
+      ' <span class="' + (t.up ? 'tick-up' : 'tick-down') + '">' + t.c + '</span></span>';
   });
-  wrap.innerHTML=html;
+  wrap.innerHTML = html;
+}
+
+async function fetchLiveTicker() {
+  const ids = Object.keys(CG_IDS).join(',');
+  try {
+    const cgRes = await fetch(
+      'https://api.coingecko.com/api/v3/simple/price?ids=' + ids +
+      '&vs_currencies=usd&include_24hr_change=true',
+      { headers: { 'Accept': 'application/json' } }
+    );
+    if (!cgRes.ok) throw new Error('CG ' + cgRes.status);
+    const cgData = await cgRes.json();
+    const items = Object.entries(CG_IDS).map(function(entry) {
+      var id = entry[0]; var label = entry[1];
+      var d = cgData[id]; if (!d) return null;
+      var chg = d.usd_24h_change || 0;
+      var up  = chg >= 0;
+      return { s: label, p: _fmtP(d.usd), c: (up ? '+' : '') + chg.toFixed(2) + '%', up: up };
+    }).filter(Boolean);
+
+    // Append forex from Frankfurter (daily reference rates — good enough for ticker)
+    try {
+      const fxRes = await fetch('https://api.frankfurter.app/latest?from=USD&to=EUR,GBP,JPY');
+      if (fxRes.ok) {
+        const fxData = await fxRes.json();
+        var rates = fxData.rates || {};
+        if (rates.EUR) items.push({ s:'EUR/USD', p:(1/rates.EUR).toFixed(4), c:'', up:true });
+        if (rates.GBP) items.push({ s:'GBP/USD', p:(1/rates.GBP).toFixed(4), c:'', up:true });
+        if (rates.JPY) items.push({ s:'USD/JPY', p:rates.JPY.toFixed(2),     c:'', up:true });
+      }
+    } catch(e2) {}
+
+    _tickerItems = items;
+    _renderTicker(_tickerItems);
+  } catch(e) {
+    if (!_tickerItems.length) {
+      _renderTicker([{ s:'Loading live prices…', p:'', c:'', up:true }]);
+    }
+  }
+}
+
+function buildTicker() {
+  var wrap = document.getElementById('ticker');
+  if (wrap) wrap.innerHTML = '<span class="tick-item" style="opacity:.5;font-size:.8rem">● Fetching live prices…</span>';
+  fetchLiveTicker();
+  setInterval(fetchLiveTicker, 30000);
+}
 }
 
 // ============ COURSES ============
