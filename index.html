@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>Asterix.COM — Ghost Wick Protocol</title>
+<title>AxTrader — Institutional Precision Trading Signals</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
@@ -15,7 +15,7 @@
 <!-- iOS Safari "Add to Home Screen" -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Asterix.COM">
+<meta name="apple-mobile-web-app-title" content="AxTrader">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png">
@@ -25,7 +25,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 
 <!-- Android / Chrome install hint -->
-<meta name="application-name" content="Asterix.COM">
+<meta name="application-name" content="AxTrader">
 <meta name="msapplication-TileColor" content="#1a1814">
 <meta name="msapplication-TileImage" content="/icon-192.png">
 <style>
@@ -282,6 +282,577 @@ canvas{width:100%;height:100%}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ════════ V3 INSTITUTIONAL DESIGN SYSTEM ════════ */
+:root {
+  --accent: #c9a84c;
+  --ink: #1a1814;
+}
+
+/* Trust strip on auth */
+.trust-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 10px 0 20px;
+  flex-wrap: wrap;
+}
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--text2);
+}
+.trust-item-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+}
+
+/* Better topbar session info */
+.session-label {
+  font-size: .65rem;
+  color: var(--text3);
+  text-align: right;
+  line-height: 1.3;
+}
+
+/* ── HOME sections ─ */
+.stat-strip {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+  padding: 16px;
+}
+.stat-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 12px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.stat-tile-val {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin-bottom: 3px;
+}
+.stat-tile-lbl {
+  font-size: .65rem;
+  color: var(--text3);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.stat-tile-sub {
+  font-size: .62rem;
+  color: var(--text3);
+  margin-top: 1px;
+}
+
+/* ── Improved inst hub ─ */
+.inst-hub {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+  padding: 0 16px 4px;
+}
+.inst-card {
+  border-radius: 14px;
+  padding: 14px 10px;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  background: var(--surface);
+  transition: transform .15s, box-shadow .15s;
+}
+.inst-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.inst-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 14px 14px 0 0;
+}
+.inst-crypto::before { background: #f59e0b; }
+.inst-forex::before  { background: #ef4444; }
+.inst-stocks::before { background: #3b82f6; }
+.inst-live-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  animation: pulse 1.4s infinite;
+  margin-bottom: 8px;
+}
+.inst-icon { font-size: 1.1rem; margin-bottom: 6px; }
+.inst-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.inst-desc { font-size: .62rem; color: var(--text3); line-height: 1.4; margin-bottom: 7px; }
+.inst-handle {
+  font-size: .63rem;
+  font-weight: 700;
+  color: var(--gold);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Section divider label ─ */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px 4px;
+  font-size: .65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text3);
+}
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── Compact broker cards ─ */
+.broker-strip {
+  display: flex;
+  gap: 10px;
+  padding: 0 16px 4px;
+}
+.broker-card {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: var(--shadow);
+}
+.broker-card h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .85rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.broker-card p { font-size: .72rem; color: var(--text2); margin-bottom: 10px; line-height: 1.3; }
+.broker-card a {
+  display: block;
+  padding: 8px;
+  background: var(--gold);
+  color: #fff;
+  border-radius: 8px;
+  font-size: .75rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  transition: .15s;
+}
+.broker-card a:hover { opacity: .88; }
+
+/* ── Signals page improvements ─ */
+.sig-meta-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0;
+}
+.sig-stat-item {
+  text-align: center;
+}
+.sig-stat-val {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+.sig-stat-lbl {
+  font-size: .6rem;
+  color: var(--text3);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* ── Section head improved ─ */
+.sig-section-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--surface2);
+}
+.sig-section-label {
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.sig-section-line { flex: 1; height: 1px; background: var(--border); }
+
+/* ── Category pills ─ */
+.cat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+}
+.cat-crypto { background: #fef3c7; color: #92400e; }
+.cat-forex  { background: var(--red-bg); color: var(--red); }
+.cat-stocks { background: var(--blue-bg); color: var(--blue); }
+
+/* ── Premium lock overlay ─ */
+.prem-lock-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  gap: 4px;
+}
+.prem-lock-icon { font-size: 1.5rem; }
+.prem-lock-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .9rem;
+  font-weight: 800;
+  color: var(--premium);
+}
+.prem-lock-sub { font-size: .75rem; color: var(--text2); margin-bottom: 4px; }
+.prem-lock-btn {
+  padding: 8px 18px;
+  background: var(--premium);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: .8rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ── More page improvements ─ */
+.more-section-label {
+  padding: 16px 16px 6px;
+  font-size: .65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text3);
+}
+.more-row-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 8px;
+  font-size: .62rem;
+  font-weight: 700;
+  background: var(--gold-bg);
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+/* ── Games page ─ */
+.atx-strip {
+  background: var(--text);
+  margin: 0 16px;
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.atx-strip-label {
+  font-size: .75rem;
+  color: rgba(255,255,255,.6);
+  margin-bottom: 2px;
+}
+.atx-strip-val {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--gold2);
+}
+.atx-strip-note {
+  font-size: .65rem;
+  color: rgba(255,255,255,.4);
+  text-align: right;
+}
+
+/* ── Hero improvements ─ */
+.hero-card-v3 {
+  background: var(--text);
+  border-radius: 20px;
+  padding: 22px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  margin: 16px 16px 0;
+}
+.hero-card-v3::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 160px; height: 160px;
+  background: radial-gradient(circle, rgba(201,168,76,.3) 0%, transparent 70%);
+}
+.hero-label-v3 {
+  font-size: .65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--gold2);
+  margin-bottom: 6px;
+}
+.hero-title-v3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+.hero-title-v3 span { color: var(--gold2); }
+.hero-sub-v3 {
+  font-size: .8rem;
+  color: rgba(255,255,255,.55);
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+.hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.hero-metric {
+  background: rgba(255,255,255,.07);
+  border-radius: 10px;
+  padding: 10px 6px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,.08);
+}
+.hero-metric-val {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .95rem;
+  font-weight: 800;
+  color: var(--gold2);
+  margin-bottom: 2px;
+}
+.hero-metric-lbl {
+  font-size: .58rem;
+  opacity: .55;
+  line-height: 1.3;
+}
+
+/* ── Premium banner v3 ─ */
+.prem-banner-v3 {
+  background: linear-gradient(135deg, #1a1814 0%, #2d2418 60%, #1a1c2e 100%);
+  border-radius: 20px;
+  padding: 20px;
+  margin: 14px 16px 0;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(201,168,76,.2);
+}
+.prem-banner-v3::before {
+  content: '';
+  position: absolute;
+  top: -20px; right: -20px;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(201,168,76,.25) 0%, transparent 70%);
+}
+.prem-banner-v3::after {
+  content: '';
+  position: absolute;
+  bottom: -30px; left: 20px;
+  width: 80px; height: 80px;
+  background: radial-gradient(circle, rgba(124,58,237,.15) 0%, transparent 70%);
+}
+.prem-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.prem-badge-pill {
+  background: rgba(201,168,76,.2);
+  color: var(--gold2);
+  border: 1px solid rgba(201,168,76,.3);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: .65rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+}
+.prem-banner-v3 h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+  line-height: 1.25;
+}
+.prem-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.prem-price {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--gold2);
+}
+.prem-price-period {
+  font-size: .8rem;
+  color: rgba(255,255,255,.4);
+}
+.prem-features-v3 {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 8px;
+  margin-bottom: 14px;
+}
+.prem-features-v3 li {
+  font-size: .75rem;
+  color: rgba(255,255,255,.75);
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  line-height: 1.35;
+}
+.prem-features-v3 li::before {
+  content: '✦';
+  color: var(--gold2);
+  font-size: .65rem;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+.btn-upgrade-v3 {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: #1a1814;
+  border: none;
+  border-radius: 12px;
+  font-size: .9rem;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: .15s;
+  letter-spacing: .02em;
+}
+.btn-upgrade-v3:hover { opacity: .9; transform: translateY(-1px); }
+
+/* ── News card v3 ─ */
+.news-source-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+/* ── System status dot ─ */
+.sys-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+/* ── Account section on More ─ */
+.account-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin: 0 16px 6px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.account-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #fff;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.account-info { flex: 1; }
+.account-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: .95rem;
+  margin-bottom: 1px;
+}
+.account-email { font-size: .75rem; color: var(--text2); margin-bottom: 5px; }
+
+/* ── GWP About card ─ */
+.gwp-pillar {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.gwp-pillar:last-child { border-bottom: none; }
+.gwp-pillar-num {
+  width: 28px;
+  height: 28px;
+  background: var(--gold-bg);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  font-size: .85rem;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+.gwp-pillar-text h5 { font-size: .85rem; font-weight: 700; margin-bottom: 2px; }
+.gwp-pillar-text p { font-size: .75rem; color: var(--text2); line-height: 1.4; }
+
 </style>
 </head>
 <body>
@@ -291,10 +862,15 @@ canvas{width:100%;height:100%}
 <!-- ============ AUTH SCREEN ============ -->
 <div id="auth-screen">
   <div class="auth-logo">
-    <div class="auth-logo-icon"><span>A</span></div>
-    <h1>Asterix.COM</h1>
+    <div class="auth-logo-icon"><span style="font-size:1rem;letter-spacing:-.5px">Ax</span></div>
+    <h1>AxTrader</h1>
   </div>
-  <p class="auth-tagline">Ghost Wick Protocol · Institutional Trading Signals</p>
+  <p class="auth-tagline">Ghost Wick Protocol™ · Institutional Precision Trading Signals</p>
+  <div class="trust-strip">
+    <div class="trust-item"><span class="trust-item-dot"></span> 2,847 Active Members</div>
+    <div class="trust-item"><span class="trust-item-dot"></span> 97% Signal Accuracy</div>
+    <div class="trust-item"><span class="trust-item-dot"></span> 3 Markets Covered</div>
+  </div>
   <div class="auth-card">
     <div class="lang-row">
       <label>🌐 Language:</label>
@@ -349,10 +925,11 @@ canvas{width:100%;height:100%}
 <div id="app">
   <div class="topbar">
     <div class="topbar-logo">
-      <div class="topbar-logo-icon"><span>A</span></div>
-      <h1>Asterix.COM</h1>
+      <div class="topbar-logo-icon"><span style="font-size:.75rem;letter-spacing:-.5px">Ax</span></div>
+      <h1>AxTrader</h1>
     </div>
     <div class="live-badge"><span class="live-dot"></span> LIVE</div>
+    <div class="session-label" id="session-label">NY Session<br><span id="session-time">--:--</span></div>
     <button class="avatar-btn" id="avatar-btn" onclick="openProfile()">A</button>
   </div>
   <div class="content">
@@ -360,68 +937,153 @@ canvas{width:100%;height:100%}
 
     <!-- HOME -->
     <div class="page active" id="page-home">
-      <div class="hero">
-        <div class="hero-card">
-          <div class="hero-label">Ghost Wick Protocol™</div>
-          <div class="hero-title">Institutional <span>Precision</span><br>Trading Signals</div>
-          <div class="hero-stats">
-            <div class="hero-stat"><div class="hero-stat-val">97%</div><div class="hero-stat-lbl">Accuracy</div></div>
-            <div class="hero-stat"><div class="hero-stat-val" id="hero-member-count">2,847</div><div class="hero-stat-lbl">Members</div></div>
-            <div class="hero-stat"><div class="hero-stat-val">1.8:1</div><div class="hero-stat-lbl">R:R Ratio</div></div>
+
+      <!-- ① HERO ──────────────────────────────────────────────── -->
+      <div class="hero-card-v3">
+        <div class="hero-label-v3">✦ Ghost Wick Protocol™ · AxTrader</div>
+        <div class="hero-title-v3">Institutional <span>Signal</span><br>Intelligence</div>
+        <div class="hero-sub-v3">Where smart money leaves its footprint — we follow it.</div>
+        <div class="hero-metrics">
+          <div class="hero-metric">
+            <div class="hero-metric-val">97%</div>
+            <div class="hero-metric-lbl">Win Rate</div>
+          </div>
+          <div class="hero-metric">
+            <div class="hero-metric-val" id="hero-member-count">2,847</div>
+            <div class="hero-metric-lbl">Members</div>
+          </div>
+          <div class="hero-metric">
+            <div class="hero-metric-val">1.8:1</div>
+            <div class="hero-metric-lbl">Min R:R</div>
+          </div>
+          <div class="hero-metric">
+            <div class="hero-metric-val">3</div>
+            <div class="hero-metric-lbl">Markets</div>
           </div>
         </div>
       </div>
-      <div class="premium-banner" id="home-premium-banner">
-        <h3>Upgrade to Premium ✦</h3>
-        <div class="price">$12.99<span>/month</span></div>
-        <ul class="premium-features">
-          <li>2–3 high-probability signals daily</li>
-          <li>Zero ads — clean experience</li>
-          <li>Advanced ICT, SMC & GWP courses</li>
-          <li>Priority Liquidity Trap alerts</li>
-          <li>4H close confirmation alerts</li>
-          <li>Liquidation price warnings</li>
-        </ul>
-        <button class="btn-upgrade" onclick="openUpgrade()">Upgrade Now — $12.99/mo</button>
+
+      <!-- ② INSTITUTIONAL EDGE HUB ─────────────────────────── -->
+      <div class="section-divider">🏛️ Institutional Edge Hub</div>
+      <div class="inst-hub">
+        <a class="inst-card inst-crypto" href="https://t.me/gwp_crypto_bot" target="_blank">
+          <div class="inst-live-dot" style="background:#f59e0b"></div>
+          <div class="inst-icon">🟡</div>
+          <div class="inst-name">Crypto</div>
+          <div class="inst-desc">BTC · ETH · SOL · AVAX · UNI</div>
+          <div class="inst-handle">@gwp_crypto_bot →</div>
+        </a>
+        <a class="inst-card inst-forex" href="https://t.me/gwp_forex_bot" target="_blank">
+          <div class="inst-live-dot" style="background:#ef4444"></div>
+          <div class="inst-icon">🔴</div>
+          <div class="inst-name">Forex</div>
+          <div class="inst-desc">XAU · EUR · GBP · JPY · OIL</div>
+          <div class="inst-handle">@gwp_forex_bot →</div>
+        </a>
+        <a class="inst-card inst-stocks" href="https://t.me/gwp_stocks_bot" target="_blank">
+          <div class="inst-live-dot" style="background:#3b82f6"></div>
+          <div class="inst-icon">🔵</div>
+          <div class="inst-name">Stocks</div>
+          <div class="inst-desc">TSLA · NVDA · MSTR · PLTR · AMD</div>
+          <div class="inst-handle">@gwp_stocks_bot →</div>
+        </a>
       </div>
-      <div class="section">
-        <div class="section-header"><div class="section-title">💰 Start Trading</div></div>
-        <div class="referral-grid">
-          <div class="ref-card"><div class="ref-card-logo">🟡</div><h4>ByBit</h4><p>Up to $30,000 welcome bonus</p><a href="https://www.bybit.com/invite?ref=ASTERIX" target="_blank">Join ByBit →</a></div>
-          <div class="ref-card"><div class="ref-card-logo">🟢</div><h4>KuCoin</h4><p>10% fee discount forever</p><a href="https://www.kucoin.com/r/ASTERIX" target="_blank">Join KuCoin →</a></div>
-          <div class="ref-card"><div class="ref-card-logo">🟡</div><h4>Crypto Bot</h4><p>Live GWP crypto signals on Telegram</p><a href="https://t.me/gwp_crypto_bot" target="_blank">@gwp_crypto_bot →</a></div>
-          <div class="ref-card"><div class="ref-card-logo">🔴</div><h4>Forex Bot</h4><p>Live GWP forex &amp; gold signals</p><a href="https://t.me/gwp_forex_bot" target="_blank">@gwp_forex_bot →</a></div>
-        </div>
-      </div>
-      <div class="section">
-        <div class="section-header">
-          <div class="section-title">Latest Signals</div>
-          <span class="section-link" onclick="navTo('signals')">See all →</span>
-        </div>
+
+      <!-- ③ LATEST SIGNALS PREVIEW ────────────────────────── -->
+      <div class="section-divider">📡 Latest Signals</div>
+      <div style="padding:0 16px 4px">
         <div id="home-signals-preview"></div>
+        <button onclick="navTo('signals')" style="width:100%;padding:11px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;font-size:.85rem;font-weight:700;color:var(--gold);cursor:pointer;font-family:inherit;margin-top:2px">View All Signals & Premium →</button>
       </div>
-      <div class="ad-slot" id="ad-home">📢 Advertisement — <a href="#" onclick="openUpgrade()" style="color:var(--gold);margin-left:4px">Go Premium to remove ads</a></div>
-      <div class="section">
-        <div class="section-header">
-          <div class="section-title">Market News</div>
-          <span class="section-link" onclick="navTo('news')">See all →</span>
+
+      <!-- ④ PREMIUM UPGRADE ───────────────────────────────── -->
+      <div class="prem-banner-v3" id="home-premium-banner">
+        <div class="prem-badge-row">
+          <span class="prem-badge-pill">✦ PREMIUM</span>
+          <span style="font-size:.65rem;color:rgba(255,255,255,.4)">2,847 members trust us</span>
         </div>
-        <div id="home-news-preview"></div>
+        <h3>Unlock Full Institutional Access</h3>
+        <div class="prem-price-row">
+          <span class="prem-price">$12.99</span>
+          <span class="prem-price-period">/month · cancel anytime</span>
+        </div>
+        <ul class="prem-features-v3">
+          <li>2–3 premium signals daily</li>
+          <li>Zero ads, clean UI</li>
+          <li>Advanced ICT/SMC/GWP courses</li>
+          <li>Liquidity Trap alerts</li>
+          <li>4H confirmation alerts</li>
+          <li>Liquidation warnings</li>
+        </ul>
+        <button class="btn-upgrade-v3" onclick="openUpgrade()">Upgrade Now — $12.99 / month</button>
       </div>
+
+      <!-- ⑤ BROKERS ──────────────────────────────────────── -->
+      <div class="section-divider">💰 Recommended Brokers</div>
+      <div class="broker-strip">
+        <div class="broker-card">
+          <div style="font-size:1.3rem;margin-bottom:5px">🟡</div>
+          <h4>ByBit</h4>
+          <p>Up to $30,000 welcome bonus for new users</p>
+          <a href="https://www.bybit.com/invite?ref=ASTERIX" target="_blank">Join ByBit →</a>
+        </div>
+        <div class="broker-card">
+          <div style="font-size:1.3rem;margin-bottom:5px">🟢</div>
+          <h4>KuCoin</h4>
+          <p>10% lifetime fee discount via our link</p>
+          <a href="https://www.kucoin.com/r/ASTERIX" target="_blank">Join KuCoin →</a>
+        </div>
+      </div>
+
+      <div class="ad-slot" id="ad-home" style="margin:14px 16px">📢 Advertisement — <a href="#" onclick="openUpgrade()" style="color:var(--gold);margin-left:4px">Go Premium to remove</a></div>
+
+      <!-- ⑥ MARKET NEWS PREVIEW ────────────────────────── -->
+      <div class="section-divider">📰 Market Intelligence</div>
+      <div style="padding:0 16px 4px">
+        <div id="home-news-preview"></div>
+        <button onclick="navTo('news')" style="width:100%;padding:11px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;font-size:.85rem;font-weight:700;color:var(--text2);cursor:pointer;font-family:inherit;margin-top:2px">Read Full Market Briefing →</button>
+      </div>
+
     </div>
 
     <!-- SIGNALS -->
     <div class="page" id="page-signals">
-      <div class="section" style="padding-top:16px">
+      <!-- Signals Stats Strip -->
+      <div class="sig-meta-strip">
+        <div class="sig-stat-item">
+          <div class="sig-stat-val">3</div>
+          <div class="sig-stat-lbl">Free</div>
+        </div>
+        <div style="width:1px;height:28px;background:var(--border)"></div>
+        <div class="sig-stat-item">
+          <div class="sig-stat-val">3</div>
+          <div class="sig-stat-lbl">Premium</div>
+        </div>
+        <div style="width:1px;height:28px;background:var(--border)"></div>
+        <div class="sig-stat-item">
+          <div class="sig-stat-val">97%</div>
+          <div class="sig-stat-lbl">Accuracy</div>
+        </div>
+        <div style="width:1px;height:28px;background:var(--border)"></div>
+        <div class="sig-stat-item">
+          <div class="sig-stat-val">1.8:1</div>
+          <div class="sig-stat-lbl">R:R</div>
+        </div>
+      </div>
+
+      <div class="section" style="padding-top:14px">
         <div class="section-header">
-          <div class="section-title">🎯 GWP Signals</div>
+          <div>
+            <div class="section-title">🎯 AxTrader Signals</div>
+            <div style="font-size:.72rem;color:var(--text3);margin-top:1px">GWP™ Powered · 3 Markets · Live</div>
+          </div>
           <button class="refresh-btn" id="refresh-btn" onclick="manualRefresh()">
             <span class="spin-icon">↻</span><span id="signal-last-update">Fetching...</span>
           </button>
         </div>
         <div id="sig-source-row" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
           <span id="sig-live-badge" class="live-source-badge demo">⏳ Waiting for bot...</span>
-          <span style="font-size:.72rem;color:var(--text3)">Auto-refresh every 60s</span>
+          <span style="font-size:.72rem;color:var(--text3)">Auto-refresh 60s</span>
         </div>
         <div id="signals-list"></div>
         <div class="ad-slot" id="ad-signals">📢 Advertisement — <a href="#" onclick="openUpgrade()" style="color:var(--gold);margin-left:4px">Remove ads</a></div>
@@ -431,14 +1093,21 @@ canvas{width:100%;height:100%}
     <!-- GAMES -->
     <div class="page" id="page-games">
       <div class="section" style="padding-top:16px">
-        <div class="section-header">
-          <div class="section-title">🎮 Arcade</div>
-          <span class="section-link" style="font-family:'JetBrains Mono',monospace;color:var(--gold)">⚡ <span id="atx-balance">1,000</span> ATX</span>
+        <div class="section-header" style="margin-bottom:12px">
+          <div class="section-title">🎮 Training Arcade</div>
+          <span style="font-size:.72rem;color:var(--text2)">Practice · Not real money</span>
+        </div>
+        <div class="atx-strip">
+          <div>
+            <div class="atx-strip-label">Your ATX Balance</div>
+            <div class="atx-strip-val">⚡ <span id="atx-balance">1,000</span> ATX</div>
+          </div>
+          <div class="atx-strip-note">Simulated credits<br>for practice only</div>
         </div>
         <div class="section-header" style="margin-top:4px"><div class="section-title" style="font-size:.85rem;color:var(--text2)">WEEKLY TOP</div></div>
         <div class="leaderboard" style="margin-bottom:16px">
           <div class="lb-row"><div class="lb-rank gold">#1</div><div class="lb-avatar">CK</div><div class="lb-name">CryptoKwame<div class="lb-country">GH</div></div><div><div class="lb-score">+6,820 ATX</div><div class="lb-mult">18.44x</div></div></div>
-          <div class="lb-row"><div class="lb-rank">🏆</div><div class="lb-avatar">A</div><div class="lb-name">Asterix.COM<div class="lb-country">Official</div></div><div><div class="lb-score">+4,200 ATX</div><div class="lb-mult">12.10x</div></div></div>
+          <div class="lb-row"><div class="lb-rank">🏆</div><div class="lb-avatar">A</div><div class="lb-name">AxTrader<div class="lb-country">Official</div></div><div><div class="lb-score">+4,200 ATX</div><div class="lb-mult">12.10x</div></div></div>
           <div class="lb-row"><div class="lb-rank">#3</div><div class="lb-avatar">TN</div><div class="lb-name">TradingNana<div class="lb-country">NG</div></div><div><div class="lb-score">+3,140 ATX</div><div class="lb-mult">9.88x</div></div></div>
           <div class="lb-row"><div class="lb-rank">#4</div><div class="lb-avatar">DK</div><div class="lb-name">DeFiKofi<div class="lb-country">GH</div></div><div><div class="lb-score">+2,010 ATX</div><div class="lb-mult">7.22x</div></div></div>
           <div class="lb-row"><div class="lb-rank">#5</div><div class="lb-avatar">CM</div><div class="lb-name">CoinMaestro<div class="lb-country">ZA</div></div><div><div class="lb-score">+980 ATX</div><div class="lb-mult">5.60x</div></div></div>
@@ -455,42 +1124,157 @@ canvas{width:100%;height:100%}
     <!-- NEWS -->
     <div class="page" id="page-news">
       <div class="section" style="padding-top:16px">
-        <div class="section-header"><div class="section-title">📰 Market Intelligence</div></div>
+        <div class="section-header" style="margin-bottom:14px">
+          <div>
+            <div class="section-title">📰 Market Intelligence</div>
+            <div style="font-size:.72rem;color:var(--text3);margin-top:1px">Crypto · Macro · Geopolitical</div>
+          </div>
+          <span id="news-time-lbl" style="font-size:.7rem;color:var(--text3)"></span>
+        </div>
         <div id="news-list"></div>
       </div>
     </div>
 
     <!-- MORE -->
     <div class="page" id="page-more">
-      <div class="section" style="padding-top:16px">
-        <div class="section-header"><div class="section-title">📚 Trading Academy</div></div>
-        <div class="courses-tabs" id="courses-tabs">
-          <button class="course-tab active" onclick="switchCourseTab('ict',this)">ICT</button>
-          <button class="course-tab" onclick="switchCourseTab('smc',this)">SMC</button>
-          <button class="course-tab" onclick="switchCourseTab('gwp',this)">GWP</button>
-          <button class="course-tab" onclick="switchCourseTab('advanced',this)">⭐ Advanced</button>
+      <div style="padding-top:16px">
+
+        <!-- ─── SECTION A: ACCOUNT ─────────────────────────────── -->
+        <div class="more-section-label">👤 My Account</div>
+        <div class="account-card" onclick="openProfile()">
+          <div class="account-avatar" id="more-avatar-btn">A</div>
+          <div class="account-info">
+            <div class="account-name" id="more-display-name">User</div>
+            <div class="account-email" id="more-display-email">tap to edit profile</div>
+            <span class="badge-status badge-free" id="more-plan-badge">FREE PLAN</span>
+          </div>
+          <span class="more-row-arrow" style="font-size:1.1rem">›</span>
         </div>
-        <div id="courses-content"></div>
-      </div>
-      <div class="section">
-        <div class="section-header"><div class="section-title">⚙️ Settings</div></div>
-        <div class="more-section">
-          <div class="more-row" onclick="openProfile()"><div class="more-row-icon" style="background:var(--gold-bg)">👤</div><div class="more-row-text"><h5>My Profile</h5><p>Edit info, change picture</p></div><span class="more-row-arrow">›</span></div>
-          <div class="more-row" onclick="openUpgrade()"><div class="more-row-icon" style="background:var(--premium-bg)">⭐</div><div class="more-row-text"><h5>Upgrade to Premium</h5><p>$12.99/month — unlock everything</p></div><span class="more-row-arrow">›</span></div>
-          <div class="more-row" onclick="openLangModal()"><div class="more-row-icon" style="background:var(--blue-bg)">🌐</div><div class="more-row-text"><h5>Language</h5><p id="current-lang-label">English</p></div><span class="more-row-arrow">›</span></div>
-          <div class="more-row" onclick="showToast('Referral link copied!')"><div class="more-row-icon" style="background:var(--green-bg)">🔗</div><div class="more-row-text"><h5>Referral Program</h5><p>Earn ATX for every invite</p></div><span class="more-row-arrow">›</span></div>
-          <div class="more-row" onclick="openAboutGWP()"><div class="more-row-icon" style="background:var(--gold-bg)">🧠</div><div class="more-row-text"><h5>What is GWP?</h5><p>Ghost Wick Protocol explained</p></div><span class="more-row-arrow">›</span></div>
-          <div class="more-row" onclick="openSystemStatus()"><div class="more-row-icon" style="background:var(--green-bg)">⚡</div><div class="more-row-text"><h5>System Status</h5><p>Frontend · Bots · Live Sheet bridge</p></div><span class="more-row-arrow">›</span></div>
-          <div class="more-row" id="pwa-install-btn" onclick="triggerInstallPrompt()" style="display:none"><div class="more-row-icon" style="background:var(--gold-bg)">📲</div><div class="more-row-text"><h5>Install App</h5><p>Add Asterix.COM to your home screen</p></div><span class="more-row-arrow">›</span></div>
-          <div class="more-row" onclick="doLogout()"><div class="more-row-icon" style="background:var(--red-bg)">🚪</div><div class="more-row-text"><h5>Sign Out</h5><p></p></div><span class="more-row-arrow">›</span></div>
+        <div class="more-section" style="margin:0 16px 16px">
+          <div class="more-row" onclick="openUpgrade()">
+            <div class="more-row-icon" style="background:var(--premium-bg)">⭐</div>
+            <div class="more-row-text">
+              <h5>Upgrade to Premium</h5>
+              <p>Unlock all signals, zero ads, full academy</p>
+            </div>
+            <span class="more-row-badge">$12.99/mo</span>
+            <span class="more-row-arrow" style="margin-left:6px">›</span>
+          </div>
         </div>
-        <div class="more-section">
-          <div class="more-row" onclick="window.open('mailto:asterixcomltd@gmail.com')"><div class="more-row-icon" style="background:var(--surface2)">✉️</div><div class="more-row-text"><h5>Email Us</h5><p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="69081a1d0c1b00110a0604051d0d290e04080005470a0604">[email&#160;protected]</a></p></div><span class="more-row-arrow">›</span></div>
-          <div class="more-row" onclick="window.open('https://t.me/gwp_crypto_bot','_blank')"><div class="more-row-icon" style="background:#fdf8ee">🟡</div><div class="more-row-text"><h5>Crypto Signals Bot</h5><p>@gwp_crypto_bot — BTC, ETH, SOL…</p></div><span class="more-row-arrow">›</span></div>
-          <div class="more-row" onclick="window.open('https://t.me/gwp_forex_bot','_blank')"><div class="more-row-icon" style="background:#fdf0ee">🔴</div><div class="more-row-text"><h5>Forex Signals Bot</h5><p>@gwp_forex_bot — XAU, EUR, GBP…</p></div><span class="more-row-arrow">›</span></div>
-          <div class="more-row" onclick="window.open('https://t.me/asterix_trading_signal_hub','_blank')"><div class="more-row-icon" style="background:#e8f4fd">✈️</div><div class="more-row-text"><h5>Telegram Community</h5><p>t.me/asterix_trading_signal_hub</p></div><span class="more-row-arrow">›</span></div>
-          <div class="more-row" onclick="window.open('https://twitter.com/Asterix_Abdin','_blank')"><div class="more-row-icon" style="background:#f0f0f0">𝕏</div><div class="more-row-text"><h5>Follow on X</h5><p>@Asterix_Abdin</p></div><span class="more-row-arrow">›</span></div>
+
+        <!-- ─── SECTION B: TRADING ACADEMY ────────────────────── -->
+        <div class="more-section-label">📚 Trading Academy</div>
+        <div style="padding:0 16px 6px">
+          <div class="courses-tabs" id="courses-tabs">
+            <button class="course-tab active" onclick="switchCourseTab('ict',this)">ICT</button>
+            <button class="course-tab" onclick="switchCourseTab('smc',this)">SMC</button>
+            <button class="course-tab" onclick="switchCourseTab('gwp',this)">GWP</button>
+            <button class="course-tab" onclick="switchCourseTab('advanced',this)">⭐ Advanced</button>
+          </div>
+          <div id="courses-content"></div>
         </div>
+
+        <!-- ─── SECTION C: SIGNAL BOTS ────────────────────────── -->
+        <div class="more-section-label">🤖 Our Signal Bots</div>
+        <div class="more-section" style="margin:0 16px 16px">
+          <div class="more-row" onclick="window.open('https://t.me/gwp_crypto_bot','_blank')">
+            <div class="more-row-icon" style="background:#fef3c7">🟡</div>
+            <div class="more-row-text"><h5>Crypto Signals Bot</h5><p>BTC · ETH · SOL · AVAX · UNI · SUSHI</p></div>
+            <span class="more-row-badge">@gwp_crypto_bot</span>
+            <span class="more-row-arrow" style="margin-left:6px">›</span>
+          </div>
+          <div class="more-row" onclick="window.open('https://t.me/gwp_forex_bot','_blank')">
+            <div class="more-row-icon" style="background:#fdf0ee">🔴</div>
+            <div class="more-row-text"><h5>Forex Signals Bot</h5><p>XAU/USD · EUR/USD · GBP/USD · OIL</p></div>
+            <span class="more-row-badge">@gwp_forex_bot</span>
+            <span class="more-row-arrow" style="margin-left:6px">›</span>
+          </div>
+          <div class="more-row" onclick="window.open('https://t.me/gwp_stocks_bot','_blank')">
+            <div class="more-row-icon" style="background:#eff6ff">🔵</div>
+            <div class="more-row-text"><h5>Stocks Signals Bot</h5><p>TSLA · NVDA · MSTR · PLTR · AMD</p></div>
+            <span class="more-row-badge">@gwp_stocks_bot</span>
+            <span class="more-row-arrow" style="margin-left:6px">›</span>
+          </div>
+        </div>
+
+        <!-- ─── SECTION D: COMMUNITY ──────────────────────────── -->
+        <div class="more-section-label">✈️ Community & Social</div>
+        <div class="more-section" style="margin:0 16px 16px">
+          <div class="more-row" onclick="window.open('https://t.me/asterix_trading_signal_hub','_blank')">
+            <div class="more-row-icon" style="background:#e8f4fd">✈️</div>
+            <div class="more-row-text"><h5>Telegram Community</h5><p>Live analysis · Signal alerts · Discussion</p></div>
+            <span class="more-row-arrow">›</span>
+          </div>
+          <div class="more-row" onclick="window.open('https://twitter.com/Asterix_Abdin','_blank')">
+            <div class="more-row-icon" style="background:#f0f0f0">𝕏</div>
+            <div class="more-row-text"><h5>Follow on X</h5><p>@Asterix_Abdin — market insights daily</p></div>
+            <span class="more-row-arrow">›</span>
+          </div>
+          <div class="more-row" onclick="showToast('Referral link copied! Share to earn ATX.')">
+            <div class="more-row-icon" style="background:var(--green-bg)">🔗</div>
+            <div class="more-row-text"><h5>Referral Program</h5><p>Invite friends · Earn ATX rewards</p></div>
+            <span class="more-row-arrow">›</span>
+          </div>
+        </div>
+
+        <!-- ─── SECTION E: APP SETTINGS ───────────────────────── -->
+        <div class="more-section-label">⚙️ App Settings</div>
+        <div class="more-section" style="margin:0 16px 16px">
+          <div class="more-row" onclick="openLangModal()">
+            <div class="more-row-icon" style="background:var(--blue-bg)">🌐</div>
+            <div class="more-row-text"><h5>Language</h5><p id="current-lang-label">English</p></div>
+            <span class="more-row-arrow">›</span>
+          </div>
+          <div class="more-row" id="pwa-install-btn" onclick="triggerInstallPrompt()" style="display:none">
+            <div class="more-row-icon" style="background:var(--gold-bg)">📲</div>
+            <div class="more-row-text"><h5>Install App</h5><p>Add to home screen — works offline</p></div>
+            <span class="more-row-arrow">›</span>
+          </div>
+        </div>
+
+        <!-- ─── SECTION F: KNOWLEDGE & SYSTEM ────────────────── -->
+        <div class="more-section-label">🧠 Knowledge & System</div>
+        <div class="more-section" style="margin:0 16px 16px">
+          <div class="more-row" onclick="openAboutGWP()">
+            <div class="more-row-icon" style="background:var(--gold-bg)">🧠</div>
+            <div class="more-row-text"><h5>What is GWP?</h5><p>The 5-Pillar Ghost Wick Protocol explained</p></div>
+            <span class="more-row-arrow">›</span>
+          </div>
+          <div class="more-row" onclick="openSystemStatus()">
+            <div class="more-row-icon" style="background:var(--green-bg)"><span class="sys-dot" style="margin:0"></span></div>
+            <div class="more-row-text"><h5>System Status</h5><p>Live · All bots operational · Gist bridge active</p></div>
+            <span class="more-row-arrow">›</span>
+          </div>
+        </div>
+
+        <!-- ─── SECTION G: CONTACT ────────────────────────────── -->
+        <div class="more-section-label">✉️ Contact & Support</div>
+        <div class="more-section" style="margin:0 16px 16px">
+          <div class="more-row" onclick="window.open('mailto:asterixcomltd@gmail.com')">
+            <div class="more-row-icon" style="background:var(--surface2)">✉️</div>
+            <div class="more-row-text"><h5>Email Support</h5><p>asterixcomltd@gmail.com</p></div>
+            <span class="more-row-arrow">›</span>
+          </div>
+          <div class="more-row" onclick="window.open('https://t.me/Asterix_Abdin','_blank')">
+            <div class="more-row-icon" style="background:#e8f4fd">💬</div>
+            <div class="more-row-text"><h5>Direct Message</h5><p>@Asterix_Abdin on Telegram</p></div>
+            <span class="more-row-arrow">›</span>
+          </div>
+        </div>
+
+        <!-- ─── SECTION H: SIGN OUT (always last) ────────────── -->
+        <div class="more-section-label">🔐 Account Security</div>
+        <div class="more-section" style="margin:0 16px 24px;border-color:#fde8e8">
+          <div class="more-row" onclick="doLogout()" style="border-bottom:none">
+            <div class="more-row-icon" style="background:var(--red-bg)">🚪</div>
+            <div class="more-row-text">
+              <h5 style="color:var(--red)">Sign Out</h5>
+              <p id="logout-email-hint" style="color:var(--text3)">Signed in as…</p>
+            </div>
+            <span class="more-row-arrow" style="color:var(--red)">›</span>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -540,8 +1324,8 @@ canvas{width:100%;height:100%}
     <button class="modal-close" onclick="closeOverlay('upgrade-overlay')">✕</button>
     <div style="text-align:center;margin-bottom:16px">
       <div style="font-size:2rem;margin-bottom:8px">✦</div>
-      <h2>Asterix Premium</h2>
-      <p class="sub">Unlock the full power of GWP</p>
+      <h2>AxTrader Premium</h2>
+      <p class="sub">Unlock the full power of AxTrader</p>
       <div style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:800;color:var(--gold)">$12.99<span style="font-size:1rem;color:var(--text2);font-weight:400">/month</span></div>
     </div>
     <ul class="premium-features" style="margin-bottom:20px">
@@ -690,9 +1474,9 @@ canvas{width:100%;height:100%}
         &nbsp;&nbsp;&nbsp;&nbsp;↓ write crypto/forex_signals.json<br>
         <span style="color:var(--blue);font-weight:800">GITHUB GIST (public JSON bridge)</span><br>
         &nbsp;&nbsp;↓ raw URL fetch (no auth needed)<br>
-        <span style="color:var(--green);font-weight:800">FRONTEND (Vercel)</span><br>
+        <span style="color:var(--green);font-weight:800">AXTRADER FRONTEND (Vercel)</span><br>
         &nbsp;&nbsp;↓ merges + renders live signals<br>
-        <span style="color:var(--premium);font-weight:800">TELEGRAM (@gwp_crypto_bot / @gwp_forex_bot)</span>
+        <span style="color:var(--premium);font-weight:800">TELEGRAM (@gwp_crypto_bot / @gwp_forex_bot / @gwp_stocks_bot)</span>
       </div>
     </div>
 
@@ -743,32 +1527,35 @@ async function fetchSignalsFromSheet() {
     const t    = Date.now();
     const base = `https://gist.githubusercontent.com/${GIST_USER}/${GIST_ID}/raw`;
 
-    // Try fetching both signal files in parallel
-    const [ar, fr] = await Promise.allSettled([
+    // Fetch all 3 bot signal files in parallel
+    const [ar, fr, sr] = await Promise.allSettled([
       fetch(`${base}/crypto_signals.json?t=${t}`),
-      fetch(`${base}/forex_signals.json?t=${t}`)
+      fetch(`${base}/forex_signals.json?t=${t}`),
+      fetch(`${base}/stocks_signals.json?t=${t}`)
     ]);
 
-    let crypto = [], forex = [];
+    let crypto = [], forex = [], stocks = [];
     if (ar.status === 'fulfilled' && ar.value.ok) {
-      try {
-        const txt = await ar.value.text();
-        crypto = JSON.parse(txt);
-      } catch(e) { console.warn('crypto parse fail', e); }
+      try { const txt = await ar.value.text(); crypto = JSON.parse(txt); } catch(e) {}
     }
     if (fr.status === 'fulfilled' && fr.value.ok) {
-      try {
-        const txt = await fr.value.text();
-        forex = JSON.parse(txt);
-      } catch(e) { console.warn('forex parse fail', e); }
+      try { const txt = await fr.value.text(); forex = JSON.parse(txt); } catch(e) {}
+    }
+    if (sr.status === 'fulfilled' && sr.value.ok) {
+      try { const txt = await sr.value.text(); stocks = JSON.parse(txt); } catch(e) {}
     }
 
-    // Merge both arrays, sort newest-first, keep top 20
-    const merged = [...(Array.isArray(crypto)?crypto:[]), ...(Array.isArray(forex)?forex:[])]
+    // Tag each with its bot type
+    (Array.isArray(crypto)?crypto:[]).forEach(s=>{ if(!s.bot) s.bot='crypto'; });
+    (Array.isArray(forex)?forex:[]).forEach(s=>{ if(!s.bot) s.bot='forex'; });
+    (Array.isArray(stocks)?stocks:[]).forEach(s=>{ if(!s.bot) s.bot='stocks'; });
+
+    // Merge all, sort newest-first
+    const merged = [...(Array.isArray(crypto)?crypto:[]), ...(Array.isArray(forex)?forex:[]), ...(Array.isArray(stocks)?stocks:[])]
       .filter(s => s && (s.pair || s.symbol))
       .map(s => { if (!s.pair && s.symbol) s.pair = s.symbol; return s; })
       .sort((a, b) => (b.ts || b.timestamp || 0) - (a.ts || a.timestamp || 0))
-      .slice(0, 20);
+      .slice(0, 30);
 
     if (!merged.length) {
       console.log('Gist is empty — bots have not written yet. GIST_ID:', GIST_ID);
@@ -777,7 +1564,7 @@ async function fetchSignalsFromSheet() {
     }
 
     // ── Normalize helper ──────────────────────────────────────────────────────
-    function normalizeSignal(s, slotIndex) {
+    function normalizeSignal(s, isPremiumSlot) {
       let rawScore = s.score || s.conviction || 80;
       let normScore;
       if (rawScore <= 10)       normScore = Math.round(rawScore * 12.5);
@@ -798,48 +1585,47 @@ async function fetchSignalsFromSheet() {
         rr        : s.rr     || '',
         bot       : s.bot    || '',
         time      : s.time   || '--:--',
-        premium   : slotIndex >= 2
+        premium   : isPremiumSlot
       };
     }
 
-    // ── RULE: slot 0 = best CRYPTO, slot 1 = best FOREX, slots 2-4 = mixed ──
-    // "Best" = highest score among most-recent signals of that type
-    const cryptoPool = merged.filter(s => (s.bot || '') === 'crypto');
-    const forexPool  = merged.filter(s => (s.bot || '') === 'forex');
+    // ── LAYOUT: slot 0=CRYPTO(free), 1=FOREX(free), 2=STOCKS(free)
+    //            slot 3=CRYPTO(premium), 4=FOREX(premium), 5=STOCKS(premium)
+    const cryptoPool  = merged.filter(s => s.bot === 'crypto');
+    const forexPool   = merged.filter(s => s.bot === 'forex');
+    const stocksPool  = merged.filter(s => s.bot === 'stocks');
 
-    // Pick top of each type (already sorted newest-first; pick highest score within top-5)
     const pickBest = pool => {
       if (!pool.length) return null;
-      const candidates = pool.slice(0, 5);
-      return candidates.reduce((best, s) => {
-        const sc = s.score || s.conviction || 0;
-        const bsc = best.score || best.conviction || 0;
-        return sc > bsc ? s : best;
-      }, candidates[0]);
+      return pool.slice(0,5).reduce((b,s)=>((s.score||s.conviction||0)>(b.score||b.conviction||0)?s:b), pool[0]);
+    };
+    const pickSecond = (pool, first) => {
+      const rem = pool.filter(s=>s!==first);
+      return pickBest(rem);
     };
 
-    const topCrypto = pickBest(cryptoPool);
-    const topForex  = pickBest(forexPool);
+    const topC = pickBest(cryptoPool);
+    const topF = pickBest(forexPool);
+    const topS = pickBest(stocksPool);
+    const top2C = pickSecond(cryptoPool, topC);
+    const top2F = pickSecond(forexPool, topF);
+    const top2S = pickSecond(stocksPool, topS);
 
-    // Remaining pool: exclude the two selected, take up to 3 (mixed, newest-first)
-    const usedSet = new Set([topCrypto, topForex].filter(Boolean));
-    const rest = merged.filter(s => !usedSet.has(s)).slice(0, 3);
+    // Build 6-slot array, fallback gracefully
+    const fallCrypto = {pair:'BTC/USDT',dir:'LONG',entry:'67,400',sl:'66,800',tp:'68,900',tp1:'68,900',tp3:'71,200',score:94,tf:'4H',time:'--:--',bot:'crypto',grade:'A+ ELITE',rr:'2.2'};
+    const fallForex  = {pair:'XAU/USD', dir:'LONG',entry:'2,295', sl:'2,278', tp:'2,335', tp1:'2,318', tp3:'2,390', score:96,tf:'4H',time:'--:--',bot:'forex', grade:'A+★ SUPREME',rr:'3.1'};
+    const fallStocks = {pair:'TSLA',    dir:'LONG',entry:'182.50',sl:'178.30',tp:'191.20',tp1:'191.20',tp3:'205.00',score:88,tf:'4H',time:'--:--',bot:'stocks',grade:'A+ ELITE',rr:'2.0'};
 
-    // Build ordered list: [crypto, forex, ...rest] — handle missing types gracefully
-    let ordered = [];
-    if (topCrypto && topForex) {
-      ordered = [topCrypto, topForex, ...rest];
-    } else if (topCrypto) {
-      // No forex signals yet: fill slot 1 from rest
-      ordered = [topCrypto, ...rest].slice(0, 5);
-    } else if (topForex) {
-      // No crypto signals yet: fill slot 0 from rest
-      ordered = [topForex, ...rest].slice(0, 5);
-    } else {
-      ordered = rest.slice(0, 5);
-    }
+    const ordered = [
+      topC  || fallCrypto,
+      topF  || fallForex,
+      topS  || fallStocks,
+      top2C || topC || fallCrypto,
+      top2F || topF || fallForex,
+      top2S || topS || fallStocks
+    ].filter(Boolean);
 
-    signalsData = ordered.slice(0, 5).map((s, i) => normalizeSignal(s, i));
+    signalsData = ordered.slice(0, 6).map((s, i) => normalizeSignal(s, i >= 3));
 
     const now = new Date();
     const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
@@ -857,17 +1643,20 @@ async function fetchSignalsFromSheet() {
 }
 
 function renderFallbackSignals() {
-  // Show while waiting for first bot signal.
-  // RULE: slot 0 = CRYPTO (full), slot 1 = FOREX (full), slots 2-4 = mixed compact
+  // 6-slot layout: 0-2 = FREE (crypto/forex/stocks), 3-5 = PREMIUM locked
   signalsData = [
-    // ── SLOT 1 — CRYPTO full ───────────────────────────────────────────────
-    { pair:'BTC/USDT', dir:'LONG',  entry:'67,400', sl:'66,800', tp:'68,900', tp1:'68,900', tp3:'71,200',  score:94, tf:'4H', time:'--:--', bot:'crypto', grade:'A+ ELITE', rr:'2.2', premium:false },
-    // ── SLOT 2 — FOREX full ────────────────────────────────────────────────
+    // ── FREE SLOT 0 — CRYPTO ─────────────────────────────────────────────
+    { pair:'BTC/USDT', dir:'LONG',  entry:'67,400', sl:'66,800', tp:'68,900', tp1:'68,900', tp3:'71,200',  score:94, tf:'4H', time:'--:--', bot:'crypto', grade:'A+ ELITE',    rr:'2.2', premium:false },
+    // ── FREE SLOT 1 — FOREX ──────────────────────────────────────────────
     { pair:'XAU/USD',  dir:'LONG',  entry:'2,295',  sl:'2,278',  tp:'2,335',  tp1:'2,318',  tp3:'2,390',   score:96, tf:'4H', time:'--:--', bot:'forex',  grade:'A+★ SUPREME', rr:'3.1', premium:false },
-    // ── SLOTS 3-5 — compact mixed ──────────────────────────────────────────
-    { pair:'ETH/USDT', dir:'SHORT', entry:'2,135',  sl:'2,171',  tp:'2,030',  tp1:'2,083',  tp3:'1,820',   score:86, tf:'4H', time:'--:--', bot:'crypto', grade:'A SOLID',   rr:'2.9', premium:true  },
-    { pair:'EUR/USD',  dir:'SHORT', entry:'1.0812', sl:'1.0845', tp:'1.0762', tp1:'1.0762', tp3:'1.0680',  score:78, tf:'1H', time:'--:--', bot:'forex',  grade:'A SOLID',   rr:'1.8', premium:true  },
-    { pair:'SOL/USDT', dir:'SHORT', entry:'82.17',  sl:'83.70',  tp:'78.45',  tp1:'80.31',  tp3:'71.02',   score:88, tf:'1H', time:'--:--', bot:'crypto', grade:'A+ ELITE',  rr:'2.4', premium:true  },
+    // ── FREE SLOT 2 — STOCKS ─────────────────────────────────────────────
+    { pair:'TSLA',     dir:'LONG',  entry:'182.50', sl:'178.30', tp:'191.20', tp1:'191.20', tp3:'205.00',  score:88, tf:'4H', time:'--:--', bot:'stocks', grade:'A+ ELITE',    rr:'2.0', premium:false },
+    // ── PREMIUM SLOT 3 — CRYPTO (locked) ─────────────────────────────────
+    { pair:'ETH/USDT', dir:'SHORT', entry:'2,135',  sl:'2,171',  tp:'2,030',  tp1:'2,083',  tp3:'1,820',   score:91, tf:'4H', time:'--:--', bot:'crypto', grade:'A+★ SUPREME', rr:'2.9', premium:true  },
+    // ── PREMIUM SLOT 4 — FOREX (locked) ──────────────────────────────────
+    { pair:'EUR/USD',  dir:'SHORT', entry:'1.0812', sl:'1.0845', tp:'1.0762', tp1:'1.0762', tp3:'1.0680',  score:82, tf:'1H', time:'--:--', bot:'forex',  grade:'A SOLID',     rr:'1.8', premium:true  },
+    // ── PREMIUM SLOT 5 — STOCKS (locked) ─────────────────────────────────
+    { pair:'NVDA',     dir:'SHORT', entry:'875.00', sl:'893.00', tp:'845.00', tp1:'855.00', tp3:'810.00',  score:93, tf:'4H', time:'--:--', bot:'stocks', grade:'A+★ SUPREME', rr:'2.4', premium:true  },
   ];
   const el = document.getElementById('signal-last-update');
   if(el) el.textContent = 'Waiting for bot...';
@@ -909,6 +1698,27 @@ function openSystemStatus() { openOverlay('status-overlay', true); }
 setInterval(fetchSignalsFromSheet, 60000);
 
 // ============ RENDER SIGNALS ============
+function getCatInfo(bot) {
+  if (bot === 'forex')  return { label:'Forex',  cls:'cat-forex',  emoji:'🔴', handle:'gwp_forex_bot'  };
+  if (bot === 'stocks') return { label:'Stocks', cls:'cat-stocks', emoji:'🔵', handle:'gwp_stocks_bot' };
+  return                       { label:'Crypto', cls:'cat-crypto', emoji:'🟡', handle:'gwp_crypto_bot' };
+}
+
+function getGrade(s) {
+  let g;
+  if (s.grade) {
+    const u = s.grade.toUpperCase();
+    if (u.includes('SUPREME') || u.includes('ELITE')) g = 'A+★';
+    else if (u.startsWith('A+')) g = 'A+';
+    else if (u.startsWith('A'))  g = 'A';
+    else g = s.grade.split(' ')[0];
+  } else {
+    g = s.score>=90?'A+★':s.score>=80?'A+':s.score>=70?'A':'B+';
+  }
+  const cls = s.score>=90?'grade-astar':s.score>=80?'grade-aplus':s.score>=70?'grade-a':'grade-b';
+  return { g, cls };
+}
+
 function renderSignals() {
   const container = document.getElementById('signals-list');
   if (!container) return;
@@ -917,79 +1727,94 @@ function renderSignals() {
     return;
   }
 
-  let html = '';
-  signalsData.forEach((s, i) => {
-    let gradeLabel;
-    if (s.grade) {
-      const g = s.grade.toUpperCase();
-      if (g.includes('SUPREME') || g.includes('ELITE')) gradeLabel = 'A+★';
-      else if (g.startsWith('A+')) gradeLabel = 'A+';
-      else if (g.startsWith('A')) gradeLabel = 'A';
-      else gradeLabel = s.grade.split(' ')[0];
-    } else {
-      gradeLabel = s.score>=90?'A+★':s.score>=80?'A+':s.score>=70?'A':'B+';
-    }
-    const grade = gradeLabel;
-    const gradeClass = s.score>=90?'grade-astar':s.score>=80?'grade-aplus':s.score>=70?'grade-a':'grade-b';
-    const botHandle = s.bot==='forex' ? 'gwp_forex_bot' : 'gwp_crypto_bot';
-    const botEmoji  = s.bot==='forex' ? '🔴' : '🟡';
-    const staleMs   = Date.now() - (s.ts || 0);
-    const staleHrs  = staleMs / 3600000;
-    const ageLabel  = s.ts ? (staleHrs < 1 ? 'just now' : staleHrs < 24 ? Math.floor(staleHrs)+'h ago' : Math.floor(staleHrs/24)+'d ago') : s.time;
+  const ageStr = s => {
+    const hrs = (Date.now() - (s.ts||0)) / 3600000;
+    return s.ts ? (hrs<1?'just now':hrs<24?Math.floor(hrs)+'h ago':Math.floor(hrs/24)+'d ago') : s.time;
+  };
 
-    if (i < 2) {
-      // ── FULL SIGNAL CARD (slot 0 = crypto, slot 1 = forex) ───────────────
-      const primaryHandle = s.bot==='forex' ? 'gwp_forex_bot'  : 'gwp_crypto_bot';
-      const primaryEmoji  = s.bot==='forex' ? '🔴' : '🟡';
-      const secondHandle  = s.bot==='forex' ? 'gwp_crypto_bot' : 'gwp_forex_bot';
-      const secondEmoji   = s.bot==='forex' ? '🟡' : '🔴';
+  let html = '';
+
+  // ── FREE section header ──────────────────────────────────────────────────
+  html += `<div class="sig-section-head">
+    <span class="sig-section-label" style="color:var(--green)">✅ FREE SIGNALS</span>
+    <span class="sig-section-line"></span>
+    <span style="font-size:.7rem;color:var(--text3);white-space:nowrap">3 complete · all markets</span>
+  </div>`;
+
+  signalsData.forEach((s, i) => {
+    if (i === 3) {
+      // ── PREMIUM section header ─────────────────────────────────────────
+      html += `<div class="sig-section-head" style="margin-top:8px">
+        <span class="sig-section-label" style="color:var(--premium)">🔒 PREMIUM SIGNALS</span>
+        <span class="sig-section-line"></span>
+        <button onclick="openUpgrade()" style="font-size:.68rem;color:#fff;background:var(--premium);border:none;border-radius:8px;padding:3px 10px;cursor:pointer;font-weight:700;white-space:nowrap">Unlock $12.99/mo</button>
+      </div>`;
+    }
+
+    const cat = getCatInfo(s.bot);
+    const {g: grade, cls: gradeClass} = getGrade(s);
+    const age = ageStr(s);
+
+    if (!s.premium) {
+      // ── FULL FREE CARD ────────────────────────────────────────────────
       html += `<div class="signal-card">
-        <div class="sig-top">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span class="cat-pill ${cat.cls}">${cat.emoji} ${cat.label}</span>
+          <span class="sig-badge ${s.dir==='LONG'?'badge-long':'badge-short'}">${s.dir}</span>
+        </div>
+        <div class="sig-top" style="margin-bottom:8px">
           <div>
             <div class="sig-pair">${s.pair}<span class="grade-badge ${gradeClass}">${grade}</span></div>
-            <span style="font-size:.72rem;color:var(--text3)">${s.tf} · ${ageLabel}${s.rr ? ' · R:R '+s.rr : ''}</span>
+            <span style="font-size:.72rem;color:var(--text3)">${s.tf} · ${age}${s.rr?' · R:R '+s.rr:''}</span>
           </div>
-          <span class="sig-badge ${s.dir==='LONG'?'badge-long':'badge-short'}">${s.dir}</span>
         </div>
         <div class="sig-row">
           <div class="sig-cell"><div class="sig-cell-label">Entry</div><div class="sig-cell-val">${s.entry}</div></div>
           <div class="sig-cell"><div class="sig-cell-label">Stop Loss</div><div class="sig-cell-val" style="color:var(--red)">${s.sl}</div></div>
           <div class="sig-cell"><div class="sig-cell-label">TP1</div><div class="sig-cell-val" style="color:var(--green)">${s.tp1||s.tp}</div></div>
         </div>
-        ${s.tp3 && s.tp3 !== s.tp ? `<div class="sig-row" style="margin-top:4px">
+        ${s.tp3 && s.tp3 !== s.tp ? `<div class="sig-row" style="margin-top:6px">
           <div class="sig-cell"><div class="sig-cell-label">TP2</div><div class="sig-cell-val" style="color:var(--green)">${s.tp}</div></div>
           <div class="sig-cell" style="grid-column:span 2"><div class="sig-cell-label">TP3 🏆 Runner</div><div class="sig-cell-val" style="color:var(--green)">${s.tp3}</div></div>
         </div>` : ''}
-        <div class="score-bar-wrap">
+        <div class="score-bar-wrap" style="margin-top:10px">
           <div class="score-bar-label"><span>GWP Score</span><span style="font-weight:700;color:var(--gold)">${s.score}%</span></div>
           <div class="score-bar"><div class="score-fill" style="width:${s.score}%"></div></div>
         </div>
-        <div class="sig-bots">
-          <a class="bot-link" href="https://t.me/${primaryHandle}" target="_blank">${primaryEmoji} @${primaryHandle}</a>
-          <a class="bot-link" href="https://t.me/${secondHandle}" target="_blank">${secondEmoji} @${secondHandle}</a>
+        <div class="sig-bots" style="margin-top:10px">
+          <a class="bot-link" href="https://t.me/${cat.handle}" target="_blank">${cat.emoji} @${cat.handle}</a>
         </div>
       </div>`;
     } else {
-      // ── COMPACT ROW (signal 3+) — pair + direction only, setups hidden ─
-      html += `<div class="signal-card" style="padding:11px 16px">
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <div style="display:flex;align-items:center;gap:8px;min-width:0">
-            <span style="font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700">${s.pair}</span>
-            <span class="grade-badge ${gradeClass}" style="font-size:.63rem;padding:2px 6px">${grade}</span>
-            <span style="font-size:.72rem;color:var(--text3)">${s.tf}</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-            <span style="font-size:.7rem;color:var(--text3)">${ageLabel}</span>
-            <span class="sig-badge ${s.dir==='LONG'?'badge-long':'badge-short'}" style="font-size:.68rem">${s.dir}</span>
-          </div>
+      // ── PREMIUM LOCKED CARD ──────────────────────────────────────────
+      html += `<div class="signal-card" style="position:relative;overflow:hidden;min-height:160px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span class="cat-pill ${cat.cls}">${cat.emoji} ${cat.label}</span>
+          <span class="sig-badge ${s.dir==='LONG'?'badge-long':'badge-short'}">${s.dir}</span>
         </div>
-        <div style="margin-top:5px;font-size:.7rem;color:var(--text3)">
-          Full setup on Telegram →
-          <a href="https://t.me/${botHandle}" target="_blank" style="color:var(--gold);font-weight:600;text-decoration:none">${botEmoji} @${botHandle}</a>
+        <div style="margin-bottom:8px">
+          <div class="sig-pair">${s.pair}<span class="grade-badge ${gradeClass}">${grade}</span></div>
+          <span style="font-size:.72rem;color:var(--text3)">${s.tf} · R:R ${s.rr||'—'}</span>
+        </div>
+        <div class="sig-row" style="filter:blur(5px);pointer-events:none;user-select:none">
+          <div class="sig-cell"><div class="sig-cell-label">Entry</div><div class="sig-cell-val">██,███</div></div>
+          <div class="sig-cell"><div class="sig-cell-label">Stop Loss</div><div class="sig-cell-val" style="color:var(--red)">██,███</div></div>
+          <div class="sig-cell"><div class="sig-cell-label">TP1</div><div class="sig-cell-val" style="color:var(--green)">██,███</div></div>
+        </div>
+        <div class="score-bar-wrap" style="margin-top:8px;filter:blur(3px);pointer-events:none">
+          <div class="score-bar-label"><span>GWP Score</span><span style="font-weight:700;color:var(--gold)">${s.score}%</span></div>
+          <div class="score-bar"><div class="score-fill" style="width:${s.score}%"></div></div>
+        </div>
+        <div class="prem-lock-overlay">
+          <div class="prem-lock-icon">🔒</div>
+          <div class="prem-lock-label">Premium Signal</div>
+          <div class="prem-lock-sub">Full entry, SL & TP levels</div>
+          <button class="prem-lock-btn" onclick="openUpgrade()">Unlock — $12.99/mo</button>
         </div>
       </div>`;
     }
   });
+
   container.innerHTML = html;
   const countEl = document.getElementById('ps-signals');
   if(countEl) countEl.textContent = signalsData.length;
@@ -999,9 +1824,15 @@ function renderHomePreview() {
   const preview = document.getElementById('home-signals-preview');
   if(!preview || signalsData.length === 0) return;
   let html = '';
-  signalsData.slice(0,2).forEach(s => {
+  // Show the 3 free signals on home
+  signalsData.filter(s=>!s.premium).slice(0,3).forEach(s => {
+    const cat = getCatInfo(s.bot);
     html += `<div class="signal-card">
-      <div class="sig-top"><div><div class="sig-pair">${s.pair}</div></div><span class="sig-badge ${s.dir==='LONG'?'badge-long':'badge-short'}">${s.dir}</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <span class="cat-pill ${cat.cls}">${cat.emoji} ${cat.label}</span>
+        <span class="sig-badge ${s.dir==='LONG'?'badge-long':'badge-short'}">${s.dir}</span>
+      </div>
+      <div class="sig-pair" style="margin-bottom:6px">${s.pair}</div>
       <div class="sig-row">
         <div class="sig-cell"><div class="sig-cell-label">Entry</div><div class="sig-cell-val">${s.entry}</div></div>
         <div class="sig-cell"><div class="sig-cell-label">SL</div><div class="sig-cell-val" style="color:var(--red)">${s.sl}</div></div>
@@ -1057,7 +1888,15 @@ function loginUser(user) {
   document.getElementById('pf-name').value=user.name;
   document.getElementById('pf-email').value=user.email;
   document.getElementById('ps-days').textContent=1;
+  const leh=document.getElementById('logout-email-hint'); if(leh) leh.textContent=user.email||'';
   initApp();
+  // Sync More page account card
+  const mab = document.getElementById('more-avatar-btn');
+  if(mab) mab.textContent = letter;
+  const mdn = document.getElementById('more-display-name');
+  if(mdn) mdn.textContent = user.name;
+  const mde = document.getElementById('more-display-email');
+  if(mde) mde.textContent = user.email;
   showToast('Welcome, '+user.name+'! 🎉');
 }
 function doLogout() {
@@ -1148,6 +1987,8 @@ const tickerData=[
   {s:'UNI/USDT',p:'9.14',c:'+0.88%',up:true},{s:'AVAX/USDT',p:'36.50',c:'-1.22%',up:false},
   {s:'SUSHI/USDT',p:'1.82',c:'+3.41%',up:true},{s:'XAU/USD',p:'2,310',c:'+0.30%',up:true},
   {s:'EUR/USD',p:'1.0821',c:'-0.12%',up:false},{s:'GBP/USD',p:'1.2634',c:'+0.08%',up:true},
+  {s:'TSLA',p:'182.50',c:'+1.20%',up:true},{s:'NVDA',p:'875.00',c:'+3.44%',up:true},
+  {s:'MSTR',p:'1,620',c:'+4.10%',up:true},{s:'AMD',p:'162.30',c:'-0.80%',up:false},
 ];
 function buildTicker(){
   const wrap=document.getElementById('ticker');
@@ -1182,7 +2023,7 @@ const coursesData={
     {title:'GWP 103 — 5-Pillar Confluence',icon:'🏛️',body:'A GWP signal only triggers when ALL 5 pillars align — this gives the 97% accuracy.',illus:`[1] Ghost Wick ✓\n[2] Liquidity Trap ✓\n[3] Market Structure Break ✓\n[4] Order Block alignment ✓\n[5] Kelly R:R ≥ 1.8:1 ✓\n\nALL 5 = SIGNAL FIRES 🔥`,detail:'Each pillar alone: 60-70% win rate. All five together: 97%. Quality over quantity.',badge:'free'},
     {title:'GWP 104 — Liquidity SL Rule',icon:'🛡️',body:'SL must go BEYOND the swing that created the Ghost Wick — never at the wick tip.',illus:`WRONG: SL at wick tip ❌\nCORRECT: SL beyond swing ✓\n\nSL = Swing Low/High ± 5-10 pips`,detail:'Institutions know where wick-tip stops are. They sweep them before the real move.',badge:'free'},
     {title:'GWP 105 — Kelly Risk Sizing',icon:'📏',body:'GWP uses the Kelly Criterion to determine optimal position sizing.',illus:`f = (p×b - q) / b\np=0.97, b=1.8\nf = 95.3% → Capped at 2% max`,detail:'The raw Kelly suggests 95%. GWP caps at 2% per trade. Score 90+: risk 2%. Score 80-89: risk 1%.',badge:'free'},
-    {title:'GWP 106 — Bot Automation',icon:'🤖',body:'GWP signals are automated via two bots running on GitHub Actions (Node.js 22).',illus:`Bot 1: ASTERIX_5PILLAR_BOT\nPairs: BTC, ETH, SOL, DEXE, UNI, AVAX, SUSHI\n\nBot 2: ASTERIX_PRECISION_BOT\nPairs: Crypto + XAU/USD, EUR/USD, GBP/USD`,detail:'Both bots scan every 30 minutes across 4H/1H/15M, check all GWP pillars, and publish signals to a GitHub Gist read by this app.',badge:'free'},
+    {title:'GWP 106 — Bot Automation',icon:'🤖',body:'GWP signals are automated via two bots running on GitHub Actions (Node.js 22).',illus:`Bot 1: ASTERIX_5PILLAR_BOT\nPairs: BTC, ETH, SOL, DEXE, UNI, AVAX, SUSHI\n\nBot 2: ASTERIX_PRECISION_BOT\nPairs: Crypto + XAU/USD, EUR/USD, GBP/USD`,detail:'Both bots scan every 30 minutes across 4H/1H/15M, check all GWP pillars, and publish signals to a GitHub Gist read by AxTrader.',badge:'free'},
   ],
   advanced:[
     {title:'[PREMIUM] Advanced ICT — Institutional Flow',icon:'🔬',body:'Deep dive into how central banks, hedge funds, and primary dealers move markets.',badge:'premium'},
@@ -1501,6 +2342,27 @@ async function triggerInstallPrompt() {
     showToast('📱 Tap your browser menu → "Add to Home Screen"');
   }
 }
+
+// ============ SESSION CLOCK ============
+function updateSessionClock() {
+  const now = new Date();
+  const nyOff = -4; // EDT
+  const nyH = (now.getUTCHours() + nyOff + 24) % 24;
+  const nyM = now.getUTCMinutes();
+  const pad = n => String(n).padStart(2,'0');
+  const timeStr = pad(nyH) + ':' + pad(nyM);
+  const el = document.getElementById('session-time');
+  if(el) el.textContent = timeStr + ' NY';
+  const lbl = document.getElementById('session-label');
+  let session = 'Off-Hours';
+  if(nyH>=8 && nyH<12) session='NY Morning';
+  else if(nyH>=12 && nyH<17) session='NY Afternoon';
+  else if(nyH>=2 && nyH<8) session='London Session';
+  else if(nyH>=17 && nyH<22) session='NY Evening';
+  if(lbl) lbl.innerHTML = session + '<br><span id="session-time">' + timeStr + ' NY</span>';
+}
+setInterval(updateSessionClock, 30000);
+updateSessionClock();
 
 // ============ INIT APP ============
 function initApp() {
