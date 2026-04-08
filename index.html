@@ -369,6 +369,7 @@ canvas{width:100%;height:100%}
           <div class="ref-card"><div class="ref-card-logo">🟢</div><h4>KuCoin</h4><p>10% fee discount forever</p><a href="https://www.kucoin.com/r/ASTERIX" target="_blank">Join KuCoin →</a></div>
           <div class="ref-card"><div class="ref-card-logo">🟡</div><h4>Crypto Bot</h4><p>Live GWP crypto signals on Telegram</p><a href="https://t.me/gwp_crypto_bot" target="_blank">@gwp_crypto_bot →</a></div>
           <div class="ref-card"><div class="ref-card-logo">🔴</div><h4>Forex Bot</h4><p>Live GWP forex &amp; gold signals</p><a href="https://t.me/gwp_forex_bot" target="_blank">@gwp_forex_bot →</a></div>
+          <div class="ref-card"><div class="ref-card-logo">🟢</div><h4>Stocks Bot</h4><p>Live GWP US stocks signals</p><a href="https://t.me/gwp_stocks_bot" target="_blank">@gwp_stocks_bot →</a></div>
         </div>
       </div>
       <div class="section">
@@ -465,6 +466,7 @@ canvas{width:100%;height:100%}
           <div class="more-row" onclick="window.open('mailto:asterixcomltd@gmail.com')"><div class="more-row-icon" style="background:var(--surface2)">✉️</div><div class="more-row-text"><h5>Email Us</h5><p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="69081a1d0c1b00110a0604051d0d290e04080005470a0604">[email&#160;protected]</a></p></div><span class="more-row-arrow">›</span></div>
           <div class="more-row" onclick="window.open('https://t.me/gwp_crypto_bot','_blank')"><div class="more-row-icon" style="background:#fdf8ee">🟡</div><div class="more-row-text"><h5>Crypto Signals Bot</h5><p>@gwp_crypto_bot — BTC, ETH, SOL…</p></div><span class="more-row-arrow">›</span></div>
           <div class="more-row" onclick="window.open('https://t.me/gwp_forex_bot','_blank')"><div class="more-row-icon" style="background:#fdf0ee">🔴</div><div class="more-row-text"><h5>Forex Signals Bot</h5><p>@gwp_forex_bot — XAU, EUR, GBP…</p></div><span class="more-row-arrow">›</span></div>
+          <div class="more-row" onclick="window.open('https://t.me/gwp_stocks_bot','_blank')"><div class="more-row-icon" style="background:#edf7f2">🟢</div><div class="more-row-text"><h5>Stocks Signals Bot</h5><p>@gwp_stocks_bot — TSLA, NVDA, MSTR…</p></div><span class="more-row-arrow">›</span></div>
           <div class="more-row" onclick="window.open('https://t.me/asterix_trading_signal_hub','_blank')"><div class="more-row-icon" style="background:#e8f4fd">✈️</div><div class="more-row-text"><h5>Telegram Community</h5><p>t.me/asterix_trading_signal_hub</p></div><span class="more-row-arrow">›</span></div>
           <div class="more-row" onclick="window.open('https://twitter.com/Asterix_Abdin','_blank')"><div class="more-row-icon" style="background:#f0f0f0">𝕏</div><div class="more-row-text"><h5>Follow on X</h5><p>@Asterix_Abdin</p></div><span class="more-row-arrow">›</span></div>
         </div>
@@ -664,7 +666,7 @@ canvas{width:100%;height:100%}
     <div class="status-card" style="background:var(--gold-bg);border-color:var(--gold);margin:0 0 12px">
       <div style="font-family:'JetBrains Mono',monospace;font-size:.75rem;line-height:1.9;color:var(--text)">
         <span style="color:var(--gold);font-weight:800">BOTS (GitHub Actions — Node.js)</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;↓ write crypto/forex_signals.json<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;↓ write crypto/forex/stocks_signals.json<br>
         <span style="color:var(--blue);font-weight:800">GITHUB GIST (public JSON bridge)</span><br>
         &nbsp;&nbsp;↓ raw URL fetch (no auth needed)<br>
         <span style="color:var(--green);font-weight:800">FRONTEND (Vercel)</span><br>
@@ -701,6 +703,7 @@ canvas{width:100%;height:100%}
 //   1. gist.github.com → New gist → Public
 //      File 1: crypto_signals.json  content: []
 //      File 2: forex_signals.json    content: []
+//      File 3: stocks_signals.json   content: []
 //   2. Copy the Gist ID from the URL (32-char hex after your username)
 //   3. Paste it below as GIST_ID
 //   4. Add GH_PAT + GIST_ID secrets to your gwp-bots repo
@@ -720,32 +723,34 @@ async function fetchSignalsFromSheet() {
     const t    = Date.now();
     const base = `https://gist.githubusercontent.com/${GIST_USER}/${GIST_ID}/raw`;
 
-    // Try fetching both signal files in parallel
-    const [ar, fr] = await Promise.allSettled([
+    // Fetch all three signal files in parallel
+    const [ar, fr, sr] = await Promise.allSettled([
       fetch(`${base}/crypto_signals.json?t=${t}`),
-      fetch(`${base}/forex_signals.json?t=${t}`)
+      fetch(`${base}/forex_signals.json?t=${t}`),
+      fetch(`${base}/stocks_signals.json?t=${t}`)
     ]);
 
-    let crypto = [], forex = [];
+    let crypto = [], forex = [], stocks = [];
     if (ar.status === 'fulfilled' && ar.value.ok) {
-      try {
-        const txt = await ar.value.text();
-        crypto = JSON.parse(txt);
-      } catch(e) { console.warn('crypto parse fail', e); }
+      try { crypto = JSON.parse(await ar.value.text()); } catch(e) {}
     }
     if (fr.status === 'fulfilled' && fr.value.ok) {
-      try {
-        const txt = await fr.value.text();
-        forex = JSON.parse(txt);
-      } catch(e) { console.warn('forex parse fail', e); }
+      try { forex  = JSON.parse(await fr.value.text());  } catch(e) {}
+    }
+    if (sr.status === 'fulfilled' && sr.value.ok) {
+      try { stocks = JSON.parse(await sr.value.text()); } catch(e) {}
     }
 
-    // Merge both arrays, sort newest-first, keep top 20
-    const merged = [...(Array.isArray(crypto)?crypto:[]), ...(Array.isArray(forex)?forex:[])]
+    // Merge all three, sort newest-first, keep top 25
+    const merged = [
+      ...(Array.isArray(crypto)?crypto:[]),
+      ...(Array.isArray(forex)?forex:[]),
+      ...(Array.isArray(stocks)?stocks:[]),
+    ]
       .filter(s => s && (s.pair || s.symbol))
       .map(s => { if (!s.pair && s.symbol) s.pair = s.symbol; return s; })
       .sort((a, b) => (b.ts || b.timestamp || 0) - (a.ts || a.timestamp || 0))
-      .slice(0, 20);
+      .slice(0, 25);
 
     if (!merged.length) {
       console.log('Gist is empty — bots have not written yet. GIST_ID:', GIST_ID);
@@ -783,38 +788,28 @@ async function fetchSignalsFromSheet() {
     // "Best" = highest score among most-recent signals of that type
     const cryptoPool = merged.filter(s => (s.bot || '') === 'crypto');
     const forexPool  = merged.filter(s => (s.bot || '') === 'forex');
+    const stocksPool = merged.filter(s => (s.bot || '') === 'stocks');
 
-    // Pick top of each type (already sorted newest-first; pick highest score within top-5)
+    // Pick best of each bot type (highest score among top-5 most recent)
     const pickBest = pool => {
       if (!pool.length) return null;
       const candidates = pool.slice(0, 5);
       return candidates.reduce((best, s) => {
-        const sc = s.score || s.conviction || 0;
-        const bsc = best.score || best.conviction || 0;
-        return sc > bsc ? s : best;
+        return (s.score || 0) > (best.score || 0) ? s : best;
       }, candidates[0]);
     };
 
     const topCrypto = pickBest(cryptoPool);
     const topForex  = pickBest(forexPool);
+    const topStocks = pickBest(stocksPool);
 
-    // Remaining pool: exclude the two selected, take up to 3 (mixed, newest-first)
-    const usedSet = new Set([topCrypto, topForex].filter(Boolean));
-    const rest = merged.filter(s => !usedSet.has(s)).slice(0, 3);
+    // Slots: 0=crypto, 1=forex, 2=stocks, 3-4=best of the rest
+    const anchors = [topCrypto, topForex, topStocks].filter(Boolean);
+    const usedSet = new Set(anchors);
+    const rest = merged.filter(s => !usedSet.has(s)).slice(0, 2);
 
-    // Build ordered list: [crypto, forex, ...rest] — handle missing types gracefully
-    let ordered = [];
-    if (topCrypto && topForex) {
-      ordered = [topCrypto, topForex, ...rest];
-    } else if (topCrypto) {
-      // No forex signals yet: fill slot 1 from rest
-      ordered = [topCrypto, ...rest].slice(0, 5);
-    } else if (topForex) {
-      // No crypto signals yet: fill slot 0 from rest
-      ordered = [topForex, ...rest].slice(0, 5);
-    } else {
-      ordered = rest.slice(0, 5);
-    }
+    let ordered = [...anchors, ...rest].slice(0, 5);
+    if (!ordered.length) ordered = merged.slice(0, 5);
 
     signalsData = ordered.slice(0, 5).map((s, i) => normalizeSignal(s, i));
 
@@ -845,6 +840,7 @@ function renderFallbackSignals() {
     { pair:'ETH/USDT', dir:'SHORT', entry:'2,135',  sl:'2,171',  tp:'2,030',  tp1:'2,083',  tp3:'1,820',   score:86, tf:'4H', time:'--:--', bot:'crypto', grade:'A SOLID',   rr:'2.9', premium:true  },
     { pair:'EUR/USD',  dir:'SHORT', entry:'1.0812', sl:'1.0845', tp:'1.0762', tp1:'1.0762', tp3:'1.0680',  score:78, tf:'1H', time:'--:--', bot:'forex',  grade:'A SOLID',   rr:'1.8', premium:true  },
     { pair:'SOL/USDT', dir:'SHORT', entry:'82.17',  sl:'83.70',  tp:'78.45',  tp1:'80.31',  tp3:'71.02',   score:88, tf:'1H', time:'--:--', bot:'crypto', grade:'A+ ELITE',  rr:'2.4', premium:true  },
+    { pair:'TSLA/USD', dir:'SHORT', entry:'238.50', sl:'244.10', tp:'224.30', tp1:'231.40', tp3:'210.00',  score:83, tf:'4H', time:'--:--', bot:'stocks', grade:'A SOLID',   rr:'2.6', premium:true  },
   ];
   const el = document.getElementById('signal-last-update');
   if(el) el.textContent = 'Waiting for bot...';
@@ -860,7 +856,7 @@ function setSignalSourceBadge(isLive, count) {
   if (!badge) return;
   if (isLive) {
     badge.className = 'live-source-badge live';
-    badge.textContent = '● LIVE — ' + count + ' signal' + (count !== 1 ? 's' : '') + ' from sheet';
+    badge.textContent = '● LIVE — ' + count + ' signal' + (count !== 1 ? 's' : '') + ' (crypto+forex+stocks)';
   } else {
     badge.className = 'live-source-badge demo';
     badge.textContent = '⏳ Waiting for bot signal...';
@@ -908,18 +904,17 @@ function renderSignals() {
     }
     const grade = gradeLabel;
     const gradeClass = s.score>=90?'grade-astar':s.score>=80?'grade-aplus':s.score>=70?'grade-a':'grade-b';
-    const botHandle = s.bot==='forex' ? 'gwp_forex_bot' : 'gwp_crypto_bot';
-    const botEmoji  = s.bot==='forex' ? '🔴' : '🟡';
+    const botHandle = s.bot==='forex' ? 'gwp_forex_bot' : s.bot==='stocks' ? 'gwp_stocks_bot' : 'gwp_crypto_bot';
+    const botEmoji  = s.bot==='forex' ? '🔴' : s.bot==='stocks' ? '🟢' : '🟡';
     const staleMs   = Date.now() - (s.ts || 0);
     const staleHrs  = staleMs / 3600000;
     const ageLabel  = s.ts ? (staleHrs < 1 ? 'just now' : staleHrs < 24 ? Math.floor(staleHrs)+'h ago' : Math.floor(staleHrs/24)+'d ago') : s.time;
 
     if (i < 2) {
       // ── FULL SIGNAL CARD (slot 0 = crypto, slot 1 = forex) ───────────────
-      const primaryHandle = s.bot==='forex' ? 'gwp_forex_bot'  : 'gwp_crypto_bot';
-      const primaryEmoji  = s.bot==='forex' ? '🔴' : '🟡';
-      const secondHandle  = s.bot==='forex' ? 'gwp_crypto_bot' : 'gwp_forex_bot';
-      const secondEmoji   = s.bot==='forex' ? '🟡' : '🔴';
+      const _bm = { crypto:['gwp_crypto_bot','🟡'], forex:['gwp_forex_bot','🔴'], stocks:['gwp_stocks_bot','🟢'] };
+      const [primaryHandle, primaryEmoji] = _bm[s.bot] || _bm.crypto;
+      const otherBots = Object.entries(_bm).filter(([k])=>k!==s.bot).map(([,v])=>{ const [h,e]=v; return `<a class="bot-link" href="https://t.me/${h}" target="_blank">${e} @${h}</a>`; })
       html += `<div class="signal-card">
         <div class="sig-top">
           <div>
@@ -943,7 +938,7 @@ function renderSignals() {
         </div>
         <div class="sig-bots">
           <a class="bot-link" href="https://t.me/${primaryHandle}" target="_blank">${primaryEmoji} @${primaryHandle}</a>
-          <a class="bot-link" href="https://t.me/${secondHandle}" target="_blank">${secondEmoji} @${secondHandle}</a>
+          ${otherBots[0]}
         </div>
       </div>`;
     } else {
