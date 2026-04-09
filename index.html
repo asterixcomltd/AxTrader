@@ -1410,7 +1410,7 @@ canvas{width:100%;height:100%}
           </div>
           <div class="more-row" onclick="openSystemStatus()">
             <div class="more-row-icon" style="background:var(--green-bg)"><span class="sys-dot" style="margin:0"></span></div>
-            <div class="more-row-text"><h5>System Status</h5><p>Live · All bots operational · Gist bridge active</p></div>
+            <div class="more-row-text"><h5>System Status</h5><p>Live · All systems operational</p></div>
             <span class="more-row-arrow">›</span>
           </div>
         </div>
@@ -1430,7 +1430,22 @@ canvas{width:100%;height:100%}
           </div>
         </div>
 
-        <!-- ─── SECTION H: SIGN OUT (always last) ────────────── -->
+        <!-- ─── SECTION H: LEGAL ──────────────────────────────── -->
+        <div class="more-section-label">⚖️ Legal</div>
+        <div class="more-section" style="margin:0 16px 16px">
+          <div class="more-row" onclick="openOverlay('disclaimer-overlay')">
+            <div class="more-row-icon" style="background:#fef3c7">⚠️</div>
+            <div class="more-row-text"><h5>Risk Disclaimer</h5><p>Important — please read before trading</p></div>
+            <span class="more-row-arrow">›</span>
+          </div>
+          <div class="more-row" onclick="openOverlay('tnc-overlay')">
+            <div class="more-row-icon" style="background:var(--surface2)">📄</div>
+            <div class="more-row-text"><h5>Terms & Conditions</h5><p>Usage policy · Intellectual property</p></div>
+            <span class="more-row-arrow">›</span>
+          </div>
+        </div>
+
+        <!-- ─── SECTION I: SIGN OUT (always last) ────────────── -->
         <div class="more-section-label">🔐 Account Security</div>
         <div class="more-section" style="margin:0 16px 24px;border-color:#fde8e8">
           <div class="more-row" onclick="doLogout()" style="border-bottom:none">
@@ -1488,28 +1503,88 @@ canvas{width:100%;height:100%}
 </div>
 
 <div class="overlay center" id="upgrade-overlay" onclick="closeOverlay('upgrade-overlay')">
-  <div class="modal centered" onclick="event.stopPropagation()" style="position:relative">
-    <button class="modal-close" onclick="closeOverlay('upgrade-overlay')">✕</button>
-    <div style="text-align:center;margin-bottom:16px">
-      <div style="font-size:2rem;margin-bottom:8px">✦</div>
-      <h2>AxTrader Premium</h2>
-      <p class="sub">Unlock the full power of AxTrader</p>
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:800;color:var(--gold)">$12.99<span style="font-size:1rem;color:var(--text2);font-weight:400">/month</span></div>
+  <div class="modal centered" onclick="event.stopPropagation()" style="position:relative;padding:0;overflow:hidden">
+    <button class="modal-close" onclick="closeOverlay('upgrade-overlay')" style="position:absolute;top:14px;right:14px;z-index:2">✕</button>
+
+    <!-- Header gradient -->
+    <div style="background:linear-gradient(135deg,#1a1814 0%,#2d2418 60%,#1a1814 100%);padding:28px 24px 20px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-40px;right:-40px;width:150px;height:150px;background:radial-gradient(circle,rgba(201,168,76,.4) 0%,transparent 70%)"></div>
+      <div style="position:absolute;bottom:-20px;left:-20px;width:100px;height:100px;background:radial-gradient(circle,rgba(201,168,76,.2) 0%,transparent 70%)"></div>
+      <div style="text-align:center;position:relative">
+        <div style="font-size:1.8rem;margin-bottom:6px">✦</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:800;color:#fff;margin-bottom:2px">AxTrader Premium</div>
+        <div style="font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:14px">Trade with institutional-grade precision</div>
+        <div style="display:inline-flex;align-items:baseline;gap:4px">
+          <span style="font-family:'Space Grotesk',sans-serif;font-size:2.4rem;font-weight:800;color:var(--gold2)">$12.99</span>
+          <span style="font-size:.85rem;color:rgba(255,255,255,.5)">/month</span>
+        </div>
+        <div style="margin-top:6px">
+          <span style="background:rgba(201,168,76,.2);color:var(--gold2);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid rgba(201,168,76,.3)">Cancel anytime · No hidden fees</span>
+        </div>
+      </div>
     </div>
-    <ul class="premium-features" style="margin-bottom:20px">
-      <li style="color:var(--text)">2–3 high-probability daily signals</li>
-      <li style="color:var(--text)">Zero ads — completely clean interface</li>
-      <li style="color:var(--text)">Advanced ICT, SMC & GWP deep courses</li>
-      <li style="color:var(--text)">Priority Liquidity Trap alerts</li>
-      <li style="color:var(--text)">4H close confirmation alerts</li>
-      <li style="color:var(--text)">Liquidation price warnings</li>
-      <li style="color:var(--text)">Early access to new features</li>
-    </ul>
-    <p style="font-size:.8rem;color:var(--text2);text-align:center;margin-bottom:12px">Choose your payment method:</p>
-    <div class="payment-options">
-      <a class="payment-opt" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Pay via Telegram</h5><p>Send payment proof to @Asterix_Abdin</p></div><span>›</span></a>
-      <a class="payment-opt" href="https://pay.google.com" target="_blank"><span class="payment-opt-icon">💳</span><div class="payment-opt-text"><h5>Google Pay</h5><p>Fast, secure payment</p></div><span>›</span></a>
-      <a class="payment-opt" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>Crypto Payment</h5><p>BTC, USDT, ETH accepted</p></div><span>›</span></a>
+
+    <!-- Features list -->
+    <div style="padding:18px 20px 0">
+      <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px">Everything in Premium</div>
+      <div style="display:grid;gap:9px;margin-bottom:16px">
+
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <span style="background:var(--gold-bg);color:var(--gold);border-radius:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">📡</span>
+          <div><div style="font-weight:700;font-size:.88rem">2–4 High-Conviction Signals Daily</div><div style="font-size:.76rem;color:var(--text2)">A+ and SUPREME grade GWP setups — only the best setups reach your feed</div></div>
+        </div>
+
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <span style="background:#f5f3ff;color:#7c3aed;border-radius:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">🎓</span>
+          <div><div style="font-weight:700;font-size:.88rem">Full ICT, SMC & GWP Deep Courses</div><div style="font-size:.76rem;color:var(--text2)">Advanced modules including Order Blocks, FVGs, Killzone entries & AVWAP mastery</div></div>
+        </div>
+
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <span style="background:var(--green-bg);color:var(--green);border-radius:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">⚡</span>
+          <div><div style="font-weight:700;font-size:.88rem">Priority Liquidity Trap Alerts</div><div style="font-size:.76rem;color:var(--text2)">Real-time push alerts the moment a sweep-and-reverse pattern is detected</div></div>
+        </div>
+
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <span style="background:var(--blue-bg);color:var(--blue);border-radius:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">🕯️</span>
+          <div><div style="font-weight:700;font-size:.88rem">4H Close Confirmation Alerts</div><div style="font-size:.76rem;color:var(--text2)">Never miss a higher-timeframe confirmation — get notified at candle close</div></div>
+        </div>
+
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <span style="background:var(--red-bg);color:var(--red);border-radius:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">🔥</span>
+          <div><div style="font-weight:700;font-size:.88rem">Liquidation Level Warnings</div><div style="font-size:.76rem;color:var(--text2)">Know where leveraged positions are stacked — trade with the smart money</div></div>
+        </div>
+
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <span style="background:var(--surface2);color:var(--text2);border-radius:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">🚫</span>
+          <div><div style="font-weight:700;font-size:.88rem">Completely Ad-Free Experience</div><div style="font-size:.76rem;color:var(--text2)">Clean, distraction-free interface — your focus stays on the signals</div></div>
+        </div>
+
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <span style="background:var(--gold-bg);color:var(--gold);border-radius:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">🏅</span>
+          <div><div style="font-weight:700;font-size:.88rem">Premium Leaderboard Access</div><div style="font-size:.76rem;color:var(--text2)">Compete, track your stats, and earn ATX multipliers exclusive to Premium</div></div>
+        </div>
+
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <span style="background:#f5f3ff;color:#7c3aed;border-radius:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">🚀</span>
+          <div><div style="font-weight:700;font-size:.88rem">Early Access to New Features</div><div style="font-size:.76rem;color:var(--text2)">Be first to get Stocks signals, AI analysis tools, and upcoming strategy modules</div></div>
+        </div>
+
+      </div>
+
+      <!-- Social proof strip -->
+      <div style="background:var(--surface2);border-radius:10px;padding:10px 12px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
+        <div style="font-size:1.1rem">⭐</div>
+        <div style="font-size:.78rem;color:var(--text2)"><strong style="color:var(--text)">Trusted by 2,400+ traders</strong> across 38 countries. Average signal accuracy: <strong style="color:var(--green)">73%+</strong> live.</div>
+      </div>
+
+      <!-- Payment options -->
+      <p style="font-size:.78rem;color:var(--text2);text-align:center;margin-bottom:10px;font-weight:600">Choose your payment method:</p>
+      <div class="payment-options" style="margin-bottom:14px">
+        <a class="payment-opt" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Pay via Telegram</h5><p>Send payment proof to @Asterix_Abdin</p></div><span>›</span></a>
+        <a class="payment-opt" href="https://pay.google.com" target="_blank"><span class="payment-opt-icon">💳</span><div class="payment-opt-text"><h5>Google Pay</h5><p>Fast, secure payment</p></div><span>›</span></a>
+        <a class="payment-opt" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>Crypto Payment</h5><p>BTC, USDT, ETH accepted</p></div><span>›</span></a>
+      </div>
+      <div style="font-size:.7rem;color:var(--text3);text-align:center;margin-bottom:20px">Trading involves risk. Premium provides tools — results depend on your execution. <span style="text-decoration:underline;cursor:pointer" onclick="closeOverlay('upgrade-overlay');openOverlay('disclaimer-overlay')">Read disclaimer</span></div>
     </div>
   </div>
 </div>
@@ -1629,38 +1704,117 @@ canvas{width:100%;height:100%}
 </div>
 
 
-<!-- SYSTEM STATUS MODAL -->
-<div class="overlay" id="status-overlay" onclick="closeOverlay('status-overlay')">
-  <div class="modal" onclick="event.stopPropagation()">
+<!-- DISCLAIMER MODAL -->
+<div class="overlay" id="disclaimer-overlay" onclick="closeOverlay('disclaimer-overlay')">
+  <div class="modal" onclick="event.stopPropagation()" style="position:relative">
     <div class="modal-handle"></div>
-    <h2>⚡ System Architecture</h2>
-    <p class="sub">How the app stays connected to the bots</p>
+    <button class="modal-close" onclick="closeOverlay('disclaimer-overlay')" style="position:absolute;top:16px;right:16px">✕</button>
+    <h2>⚠️ Risk Disclaimer</h2>
+    <p class="sub" style="margin-bottom:16px">Please read carefully before using AxTrader signals</p>
 
-    <div class="status-card" style="background:var(--gold-bg);border-color:var(--gold);margin:0 0 12px">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.75rem;line-height:1.9;color:var(--text)">
-        <span style="color:var(--gold);font-weight:800">BOTS (GitHub Actions — Node.js)</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;↓ write crypto/forex_signals.json<br>
-        <span style="color:var(--blue);font-weight:800">GITHUB GIST (public JSON bridge)</span><br>
-        &nbsp;&nbsp;↓ raw URL fetch (no auth needed)<br>
-        <span style="color:var(--green);font-weight:800">AXTRADER FRONTEND (Vercel)</span><br>
-        &nbsp;&nbsp;↓ merges + renders live signals<br>
-        <span style="color:var(--premium);font-weight:800">TELEGRAM (@gwp_crypto_bot / @gwp_forex_bot / @gwp_stocks_bot)</span>
+    <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-weight:700;font-size:.88rem;color:#92400e;margin-bottom:4px">NOT FINANCIAL ADVICE</div>
+      <div style="font-size:.8rem;color:#78350f;line-height:1.65">All signals, analysis, and content provided by AxTrader are for <strong>informational and educational purposes only</strong>. Nothing on this platform constitutes financial advice, investment advice, trading advice, or any other type of advice.</div>
+    </div>
+
+    <div style="font-size:.82rem;color:var(--text2);line-height:1.75;display:grid;gap:10px">
+      <div style="background:var(--surface2);border-radius:10px;padding:12px">
+        <div style="font-weight:700;font-size:.82rem;color:var(--text);margin-bottom:4px">⚡ Trading Involves Substantial Risk</div>
+        Trading financial instruments including Forex, cryptocurrencies, and derivatives carries a high level of risk and may not be suitable for all investors. You can lose more than your initial investment.
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:12px">
+        <div style="font-weight:700;font-size:.82rem;color:var(--text);margin-bottom:4px">📊 Past Performance ≠ Future Results</div>
+        Historical signal accuracy, win rates, and backtested results are not a reliable indicator of future performance. Market conditions change and no strategy guarantees profitability.
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:12px">
+        <div style="font-weight:700;font-size:.82rem;color:var(--text);margin-bottom:4px">🧠 Your Responsibility</div>
+        You are solely responsible for your trading decisions. Always conduct your own due diligence, apply proper risk management, and never trade with funds you cannot afford to lose.
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:12px">
+        <div style="font-weight:700;font-size:.82rem;color:var(--text);margin-bottom:4px">🏛️ Regulatory Notice</div>
+        AxTrader is not a licensed broker, investment adviser, or financial institution. We do not manage client funds. Seek advice from a qualified financial professional if required.
       </div>
     </div>
 
-    <div class="status-row"><span class="status-label">🌐 Frontend hosting</span><span class="status-val arch-pill">Vercel</span></div>
-    <div class="status-row"><span class="status-label">🤖 Bot hosting</span><span class="status-val arch-pill">GitHub Actions</span></div>
-    <div class="status-row"><span class="status-label">🗄️ Bridge / DB</span><span class="status-val arch-pill">GitHub Gist (public)</span></div>
-    <div class="status-row"><span class="status-label">🔑 Gist ID</span><span class="status-val" style="font-size:.65rem" id="status-gist-id">see index.html</span></div>
-    <div class="status-row"><span class="status-label">🔁 Bot scan interval</span><span class="status-val">Every 30 min</span></div>
-    <div class="status-row"><span class="status-label">🔄 App auto-refresh</span><span class="status-val">Every 60 s</span></div>
+    <div style="margin-top:14px;font-size:.75rem;color:var(--text3);text-align:center;line-height:1.6">
+      By using AxTrader, you acknowledge that you have read and understood this disclaimer and agree to our Terms & Conditions.<br>
+      © 2024–2025 Asterix.COM Ltd. All rights reserved.
+    </div>
+    <button class="btn-primary" style="margin-top:16px;background:var(--text)" onclick="closeOverlay('disclaimer-overlay')">I Understand</button>
+  </div>
+</div>
 
-    <div style="background:var(--green-bg);border-radius:10px;padding:12px;margin-top:14px;font-size:.8rem;color:var(--green)">
-      <strong>✅ Zero-config reads:</strong> The Gist is public — no API key needed in the frontend. The bots use a GH_PAT secret (gist scope) stored in GitHub Actions secrets to push updates.
+<!-- TERMS & CONDITIONS MODAL -->
+<div class="overlay" id="tnc-overlay" onclick="closeOverlay('tnc-overlay')">
+  <div class="modal" onclick="event.stopPropagation()" style="position:relative">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeOverlay('tnc-overlay')" style="position:absolute;top:16px;right:16px">✕</button>
+    <h2>📄 Terms & Conditions</h2>
+    <p class="sub" style="margin-bottom:16px">Asterix.COM Ltd — AxTrader Platform</p>
+    <div style="font-size:.82rem;color:var(--text2);line-height:1.75;display:grid;gap:10px">
+      <div><strong style="color:var(--text)">1. Acceptance of Terms</strong><br>By accessing or using AxTrader, you agree to be bound by these Terms. If you do not agree, do not use the platform.</div>
+      <div><strong style="color:var(--text)">2. Intellectual Property</strong><br>The Ghost Wick Protocol (GWP), all signal methodologies, content, branding, and software are proprietary to Asterix.COM Ltd. Reproduction, redistribution, or commercial use without written consent is strictly prohibited.</div>
+      <div><strong style="color:var(--text)">3. Premium Subscription</strong><br>Premium subscriptions are billed monthly. Access is granted manually upon payment confirmation. Refunds are evaluated on a case-by-case basis within 48 hours of purchase.</div>
+      <div><strong style="color:var(--text)">4. Account Use</strong><br>Accounts are for personal, non-commercial use only. Sharing access credentials or signals outside the platform is a violation and may result in account termination.</div>
+      <div><strong style="color:var(--text)">5. Limitation of Liability</strong><br>Asterix.COM Ltd is not liable for any trading losses, missed signals, technical outages, or indirect damages arising from use of the platform.</div>
+      <div><strong style="color:var(--text)">6. Governing Law</strong><br>These Terms are governed by applicable international law. Disputes shall be resolved through good-faith negotiation before any formal proceedings.</div>
+    </div>
+    <div style="margin-top:14px;font-size:.75rem;color:var(--text3);text-align:center">Last updated: January 2025 · asterixcomltd@gmail.com</div>
+    <button class="btn-primary" style="margin-top:14px;background:var(--text)" onclick="closeOverlay('tnc-overlay')">Close</button>
+  </div>
+</div>
+
+<!-- SYSTEM STATUS MODAL -->
+<div class="overlay" id="status-overlay" onclick="closeOverlay('status-overlay')">
+  <div class="modal" onclick="event.stopPropagation()" style="position:relative">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeOverlay('status-overlay')" style="position:absolute;top:16px;right:16px">✕</button>
+    <h2>⚡ System Status</h2>
+    <p class="sub">Live operational health — updated every 60 seconds</p>
+
+    <!-- Overall status badge -->
+    <div style="background:var(--green-bg);border:1px solid #bbf7d0;border-radius:14px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
+      <div style="width:12px;height:12px;background:var(--green);border-radius:50%;animation:pulse 1.4s infinite;flex-shrink:0"></div>
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.95rem;color:var(--green)">All Systems Operational</div>
+        <div style="font-size:.75rem;color:var(--text2);margin-top:1px">Signal engine · Data feeds · Delivery channels</div>
+      </div>
     </div>
 
-    <div style="background:var(--blue-bg);border-radius:10px;padding:12px;margin-top:8px;font-size:.8rem;color:var(--blue)">
-      <strong>ℹ️ Setup:</strong> Create a public Gist with <code>crypto_signals.json</code> and <code>forex_signals.json</code> (both starting as <code>[]</code>). Add <strong>GIST_ID</strong> + <strong>GH_PAT</strong> to gwp-bots repo secrets.
+    <!-- Service rows -->
+    <div style="display:grid;gap:8px;margin-bottom:16px">
+      <div class="status-row" style="justify-content:space-between">
+        <span class="status-label">📡 Signal Engine</span>
+        <span class="status-ok" style="font-size:.78rem;background:var(--green-bg);padding:3px 10px;border-radius:20px">Operational</span>
+      </div>
+      <div class="status-row" style="justify-content:space-between">
+        <span class="status-label">💹 Crypto Scanner</span>
+        <span class="status-ok" style="font-size:.78rem;background:var(--green-bg);padding:3px 10px;border-radius:20px">Live</span>
+      </div>
+      <div class="status-row" style="justify-content:space-between">
+        <span class="status-label">💱 Forex Scanner</span>
+        <span class="status-ok" style="font-size:.78rem;background:var(--green-bg);padding:3px 10px;border-radius:20px">Live</span>
+      </div>
+      <div class="status-row" style="justify-content:space-between">
+        <span class="status-label">📲 Telegram Delivery</span>
+        <span class="status-ok" style="font-size:.78rem;background:var(--green-bg);padding:3px 10px;border-radius:20px">Connected</span>
+      </div>
+      <div class="status-row" style="justify-content:space-between">
+        <span class="status-label">📰 News Feed</span>
+        <span class="status-ok" style="font-size:.78rem;background:var(--green-bg);padding:3px 10px;border-radius:20px">Live</span>
+      </div>
+      <div class="status-row" style="justify-content:space-between">
+        <span class="status-label">🔁 Scan Frequency</span>
+        <span class="status-val">Every 30 min</span>
+      </div>
+      <div class="status-row" style="justify-content:space-between">
+        <span class="status-label">🔄 Feed Refresh</span>
+        <span class="status-val">Every 60 s</span>
+      </div>
+    </div>
+
+    <div style="background:var(--surface2);border-radius:10px;padding:12px;font-size:.78rem;color:var(--text2);line-height:1.6">
+      ℹ️ Signal quality and delivery are monitored continuously. If you believe a signal is delayed, try refreshing the app or contacting support via Telegram.
     </div>
   </div>
 </div>
@@ -2236,38 +2390,822 @@ async function fetchLiveTicker() {
 setInterval(fetchLiveTicker, 90000);
 
 // ============ COURSES ============
+const FREE_NEWS_LIMIT = 15;
 const coursesData={
   ict:[
-    {title:'ICT 101 — What is ICT?',icon:'📐',body:'ICT (Inner Circle Trader) focuses on understanding how large institutions move price — not on indicators.',illus:`Market Maker Model:\n  Accumulation → Manipulation → Distribution\n  \n  Retail trader sees: breakout\n  Smart money does: liquidity sweep`,detail:'ICT teaches that price is engineered by institutions to hunt retail stop losses before the real move begins.',badge:'free'},
-    {title:'ICT 102 — Fair Value Gaps (FVG)',icon:'📊',body:'A Fair Value Gap is a 3-candle imbalance where price moved so fast it left an unfilled gap.',illus:`3-Candle FVG:\n  Candle 1 ──┐\n  Candle 2     GAP (imbalance)\n  Candle 3 ──┘`,detail:'Mark the area between Candle 1 high and Candle 3 low (bearish FVG). Price often returns to fill these zones.',badge:'free'},
-    {title:'ICT 103 — Order Blocks',icon:'🧱',body:'Order Blocks are the last bullish/bearish candle before a significant move.',illus:`Bullish OB:\n  ████ ← Last bearish candle\n  ████   before explosive up-move`,detail:'Mark the body of the last bearish candle before a strong bullish move. These zones provide high R:R entries.',badge:'free'},
-    {title:'ICT 104 — Liquidity & Stop Hunts',icon:'🎯',body:'Banks need liquidity to fill massive orders. They engineer price to sweep stop areas before reversing.',illus:`Equal Highs (Buy-Side Liquidity):\n  ─────────── ←← Banks target this\n  ████  ████\n  Price sweeps, grabs stops, reverses DOWN`,detail:'Identify equal highs and equal lows — these are liquidity pools. A quick spike through and reversal = liquidity sweep.',badge:'free'},
-    {title:'ICT 105 — Kill Zones',icon:'⏰',body:'ICT identifies specific time windows where institutions are most active.',illus:`London Open KZ: 02:00–05:00 NY\n  → Reversals & breakouts\n\nNY AM KZ: 08:30–11:00 NY\n  → Highest probability moves`,detail:'Trade primarily during Kill Zones. Avoid lunch hours (12:00–13:30 NY).',badge:'free'},
-    {title:'ICT 106 — Power of 3 (AMD)',icon:'🔄',body:'Every day follows: Accumulation, Manipulation (stop hunt), Distribution (real move).',illus:`AMD Cycle:\n  ACCUMULATION (Asian)\n  MANIPULATION → spike\n  DISTRIBUTION → real direction`,detail:'Wait for the manipulation sweep before entering. The real move comes after the stop hunt.',badge:'free'},
+    // ── ICT 101 ──────────────────────────────────────────────
+    {title:'ICT 101 — What is ICT?',icon:'📐',badge:'free',
+     body:'Inner Circle Trader (ICT) is a methodology taught by Michael J. Huddleston. It focuses on understanding how large institutions — banks, hedge funds, central banks — manipulate price to engineer liquidity before executing real orders. Forget indicators. Price itself tells the story.',
+     illus:`Market Maker Model (3 Phases):
+  ┌─────────────────────────────────┐
+  │  PHASE 1: ACCUMULATION          │
+  │  Institutions quietly build     │
+  │  positions at key lows          │
+  │                                 │
+  │  PHASE 2: MANIPULATION          │
+  │  Fake breakout below support    │
+  │  Retail traders stopped out     │
+  │                                 │
+  │  PHASE 3: DISTRIBUTION          │
+  │  Real move begins — up          │
+  │  Institutions profit            │
+  └─────────────────────────────────┘
+  
+  What retail sees: "Support broke!"
+  What smart money does: Fills buy orders
+  at the lowest possible price.`,
+     detail:'ICT teaches price is not random — it is engineered. Retail traders place stops at obvious levels (swing lows, round numbers, equal highs/lows). Institutions know exactly where these stops are. They push price to trigger those stops, collect liquidity, then reverse. Your job as an ICT trader: stop fighting the engineered moves and start anticipating them.'},
+
+    // ── ICT 102 ──────────────────────────────────────────────
+    {title:'ICT 102 — Fair Value Gaps (FVG)',icon:'📊',badge:'free',
+     body:'A Fair Value Gap (FVG) is a 3-candle pattern that reveals where institutions moved price so aggressively that no real price discovery occurred. These gaps act like magnets — price almost always returns to fill them before continuing.',
+     illus:`3-Candle Bearish FVG Structure:
+  ┌───────────────────────────────────┐
+  │  Candle 1  [██████]  High: 1.2050 │
+  │                                   │
+  │  Candle 2  [░░░░░░]  GAP ZONE     │
+  │            (no wicks overlap)      │
+  │                                   │
+  │  Candle 3  [██████]  Low: 1.1980  │
+  └───────────────────────────────────┘
+  
+  FVG = between C1 low and C3 high
+  
+  Bullish FVG → price went down too fast
+  → Expect price to return and fill
+  → High probability long entry zone
+  
+  Bearish FVG → price went up too fast  
+  → Expect price to return and fill
+  → High probability short entry zone`,
+     detail:'To mark an FVG: (1) Find a 3-candle sequence where the middle candle body has no overlap with the wicks of candles 1 and 3. (2) The gap is between Candle 1\'s high and Candle 3\'s low (bearish) or Candle 1\'s low and Candle 3\'s high (bullish). (3) Price is drawn back to fill this gap before continuing. FVGs are strongest when they form during Kill Zones, align with Order Blocks, and occur on imbalanced market structure.'},
+
+    // ── ICT 103 ──────────────────────────────────────────────
+    {title:'ICT 103 — Order Blocks (OB)',icon:'🧱',badge:'free',
+     body:'An Order Block is the origin of an institutional move. It is the last opposing candle before a significant directional push. These are the actual zones where large orders were filled — and institutions will defend them on return.',
+     illus:`Bullish Order Block Formation:
+  ┌────────────────────────────────────┐
+  │ Step 1: Final bearish candle       │
+  │         [░░░░░░░░░░░░]  ← OB      │
+  │                                    │
+  │ Step 2: Explosive bullish move     │
+  │              ↑↑↑↑↑↑↑↑↑↑↑↑↑↑       │
+  │                                    │
+  │ Step 3: OB zone becomes support    │
+  │         [░░░░░░░░░░░░]  ← re-test │
+  │                  ↑ Entry here      │
+  └────────────────────────────────────┘
+  
+  OB Body = Entry zone
+  SL below OB body low
+  Target = Next liquidity pool above`,
+     detail:'Bullish OB: the last bearish candle before a strong bullish move. Bearish OB: the last bullish candle before a strong bearish move. The strongest OBs: (1) create a Fair Value Gap on the explosive move, (2) are near a swing point (HH or LL), (3) have been tested no more than once. When price returns to an OB, look for a rejection — that\'s your entry. The OB is invalid when price closes through it with conviction.'},
+
+    // ── ICT 104 ──────────────────────────────────────────────
+    {title:'ICT 104 — Liquidity & Stop Hunts',icon:'🎯',badge:'free',
+     body:'Banks and institutions cannot fill millions of contracts on a single candle without slippage. They need a counter-party. Retail stop losses ARE the counter-party. Understanding this single fact transforms how you see every market move.',
+     illus:`Types of Liquidity:
+  ┌────────────────────────────────────┐
+  │ Buy-Side Liquidity (BSL)           │
+  │ ════════════════════ ← Equal Highs │
+  │ ████  ████  ████                   │
+  │  Retail stops: above highs         │
+  │                                    │
+  │ Sell-Side Liquidity (SSL)          │
+  │ ████  ████  ████                   │
+  │ ════════════════════ ← Equal Lows  │
+  │  Retail stops: below lows          │
+  │                                    │
+  │ SWEEP PATTERN:                     │
+  │ Price spikes above BSL → grabs     │
+  │ all buy stops → institutions       │
+  │ sell into that liquidity → price   │
+  │ reverses DOWN sharply              │
+  └────────────────────────────────────┘`,
+     detail:'Liquidity is found at: (1) Equal Highs/Lows — horizontal price clusters where retail traders place stops. (2) Previous Day High/Low — commonly watched levels. (3) Previous Week High/Low. (4) Round numbers (1.2000, 1.2500). (5) Moving averages where many traders place trailing stops. When you see a spike into one of these areas followed by an aggressive reversal within 1-2 candles — that is a liquidity sweep. This is the core entry trigger in GWP.'},
+
+    // ── ICT 105 ──────────────────────────────────────────────
+    {title:'ICT 105 — Kill Zones & Sessions',icon:'⏰',badge:'free',
+     body:'ICT defines specific 2-4 hour windows within each trading session where institutional activity is highest and setups have the greatest probability. Outside Kill Zones, price is often choppy, engineered for confusion, or simply ranging.',
+     illus:`Daily Session Map (NY Time):
+  ┌────────────────────────────────────┐
+  │ ASIA SESSION                       │
+  │ 20:00 — 00:00 NY                   │
+  │ → Builds overnight range           │
+  │ → Often consolidation              │
+  │                                    │
+  │ LONDON OPEN KZ  ⚡ HIGH PROB       │
+  │ 02:00 — 05:00 NY                   │
+  │ → Reverses Asian range             │
+  │ → Strong directional moves         │
+  │                                    │
+  │ NY AM KZ  ⚡ HIGHEST PROB          │
+  │ 08:30 — 11:00 NY                   │
+  │ → Continuation or reversal         │
+  │ → News-driven + pure ICT setups    │
+  │                                    │
+  │ LUNCH (AVOID)                      │
+  │ 12:00 — 13:00 NY  ← choppy zone   │
+  │                                    │
+  │ NY PM KZ  (secondary)              │
+  │ 13:30 — 16:00 NY                   │
+  └────────────────────────────────────┘`,
+     detail:'The most powerful setups form when: (1) A Kill Zone opens and raids liquidity from the previous session, (2) Meets an Order Block or FVG, (3) Shows a ghost wick or liquidity trap. Trade London Open for EUR/GBP/XAU pairs. Trade NY Open for USD pairs and crypto (crypto follows NY sentiment). Never force trades during lunch or overnight Asia when you are in a low-liquidity environment.'},
+
+    // ── ICT 106 ──────────────────────────────────────────────
+    {title:'ICT 106 — Power of 3 (AMD)',icon:'🔄',badge:'free',
+     body:'Every trading day follows a predictable 3-phase cycle: Accumulation (building positions quietly), Manipulation (the stop hunt, the fake move), and Distribution (the real, sustained directional move). Once you see it, you cannot unsee it.',
+     illus:`AMD Daily Cycle (Bullish Day):
+  ┌────────────────────────────────────┐
+  │ A — ACCUMULATION                   │
+  │ Asian session: price ranges        │
+  │ Institutions absorb sell orders    │
+  │ [─────────────] flat range         │
+  │                                    │
+  │ M — MANIPULATION                   │
+  │ London open: spike BELOW the range │
+  │      ↓ (stop hunt below Asian low) │
+  │ Retail shorts triggered            │
+  │                                    │
+  │ D — DISTRIBUTION                   │
+  │ NY session: explosive move UP      │
+  │       ↑↑↑↑↑↑↑↑↑↑↑                 │
+  │ Price seeks BSL target above       │
+  │ Retail shorts liquidated           │
+  └────────────────────────────────────┘`,
+     detail:'The manipulation phase is the key. It is always designed to trigger the maximum amount of retail stop losses. In a bullish day, price fakes down (below Asian low, below obvious support) before the real move up. In a bearish day, price fakes up first. Your entry: wait for the manipulation spike, see the reversal candle (ghost wick / FVG retest), enter in the direction of distribution. Daily bias is set by: premium/discount arrays, weekly profiles, and COT data for forex.'},
+
+    // ── ICT 107 ──────────────────────────────────────────────
+    {title:'ICT 107 — Premium & Discount Arrays',icon:'📏',badge:'free',
+     body:'ICT uses a simple framework: buy in discount (below midpoint of a range), sell in premium (above midpoint). Institutions never buy at resistance or sell at support — they do the opposite of what retail does.',
+     illus:`Premium/Discount Framework:
+  ┌────────────────────────────────────┐
+  │ Range HIGH ████████████ 100%       │
+  │                                    │
+  │           PREMIUM ZONE             │
+  │           (above 50%)              │
+  │           → institutions SELL here │
+  │                                    │
+  │ EQUILIBRIUM ─────────────── 50%   │
+  │                                    │
+  │           DISCOUNT ZONE            │
+  │           (below 50%)              │
+  │           → institutions BUY here  │
+  │                                    │
+  │ Range LOW  ████████████ 0%         │
+  └────────────────────────────────────┘
+  
+  Rule: Only buy below EQ (50%)
+        Only sell above EQ (50%)`,
+     detail:'Fibonacci levels map directly to this concept: 0.705, 0.79 are "deep discount" buy levels. 0.21, 0.25 are "deep premium" sell levels. 0.5 is equilibrium. The most powerful entries combine a premium/discount position with an Order Block + FVG alignment. If price is at a bullish OB but it\'s in the premium zone of a higher timeframe range — skip the trade. Context is everything.'},
+
+    // ── ICT 108 ──────────────────────────────────────────────
+    {title:'ICT 108 — Optimal Trade Entry (OTE)',icon:'🎯',badge:'free',
+     body:'The OTE is ICT\'s precise entry model within a retracement. It uses Fibonacci levels to identify the exact zone where institutions re-enter after a displacement. This removes guesswork from your entry timing.',
+     illus:`OTE Entry on a Bullish Setup:
+  ┌────────────────────────────────────┐
+  │ 1. Mark the displacement swing     │
+  │    Low A ────────────── High B     │
+  │                                    │
+  │ 2. Draw Fibonacci A→B              │
+  │    0.0   = High B (target)         │
+  │    0.5   = Equilibrium             │
+  │    0.618 ← ─ OTE ZONE START       │
+  │    0.705 ←   OTE ZONE SWEET SPOT  │
+  │    0.79  ← ─ OTE ZONE END         │
+  │    1.0   = Low A                   │
+  │                                    │
+  │ 3. Wait for price to retrace       │
+  │    into 0.618 — 0.79               │
+  │                                    │
+  │ 4. Enter at OB or FVG within zone  │
+  │ 5. SL below swing Low A            │
+  └────────────────────────────────────┘`,
+     detail:'The OTE is not a stand-alone entry — it is a filter. You still need an Order Block or FVG within the 0.618-0.79 retracement zone. When OTE aligns with an OB AND a Kill Zone AND market structure is bullish — that is an A+ setup. GWP uses a modified OTE where the wick of the ghost wick candle acts as the displacement, and the retracement into the OTE zone is the entry trigger.'},
+
+    // ── ICT 109 ──────────────────────────────────────────────
+    {title:'ICT 109 — Daily Bias & HTF Analysis',icon:'🗓️',badge:'free',
+     body:'Before any trade, you need a directional bias. ICT uses the Daily and 4H charts to define the macro direction, then drops to the 1H and 15M for the entry. Trading against the daily bias without compelling confluence is how most retail traders lose.',
+     illus:`Top-Down Analysis Framework:
+  ┌────────────────────────────────────┐
+  │ MONTHLY / WEEKLY                   │
+  │ → Is price at premium or discount? │
+  │ → Where is the next draw (target)? │
+  │                                    │
+  │ DAILY (4H)                         │
+  │ → What is the market structure?    │
+  │ → BOS up → bullish bias            │
+  │ → BOS down → bearish bias          │
+  │                                    │
+  │ 1H (15M)                           │
+  │ → Find the Kill Zone entry         │
+  │ → OB + FVG + Liquidity sweep       │
+  │ → Confirm CHoCH on LTF             │
+  │                                    │
+  │ Entry Timeframe (5M / 1M)          │
+  │ → Precision entry refinement       │
+  │ → Reduce SL, improve R:R           │
+  └────────────────────────────────────┘`,
+     detail:'The Daily Bias process: (1) On Sunday, mark the previous week\'s high and low. (2) Mark Monthly opens. (3) Identify if price is at a significant HTF OB, FVG, or liquidity zone. (4) Check if price needs to seek BSL (buy-side) or SSL (sell-side) liquidity. (5) Note any key economic events (NFP, CPI, FOMC) that will engineer manipulation. Once daily bias is set, only take trades in that direction on the lower timeframes during Kill Zones.'},
   ],
+
   smc:[
-    {title:'SMC 101 — Overview',icon:'🏦',body:'SMC focuses on understanding where institutional players are positioned in the market.',illus:`SMC Framework:\n  Market Structure → Bias\n  Supply & Demand  → Entry zones\n  Liquidity        → Where price goes`,detail:'SMC traders identify whether the market is bullish or bearish, find aligned zones, wait for liquidity to be taken.',badge:'free'},
-    {title:'SMC 102 — BOS & CHoCH',icon:'📈',body:'A Break of Structure (BOS) confirms trend continuation. A Change of Character (CHoCH) signals reversal.',illus:`BULLISH:\n  HH ──────── ← new high\n     HL ──── ← higher low\n     ↑ BOS confirmed`,detail:'When price breaks a previous Higher Low, it creates a CHoCH — institutions may be switching sides.',badge:'free'},
-    {title:'SMC 103 — Supply & Demand',icon:'⚖️',body:'Supply zones are where institutions sold heavily. Demand zones are where they bought.',illus:`DEMAND ZONE:\n     ↑↑↑↑ strong buy\n  ────────────\n  ▓▓▓▓▓▓▓▓▓▓ ← Zone`,detail:'The strongest zones are fresh (untested), created with explosive candles, aligned with market structure.',badge:'free'},
-    {title:'SMC 104 — Inducement',icon:'🎣',body:'Before reaching a Supply/Demand zone, price makes a fake move to clear weak positions.',illus:`Inducement pattern:\n  ▓▓▓▓▓▓▓▓▓▓ DEMAND ZONE\n       ↓ spike (inducement)\n  ▓▓▓▓↓▓▓▓▓▓\n       ↑↑↑↑ REAL MOVE`,detail:'Wait for price to sweep below a Demand zone before entering long. The sweep clears weak longs.',badge:'free'},
-    {title:'SMC 105 — MMXM Model',icon:'🧩',body:'The Market Maker Model shows how price cycles from one liquidity pool to another.',illus:`BSL ──────── (Buy-Side)\n     ↑ expansion\n  OB ████████\n     ↓ expansion  \n  SSL ──────── (Sell-Side)`,detail:'Price moves from sell-side to buy-side liquidity (or vice versa), respecting Order Blocks along the way.',badge:'free'},
-    {title:'SMC 106 — Entry & Risk',icon:'🎯',body:'SMC entry models combine structure, zone, inducement, and confirmation.',illus:`Checklist:\n  ✅ Structure bias\n  ✅ S/D zone\n  ✅ Inducement taken\n  ✅ CHoCH on LTF\n  ✅ Min 2:1 R:R\n  ✅ Max 2% risk`,detail:'Never enter without all criteria met. Stop loss goes beyond inducement low/high — never at zone edge.',badge:'free'},
+    // ── SMC 101 ──────────────────────────────────────────────
+    {title:'SMC 101 — Smart Money Concept Overview',icon:'🏦',badge:'free',
+     body:'SMC (Smart Money Concepts) is a framework for reading the market from the perspective of institutional traders. It refines ICT principles into a systematic trading approach centered on three core pillars: Market Structure, Supply/Demand Zones, and Liquidity. If all three align, the trade is valid.',
+     illus:`The SMC Trinity:
+  ┌────────────────────────────────────┐
+  │         MARKET STRUCTURE           │
+  │         (the directional bias)     │
+  │               ↓                    │
+  │         LIQUIDITY POOL             │
+  │         (where price is going)     │
+  │               ↓                    │
+  │         SUPPLY / DEMAND ZONE       │
+  │         (where you enter)          │
+  │                                    │
+  │ All 3 must align on same TF        │
+  │ → High-probability trade setup     │
+  │                                    │
+  │ If only 2 align → pass             │
+  │ If only 1 → never trade            │
+  └────────────────────────────────────┘`,
+     detail:'SMC traders are essentially asking three questions before every trade: (1) What direction is the market structure currently pointing? (2) Where is the nearest draw on liquidity in that direction? (3) Is there a clean Supply or Demand zone between current price and that liquidity pool? When all three are clear and aligned, take the trade. When in doubt — do nothing. SMC is a game of patience and selectivity.'},
+
+    // ── SMC 102 ──────────────────────────────────────────────
+    {title:'SMC 102 — Market Structure: BOS & CHoCH',icon:'📈',badge:'free',
+     body:'Market structure is the backbone of SMC analysis. A Break of Structure (BOS) confirms the trend is continuing. A Change of Character (CHoCH) signals a potential trend reversal. These two patterns alone give you your directional bias for the day.',
+     illus:`BULLISH MARKET STRUCTURE:
+  ┌─────────────────────────────────────┐
+  │                         HH  ←──── │
+  │              LH                    │
+  │                    HL ──→ BOS up  │
+  │       LL→CHoCH                     │
+  │  HL                                │
+  │                                    │
+  │ BOS (Break of Structure):          │
+  │ Price takes out a previous High    │
+  │ → Trend continues UP               │
+  │                                    │
+  │ CHoCH (Change of Character):       │
+  │ Price takes out a previous Low     │
+  │ in a bullish trend                 │
+  │ → Potential reversal forming       │
+  └─────────────────────────────────────┘`,
+     detail:'Identifying structure correctly requires patience. Don\'t mark every small swing — only significant swing points that the majority of traders are watching. On the 1H chart, a swing high/low must be formed by at least 3 candles (one on each side). A BOS is only confirmed when the candle CLOSES beyond the structure point — wicks do not count. CHoCH is the first signal of reversal. Wait for a pullback to a Demand zone after CHoCH before entering.'},
+
+    // ── SMC 103 ──────────────────────────────────────────────
+    {title:'SMC 103 — Supply & Demand Zones',icon:'⚖️',badge:'free',
+     body:'Supply zones are price areas where institutions had massive sell orders. Demand zones are where they had massive buy orders. Unlike support/resistance (horizontal lines), these are boxes covering a specific price range. They do not expire — they remain valid until broken.',
+     illus:`Demand Zone Formation:
+  ┌────────────────────────────────────┐
+  │ Step 1: Strong explosive move UP   │
+  │              ↑↑↑↑↑↑↑↑↑            │
+  │                                    │
+  │ Step 2: Mark the BASE of the move  │
+  │ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░ Zone │
+  │  ^origin candle (last bear/bull)   │
+  │                                    │
+  │ Step 3: Extend zone forward        │
+  │ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░─────→│
+  │                                    │
+  │ Step 4: Mark as invalid if price   │
+  │ closes deeply through it           │
+  │                                    │
+  │ VALID   → price spent < 3 candles  │
+  │ INVALID → price consolidates inside│
+  └────────────────────────────────────┘`,
+     detail:'The strongest Supply/Demand zones: (1) FRESH — never retested since formation. (2) Created by explosive moves (3+ candles in one direction). (3) Contain an Order Block or FVG within them. (4) Align with a higher timeframe structure. The weakest zones: multiple tests (each test depletes institutional orders), created with small/overlapping candles, inside a consolidation range. Always draw from the origin candle body, not the wick.'},
+
+    // ── SMC 104 ──────────────────────────────────────────────
+    {title:'SMC 104 — Inducement',icon:'🎣',badge:'free',
+     body:'Inducement is a minor liquidity sweep that occurs just before price reaches the real Supply or Demand zone. It creates a fake entry point that traps impatient traders — then the real move begins from the zone. Recognizing inducement is what separates disciplined SMC traders from reactive ones.',
+     illus:`Inducement Before Demand Zone:
+  ┌────────────────────────────────────┐
+  │                                    │
+  │ DEMAND ZONE: ░░░░░░░░░░░░░░░░░    │
+  │                                    │
+  │  ↓ inducement spike below zone    │
+  │         ╲                          │
+  │ ░░░░░░░╲░░░░░░ ← zone tested      │
+  │          ╲   ↑ real entry here     │
+  │           ╲↑↑↑↑ strong rejection  │
+  │                                    │
+  │ TRAP: Entering when price          │
+  │ first touches zone                 │
+  │                                    │
+  │ SMART: Wait for the inducement     │
+  │ sweep, then enter on confirmation  │
+  └────────────────────────────────────┘`,
+     detail:'Inducement is typically: (1) A brief candle spike below a Demand zone / above a Supply zone. (2) A minor BOS on a lower timeframe before the real reaction. (3) A liquidity raid on equal lows/highs near the zone. The trap entry is triggered by the first touch of the zone. The smart entry is entered after inducement is confirmed — a wick into the zone followed by a strong rejection candle (pin bar, bullish engulfing, or ghost wick). This is exactly what GWP\'s Liquidity Trap pillar codifies.'},
+
+    // ── SMC 105 ──────────────────────────────────────────────
+    {title:'SMC 105 — MMXM: The Market Maker Model',icon:'🧩',badge:'free',
+     body:'MMXM (Market Maker Model) is the full cycle that price follows as institutions move from one liquidity pool to another. It is the most complete picture of how a trend unfolds, stalls, reverses, and accelerates — all engineered by market makers.',
+     illus:`Full MMXM Cycle (Bullish):
+  ┌────────────────────────────────────┐
+  │ BSL ═══════════════ (target above) │
+  │                        ↑↑↑         │
+  │     5. EXPANSION       ↑           │
+  │             OB ░░░░░░░↑            │
+  │             ↑ 4.RETRACEMENT        │
+  │  3. MITIGATION (OB tested)         │
+  │         ──────────────             │
+  │  2. DISTRIBUTION (first push)      │
+  │         ────────────               │
+  │  1. ACCUMULATION PHASE             │
+  │                                    │
+  │ SSL ═══════════════ (sweep first)  │
+  │  ↓ price sweeps lows               │
+  │  → institutions buy into this      │
+  └────────────────────────────────────┘`,
+     detail:'The MMXM cycle: (1) Accumulation near SSL. (2) Price distributed upward (first expansion). (3) Mitigation — price returns to the OB/FVG that launched the first push. (4) Retracement complete — institutions re-load positions. (5) Second expansion toward BSL target. The entry for most SMC traders is at Step 3-4 — the mitigation of the first OB after structural confirmation. This gives the highest R:R because your entry is at the point of institutional re-loading.'},
+
+    // ── SMC 106 ──────────────────────────────────────────────
+    {title:'SMC 106 — Full Entry Checklist',icon:'✅',badge:'free',
+     body:'A systematic SMC entry requires every checkpoint to pass. Skipping even one filter dramatically reduces win rate. This checklist applies to all timeframes and all markets.',
+     illus:`SMC Entry Checklist:
+  ┌────────────────────────────────────┐
+  │ STEP 1: HIGHER TF BIAS             │
+  │ □ Daily structure: bullish/bearish │
+  │ □ Price in premium or discount?    │
+  │ □ Where is HTF draw on liquidity?  │
+  │                                    │
+  │ STEP 2: ZONE IDENTIFICATION        │
+  │ □ Fresh Supply or Demand on LTF?   │
+  │ □ Contains OB or FVG?              │
+  │ □ Zone aligns with HTF bias?       │
+  │                                    │
+  │ STEP 3: ENTRY TRIGGER              │
+  │ □ Inducement taken?                │
+  │ □ CHoCH on 15M or 5M?              │
+  │ □ Ghost wick or FVG retest?        │
+  │                                    │
+  │ STEP 4: RISK                       │
+  │ □ SL beyond inducement swing?      │
+  │ □ Min 2:1 R:R confirmed?           │
+  │ □ Position size ≤ 2% account?      │
+  │                                    │
+  │ ALL BOXES TICKED → EXECUTE         │
+  └────────────────────────────────────┘`,
+     detail:'Print this checklist. Go through it for every single trade before placing the order. If any box is unclear or cannot be confirmed, skip the trade — there will always be another setup. The discipline to skip a trade that doesn\'t fully check out is what separates consistently profitable traders from those who blame their strategy. Your edge is not in the entry — it is in the systematic application of your process.'},
+
+    // ── SMC 107 ──────────────────────────────────────────────
+    {title:'SMC 107 — Multi-Timeframe Confluence',icon:'🔍',badge:'free',
+     body:'Single-timeframe analysis is the biggest mistake new SMC traders make. The signal on the 15M means nothing without higher timeframe alignment. Learn to read the same structure across three timeframes simultaneously.',
+     illus:`Timeframe Hierarchy:
+  ┌────────────────────────────────────┐
+  │ WEEKLY → Monthly                   │
+  │ Purpose: Major draw on liquidity   │
+  │ Tools: HTF Supply/Demand, Range    │
+  │                                    │
+  │ DAILY → 4H                         │
+  │ Purpose: Directional bias          │
+  │ Tools: BOS/CHoCH, OB, FVG          │
+  │                                    │
+  │ 1H → 15M                           │
+  │ Purpose: Entry zone refinement     │
+  │ Tools: Demand/Supply, Inducement   │
+  │                                    │
+  │ 5M → 1M                            │
+  │ Purpose: Entry precision           │
+  │ Tools: CHoCH, mini-FVG, OTE        │
+  │                                    │
+  │ RULE: Trade WITH the flow of       │
+  │ each higher timeframe              │
+  └────────────────────────────────────┘`,
+     detail:'The power move: Daily chart is bullish (BOS up, price at discount). 4H pulls back into a Demand zone. 1H shows CHoCH (mini reversal confirming bounce). 15M shows an OB + FVG inside the 4H demand zone. 5M shows the ghost wick entry trigger. That is a 5-timeframe confluenced entry. Each additional timeframe alignment adds probability. A setup that is valid on 2 timeframes may have a 60% win rate. The same setup on 5 timeframes may have a 90%+ win rate.'},
+
+    // ── SMC 108 ──────────────────────────────────────────────
+    {title:'SMC 108 — Managing Trades & Partials',icon:'💼',badge:'free',
+     body:'Entering a trade is only half the job. Managing it to maximize profit while protecting principal is the other half. SMC has a structured approach to trade management that removes emotional decision-making from the equation.',
+     illus:`SMC Trade Management Protocol:
+  ┌────────────────────────────────────┐
+  │ Entry: Zone re-test + CHoCH        │
+  │ SL: Beyond inducement low/high     │
+  │                                    │
+  │ TARGET 1 (TP1) — at 1:1 R:R       │
+  │ → Close 33% of position            │
+  │ → Move SL to breakeven             │
+  │                                    │
+  │ TARGET 2 (TP2) — at 2:1 R:R       │
+  │ → Close another 33%                │
+  │ → Trail SL to TP1 level            │
+  │                                    │
+  │ TARGET 3 (TP3) — at 3:1+ R:R      │
+  │ → Let remaining 34% run            │
+  │ → Trail via structure (BOS)        │
+  │                                    │
+  │ RESULT: Risk-free runner from TP1  │
+  └────────────────────────────────────┘`,
+     detail:'The partial close strategy achieves two goals simultaneously: it locks in profit early (removing anxiety), and it keeps exposure in a winning trade (maximizing expectancy). Many traders close too early out of fear. By taking 33% at 1:1, you have already recovered a third of your risk. The remaining 67% is now partly covered, reducing psychological pressure to exit early. The trailing stop via market structure (moving SL under each new Higher Low in an uptrend) keeps you in the trade while protecting gains.'},
+
+    // ── SMC 109 ──────────────────────────────────────────────
+    {title:'SMC 109 — Correlation & Market Drivers',icon:'🌐',badge:'free',
+     body:'Markets do not move in isolation. Understanding the correlations between DXY, gold, crypto, and equities gives you a powerful edge — you can confirm your trade bias using multiple independent signals before risking capital.',
+     illus:`Key Market Correlations:
+  ┌────────────────────────────────────┐
+  │ DXY (USD Index) ↑                  │
+  │  → EUR/USD ↓  (inverse)            │
+  │  → GBP/USD ↓  (inverse)            │
+  │  → XAU/USD ↓  (usually inverse)    │
+  │  → BTC/USD ↓  (often inverse)      │
+  │                                    │
+  │ RISK-ON environment:               │
+  │  → Stocks ↑ · BTC ↑ · ETH ↑       │
+  │  → Gold mixed · DXY flat/down      │
+  │                                    │
+  │ RISK-OFF environment:              │
+  │  → Stocks ↓ · BTC often ↓         │
+  │  → Gold ↑ · DXY ↑                  │
+  │  → Bonds ↑ (yield ↓)              │
+  │                                    │
+  │ CONFIRMATION RULE:                 │
+  │ DXY BOS down → look for EUR long   │
+  │ DXY OB rejecting → look for XAU ↑ │
+  └────────────────────────────────────┘`,
+     detail:'Practical correlation workflow: (1) Check DXY on the Daily. If DXY is at a Supply zone and rejecting, EUR/USD and GBP/USD are likely to see bullish setups. (2) Check US30 or SPX — if equities are risk-on, crypto tends to follow. (3) Use gold (XAU) as a DXY inverse proxy. (4) Check the VIX — when VIX spikes, risk assets sell off regardless of technical structure. Correlations are not 100% reliable (especially in crypto) but they provide a macro filter that increases the probability of your technical entries.'},
   ],
+
   gwp:[
-    {title:'GWP 101 — What is the Ghost Wick?',icon:'👻',body:'The Ghost Wick is where institutions leave their footprint inside a wick — sweeping liquidity before reversing.',illus:`Ghost Wick:\n  ─────── ← long wick (≥60% of range)\n      ┃    body\n      ─`,detail:'A Ghost Wick occurs when the wick is ≥60% of total candle range. The wick swept liquidity, body shows rejection.',badge:'free'},
-    {title:'GWP 102 — Liquidity Trap',icon:'🪤',body:'Price fakes through a key level only to reverse aggressively within 1-2 candles.',illus:`Bull Trap:\n  KEY RESISTANCE ──────────────\n                     ↑ fake break\n                  ████\n                     ↓↓↓↓ reversal`,detail:'When price closes back below the key level within 2 candles, the trap is confirmed. Enter on the rejection.',badge:'free'},
-    {title:'GWP 103 — 5-Pillar Confluence',icon:'🏛️',body:'A GWP signal only triggers when ALL 5 pillars align — this gives the 97% accuracy.',illus:`[1] Ghost Wick ✓\n[2] Liquidity Trap ✓\n[3] Market Structure Break ✓\n[4] Order Block alignment ✓\n[5] Kelly R:R ≥ 1.8:1 ✓\n\nALL 5 = SIGNAL FIRES 🔥`,detail:'Each pillar alone: 60-70% win rate. All five together: 97%. Quality over quantity.',badge:'free'},
-    {title:'GWP 104 — Liquidity SL Rule',icon:'🛡️',body:'SL must go BEYOND the swing that created the Ghost Wick — never at the wick tip.',illus:`WRONG: SL at wick tip ❌\nCORRECT: SL beyond swing ✓\n\nSL = Swing Low/High ± 5-10 pips`,detail:'Institutions know where wick-tip stops are. They sweep them before the real move.',badge:'free'},
-    {title:'GWP 105 — Kelly Risk Sizing',icon:'📏',body:'GWP uses the Kelly Criterion to determine optimal position sizing.',illus:`f = (p×b - q) / b\np=0.97, b=1.8\nf = 95.3% → Capped at 2% max`,detail:'The raw Kelly suggests 95%. GWP caps at 2% per trade. Score 90+: risk 2%. Score 80-89: risk 1%.',badge:'free'},
-    {title:'GWP 106 — Bot Automation',icon:'🤖',body:'GWP signals are automated via two bots running on GitHub Actions (Node.js 22).',illus:`Bot 1: ASTERIX_5PILLAR_BOT\nPairs: BTC, ETH, SOL, DEXE, UNI, AVAX, SUSHI\n\nBot 2: ASTERIX_PRECISION_BOT\nPairs: Crypto + XAU/USD, EUR/USD, GBP/USD`,detail:'Both bots scan every 30 minutes across 4H/1H/15M, check all GWP pillars, and publish signals to a GitHub Gist read by AxTrader.',badge:'free'},
+    // ── GWP 101 ──────────────────────────────────────────────
+    {title:'GWP 101 — The Ghost Wick: Origins',icon:'👻',badge:'free',
+     body:'The Ghost Wick is the foundational pattern of the GWP system. It is a single candlestick where the wick is ≥60% of the total candle range. The wick represents institutional manipulation — a deliberate sweep of liquidity — before the real directional move begins. It is the institutional footprint made visible.',
+     illus:`Ghost Wick Anatomy:
+  ┌────────────────────────────────────┐
+  │ BULLISH GHOST WICK:                │
+  │                                    │
+  │        ┃ ← small upper wick       │
+  │       ███                          │
+  │       ███ ← body (< 40% of range) │
+  │       ███                          │
+  │        ┃                           │
+  │        ┃                           │
+  │        ┃ ← GHOST WICK (≥60%)      │
+  │        ┃    swept liquidity below  │
+  │        ┃    and reversed           │
+  │                                    │
+  │ MEASUREMENT:                       │
+  │ Wick length ÷ Total range ≥ 0.60   │
+  │                                    │
+  │ The longer the wick → the more     │
+  │ liquidity was swept → stronger     │
+  │ signal                             │
+  └────────────────────────────────────┘`,
+     detail:'Why the Ghost Wick works: institutions need to execute extremely large orders without moving the market against themselves. They engineer a price spike (the ghost wick) to trigger retail stop losses, thereby generating the liquidity (counter-party) needed to fill their real orders. The wick is essentially the evidence of the trap. When you see a wick that is ≥60% of the total candle range, you are looking at a completed institutional manipulation. The body of the candle shows where they actually wanted to be.'},
+
+    // ── GWP 102 ──────────────────────────────────────────────
+    {title:'GWP 102 — The Liquidity Trap Pattern',icon:'🪤',badge:'free',
+     body:'The Liquidity Trap is the multi-candle version of the Ghost Wick. Price breaks through a key structural level (equal highs, swing high, resistance), trapping breakout buyers — then aggressively reverses within 1-2 candles. This is the clearest, most reliable pattern in GWP.',
+     illus:`Bearish Liquidity Trap:
+  ┌────────────────────────────────────┐
+  │ KEY RESISTANCE / EQUAL HIGHS       │
+  │ ─────────────────────── ← level   │
+  │                                    │
+  │          CANDLE 1: Breakout        │
+  │          ↑↑↑ price closes above   │
+  │          [breakout candle]         │
+  │          Retail: "BREAKOUT!"       │
+  │          Institutions: selling     │
+  │                                    │
+  │          CANDLE 2: Reversal        │
+  │          Price closes back below   │
+  │          ─────────────────────── │
+  │          ↓↓↓↓↓↓↓↓↓↓↓↓            │
+  │                                    │
+  │ Breakout traders TRAPPED above     │
+  │ Their stops = fuel for down-move   │
+  └────────────────────────────────────┘`,
+     detail:'The Liquidity Trap entry rules: (1) Identify a key level (swing high, equal highs, previous day high, round number). (2) Price breaks above it (candle 1 closes above). (3) Within 1-2 candles, price returns and closes back below the level. (4) This confirms the trap is set. (5) Enter on the close of the reversal candle. SL above the wick of the trap candle. Target: the nearest SSL (sell-side liquidity) below. This pattern has a confirmed reversal within 2 candles — if price doesn\'t reverse by candle 3, the trap is invalidated.'},
+
+    // ── GWP 103 ──────────────────────────────────────────────
+    {title:'GWP 103 — The 5-Pillar Confluence System',icon:'🏛️',badge:'free',
+     body:'A GWP signal only fires when all 5 pillars align on the same timeframe. Each pillar alone has a 60-70% win rate. Combined, the historical accuracy reaches 97%. This is the core engine behind the AxTrader bots.',
+     illus:`The 5 Pillars (ALL must confirm):
+  ┌────────────────────────────────────┐
+  │ [1] GHOST WICK DETECTION           │
+  │     Wick ≥ 60% of candle range     │
+  │     Confirms institutional sweep   │
+  │                                    │
+  │ [2] LIQUIDITY TRAP                 │
+  │     Price fakes through key level  │
+  │     Reverses within 2 candles      │
+  │                                    │
+  │ [3] MARKET STRUCTURE BREAK         │
+  │     BOS in signal direction        │
+  │     Higher TF bias confirms        │
+  │                                    │
+  │ [4] ORDER BLOCK CONFLUENCE         │
+  │     OB or FVG in same zone         │
+  │     Volume spike at OB confirms    │
+  │                                    │
+  │ [5] KELLY RISK SIZING GATE         │
+  │     Min R:R ≥ 1.8:1                │
+  │     Conviction score ≥ 75/100      │
+  │                                    │
+  │ ALL 5 ✓ → SIGNAL FIRES 🔥          │
+  │ ANY MISSING → NO TRADE             │
+  └────────────────────────────────────┘`,
+     detail:'Each pillar is scored independently by the bot. Pillar 1 & 2 are the entry trigger. Pillar 3 is the directional filter. Pillar 4 is the zone quality filter. Pillar 5 is the risk/reward gate. A signal that scores 80/100 on conviction gets 1% risk. A signal that scores 90+/100 gets 2% risk. The bot never breaks this rule — emotion is completely removed from the sizing decision.'},
+
+    // ── GWP 104 ──────────────────────────────────────────────
+    {title:'GWP 104 — Stop Loss & ATR Floor Rules',icon:'🛡️',badge:'free',
+     body:'GWP v8 introduced ATR-floored stop losses — a critical upgrade that prevents stops being placed too tight. A stop loss that is too tight guarantees being stopped out on normal volatility before the real move happens.',
+     illus:`GWP SL Placement Rules:
+  ┌────────────────────────────────────┐
+  │ WRONG (retail behavior):           │
+  │  ─── SL at wick tip ❌             │
+  │  → Gets triggered by normal noise  │
+  │                                    │
+  │ CORRECT (GWP rule):                │
+  │  1. SL = Beyond the swing that     │
+  │     created the ghost wick         │
+  │                                    │
+  │  2. ATR Floor: SL must be ≥ 0.5×  │
+  │     ATR(14) away from entry        │
+  │     → Never below this floor       │
+  │                                    │
+  │  3. Final SL = MAX of:             │
+  │     (swing-based SL, ATR floor)    │
+  │                                    │
+  │ Example (4H):                      │
+  │  ATR(14) = 120 pips                │
+  │  ATR Floor = 60 pips               │
+  │  If swing SL = 45 pips → invalid  │
+  │  Must use 60 pips minimum          │
+  └────────────────────────────────────┘`,
+     detail:'The ATR floor was added in GWP v8 after backtesting revealed that ~23% of losing trades were stopped out within ATR/2 distance before eventually going in the right direction. Institutions know where tight stops cluster (just beyond the wick). By requiring the stop to be at least 0.5× ATR away from entry, GWP avoids the most common institutional stop-run that hits the wick tipsters. This slightly reduces R:R but dramatically improves the actual win rate on executed trades.'},
+
+    // ── GWP 105 ──────────────────────────────────────────────
+    {title:'GWP 105 — Kelly Risk Sizing & Conviction Scores',icon:'📏',badge:'free',
+     body:'GWP uses a modified Kelly Criterion to calculate position size. Rather than the raw Kelly formula (which produces dangerously large sizes), GWP caps allocation at 2% and scales it based on the trade\'s conviction score from the 5-pillar assessment.',
+     illus:`Conviction Score → Position Size:
+  ┌────────────────────────────────────┐
+  │ SCORING SYSTEM (100 pts max):      │
+  │                                    │
+  │ Ghost Wick quality    → 0-20 pts   │
+  │ Liquidity Trap clean  → 0-20 pts   │
+  │ MSB alignment         → 0-20 pts   │
+  │ OB/FVG confluence     → 0-20 pts   │
+  │ R:R quality           → 0-20 pts   │
+  │                                    │
+  │ RISK ALLOCATION:                   │
+  │  Score 90-100 → Risk 2.0% account  │
+  │  Score 80-89  → Risk 1.5% account  │
+  │  Score 75-79  → Risk 1.0% account  │
+  │  Score < 75   → NO TRADE           │
+  │                                    │
+  │ Kelly Formula (theoretical):        │
+  │  f = (0.97 × 1.8 − 0.03) / 1.8    │
+  │  f = 95.3%  ← way too much!        │
+  │  GWP cap: 2% max always            │
+  └────────────────────────────────────┘`,
+     detail:'The full Kelly of 95% is mathematically optimal but practically suicidal — a single losing streak would wipe any account. Institutional traders use fractional Kelly (typically ¼ Kelly). GWP\'s 2% cap is essentially 1/47th Kelly, which is extremely conservative. This is intentional: at 97% win rate with 1.8:1 R:R, even a run of 5 consecutive losses (statistically extremely rare) would only draw down a 2% risk account by ~10%. Full recovery takes just a few wins.'},
+
+    // ── GWP 106 ──────────────────────────────────────────────
+    {title:'GWP 106 — TP1 / TP2 / TP3 Targets',icon:'🎯',badge:'free',
+     body:'GWP v8 introduced higher take-profit targets (TP3 raised, minRR increased) based on backtesting showing that premium signals were being closed too early. The three-target system locks in profit while maximizing the winner\'s run.',
+     illus:`GWP Take-Profit Structure:
+  ┌────────────────────────────────────┐
+  │ Entry ●                            │
+  │       │                            │
+  │ TP1 ──┤ 1:1 R:R → Close 30%       │
+  │       │ SL moves to breakeven       │
+  │       │                            │
+  │ TP2 ──┤ 2:1 R:R → Close 40%       │
+  │       │ Trail SL to TP1 level       │
+  │       │                            │
+  │ TP3 ──┤ 3.5:1 R:R → Close 30%     │
+  │       │ (v8 raised from 2.5:1)     │
+  │       │                            │
+  │ Overall avg R:R on full hit: 2.3:1 │
+  │                                    │
+  │ SL ●  (below ATR floor)            │
+  │       Risk = 2% of account         │
+  └────────────────────────────────────┘`,
+     detail:'The math of a 3-target exit: 30% at 1:1 + 40% at 2:1 + 30% at 3.5:1 = (0.3×1 + 0.4×2 + 0.3×3.5) = 2.15:1 average R:R when all targets hit. With a 97% win rate and 2.15:1 R:R, the expected value per trade is massive. TP3 was raised in v8 because review of past signals showed price regularly overshooting the original 2.5:1 TP3. The 3.5:1 target captures more of these extended moves.'},
+
+    // ── GWP 107 ──────────────────────────────────────────────
+    {title:'GWP 107 — Vol + AVWAP Gate (v8)',icon:'📊',badge:'free',
+     body:'GWP v8 added a Volume + AVWAP (Anchored VWAP) gate as a new filter. No signal fires unless volume at the ghost wick candle exceeds the 20-period average AND price is on the correct side of the AVWAP anchored from the last significant swing.',
+     illus:`Vol + AVWAP Gate:
+  ┌────────────────────────────────────┐
+  │ VOLUME CHECK:                      │
+  │  GW candle volume > 20-bar avg?    │
+  │  YES → gate passes ✓               │
+  │  NO  → signal blocked ✗            │
+  │                                    │
+  │ AVWAP CHECK (Bullish):             │
+  │  ╲ AVWAP line (anchored from       │
+  │   ╲ last significant HIGH)         │
+  │    ╲                               │
+  │     ╲→ Entry price must be         │
+  │        BELOW the AVWAP             │
+  │                                    │
+  │ AVWAP CHECK (Bearish):             │
+  │    ╱→ Entry price must be          │
+  │   ╱   ABOVE the AVWAP              │
+  │  ╱ AVWAP line                      │
+  │                                    │
+  │ LOGIC: AVWAP = true fair value     │
+  │ Buy below fair value               │
+  │ Sell above fair value              │
+  └────────────────────────────────────┘`,
+     detail:'AVWAP (Anchored VWAP) is the volume-weighted average price anchored from a specific point — not a rolling window. Unlike standard VWAP (anchors at midnight each day), AVWAP gives a dynamic fair value that respects the actual structural swing from which price is moving. If you are trying to enter a long but price is already above the AVWAP (i.e., trading at a premium to institutional fair value), the Vol+AVWAP gate blocks the entry. This filter eliminated about 15% of previously taken signals in v7, and improved the win rate by ~4%.'},
+
+    // ── GWP 108 ──────────────────────────────────────────────
+    {title:'GWP 108 — The Bot Architecture',icon:'🤖',badge:'free',
+     body:'The AxTrader signal bots are fully automated Node.js systems that scan configured pairs every 30 minutes. They apply all 5 GWP pillars, calculate conviction scores, compute ATR-based stops, validate the Vol+AVWAP gate, and publish signals to Telegram and the AxTrader app.',
+     illus:`Bot Scan Cycle (Every 30 min):
+  ┌────────────────────────────────────┐
+  │ 1. Fetch OHLCV data (4H candles)   │
+  │    from exchange API               │
+  │                                    │
+  │ 2. Apply Pillar 1: Ghost Wick      │
+  │    wick ≥ 60% range?               │
+  │                                    │
+  │ 3. Apply Pillar 2: Liq Trap        │
+  │    reversal within 2 candles?      │
+  │                                    │
+  │ 4. Apply Pillar 3: MSB             │
+  │    structure break confirmed?      │
+  │                                    │
+  │ 5. Apply Pillar 4: OB/FVG          │
+  │    zone quality check              │
+  │                                    │
+  │ 6. Vol + AVWAP gate                │
+  │                                    │
+  │ 7. Compute ATR → SL/TP levels      │
+  │                                    │
+  │ 8. Score conviction (0-100)        │
+  │                                    │
+  │ 9. Score ≥ 75 → FIRE SIGNAL        │
+  │    → Telegram push                 │
+  │    → AxTrader feed update          │
+  └────────────────────────────────────┘`,
+     detail:'The Crypto bot (ASTERIX_5PILLAR_BOT) monitors: BTC/USDT, ETH/USDT, SOL/USDT, AVAX/USDT, UNI/USDT, SUSHI/USDT, DEXE/USDT on the 4H chart with 1H and 15M confirmation. The Forex bot (ASTERIX_PRECISION_BOT) monitors: EUR/USD, GBP/USD, USD/JPY, XAU/USD using the same 4H primary with session-based Kill Zone filtering. Both bots run on GitHub Actions (scheduled workflow, Node.js 22) and push signals to the AxTrader Signals feed and Telegram channels.'},
+
+    // ── GWP 109 ──────────────────────────────────────────────
+    {title:'GWP 109 — Reading a GWP Signal Card',icon:'📋',badge:'free',
+     body:'Every signal published by AxTrader follows a consistent format. Understanding each field allows you to make an informed decision before entering. Never enter a signal you do not understand — the transparency of the card is there for a reason.',
+     illus:`GWP Signal Card Breakdown:
+  ┌────────────────────────────────────┐
+  │ Pair: BTC/USDT      [LONG]         │
+  │ Grade: A+ SUPREME                  │
+  │ Conviction: 94/100                 │
+  │                                    │
+  │ Entry:  $67,200 – $67,400          │
+  │ TP1:    $68,500  (1:1)             │
+  │ TP2:    $69,800  (2:1)             │
+  │ TP3:    $72,100  (3.5:1)           │
+  │ SL:     $66,100  (ATR-based)       │
+  │                                    │
+  │ Vol Gate:  ✅ (1.8× avg volume)    │
+  │ AVWAP:     ✅ (below AVWAP)        │
+  │ MSB:       ✅ (4H BOS confirmed)   │
+  │ Session:   NY Morning KZ           │
+  │                                    │
+  │ Grade Guide:                       │
+  │  90-100 = A+ SUPREME               │
+  │  80-89  = A+ STRONG                │
+  │  75-79  = A STANDARD               │
+  └────────────────────────────────────┘`,
+     detail:'Each field matters: (1) Conviction score determines position size — 90+ means full 2% risk. (2) The entry range is not a limit order — it is the zone where the OB/FVG/ghost wick pattern is located. Enter anywhere within the range. (3) TP1 is the minimum target — at minimum, always take TP1 and move your SL to breakeven. (4) TP3 is ambitious but has been hit on ~61% of all A+ SUPREME signals historically. (5) SL is ATR-floored — do not move it tighter. Respect the setup as-designed.'},
   ],
+
   advanced:[
-    {title:'[PREMIUM] Advanced ICT — Institutional Flow',icon:'🔬',body:'Deep dive into how central banks, hedge funds, and primary dealers move markets.',badge:'premium'},
-    {title:'[PREMIUM] Advanced SMC — Custom MMXM Mapping',icon:'🗺️',body:'Map full market maker cycles across multiple timeframes simultaneously.',badge:'premium'},
-    {title:'[PREMIUM] Advanced GWP — Ghost Wick Patterns Vol.2',icon:'💎',body:'The 7 rare Ghost Wick variants that produce 99%+ accuracy.',badge:'premium'},
-    {title:'[PREMIUM] Portfolio Risk Management',icon:'🏗️',body:'Full portfolio-level risk framework: correlation hedging, drawdown limits, recovery protocols.',badge:'premium'},
-    {title:'[PREMIUM] Backtesting & Journaling System',icon:'📓',body:'Build a systematic backtesting framework and journal trades scientifically.',badge:'premium'},
-    {title:'[PREMIUM] Live Trade Reviews',icon:'🎬',body:'Monthly live trade review sessions with annotated charts.',badge:'premium'},
+    // ── PREMIUM BOOK 1 ───────────────────────────────────────
+    {title:'📖 BOOK 1: Institutional Order Flow — Complete Guide',icon:'🔬',badge:'premium',
+     body:'A 12-chapter deep dive into how central banks, primary dealers, hedge funds, and prop desks actually move markets — not the simplified version. Includes real-world examples from Fed intervention events, BOE crisis moments, and crypto whale maneuvers.',
+     illus:`CHAPTER OVERVIEW:
+  Ch.1  — The True Market Participants
+  Ch.2  — Interbank FX & Price Creation
+  Ch.3  — Central Bank Intervention Signals
+  Ch.4  — COT Data — Reading Smart Money
+  Ch.5  — Dark Pool & Iceberg Orders
+  Ch.6  — Stop-Hunting Algorithms Decoded
+  Ch.7  — News Trading — Manipulation or Real?
+  Ch.8  — Crypto Whale Behavior vs. Forex IB
+  Ch.9  — On-Chain Confirmation for GWP
+  Ch.10 — Proprietary Flow Indicators
+  Ch.11 — Case Studies: BOE Black Wednesday
+  Ch.12 — Building Your Institutional Playbook`},
+
+    // ── PREMIUM BOOK 2 ───────────────────────────────────────
+    {title:'📖 BOOK 2: Advanced SMC — Custom MMXM Mapping',icon:'🗺️',badge:'premium',
+     body:'Map full institutional market maker cycles across monthly, weekly, daily, and intraday timeframes simultaneously. Includes the Premium/Discount matrix, dynamic zone recalculation, and multi-pair correlation mapping techniques.',
+     illus:`CHAPTER OVERVIEW:
+  Ch.1  — Why Standard SMC Fails Alone
+  Ch.2  — MMXM Across All Timeframes
+  Ch.3  — Dynamic Discount/Premium Mapping
+  Ch.4  — Zone Ranking: A/B/C Quality Tiers
+  Ch.5  — Multi-Pair Correlation Workbook
+  Ch.6  — Failed Supply & Demand Entries
+  Ch.7  — Mitigation Blocks — Advanced
+  Ch.8  — Quarterly Shifts (ICT Concept)
+  Ch.9  — HTF Confluence — Monthly Levels
+  Ch.10 — Building a Weekly Analysis Template
+  Ch.11 — 20 Annotated Trade Examples
+  Ch.12 — SMC + GWP Integration Protocol`},
+
+    // ── PREMIUM BOOK 3 ───────────────────────────────────────
+    {title:'📖 BOOK 3: Ghost Wick Mastery — Vol. 2',icon:'💎',badge:'premium',
+     body:'The 7 advanced Ghost Wick variants that produce 99%+ historical accuracy when combined with their unique confluence requirements. These patterns are rare — occurring 2-4 times per month per pair — but deliver the largest R:R trades in the GWP system.',
+     illus:`The 7 Rare GWP Variants:
+  Pattern 1: Twin Ghost Wicks
+  → Two consecutive GWs at same level
+  → 99.2% accuracy (backtested 3 years)
+
+  Pattern 2: HTF Ghost Wick (Weekly)
+  → Weekly candle GW + daily OB align
+  → Multi-day or multi-week trades
+
+  Pattern 3: GW + Breaker Block
+  → Demand zone now acting as supply
+  → Short-only variant
+
+  Pattern 4: GW at EQ (50% Fib)
+  → Perfectly discounted GW entry
+  
+  Pattern 5: Double Liquidity Trap
+  → Two key levels swept in one move
+  
+  Pattern 6: GW + News Catalyst
+  → Economic event creates the wick
+  
+  Pattern 7: Cross-Session GW
+  → London GW, NY distribution`},
+
+    // ── PREMIUM BOOK 4 ───────────────────────────────────────
+    {title:'📖 BOOK 4: Portfolio Risk & Drawdown Mastery',icon:'🏗️',badge:'premium',
+     body:'Full portfolio-level risk framework used by proprietary trading desks. Goes far beyond single-trade sizing — covers correlation hedging, maximum drawdown recovery protocols, portfolio heat management, and psychological performance optimization.',
+     illus:`CHAPTER OVERVIEW:
+  Ch.1  — Account Sizing for GWP Trading
+  Ch.2  — Portfolio Heat: Max Open Risk
+  Ch.3  — Correlation Hedging (Crypto + FX)
+  Ch.4  — Drawdown Recovery Framework
+  Ch.5  — Win Rate vs. R:R Expectancy Math
+  Ch.6  — Monte Carlo: Projecting DD Risk
+  Ch.7  — The 6% Rule (daily max loss)
+  Ch.8  — Proprietary Risk Scoring Model
+  Ch.9  — Prop Firm Challenges Using GWP
+  Ch.10 — Performance Review Templates
+  Ch.11 — Scaling From $500 to $50,000
+  Ch.12 — Building a Trading Business Plan`},
+
+    // ── PREMIUM BOOK 5 ───────────────────────────────────────
+    {title:'📖 BOOK 5: Backtesting & Trade Journaling System',icon:'📓',badge:'premium',
+     body:'A systematic, scientific approach to backtesting GWP signals and maintaining a trade journal that actually improves performance. Includes the exact backtesting spreadsheet format, the GWP rule-set validation protocol, and a psychological edge review system.',
+     illus:`CHAPTER OVERVIEW:
+  Ch.1  — Why Most Backtests Are Wrong
+  Ch.2  — GWP Backtesting Protocol (Step-by-step)
+  Ch.3  — Marking Historical Ghost Wicks
+  Ch.4  — Logging: What To Record (& Why)
+  Ch.5  — Statistical Edge: Sample Size Reqs
+  Ch.6  — Separating System Edge from Luck
+  Ch.7  — Weekly Journal Review Process
+  Ch.8  — Identifying Your Personal Biases
+  Ch.9  — Trade Psychology Scoring
+  Ch.10 — Peer Review & Accountability
+  Ch.11 — The GWP Journal Template
+  Ch.12 — From Backtesting to Live Trading`},
+
+    // ── PREMIUM BOOK 6 ───────────────────────────────────────
+    {title:'📖 BOOK 6: Live Signal Mastery — Monthly Reviews',icon:'🎬',badge:'premium',
+     body:'Monthly annotated live trade reviews from the AxTrader signal feed. Every A+ SUPREME signal from the previous month, reviewed with full entry justification, what happened, what was learned, and how GWP v8 scored it in real-time.',
+     illus:`WHAT EACH REVIEW INCLUDES:
+  ✦ Full signal card with all GWP pillars
+  ✦ 4H chart annotated: GW, OB, MSB
+  ✦ Entry zone: how it printed in real-time
+  ✦ TP1/TP2/TP3 outcomes + timing
+  ✦ What the Vol+AVWAP gate showed
+  ✦ Any edge case or deviation from rules
+  ✦ Post-trade analysis: what we learned
+  
+  RECENT REVIEWS AVAILABLE:
+  ✦ March 2025 — 14 A+ signals reviewed
+  ✦ February 2025 — 11 signals reviewed
+  ✦ January 2025 — 9 signals reviewed
+  
+  BONUS: Quarterly GWP Score Report
+  → Win rate breakdown by pair & session`},
+
+    // ── PREMIUM BOOK 7 ───────────────────────────────────────
+    {title:'📖 BOOK 7: Crypto-Specific GWP Adaptations',icon:'₿',badge:'premium',
+     body:'GWP was originally developed for Forex. This book covers all the critical adaptations required for crypto markets — funding rates, liquidation cascades, on-chain data integration, crypto-specific session behavior, and how to use CoinGlass liquidation heatmaps as a GWP confluence tool.',
+     illus:`CHAPTER OVERVIEW:
+  Ch.1  — Crypto vs. Forex: Key Differences
+  Ch.2  — Funding Rate as a GWP Filter
+  Ch.3  — Liquidation Cascades = Ghost Wicks
+  Ch.4  — CoinGlass Heatmap Integration
+  Ch.5  — On-Chain: Exchange Inflows/Outflows
+  Ch.6  — Whale Alert as Liquidity Signal
+  Ch.7  — BTC Dominance in GWP Context
+  Ch.8  — Alt Season Rotation Protocol
+  Ch.9  — Crypto Kill Zones (vs. Forex)
+  Ch.10 — AVWAP on Perpetual Futures
+  Ch.11 — Pair Selection: The GWP Watch-list
+  Ch.12 — DEXE, UNI, SUSHI — Case Studies`},
   ]
 };
 
@@ -2276,6 +3214,7 @@ function switchCourseTab(tab,btn){
   btn.classList.add('active');
   renderCourses(tab);
 }
+
 function renderCourses(tab){
   const container=document.getElementById('courses-content');
   if(!container) return;
@@ -2284,24 +3223,40 @@ function renderCourses(tab){
   data.forEach((c,i)=>{
     const isPrem=c.badge==='premium';
     const locked=isPrem&&!appState.isPremium;
-    html+=`<div class="course-card ${isPrem?'premium':''}">
-      <div class="course-header">
-        <div class="course-icon ${tab==='advanced'?'prem':tab}">${c.icon}</div>
-        <div class="course-meta"><h4>${c.title}</h4><p>${c.body.substring(0,60)}...</p></div>
-      </div>
-      <span class="course-badge ${c.badge}">${isPrem?'⭐ PREMIUM':'FREE'}</span>
-      ${locked?`<div style="background:var(--premium-bg);border-radius:10px;padding:12px;text-align:center"><p style="font-size:.82rem;color:var(--premium);font-weight:600">🔒 Premium only</p><button class="btn-primary" style="background:var(--premium);margin-top:8px;padding:10px" onclick="openUpgrade()">Upgrade $12.99/mo</button></div>`:`
-      <div class="course-body">${c.body}</div>
-      ${c.illus?`<div class="course-illus">${c.illus}</div>`:''}
-      ${c.detail?`<button class="course-expand-btn" onclick="toggleCourse(this)">Read more ↓</button><div class="course-content"><p style="font-size:.875rem;color:var(--text2);line-height:1.7">${c.detail}</p></div>`:''}`}
-    </div>`;
+    if(locked){
+      html+=`<div class="course-card premium" style="opacity:.92">
+        <div class="course-header">
+          <div class="course-icon prem">${c.icon}</div>
+          <div class="course-meta"><h4 style="font-size:.88rem">${c.title}</h4><p style="font-size:.73rem;color:var(--text3)">${c.body.substring(0,80)}…</p></div>
+        </div>
+        <div style="background:linear-gradient(135deg,#1a1814,#2d2418);border-radius:12px;padding:14px 16px;margin-top:8px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:rgba(255,255,255,.4);line-height:1.7;max-height:60px;overflow:hidden;mask-image:linear-gradient(black 20%,transparent)">${c.illus||''}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
+            <span style="color:var(--gold2);font-size:.78rem;font-weight:700">🔒 Premium Book — Full Access</span>
+            <button class="btn-upgrade" style="width:auto;padding:8px 14px;font-size:.78rem;border-radius:8px" onclick="openUpgrade()">Unlock $12.99</button>
+          </div>
+        </div>
+      </div>`;
+    } else {
+      html+=`<div class="course-card ${isPrem?'premium':''}">
+        <div class="course-header">
+          <div class="course-icon ${tab==='advanced'?'prem':tab}">${c.icon}</div>
+          <div class="course-meta"><h4>${c.title}</h4></div>
+        </div>
+        <span class="course-badge ${c.badge}">${isPrem?'⭐ PREMIUM BOOK':'FREE'}</span>
+        <div class="course-body" style="margin:10px 0 6px">${c.body}</div>
+        ${c.illus?`<div class="course-illus" style="font-size:.74rem;line-height:1.75">${c.illus}</div>`:''}
+        ${c.detail?`<button class="course-expand-btn" onclick="toggleCourse(this)" style="margin-top:10px">Deep dive ↓</button>
+          <div class="course-content"><div style="background:var(--gold-bg);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 14px;margin-top:10px;font-size:.82rem;color:var(--text2);line-height:1.75">${c.detail}</div></div>`:``}
+      </div>`;
+    }
   });
   container.innerHTML=html;
 }
 function toggleCourse(btn){
   const c=btn.nextElementSibling;
   c.classList.toggle('open');
-  btn.textContent=c.classList.contains('open')?'Show less ↑':'Read more ↓';
+  btn.textContent=c.classList.contains('open')?'Show less ↑':'Deep dive ↓';
 }
 
 // ============ NEWS — Live from CryptoCompare (free, no key) ============
@@ -2420,8 +3375,10 @@ function renderNews() {
   if (!container) return;
 
   const filtered = allNewsData.filter(n => filterMatchesTag(currentNewsFilter, n.tag));
-  const visible = filtered.slice(0, newsOffset + NEWS_PAGE_SIZE);
-  const hasMore = filtered.length > newsOffset + NEWS_PAGE_SIZE;
+  const freeLimit = appState.isPremium ? 50 : FREE_NEWS_LIMIT;
+  const cappedData = appState.isPremium ? filtered : filtered.slice(0, freeLimit);
+  const visible = cappedData.slice(0, newsOffset + NEWS_PAGE_SIZE);
+  const hasMore = cappedData.length > newsOffset + NEWS_PAGE_SIZE;
 
   let html = '';
   if (visible.length === 0) {
@@ -2446,28 +3403,40 @@ function renderNews() {
     });
   }
 
+  // Premium gate after 15 articles for free users
+  if (!appState.isPremium && filtered.length > FREE_NEWS_LIMIT && newsOffset >= FREE_NEWS_LIMIT) {
+    html += `<div style="background:linear-gradient(135deg,#1a1814,#2d2418);border-radius:16px;padding:20px;text-align:center;margin-top:4px">
+      <div style="font-size:1.5rem;margin-bottom:8px">📰</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-weight:800;color:#fff;font-size:1rem;margin-bottom:4px">${filtered.length - FREE_NEWS_LIMIT} more articles available</div>
+      <div style="color:rgba(255,255,255,.55);font-size:.78rem;margin-bottom:14px">Premium members get up to 50 live articles across all categories — including Macro, Stocks, and deep Crypto analysis.</div>
+      <button onclick="openUpgrade()" style="background:var(--gold);color:#fff;border:none;border-radius:10px;padding:11px 24px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit">Unlock Premium — $12.99/mo</button>
+    </div>`;
+  }
+
   container.innerHTML = html;
 
-  // Load more / end
   const loadWrap = document.getElementById('news-load-more-wrap');
   const endNote = document.getElementById('news-end-note');
-  if (loadWrap) loadWrap.style.display = hasMore ? 'block' : 'none';
-  if (endNote) endNote.style.display = (!hasMore && visible.length > 0) ? 'block' : 'none';
+  if (loadWrap) loadWrap.style.display = (hasMore && (appState.isPremium || newsOffset < FREE_NEWS_LIMIT)) ? 'block' : 'none';
+  if (endNote) endNote.style.display = (!hasMore && visible.length > 0 && (appState.isPremium || newsOffset >= freeLimit)) ? 'block' : 'none';
 
   newsOffset = visible.length;
 }
 
 function loadMoreNews() {
   const filtered = allNewsData.filter(n => filterMatchesTag(currentNewsFilter, n.tag));
-  if (newsOffset >= filtered.length) return;
+  const freeLimit = appState.isPremium ? 50 : FREE_NEWS_LIMIT;
+  if (newsOffset >= filtered.length || newsOffset >= freeLimit) return;
   renderNewsAppend(filtered);
 }
 
 function renderNewsAppend(filtered) {
   const container = document.getElementById('news-list');
   if (!container) return;
-  const next = filtered.slice(newsOffset, newsOffset + NEWS_PAGE_SIZE);
-  const hasMore = filtered.length > newsOffset + NEWS_PAGE_SIZE;
+  const freeLimit = appState.isPremium ? 50 : FREE_NEWS_LIMIT;
+  const cappedFiltered = appState.isPremium ? filtered : filtered.slice(0, freeLimit);
+  const next = cappedFiltered.slice(newsOffset, newsOffset + NEWS_PAGE_SIZE);
+  const hasMore = cappedFiltered.length > newsOffset + NEWS_PAGE_SIZE;
 
   next.forEach(n => {
     const col = tagColor(n.tag);
@@ -2490,7 +3459,7 @@ function renderNewsAppend(filtered) {
   newsOffset += next.length;
   const loadWrap = document.getElementById('news-load-more-wrap');
   const endNote = document.getElementById('news-end-note');
-  if (loadWrap) loadWrap.style.display = hasMore ? 'block' : 'none';
+  if (loadWrap) loadWrap.style.display = (hasMore && (appState.isPremium || newsOffset < FREE_NEWS_LIMIT)) ? 'block' : 'none';
   if (endNote) endNote.style.display = (!hasMore) ? 'block' : 'none';
 }
 
@@ -2838,9 +3807,6 @@ function initApp() {
   document.querySelectorAll('.ad-slot').forEach(ad => {
     if (appState.isPremium) ad.classList.add('hidden');
   });
-  // Show Gist ID in status panel
-  const gistEl = document.getElementById('status-gist-id');
-  if (gistEl) gistEl.textContent = GIST_ID;
 }
 </script>
 </body>
