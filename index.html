@@ -3948,14 +3948,16 @@ function crashAction(){
   if(crashRunning&&!crashCashedOut){
     crashCashedOut=true;cancelAnimationFrame(crashAnim);
     const winnings=Math.floor(crashBet*crashMult);
-    gameState.balance+=winnings;updateBalanceDisplays();
+    addATX(winnings, 'crash');
+    updateBalanceDisplays();
     btn.className='action-btn go';btn.textContent='🚀 Place Bet';
     msg.style.display='block';msg.className='game-msg msg-win';
-    msg.textContent=`Cashed out at ${crashMult.toFixed(2)}x! +${winnings} ATX`;crashRunning=false;return;
+    msg.textContent=`✅ Cashed out at ${crashMult.toFixed(2)}x! +⚡ ${formatATX(winnings)} ATX`;crashRunning=false;return;
   }
   crashBet=parseInt(document.getElementById('crash-bet').value)||50;
-  if(crashBet>gameState.balance) return showToast('Insufficient balance');
-  gameState.balance-=crashBet;updateBalanceDisplays();
+  if(crashBet>getATXBalance()) return showToast('❌ Insufficient ATX balance');
+  if(!removeATX(crashBet, 'crash')) return;
+  updateBalanceDisplays();
   msg.style.display='none';crashMult=1.0;crashRunning=true;crashCashedOut=false;
   btn.className='action-btn cashout';btn.textContent='💰 Cash Out';
   const crashPoint=1+Math.random()*8+Math.random()*Math.random()*10;
@@ -3979,7 +3981,7 @@ function crashAction(){
       c.fillText('CRASHED at '+crashMult.toFixed(2)+'x',w/2,h/2);
       btn.className='action-btn go';btn.textContent='🚀 Place Bet';
       msg.style.display='block';msg.className='game-msg msg-lose';
-      msg.textContent=`Crashed at ${crashMult.toFixed(2)}x. Lost ${crashBet} ATX`;return;
+      msg.textContent=`🔴 Crashed at ${crashMult.toFixed(2)}x. Lost ⚡ ${formatATX(crashBet)} ATX`;return;
     }
     if(crashRunning) crashAnim=requestAnimationFrame(frame);
   }
@@ -3995,8 +3997,9 @@ function initMinesGrid(){
 function startMines(){
   minesBet=parseInt(document.getElementById('mines-bet').value)||50;
   minesCount=Math.min(parseInt(document.getElementById('mines-count').value)||3,20);
-  if(minesBet>gameState.balance) return showToast('Insufficient balance');
-  gameState.balance-=minesBet;updateBalanceDisplays();
+  if(minesBet>getATXBalance()) return showToast('❌ Insufficient ATX balance');
+  if(!removeATX(minesBet, 'mines')) return;
+  updateBalanceDisplays();
   minesRevealed=0;minesMult=1.0;minesActive=true;minesGrid=Array(25).fill(false);
   let placed=0;while(placed<minesCount){const r=Math.floor(Math.random()*25);if(!minesGrid[r]){minesGrid[r]=true;placed++;}}
   document.getElementById('mines-start-btn').textContent='New Game';
@@ -4012,7 +4015,7 @@ function revealCell(i){
     cell.classList.add('mine-hit');cell.textContent='💣';minesActive=false;
     document.getElementById('mines-cashout-area').style.display='none';
     const msg=document.getElementById('mines-msg');msg.style.display='block';msg.className='game-msg msg-lose';
-    msg.textContent=`💥 Mine hit! Lost ${minesBet} ATX.`;
+    msg.textContent=`💥 Mine hit! Lost ⚡ ${formatATX(minesBet)} ATX.`;
     minesGrid.forEach((m,idx)=>{if(m){cells[idx].textContent='💣';cells[idx].classList.add('mine-hit');}});
   } else {
     cell.classList.add('safe','revealed');cell.textContent='💎';minesRevealed++;
@@ -4023,10 +4026,10 @@ function revealCell(i){
 }
 function cashoutMines(){
   if(!minesActive) return;minesActive=false;
-  const winnings=Math.floor(minesBet*minesMult);gameState.balance+=winnings;updateBalanceDisplays();
+  const winnings=Math.floor(minesBet*minesMult);addATX(winnings, 'mines');updateBalanceDisplays();
   document.getElementById('mines-cashout-area').style.display='none';
   const msg=document.getElementById('mines-msg');msg.style.display='block';msg.className='game-msg msg-win';
-  msg.textContent=`💰 Cashed out at ${minesMult.toFixed(2)}x! +${winnings} ATX`;
+  msg.textContent=`✅ Cashed out at ${minesMult.toFixed(2)}x! +⚡ ${formatATX(winnings)} ATX`;
 }
 
 // ============ PLINKO GAME ============
@@ -4052,16 +4055,17 @@ function drawPlinkoBoard(){
 }
 function dropPlinko(){
   const bet=parseInt(document.getElementById('plinko-bet').value)||50;
-  if(bet>gameState.balance) return showToast('Insufficient balance');
-  gameState.balance-=bet;updateBalanceDisplays();
+  if(bet>getATXBalance()) return showToast('❌ Insufficient ATX balance');
+  if(!removeATX(bet, 'plinko')) return;
+  updateBalanceDisplays();
   const mults=[0.2,0.5,1,2,5,2,1,0.5,0.2],weights=[5,10,15,20,25,20,15,10,5];
   let rand=Math.random()*125,idx=0,cum=0;
   for(let i=0;i<weights.length;i++){cum+=weights[i];if(rand<=cum){idx=i;break;}}
   const mult=mults[idx],winnings=Math.floor(bet*mult);
-  gameState.balance+=winnings;updateBalanceDisplays();
+  addATX(winnings, 'plinko');updateBalanceDisplays();
   const msg=document.getElementById('plinko-msg');msg.style.display='block';
-  if(winnings>=bet){msg.className='game-msg msg-win';msg.textContent=`🎯 ${mult}x — Won ${winnings} ATX!`;}
-  else{msg.className='game-msg msg-lose';msg.textContent=`${mult}x — Got ${winnings} ATX`;}
+  if(winnings>=bet){msg.className='game-msg msg-win';msg.textContent=`✅ ${mult}x — Won ⚡ ${formatATX(winnings)} ATX!`;}
+  else{msg.className='game-msg msg-lose';msg.textContent=`${mult}x — Got ⚡ ${formatATX(winnings)} ATX`;}
 }
 
 // ============ CANDLE CALL GAME ============
@@ -4097,8 +4101,9 @@ function drawCandles(){
 }
 function candleCall(dir){
   const bet=parseInt(document.getElementById('candle-bet').value)||50;
-  if(bet>gameState.balance) return showToast('Insufficient balance');
-  gameState.balance-=bet;updateBalanceDisplays();
+  if(bet>getATXBalance()) return showToast('❌ Insufficient ATX balance');
+  if(!removeATX(bet, 'candle')) return;
+  updateBalanceDisplays();
   const last=candleHistory[candleHistory.length-1];
   const open=last.close,close=open+(Math.random()-.48)*12;
   const realDir=close>=open?'LONG':'SHORT';
@@ -4109,13 +4114,13 @@ function candleCall(dir){
   msg.style.display='block';
   if(win){
     const winnings=Math.floor(bet*1.8);
-    gameState.balance+=winnings;
+    addATX(winnings, 'candle');
     updateBalanceDisplays();
     msg.className='game-msg msg-win';
-    msg.textContent=`✅ ${dir} correct! +${winnings} ATX (1.8x)`;
+    msg.textContent=`✅ ${dir} correct! +⚡ ${formatATX(winnings)} ATX (1.8x)`;
   } else {
     msg.className='game-msg msg-lose';
-    msg.textContent=`❌ ${dir} was wrong — next candle was ${realDir}. Lost ${bet} ATX`;
+    msg.textContent=`❌ ${dir} was wrong — next candle was ${realDir}. Lost ⚡ ${formatATX(bet)} ATX`;
   }
 }
 
