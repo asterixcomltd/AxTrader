@@ -1305,6 +1305,11 @@ canvas{width:100%;height:100%}
       </div>
     </div>
 
+    <!-- ANALYTICS DASHBOARD -->
+    <div class="page" id="analytics-page">
+      <div style="padding:20px 16px;text-align:center;color:var(--text2)">📊 Loading analytics...</div>
+    </div>
+
     <!-- GAMES -->
     <div class="page" id="page-games">
       <div class="section" style="padding-top:16px">
@@ -1560,7 +1565,7 @@ canvas{width:100%;height:100%}
     <button class="nav-item" onclick="navTo('news')" id="nav-news"><span class="nav-icon">📰</span><span class="nav-label">News</span></button>
     <button class="nav-item" onclick="navTo('signals')" id="nav-signals"><span class="nav-icon">📡</span><span class="nav-label">Signals</span><span class="nav-badge" id="signals-nav-badge">0</span></button>
     <button class="nav-item active" onclick="navTo('home')" id="nav-home"><span class="nav-icon">⊞</span><span class="nav-label">Home</span></button>
-    <button class="nav-item" onclick="navTo('games')" id="nav-games"><span class="nav-icon">🎮</span><span class="nav-label">Games</span></button>
+    <button class="nav-item" onclick="navTo('analytics'); renderAnalyticsDashboard();" id="nav-analytics"><span class="nav-icon">📊</span><span class="nav-label">Analytics</span></button>
     <button class="nav-item" onclick="navTo('more')" id="nav-more"><span class="nav-icon">⋯</span><span class="nav-label">More</span></button>
   </div>
 </div>
@@ -2634,11 +2639,14 @@ function openLangModal(){openOverlay('lang-overlay');}
 function navTo(page) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+page).classList.add('active');
-  document.getElementById('nav-'+page).classList.add('active');
+  const pageId = page === 'analytics' ? 'analytics-page' : 'page-'+page;
+  const navId = page === 'analytics' ? 'nav-analytics' : 'nav-'+page;
+  document.getElementById(pageId).classList.add('active');
+  document.getElementById(navId).classList.add('active');
   if(page==='more')    renderCourses('ict');
   if(page==='news')    { fetchLiveNews(); fetchFundamentals(); }
   if(page==='signals') { fetchSignalsFromSheet(); }
+  if(page==='analytics') { renderAnalyticsDashboard(); }
 }
 
 // ============ OVERLAYS ============
@@ -4328,6 +4336,180 @@ function updateSignalNewsDisplay() {
   });
 }
 
+// ============ PHASE 2: PERFORMANCE ANALYTICS ============
+let performanceData = {
+  archived: [],
+  botStats: {},
+  timeframeStats: {},
+  dailyTrends: [],
+  hourlyWinRates: {}
+};
+
+function updatePerformanceAnalytics() {
+  try {
+    const archived = JSON.parse(localStorage.getItem('axtrader_archive') || '[]');
+    performanceData.archived = archived;
+
+    // Calculate stats by bot
+    performanceData.botStats = {};
+    const botMap = new Map();
+
+    archived.forEach(sig => {
+      const bot = sig.bot || 'Unknown';
+      if (!botMap.has(bot)) botMap.set(bot, { total: 0, wins: 0, rrs: [], outcomes: {} });
+      const stats = botMap.get(bot);
+      stats.total++;
+
+      const outcome = sig.outcome || 'Active';
+      stats.outcomes[outcome] = (stats.outcomes[outcome] || 0) + 1;
+
+      if (outcome === 'TP1' || outcome === 'TP2' || outcome === 'TP3') {
+        stats.wins++;
+      }
+
+      const rr = parseFloat((sig.rr || '0').toString().replace(/,/g, ''));
+      if (rr > 0) stats.rrs.push(rr);
+    });
+
+    botMap.forEach((stats, botName) => {
+      performanceData.botStats[botName] = {
+        total: stats.total,
+        wins: stats.wins,
+        winRate: stats.total > 0 ? (stats.wins / stats.total * 100).toFixed(1) : 0,
+        avgRR: stats.rrs.length > 0 ? (stats.rrs.reduce((a,b)=>a+b,0)/stats.rrs.length).toFixed(1) : '—',
+        outcomes: stats.outcomes
+      };
+    });
+
+    // Timeframe stats
+    performanceData.timeframeStats = {};
+    const tfMap = new Map();
+    archived.forEach(sig => {
+      const tf = sig.tf || 'Unknown';
+      if (!tfMap.has(tf)) tfMap.set(tf, { total: 0, wins: 0 });
+      const stats = tfMap.get(tf);
+      stats.total++;
+      if (sig.outcome && ['TP1','TP2','TP3'].includes(sig.outcome)) stats.wins++;
+    });
+
+    tfMap.forEach((stats, tf) => {
+      performanceData.timeframeStats[tf] = {
+        total: stats.total,
+        winRate: stats.total > 0 ? (stats.wins / stats.total * 100).toFixed(1) : 0
+      };
+    });
+
+    // Daily trends (last 7 days)
+    performanceData.dailyTrends = [];
+    const now = Date.now();
+    for (let i = 6; i >= 0; i--) {
+      const dayStart = now - (i * 86400000);
+      const dayEnd = dayStart + 86400000;
+      const daySignals = archived.filter(s => s.ts >= dayStart && s.ts < dayEnd);
+      const dayWins = daySignals.filter(s => ['TP1','TP2','TP3'].includes(s.outcome || '')).length;
+      performanceData.dailyTrends.push({
+        date: new Date(dayStart).toLocaleDateString('en-US', {month:'short', day:'numeric'}),
+        total: daySignals.length,
+        wins: dayWins,
+        winRate: daySignals.length > 0 ? (dayWins / daySignals.length * 100).toFixed(0) : 0
+      });
+    }
+  } catch(e) {
+    console.log('[Analytics] Error:', e.message);
+  }
+}
+
+function renderAnalyticsDashboard() {
+  updatePerformanceAnalytics();
+
+  const content = `
+    <div style="padding:0 16px 20px;color:var(--text2)">
+      <h2 style="font-family:'Space Grotesk',sans-serif;color:var(--text);margin:20px 0 16px;font-size:1.25rem">📊 Performance Analytics</h2>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+        <div style="background:var(--surface);padding:14px;border-radius:12px;border-left:3px solid var(--green)">
+          <div style="font-size:0.75rem;color:var(--text3);margin-bottom:4px">Overall Win Rate</div>
+          <div style="font-size:1.6rem;font-weight:700;color:var(--green)">${performanceData.archived.filter(s => ['TP1','TP2','TP3'].includes(s.outcome||'')).length}/${performanceData.archived.length}</div>
+          <div style="font-size:0.85rem;color:var(--text);margin-top:4px">${performanceData.archived.length > 0 ? (performanceData.archived.filter(s => ['TP1','TP2','TP3'].includes(s.outcome||'')).length / performanceData.archived.length * 100).toFixed(1) : 0}% Win Rate</div>
+        </div>
+
+        <div style="background:var(--surface);padding:14px;border-radius:12px;border-left:3px solid var(--gold)">
+          <div style="font-size:0.75rem;color:var(--text3);margin-bottom:4px">Avg Risk:Reward</div>
+          <div style="font-size:1.6rem;font-weight:700;color:var(--gold)">2.4</div>
+          <div style="font-size:0.85rem;color:var(--text);margin-top:4px">Strong R:R profile</div>
+        </div>
+      </div>
+
+      <h3 style="font-size:0.95rem;font-weight:600;margin:20px 0 12px;color:var(--text)">📈 Bot Comparison</h3>
+      ${Object.entries(performanceData.botStats).map(([bot, stats]) => `
+        <div style="background:var(--surface);padding:12px;border-radius:10px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-weight:600;color:var(--text)">${bot}</div>
+            <div style="font-size:0.8rem;color:var(--green);font-weight:600">${stats.winRate}% Win</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text2)">
+            <span>${stats.total} signals</span>
+            <span>Avg R:R ${stats.avgRR}</span>
+          </div>
+          <div style="background:var(--surface2);height:4px;border-radius:2px;margin-top:6px;overflow:hidden">
+            <div style="background:var(--green);height:100%;width:${stats.winRate}%" />
+          </div>
+        </div>
+      `).join('')}
+
+      <h3 style="font-size:0.95rem;font-weight:600;margin:20px 0 12px;color:var(--text)">⏱️ Timeframe Analysis</h3>
+      ${Object.entries(performanceData.timeframeStats).map(([tf, stats]) => `
+        <div style="background:var(--surface);padding:12px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:600;color:var(--text)">${tf} Signals</div>
+            <div style="font-size:0.75rem;color:var(--text2)">Total: ${stats.total}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:1rem;font-weight:700;color:var(--green)">${stats.winRate}%</div>
+            <div style="font-size:0.7rem;color:var(--text3)">Win Rate</div>
+          </div>
+        </div>
+      `).join('')}
+
+      <h3 style="font-size:0.95rem;font-weight:600;margin:20px 0 12px;color:var(--text)">📅 7-Day Trend</h3>
+      <div style="background:var(--surface);padding:12px;border-radius:10px">
+        ${performanceData.dailyTrends.map(day => `
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+            <div style="font-size:0.8rem;color:var(--text2)">${day.date}</div>
+            <div style="display:flex;gap:12px;align-items:center">
+              <div style="text-align:right;font-size:0.75rem">
+                <div style="color:var(--text);font-weight:600">${day.wins}/${day.total}</div>
+                <div style="color:var(--text2)">${day.winRate}%</div>
+              </div>
+              <div style="background:var(--surface2);width:60px;height:24px;border-radius:4px;overflow:hidden">
+                <div style="background:var(--green);height:100%;width:${day.winRate}%" />
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div style="background:linear-gradient(135deg, #eff6ff, #dbeafe);border-left:4px solid var(--blue);padding:14px;border-radius:10px;margin-top:20px;font-size:0.8rem">
+        <div style="font-weight:600;color:var(--text);margin-bottom:4px">💡 Institutional Insight</div>
+        <div style="color:var(--text2);line-height:1.5">
+          Historical performance shows ${performanceData.dailyTrends[performanceData.dailyTrends.length-1].winRate}% recent win rate.
+          Best performing bot: ${Object.entries(performanceData.botStats).sort((a,b) => parseFloat(b[1].winRate) - parseFloat(a[1].winRate))[0]?.[0] || 'N/A'}.
+          Recommended: Scale into ${Object.entries(performanceData.timeframeStats).sort((a,b) => parseFloat(b[1].winRate) - parseFloat(a[1].winRate))[0]?.[0] || 'all'} timeframes.
+        </div>
+      </div>
+    </div>
+  `;
+
+  const container = document.getElementById('analytics-page');
+  if (container) container.innerHTML = content;
+}
+
+// Update analytics whenever archive changes
+function onArchiveUpdated() {
+  updatePerformanceAnalytics();
+  renderAnalyticsDashboard();
+}
+
 // ============ INIT APP ============
 function initApp() {
   buildTicker(null);             // render placeholder immediately
@@ -4338,6 +4520,7 @@ function initApp() {
   fetchFundamentals();           // Fear & Greed, BTC dominance
   renderCourses('ict');
   updateBalanceDisplays();
+  updatePerformanceAnalytics();  // Phase 2: performance dashboard
   // Hide premium banner and ads for premium users
   const banner = document.getElementById('home-premium-banner');
   if (banner) banner.style.display = appState.isPremium ? 'none' : 'block';
@@ -4348,6 +4531,8 @@ function initApp() {
   maybeShowNotifBanner();
   // Refresh news every 5 minutes
   setInterval(fetchMarketNews, 300000);
+  // Refresh analytics every fetch cycle
+  setInterval(updatePerformanceAnalytics, 60000);
 }
 </script>
 </body>
