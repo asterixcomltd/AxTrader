@@ -2902,6 +2902,22 @@ function setLang(lang) {
 
   if(lang==='ar') document.body.setAttribute('dir','rtl');
   else document.body.removeAttribute('dir');
+
+  // Re-render news in new language (use cache or kick off translation)
+  if (allNewsData && allNewsData.length) {
+    if (lang === 'en') {
+      renderNews();
+      renderHomePreviewNews();
+    } else if (newsArticleCache[lang]) {
+      // Already translated — instant re-render
+      renderNews();
+      renderHomePreviewNews();
+    } else {
+      // Show English immediately, then translate in background
+      renderNews();
+      translateAllNews(lang);
+    }
+  }
 }
 function openLangModal(){openOverlay('lang-overlay');}
 
@@ -3981,6 +3997,85 @@ function tagColor(tag) {
   return map[tag] || '#9e9890';
 }
 
+// ============ AUTO-TRANSLATION ENGINE ============
+// Uses MyMemory free API — no key needed, up to 10K words/day
+const newsTextCache   = {};     // key: `${lang}:${text_fingerprint}` → translated string
+const newsArticleCache = {};    // key: lang → [{...article, title, body in that lang}]
+let   newsTranslating = false;
+
+const TRANSLATABLE_LANGS = { fr:'fr', es:'es', pt:'pt', ar:'ar' };
+
+/** Translate a single string via MyMemory, with in-memory caching */
+async function translateText(text, lang) {
+  if (!text || !lang || lang === 'en' || !TRANSLATABLE_LANGS[lang]) return text;
+  const fp = lang + ':' + text.slice(0, 60); // fingerprint key
+  if (newsTextCache[fp]) return newsTextCache[fp];
+  try {
+    const r = await fetch(
+      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.slice(0, 480))}&langpair=en|${lang}`
+    );
+    const d = await r.json();
+    if (d.responseStatus === 200 && d.responseData?.translatedText) {
+      newsTextCache[fp] = d.responseData.translatedText;
+      return newsTextCache[fp];
+    }
+  } catch(e) { /* network error — return original */ }
+  return text;
+}
+
+/** Translate up to `limit` articles and cache. Shows progress in status label. */
+async function translateAllNews(lang, limit = 15) {
+  if (!lang || lang === 'en') return;
+  if (newsArticleCache[lang] || newsTranslating || !allNewsData.length) return;
+
+  newsTranslating = true;
+  const lbl = document.getElementById('news-source-lbl');
+  if (lbl) lbl.textContent = '🌐 Translating news…';
+
+  const toTranslate = allNewsData.slice(0, limit);
+  const rest        = allNewsData.slice(limit);
+
+  // Batch 5 articles at a time (each fires 2 parallel requests)
+  const BATCH = 5;
+  const translated = [];
+  for (let i = 0; i < toTranslate.length; i += BATCH) {
+    const batch = toTranslate.slice(i, i + BATCH);
+    const done  = await Promise.all(batch.map(async n => {
+      const [title, body] = await Promise.all([
+        translateText(n.title, lang),
+        translateText(n.body,  lang)
+      ]);
+      return { ...n, title, body };
+    }));
+    translated.push(...done);
+
+    // Re-render progressively every 2 batches for snappy feel
+    if ((i / BATCH) % 2 === 1 && appState.lang === lang) {
+      newsArticleCache[lang] = [...translated, ...rest];
+      renderNews();
+    }
+    await new Promise(r => setTimeout(r, 40)); // small pause between batches
+  }
+
+  // Store final result (translated articles + untranslated remainder in English)
+  newsArticleCache[lang] = [...translated, ...rest];
+  newsTranslating = false;
+
+  if (appState.lang === lang) {
+    if (lbl) lbl.textContent = translated.length + ' articles traduits · CryptoCompare';
+    renderNews();
+    renderHomePreviewNews();
+  }
+}
+
+/** Return the correct article array for the current language */
+function getActiveNewsData() {
+  const lang = appState.lang || 'en';
+  if (lang === 'en') return allNewsData;
+  return newsArticleCache[lang] || allNewsData; // fallback to EN while translating
+}
+
+// ============ NEWS FETCH ============
 async function fetchLiveNews() {
   try {
     const url = 'https://min-api.cryptocompare.com/data/v2/news/?lang=EN&sortOrder=latest&limit=50';
@@ -3999,20 +4094,32 @@ async function fetchLiveNews() {
       img: a.imageurl || ''
     }));
 
+    // Clear stale translation cache when new articles arrive
+    Object.keys(newsArticleCache).forEach(k => delete newsArticleCache[k]);
+
     newsOffset = 0;
     const badge = document.getElementById('news-live-badge');
-    const lbl = document.getElementById('news-source-lbl');
-    if (badge) { badge.style.display = 'inline-flex'; }
-    if (lbl) lbl.textContent = allNewsData.length + ' articles · CryptoCompare · Auto-refresh 5min';
+    const lbl   = document.getElementById('news-source-lbl');
+    if (badge) badge.style.display = 'inline-flex';
 
-    // Update time label
     const now = new Date();
-    const tLbl = document.getElementById('news-time-lbl');
-    if (tLbl) tLbl.textContent = 'Updated ' + now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+    const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
 
     renderNews();
     renderHomePreviewNews();
     console.log('[News] Loaded', allNewsData.length, 'articles');
+
+    const lang = appState.lang || 'en';
+    if (lang !== 'en') {
+      // Translate in background — UI already showing English
+      translateAllNews(lang);
+    } else {
+      if (lbl) lbl.textContent = allNewsData.length + ' articles · CryptoCompare · Updated ' + timeStr;
+    }
+
+    const tLbl = document.getElementById('news-time-lbl');
+    if (tLbl) tLbl.textContent = 'Updated ' + timeStr;
+
   } catch(e) {
     console.log('[News] API error, using fallback:', e.message);
     renderFallbackNews();
@@ -4039,6 +4146,10 @@ function filterNews(filter, btn) {
   document.querySelectorAll('.news-tab').forEach(t => t.classList.remove('active'));
   if (btn) btn.classList.add('active');
   newsOffset = 0;
+  // If non-English and not yet translated, kick off translation
+  const lang = appState.lang || 'en';
+  if (lang !== 'en' && !newsArticleCache[lang] && !newsTranslating && allNewsData.length)
+    translateAllNews(lang);
   renderNews();
 }
 
@@ -4046,7 +4157,7 @@ function renderNews() {
   const container = document.getElementById('news-list');
   if (!container) return;
 
-  const filtered = allNewsData.filter(n => filterMatchesTag(currentNewsFilter, n.tag));
+  const filtered = getActiveNewsData().filter(n => filterMatchesTag(currentNewsFilter, n.tag));
   const freeLimit = appState.isPremium ? 50 : FREE_NEWS_LIMIT;
   const cappedData = appState.isPremium ? filtered : filtered.slice(0, freeLimit);
   const visible = cappedData.slice(0, newsOffset + NEWS_PAGE_SIZE);
@@ -4096,7 +4207,7 @@ function renderNews() {
 }
 
 function loadMoreNews() {
-  const filtered = allNewsData.filter(n => filterMatchesTag(currentNewsFilter, n.tag));
+  const filtered = getActiveNewsData().filter(n => filterMatchesTag(currentNewsFilter, n.tag));
   const freeLimit = appState.isPremium ? 50 : FREE_NEWS_LIMIT;
   if (newsOffset >= filtered.length || newsOffset >= freeLimit) return;
   renderNewsAppend(filtered);
@@ -4105,6 +4216,12 @@ function loadMoreNews() {
 function renderNewsAppend(filtered) {
   const container = document.getElementById('news-list');
   if (!container) return;
+  // Lazily translate newly-revealed articles if we're past the initially-translated batch
+  const lang = appState.lang || 'en';
+  if (lang !== 'en' && !newsTranslating && newsArticleCache[lang]) {
+    const untranslated = newsArticleCache[lang].findIndex(n => n.title === allNewsData[n._idx]?.title);
+    if (untranslated !== -1) translateAllNews(lang, Math.min(allNewsData.length, newsOffset + 15));
+  }
   const freeLimit = appState.isPremium ? 50 : FREE_NEWS_LIMIT;
   const cappedFiltered = appState.isPremium ? filtered : filtered.slice(0, freeLimit);
   const next = cappedFiltered.slice(newsOffset, newsOffset + NEWS_PAGE_SIZE);
@@ -4137,9 +4254,10 @@ function renderNewsAppend(filtered) {
 
 function renderHomePreviewNews() {
   const preview = document.getElementById('home-news-preview');
-  if (!preview || !allNewsData.length) return;
+  const activeData = getActiveNewsData();
+  if (!preview || !activeData.length) return;
   let html = '';
-  allNewsData.slice(0, 3).forEach(n => {
+  activeData.slice(0, 3).forEach(n => {
     const col = tagColor(n.tag);
     html += `<div class="news-card-v2">
       <div class="news-tag-row">
