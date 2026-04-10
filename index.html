@@ -1830,9 +1830,10 @@ canvas{width:100%;height:100%}
       <!-- Payment options -->
       <p style="font-size:.78rem;color:var(--text2);text-align:center;margin-bottom:10px;font-weight:600">Choose your payment method:</p>
       <div class="payment-options" style="margin-bottom:14px">
-        <a class="payment-opt" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Pay via Telegram</h5><p>Send payment proof to @Asterix_Abdin</p></div><span>›</span></a>
-        <a class="payment-opt" href="https://pay.google.com" target="_blank"><span class="payment-opt-icon">💳</span><div class="payment-opt-text"><h5>Google Pay</h5><p>Fast, secure payment</p></div><span>›</span></a>
-        <a class="payment-opt" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>Crypto Payment</h5><p>BTC, USDT, ETH accepted</p></div><span>›</span></a>
+        <a class="payment-opt" id="pay-opt-flutterwave" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">🌍</span><div class="payment-opt-text"><h5>Flutterwave / Card</h5><p>Cards, bank transfer, mobile money</p></div><span>›</span></a>
+        <a class="payment-opt" id="pay-opt-momo" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">📱</span><div class="payment-opt-text"><h5>MTN MoMo / Telecel Cash</h5><p>Send to: <strong id="momo-number">Contact @Asterix_Abdin</strong></p></div><span>›</span></a>
+        <a class="payment-opt" id="pay-opt-crypto" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>Crypto (USDT / BTC)</h5><p>Send proof to @Asterix_Abdin</p></div><span>›</span></a>
+        <a class="payment-opt" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Pay via Telegram</h5><p>DM @Asterix_Abdin to arrange</p></div><span>›</span></a>
       </div>
       <div style="font-size:.7rem;color:var(--text3);text-align:center;margin-bottom:20px">Trading involves risk. Premium provides tools — results depend on your execution. <span style="text-decoration:underline;cursor:pointer" onclick="closeOverlay('upgrade-overlay');openOverlay('disclaimer-overlay')">Read disclaimer</span></div>
     </div>
@@ -2124,6 +2125,17 @@ canvas{width:100%;height:100%}
 // ════════════════════════════════════════════════════════════════
 const GIST_USER = 'asterixcomltd';          // your GitHub username
 const GIST_ID   = "a4caaf2993eea50322f31478391743b0"; // 32-char hex Gist ID
+
+// ── PAYMENT CONFIG — update these when you have your accounts ──────────────
+const PAYMENT_CONFIG = {
+  telegram_contact : 'https://t.me/Asterix_Abdin',    // fallback for all methods
+  flutterwave_link : 'https://t.me/Asterix_Abdin',    // TODO: replace with your Flutterwave payment link
+  momo_number      : null,                             // TODO: replace with your MTN MoMo number e.g. '0241234567'
+  crypto_address   : null,                             // TODO: replace with your USDT (TRC-20) wallet address
+  premium_price    : 12.99,
+  premium_currency : 'USD',
+};
+// ─────────────────────────────────────────────────────────────────────────────
 
 let signalsData = [];
 let appState = { user:null, isPremium:false, lang:'en', avatarDataURL:null };
@@ -5435,76 +5447,70 @@ function initApp() {
   setInterval(renderATXLeaderboard, 30000);
 }
 
+// ============ PAYMENT HELPERS ============
+function getPaymentLink(amountUSD, label) {
+  // Priority: Flutterwave link → Telegram fallback
+  if (PAYMENT_CONFIG.flutterwave_link && PAYMENT_CONFIG.flutterwave_link !== 'https://t.me/Asterix_Abdin') {
+    return PAYMENT_CONFIG.flutterwave_link + `?amount=${amountUSD}&ref=${encodeURIComponent(label)}`;
+  }
+  return PAYMENT_CONFIG.telegram_contact;
+}
+
+function openPaymentSheet(title, amountUSD, ref) {
+  // Build a mini payment-method sheet instead of going straight to one provider
+  const existing = document.getElementById('payment-sheet');
+  if (existing) existing.remove();
+
+  const momoLine = PAYMENT_CONFIG.momo_number
+    ? `<a class="payment-opt" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">📱</span><div class="payment-opt-text"><h5>MTN MoMo / Telecel Cash</h5><p>Send $${amountUSD} to <strong>${PAYMENT_CONFIG.momo_number}</strong> · DM proof</p></div><span>›</span></a>`
+    : `<a class="payment-opt" href="${PAYMENT_CONFIG.telegram_contact}" target="_blank"><span class="payment-opt-icon">📱</span><div class="payment-opt-text"><h5>MTN MoMo / Mobile Money</h5><p>DM @Asterix_Abdin for number</p></div><span>›</span></a>`;
+
+  const cryptoLine = PAYMENT_CONFIG.crypto_address
+    ? `<a class="payment-opt" onclick="navigator.clipboard&&navigator.clipboard.writeText('${PAYMENT_CONFIG.crypto_address}').then(()=>showToast('Address copied!'))" style="cursor:pointer"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>USDT / BTC / ETH</h5><p>${PAYMENT_CONFIG.crypto_address.slice(0,18)}… · tap to copy · DM proof</p></div><span>📋</span></a>`
+    : `<a class="payment-opt" href="${PAYMENT_CONFIG.telegram_contact}" target="_blank"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>USDT / BTC / ETH</h5><p>DM @Asterix_Abdin for wallet address</p></div><span>›</span></a>`;
+
+  const sheet = document.createElement('div');
+  sheet.id = 'payment-sheet';
+  sheet.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;z-index:9000;backdrop-filter:blur(3px)';
+  sheet.innerHTML = `
+    <div style="background:var(--surface);border-radius:24px 24px 0 0;padding:24px;width:100%;max-width:480px;max-height:80vh;overflow-y:auto" onclick="event.stopPropagation()">
+      <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:1.1rem">${title}</div>
+        <button onclick="document.getElementById('payment-sheet').remove()" style="background:var(--surface2);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.9rem">✕</button>
+      </div>
+      <div style="font-size:.8rem;color:var(--text2);margin-bottom:18px">Amount: <strong style="color:var(--gold)">$${amountUSD} USD</strong></div>
+      <div class="payment-options">
+        <a class="payment-opt" href="${PAYMENT_CONFIG.flutterwave_link}" target="_blank"><span class="payment-opt-icon">🌍</span><div class="payment-opt-text"><h5>Flutterwave</h5><p>Card · Bank · Mobile Money</p></div><span>›</span></a>
+        ${momoLine}
+        ${cryptoLine}
+        <a class="payment-opt" href="${PAYMENT_CONFIG.telegram_contact}" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Arrange via Telegram</h5><p>DM @Asterix_Abdin — any method</p></div><span>›</span></a>
+      </div>
+      <div style="font-size:.72rem;color:var(--text3);text-align:center;margin-top:14px">After payment, DM the proof to @Asterix_Abdin to activate your access.</div>
+    </div>`;
+  sheet.addEventListener('click', () => sheet.remove());
+  document.body.appendChild(sheet);
+}
+
 // ============ GHANA MONETIZATION: COSMETICS & PREMIUM ============
 function buyCosmetic(item) {
   const items = {
-    'avatar': { name: 'Premium Avatar', price: 0.99 },
-    'theme': { name: 'Dark Theme Pack', price: 1.99 },
-    'nameplate': { name: 'Golden Nameplate', price: 0.49 },
-    'vip': { name: 'VIP Badge', price: 2.99 },
-    'glow': { name: 'Glow Effect', price: 0.99 },
-    'legend': { name: 'Legend Status', price: 4.99 }
+    'avatar'    : { name: 'Premium Avatar',    price: 0.99 },
+    'theme'     : { name: 'Dark Theme Pack',   price: 1.99 },
+    'nameplate' : { name: 'Golden Nameplate',  price: 0.49 },
+    'vip'       : { name: 'VIP Badge',         price: 2.99 },
+    'glow'      : { name: 'Glow Effect',       price: 0.99 },
+    'legend'    : { name: 'Legend Status',     price: 4.99 }
   };
-
   const itemData = items[item];
   if (!itemData) return;
-
-  if (confirm(`🛒 Buy ${itemData.name} for $${itemData.price}?\n\nYou'll be redirected to PayPal.`)) {
-    const paypalLink = `https://paypal.me/axtrader/${itemData.price}?item=${item}`;
-    window.open(paypalLink, '_blank');
-    showToast(`✨ Sent to PayPal! After payment, come back to see your ${itemData.name}.`);
-  }
+  openPaymentSheet(`🛒 ${itemData.name}`, itemData.price, item);
 }
 
-function openPremiumModal() {
-  const modal = `
-    <div style="position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:1000" onclick="this.remove()">
-      <div style="background:var(--surface);border-radius:16px;padding:28px;max-width:400px;width:90%;max-height:80vh;overflow-y:auto" onclick="event.stopPropagation()">
-        <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;margin-bottom:12px;color:var(--text)">⭐ Premium Features</h2>
-
-        <div style="margin:16px 0;border-radius:10px;background:var(--premium-bg);padding:14px;border-left:3px solid var(--premium)">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-            <span style="font-size:1.4rem">🚀</span>
-            <div><div style="font-weight:600;color:var(--text)">Auto Signal Copier</div><div style="font-size:.75rem;color:var(--text2)">Copy pro trades instantly</div></div>
-          </div>
-
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-            <span style="font-size:1.4rem">📊</span>
-            <div><div style="font-weight:600;color:var(--text)">Advanced Analytics</div><div style="font-size:.75rem;color:var(--text2)">Backtest & ROI curves</div></div>
-          </div>
-
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-            <span style="font-size:1.4rem">📧</span>
-            <div><div style="font-weight:600;color:var(--text)">Daily Email Alerts</div><div style="font-size:.75rem;color:var(--text2)">Top signals before markets open</div></div>
-          </div>
-
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:1.4rem">🚫</span>
-            <div><div style="font-weight:600;color:var(--text)">No Ads Ever</div><div style="font-size:.75rem;color:var(--text2)">Clean experience</div></div>
-          </div>
-        </div>
-
-        <div style="background:var(--gold-bg);border-left:3px solid var(--gold);padding:12px;border-radius:8px;margin:16px 0;font-size:.8rem">
-          <strong style="color:var(--text)">First month: $4.99 | Then: $9.99/month</strong>
-        </div>
-
-        <button onclick="openPremiumCheckout()" style="width:100%;padding:14px;background:var(--gold);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.95rem;cursor:pointer;margin-bottom:8px">
-          Start Premium
-        </button>
-
-        <button onclick="this.closest('[onclick]').parentElement.remove()" style="width:100%;padding:10px;background:var(--surface2);color:var(--text);border:none;border-radius:10px;font-weight:600;font-size:.9rem;cursor:pointer">
-          Maybe Later
-        </button>
-      </div>
-    </div>
-  `;
-
-  document.body.innerHTML += modal;
-}
+function openPremiumModal() { openUpgrade(); }
 
 function openPremiumCheckout() {
-  window.open('https://paypal.me/axtrader/4.99?item=premium-first-month', '_blank');
-  showToast('✨ Opening payment page...');
+  openPaymentSheet('✦ AxTrader Premium', PAYMENT_CONFIG.premium_price, 'premium');
 }
 </script>
 </body>
