@@ -1943,7 +1943,16 @@ const GIST_ID   = "a4caaf2993eea50322f31478391743b0"; // 32-char hex Gist ID
 
 let signalsData = [];
 let appState = { user:null, isPremium:false, lang:'en', avatarDataURL:null };
-const gameState = { balance:1000 };
+const gameState = {
+  get balance() { return getATXBalance(); },
+  set balance(val) {
+    const diff = val - this._balance;
+    if (diff > 0) addATX(diff, 'game');
+    else if (diff < 0) removeATX(-diff, 'game');
+    this._balance = val;
+  },
+  _balance: 1000
+};
 let livePriceMap = {};
 
 // ============ LIVE SIGNALS FROM GITHUB GIST ============
@@ -3903,9 +3912,9 @@ function showToast(msg){
 
 // ============ GAME STATE ============
 function updateBalanceDisplays(){
-  document.querySelectorAll('.atx-display').forEach(el=>el.textContent=gameState.balance);
-  document.getElementById('atx-balance').textContent=gameState.balance.toLocaleString();
-  document.getElementById('ps-atx').textContent=gameState.balance.toLocaleString();
+  document.querySelectorAll('.atx-display').forEach(el=>el.textContent=getATXBalance().toLocaleString());
+  document.getElementById('atx-balance').textContent=formatATX(getATXBalance());
+  document.getElementById('ps-atx').textContent=getATXBalance().toLocaleString();
 }
 function openGame(name){
   document.getElementById('game-'+name).classList.add('open');
@@ -4773,6 +4782,129 @@ function renderNotificationSettings() {
   if (container) container.innerHTML = content;
 }
 
+// ============ GAMES ARCADE: ATX COIN ECONOMY ============
+let atxWallet = {
+  balance: 1000,
+  archived: 0,
+  gameWins: 0,
+  gameLosses: 0,
+  totalBet: 0,
+  totalWinnings: 0,
+  history: []
+};
+
+function saveATXWallet() {
+  localStorage.setItem('axtrader_atx_wallet', JSON.stringify(atxWallet));
+}
+
+function loadATXWallet() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('axtrader_atx_wallet') || '{}');
+    atxWallet = { ...atxWallet, ...saved };
+  } catch(e) {
+    console.log('[ATX] Load error:', e.message);
+  }
+}
+
+function addATX(amount, source = 'game') {
+  atxWallet.balance += Math.floor(amount);
+  atxWallet.totalWinnings += Math.floor(amount);
+  atxWallet.gameWins++;
+  atxWallet.history.push({
+    type: 'win',
+    amount: Math.floor(amount),
+    source,
+    timestamp: Date.now()
+  });
+  saveATXWallet();
+  updateBalanceDisplays();
+}
+
+function removeATX(amount, source = 'game') {
+  if (atxWallet.balance < amount) return false;
+  atxWallet.balance -= Math.floor(amount);
+  atxWallet.totalBet += Math.floor(amount);
+  atxWallet.gameLosses++;
+  atxWallet.history.push({
+    type: 'loss',
+    amount: Math.floor(amount),
+    source,
+    timestamp: Date.now()
+  });
+  saveATXWallet();
+  return true;
+}
+
+function getATXBalance() {
+  return atxWallet.balance;
+}
+
+function formatATX(amount) {
+  if (amount >= 1000000) return (amount / 1000000).toFixed(1) + 'M';
+  if (amount >= 1000) return (amount / 1000).toFixed(1) + 'K';
+  return amount.toLocaleString();
+}
+
+function renderATXLeaderboard() {
+  // Future: Pull real-time leaderboard from backend
+  // For now: Show top players from localStorage across all users (when backend added)
+  const leaderboardEl = document.querySelector('.leaderboard');
+  if (!leaderboardEl) return;
+
+  // Simulated top players (will be replaced with backend data)
+  const topPlayers = [
+    { rank: 1, name: 'CryptoKwame', country: 'GH', winnings: 6820, multiplier: 18.44 },
+    { rank: 2, name: 'AxTrader', country: 'Official', winnings: 4200, multiplier: 12.10 },
+    { rank: 3, name: 'TradingNana', country: 'NG', winnings: 3140, multiplier: 9.88 },
+    { rank: 4, name: 'DeFiKofi', country: 'GH', winnings: 2010, multiplier: 7.22 },
+    { rank: 5, name: 'CoinMaestro', country: 'ZA', winnings: 980, multiplier: 5.60 }
+  ];
+
+  // TODO: Replace with real API call
+  // const topPlayers = await fetch('/api/atx/leaderboard').then(r => r.json());
+}
+
+function renderATXStats() {
+  const winRate = atxWallet.gameWins + atxWallet.gameLosses > 0
+    ? (atxWallet.gameWins / (atxWallet.gameWins + atxWallet.gameLosses) * 100).toFixed(1)
+    : 0;
+
+  return `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <div style="background:var(--surface);padding:12px;border-radius:10px;border-left:3px solid var(--gold)">
+        <div style="font-size:0.7rem;color:var(--text3);margin-bottom:4px">Win/Loss</div>
+        <div style="font-weight:700;color:var(--text)">${atxWallet.gameWins}W / ${atxWallet.gameLosses}L</div>
+        <div style="font-size:0.75rem;color:var(--green);margin-top:4px">${winRate}% accuracy</div>
+      </div>
+      <div style="background:var(--surface);padding:12px;border-radius:10px;border-left:3px solid var(--green)">
+        <div style="font-size:0.7rem;color:var(--text3);margin-bottom:4px">Total Winnings</div>
+        <div style="font-weight:700;color:var(--text)">⚡ ${formatATX(atxWallet.totalWinnings)}</div>
+        <div style="font-size:0.75rem;color:var(--text2);margin-top:4px">ROI: ${atxWallet.totalBet > 0 ? ((atxWallet.totalWinnings / atxWallet.totalBet) * 100).toFixed(0) : 0}%</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderATXHistory() {
+  const recent = atxWallet.history.slice(-10).reverse();
+  return `
+    <div style="background:var(--surface);border-radius:10px;padding:12px">
+      <div style="font-weight:600;color:var(--text);margin-bottom:8px">Recent Activity</div>
+      ${recent.map(tx => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:0.8rem">
+          <div>
+            <div style="color:var(--text);font-weight:500">${tx.type === 'win' ? '✅ Won' : '❌ Lost'} ${tx.source}</div>
+            <div style="color:var(--text2);font-size:0.7rem">${new Date(tx.timestamp).toLocaleTimeString()}</div>
+          </div>
+          <div style="color:${tx.type === 'win' ? 'var(--green)' : 'var(--red)'};font-weight:700">
+            ${tx.type === 'win' ? '+' : '-'}⚡ ${formatATX(tx.amount)}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
 // ============ INIT APP ============
 function initApp() {
   buildTicker(null);             // render placeholder immediately
@@ -4782,6 +4914,7 @@ function initApp() {
   fetchMarketNews();             // Phase 2: institutional news context
   fetchFundamentals();           // Fear & Greed, BTC dominance
   renderCourses('ict');
+  loadATXWallet();               // Games: Load ATX wallet from localStorage
   updateBalanceDisplays();
   updatePerformanceAnalytics();  // Phase 2: performance dashboard
   loadNotificationPreferences();  // Phase 2: load notification settings
@@ -4797,6 +4930,8 @@ function initApp() {
   setInterval(fetchMarketNews, 300000);
   // Refresh analytics every fetch cycle
   setInterval(updatePerformanceAnalytics, 60000);
+  // Update leaderboard every 30 seconds
+  setInterval(renderATXLeaderboard, 30000);
 }
 </script>
 </body>
