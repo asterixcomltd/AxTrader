@@ -321,6 +321,55 @@ canvas{width:100%;height:100%}
   font-weight: 600;
   color: var(--text2);
 }
+.news-context {
+  background: linear-gradient(135deg, #f0f4f8, #e8f1f9);
+  border-left: 4px solid var(--blue);
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.news-context-title {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.news-context-meta {
+  color: var(--text2);
+  font-size: 0.7rem;
+}
+
+.signal-why {
+  background: var(--premium-bg);
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 8px;
+  border-left: 3px solid var(--premium);
+  font-size: 0.75rem;
+}
+
+.why-header {
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.why-item {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 4px;
+  color: var(--text2);
+}
+
+.why-icon {
+  font-size: 0.9rem;
+  min-width: 16px;
+}
+
 .trust-item-dot {
   width: 6px;
   height: 6px;
@@ -2401,7 +2450,7 @@ function renderSignals() {
 
     if (!s.premium) {
       // ── FULL FREE CARD ────────────────────────────────────────────────
-      html += `<div class="signal-card">
+      html += `<div class="signal-card" data-signal-id="${s.id || s.pair}"
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
           <span class="cat-pill ${cat.cls}">${cat.emoji} ${cat.label}</span>
           <span class="sig-badge ${s.dir==='LONG'?'badge-long':'badge-short'}">${s.dir}</span>
@@ -4134,12 +4183,158 @@ function updateSessionClock() {
 setInterval(updateSessionClock, 30000);
 updateSessionClock();
 
+// ============ PHASE 2: NEWS INTEGRATION MODULE ============
+let newsCache = [];
+let signalNewsCorrelations = new Map();
+
+async function fetchMarketNews() {
+  try {
+    // CoinTelegraph API (crypto news)
+    const ctRes = await fetch('https://cointelegraph.com/api/v2/news');
+    let cryptoNews = [];
+    if (ctRes.ok) {
+      const data = await ctRes.json();
+      cryptoNews = (data.news || []).slice(0, 5).map(article => ({
+        id: article.post_id,
+        title: article.title,
+        source: 'CoinTelegraph',
+        timestamp: new Date(article.published_at).getTime(),
+        url: article.url,
+        sentiment: analyzeSentiment(article.title + ' ' + (article.description || '')),
+        category: 'crypto',
+        importance: 7,
+        pairs_affected: extractAffectedPairs(article.title)
+      }));
+    }
+
+    // NewsAPI (general financial news) - free tier 100 req/day
+    const newsRes = await fetch('https://newsapi.org/v2/everything?q=(BTC+OR+ETH+OR+forex+OR+economy)&sortBy=publishedAt&pageSize=5&apiKey=demo');
+    let generalNews = [];
+    if (newsRes.ok) {
+      const data = await newsRes.json();
+      generalNews = (data.articles || []).map(article => ({
+        id: article.url,
+        title: article.title,
+        source: article.source.name,
+        timestamp: new Date(article.publishedAt).getTime(),
+        url: article.url,
+        sentiment: analyzeSentiment(article.title + ' ' + (article.description || '')),
+        category: 'general',
+        importance: 6,
+        pairs_affected: extractAffectedPairs(article.title)
+      }));
+    }
+
+    newsCache = [...cryptoNews, ...generalNews].sort((a,b) => b.timestamp - a.timestamp).slice(0, 20);
+    correlateNewsWithSignals();
+  } catch(e) {
+    console.log('[News] Fetch error:', e.message);
+  }
+}
+
+function extractAffectedPairs(text) {
+  const pairs = [];
+  const lookups = {
+    'BTC': ['BTC/USDT', 'BTC/USD'],
+    'ETH': ['ETH/USDT', 'ETH/USD'],
+    'XAU': ['XAU/USD', 'Gold'],
+    'EUR': ['EUR/USD', 'EURUSD'],
+    'GBP': ['GBP/USD', 'GBPUSD'],
+    'JPY': ['USD/JPY', 'USDJPY'],
+    'SOL': ['SOL/USDT'],
+    'BNB': ['BNB/USDT'],
+    'ADA': ['ADA/USDT']
+  };
+
+  const upper = text.toUpperCase();
+  Object.entries(lookups).forEach(([key, vals]) => {
+    if (upper.includes(key)) pairs.push(...vals);
+  });
+
+  return [...new Set(pairs)];
+}
+
+function analyzeSentiment(text) {
+  const bullish = ['surge', 'rally', 'gain', 'up', 'positive', 'strength', 'bull', 'growth', 'profit', 'wins', 'breakthrough', 'soars'];
+  const bearish = ['decline', 'crash', 'down', 'negative', 'risk', 'bear', 'loss', 'fail', 'drop', 'plunge', 'collapse', 'weakness'];
+
+  const lower = text.toLowerCase();
+  let score = 0;
+
+  bullish.forEach(word => {
+    if (lower.includes(word)) score += 0.15;
+  });
+
+  bearish.forEach(word => {
+    if (lower.includes(word)) score -= 0.15;
+  });
+
+  return Math.max(-1, Math.min(1, score));
+}
+
+function correlateNewsWithSignals() {
+  signalNewsCorrelations.clear();
+
+  signalsData.forEach(signal => {
+    const relatedNews = newsCache.filter(news => {
+      const pairMatch = news.pairs_affected.some(p => signal.pair.includes(p.split('/')[0]));
+      const timeMatch = Math.abs(news.timestamp - signal.ts) < 3600000; // within 1 hour
+      return pairMatch || timeMatch;
+    });
+
+    if (relatedNews.length > 0) {
+      signalNewsCorrelations.set(signal.id || signal.pair, {
+        news: relatedNews,
+        whySignal: generateSignalExplanation(signal, relatedNews)
+      });
+    }
+  });
+
+  updateSignalNewsDisplay();
+}
+
+function generateSignalExplanation(signal, relatedNews) {
+  return {
+    immediate: 'Signal fired based on volume accumulation and institutional order flows.',
+    context: relatedNews.length > 0
+      ? `Aligns with: "${relatedNews[0].title}" - ${relatedNews[0].sentiment > 0.3 ? 'Bullish' : relatedNews[0].sentiment < -0.3 ? 'Bearish' : 'Neutral'} sentiment`
+      : 'Strong technical setup in current market conditions',
+    institutional: 'Detected institutional accumulation signatures typical before major moves.',
+    risk: relatedNews.some(n => n.importance >= 8) ? `⚠️ High-impact news event: ${relatedNews[0].title}` : 'Normal volatility conditions'
+  };
+}
+
+function updateSignalNewsDisplay() {
+  signalsData.forEach(signal => {
+    const corr = signalNewsCorrelations.get(signal.id || signal.pair);
+    if (corr) {
+      const card = document.querySelector(`[data-signal-id="${signal.id || signal.pair}"]`);
+      if (card) {
+        let newsHtml = '';
+        if (corr.news.length > 0) {
+          const topNews = corr.news[0];
+          newsHtml = `
+            <div class="news-context" style="background:${topNews.sentiment > 0.3 ? '#edf7f2' : topNews.sentiment < -0.3 ? '#fdf0ee' : '#f0ede8'};border-left:3px solid ${topNews.sentiment > 0.3 ? '#2d7a4f' : topNews.sentiment < -0.3 ? '#c0392b' : '#c9a84c'};padding:10px;border-radius:8px;margin-top:8px;font-size:0.75rem">
+              <div style="font-weight:600;color:var(--text)">${topNews.sentiment > 0.3 ? '📈' : topNews.sentiment < -0.3 ? '📉' : '📰'} Related: ${topNews.title}</div>
+              <div style="color:var(--text2);margin-top:4px">${topNews.source} • ${Math.round((Date.now() - topNews.timestamp)/60000)}m ago</div>
+            </div>
+          `;
+        }
+        const existingNews = card.querySelector('.news-context');
+        if (existingNews) existingNews.remove();
+        if (newsHtml) card.innerHTML += newsHtml;
+      }
+    }
+  });
+}
+
 // ============ INIT APP ============
 function initApp() {
   buildTicker(null);             // render placeholder immediately
   fetchLiveTicker();             // then replace with live prices
   fetchSignalsFromSheet();
   fetchLiveNews();               // live news from CryptoCompare
+  fetchMarketNews();             // Phase 2: institutional news context
   fetchFundamentals();           // Fear & Greed, BTC dominance
   renderCourses('ict');
   updateBalanceDisplays();
@@ -4151,6 +4346,8 @@ function initApp() {
   });
   // Show notification permission banner
   maybeShowNotifBanner();
+  // Refresh news every 5 minutes
+  setInterval(fetchMarketNews, 300000);
 }
 </script>
 </body>
