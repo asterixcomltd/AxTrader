@@ -278,6 +278,21 @@ canvas{width:100%;height:100%}
 .arch-pill{display:inline-block;background:var(--gold-bg);color:var(--gold);border-radius:6px;padding:1px 7px;font-size:.7rem;font-weight:700;white-space:nowrap}
 .nav-badge{position:absolute;top:-3px;right:-3px;background:var(--red);color:#fff;border-radius:8px;font-size:.55rem;font-weight:800;padding:1px 4px;min-width:14px;text-align:center;display:none}
 .nav-badge.show{display:block}
+/* ── Feature 1: Timestamp Row ──────────────────────────────────────── */
+.sig-time-row{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:.7rem}
+.sig-fired-time{color:var(--text2)}
+.sig-expiry{color:var(--green);font-weight:600}
+.sig-expiry.expired{color:var(--text3)}
+.sig-expiry.expiring-soon{color:var(--red);font-weight:700}
+/* ── Feature 2: Archive Outcomes ───────────────────────────────────── */
+.arch-outcome-active{color:var(--blue);background:var(--blue-bg);padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:700}
+.arch-outcome-tp1,.arch-outcome-tp2{color:var(--green);background:var(--green-bg);padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:700}
+.arch-outcome-tp3{color:#166534;background:#dcfce7;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:700}
+.arch-outcome-sl{color:var(--red);background:var(--red-bg);padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:700}
+.arch-outcome-expired{color:var(--text3);background:var(--surface2);padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:700}
+/* ── Feature 3: Notification Banner ────────────────────────────────── */
+.notif-banner-action{transition:.15s}
+.notif-banner-action:hover{opacity:.88}
 .nav-item{position:relative}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -1192,6 +1207,16 @@ canvas{width:100%;height:100%}
         </div>
       </div>
 
+      <!-- Notification Permission Banner -->
+      <div id="notif-banner" style="display:none;margin:12px 16px;padding:12px 14px;background:linear-gradient(135deg,#1a1814,#2d2418);border-radius:12px;color:#fff">
+        <div style="font-weight:700;font-size:.88rem;margin-bottom:4px">📣 Get Signal Alerts</div>
+        <div style="font-size:.77rem;color:rgba(255,255,255,.65);margin-bottom:10px">Be notified when TP1 is hit (free) or all phases including TP2, TP3 & Stop Loss (premium).</div>
+        <div style="display:flex;gap:8px">
+          <button onclick="requestNotificationPermission()" class="notif-banner-action" style="flex:1;padding:9px;background:var(--gold);color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit">Enable Alerts</button>
+          <button onclick="dismissNotifBanner()" class="notif-banner-action" style="padding:9px 14px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);border:none;border-radius:8px;font-size:.82rem;cursor:pointer;font-family:inherit">Not now</button>
+        </div>
+      </div>
+
       <div class="section" style="padding-top:14px">
         <div class="section-header">
           <div>
@@ -1207,6 +1232,26 @@ canvas{width:100%;height:100%}
           <span style="font-size:.72rem;color:var(--text3)">Auto-refresh 60s</span>
         </div>
         <div id="signals-list"></div>
+
+        <!-- Archive Section -->
+        <div style="margin-top:16px;margin-left:16px;margin-right:16px">
+          <div class="section-header" style="margin-bottom:10px">
+            <div>
+              <div class="section-title">📂 Signal Archive</div>
+              <div style="font-size:.72rem;color:var(--text3)">Last 50 signals · effectiveness tracking</div>
+            </div>
+            <button onclick="toggleArchive()" id="archive-toggle-btn" class="notif-banner-action" style="background:none;border:1.5px solid var(--border);border-radius:8px;padding:5px 12px;font-size:.75rem;font-weight:600;cursor:pointer;color:var(--text2);font-family:inherit">Show ▾</button>
+          </div>
+          <!-- Stats bar — visible to all users -->
+          <div id="archive-stats-bar" style="display:flex;gap:16px;padding:10px 12px;background:var(--surface);border-radius:12px;border:1px solid var(--border);font-size:.78rem;margin-bottom:10px">
+            <span>Win Rate: <strong id="arch-win-rate" style="color:var(--green)">—</strong></span>
+            <span>Avg R:R: <strong id="arch-avg-rr" style="color:var(--gold)">—</strong></span>
+            <span>Total: <strong id="arch-total">0</strong></span>
+          </div>
+          <!-- Cards list — collapsed by default -->
+          <div id="archive-list" style="display:none"></div>
+        </div>
+
         <div class="ad-slot" id="ad-signals">📢 Advertisement — <a href="#" onclick="openUpgrade()" style="color:var(--gold);margin-left:4px">Remove ads</a></div>
       </div>
     </div>
@@ -1840,6 +1885,7 @@ const GIST_ID   = "a4caaf2993eea50322f31478391743b0"; // 32-char hex Gist ID
 let signalsData = [];
 let appState = { user:null, isPremium:false, lang:'en', avatarDataURL:null };
 const gameState = { balance:1000 };
+let livePriceMap = {};
 
 // ============ LIVE SIGNALS FROM GITHUB GIST ============
 // Gist raw URL: https://gist.githubusercontent.com/USER/GIST_ID/raw/FILENAME
@@ -1892,6 +1938,16 @@ async function fetchSignalsFromSheet() {
       if (rawScore <= 10)       normScore = Math.round(rawScore * 12.5);
       else if (rawScore <= 105) normScore = Math.round(rawScore / 105 * 100);
       else                      normScore = Math.min(rawScore, 100);
+
+      // Calculate expiration time based on timeframe
+      const base = s.ts || s.timestamp;
+      let expiresAt = null;
+      if (base) {
+        const tf = (s.tf || s.timeframe || '4H').toUpperCase();
+        const addMs = tf === '1H' ? 4*3600000 : tf === '1D' ? 72*3600000 : 16*3600000;
+        expiresAt = base + addMs;
+      }
+
       return {
         pair      : s.pair   || s.symbol || 'BTC/USDT',
         dir       : (s.dir   || s.direction || 'LONG').toUpperCase(),
@@ -1907,7 +1963,9 @@ async function fetchSignalsFromSheet() {
         rr        : s.rr     || '',
         bot       : s.bot    || '',
         time      : s.time   || '--:--',
-        premium   : isPremiumSlot
+        premium   : isPremiumSlot,
+        ts        : base || null,
+        expiresAt : expiresAt
       };
     }
 
@@ -1949,6 +2007,12 @@ async function fetchSignalsFromSheet() {
 
     signalsData = ordered.slice(0, 6).map((s, i) => normalizeSignal(s, i >= 3));
 
+    // Archive new signals
+    signalsData.filter(s => s.ts).forEach(s => archiveSignal(s));
+
+    // New signal notifications
+    signalsData.filter(s => s.ts).forEach(s => showPhaseNotification(s, 'new'));
+
     const now = new Date();
     const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
     const el = document.getElementById('signal-last-update');
@@ -1957,6 +2021,9 @@ async function fetchSignalsFromSheet() {
     setSignalSourceBadge(true, signalsData.length);
     renderSignals();
     renderHomePreview();
+
+    // Cleanup old notification states
+    pruneNotifState();
 
   } catch(e) {
     console.log('Gist fetch error:', e);
@@ -2016,8 +2083,247 @@ async function manualRefresh() {
 // ─── System status modal ───────────────────────────────────────────────────
 function openSystemStatus() { openOverlay('status-overlay', true); }
 
-// Auto-refresh every 60 seconds
-setInterval(fetchSignalsFromSheet, 60000);
+// ============ FEATURE 2: SIGNAL ARCHIVE ============
+
+function archiveSignal(signal) {
+  if (!signal.ts) return;
+  const id = `${signal.pair}_${signal.ts}`;
+  try {
+    const seen = JSON.parse(localStorage.getItem('axtrader_archive_seen') || '{}');
+    if (seen[id]) return;
+    seen[id] = true;
+    localStorage.setItem('axtrader_archive_seen', JSON.stringify(seen));
+    const archived = JSON.parse(localStorage.getItem('axtrader_archive') || '[]');
+    const entry = {
+      id, pair: signal.pair, dir: signal.dir, entry: signal.entry,
+      sl: signal.sl, tp1: signal.tp1, tp2: signal.tp, tp3: signal.tp3,
+      score: signal.score, tf: signal.tf, bot: signal.bot, grade: signal.grade,
+      rr: signal.rr, ts: signal.ts, expiresAt: signal.expiresAt,
+      archivedAt: Date.now(), outcome: 'Active', premium: signal.premium
+    };
+    archived.unshift(entry);
+    if (archived.length > 50) archived.splice(50);
+    localStorage.setItem('axtrader_archive', JSON.stringify(archived));
+  } catch(e) { console.warn('archiveSignal error:', e); }
+}
+
+function updateArchiveOutcomes(prices) {
+  try {
+    const archived = JSON.parse(localStorage.getItem('axtrader_archive') || '[]');
+    let changed = false;
+    archived.forEach(sig => {
+      if (sig.outcome !== 'Active') return;
+      const price = prices[sig.pair];
+      if (!price) return;
+      const p = price;
+      const tp3 = parseFloat((sig.tp3||'0').replace(/,/g,''));
+      const tp2 = parseFloat((sig.tp2||'0').replace(/,/g,''));
+      const tp1 = parseFloat((sig.tp1||'0').replace(/,/g,''));
+      const sl  = parseFloat((sig.sl||'0').replace(/,/g,''));
+      const isLong = sig.dir === 'LONG';
+      if (isLong) {
+        if (p >= tp3)      { sig.outcome = 'TP3'; changed = true; }
+        else if (p >= tp2) { sig.outcome = 'TP2'; changed = true; }
+        else if (p >= tp1) { sig.outcome = 'TP1'; changed = true; }
+        else if (p <= sl)  { sig.outcome = 'SL';  changed = true; }
+      } else {
+        if (p <= tp3)      { sig.outcome = 'TP3'; changed = true; }
+        else if (p <= tp2) { sig.outcome = 'TP2'; changed = true; }
+        else if (p <= tp1) { sig.outcome = 'TP1'; changed = true; }
+        else if (p >= sl)  { sig.outcome = 'SL';  changed = true; }
+      }
+      if (sig.outcome === 'Active' && sig.expiresAt && Date.now() > sig.expiresAt) {
+        sig.outcome = 'Expired'; changed = true;
+      }
+    });
+    if (changed) localStorage.setItem('axtrader_archive', JSON.stringify(archived));
+  } catch(e) { console.warn('updateArchiveOutcomes error:', e); }
+}
+
+function updateArchiveStats() {
+  try {
+    const archived = JSON.parse(localStorage.getItem('axtrader_archive') || '[]');
+    const closed = archived.filter(s => s.outcome !== 'Active' && s.outcome !== 'Expired');
+    const wins   = closed.filter(s => s.outcome === 'TP1' || s.outcome === 'TP2' || s.outcome === 'TP3');
+    const winRate = closed.length ? Math.round(wins.length / closed.length * 100) : null;
+    const avgRR   = archived.filter(s=>s.rr).reduce((a,s)=>a+parseFloat(s.rr||0),0) / (archived.filter(s=>s.rr).length||1);
+    document.getElementById('arch-win-rate').textContent = winRate !== null ? winRate + '%' : '—';
+    document.getElementById('arch-avg-rr').textContent   = archived.length ? avgRR.toFixed(1) : '—';
+    document.getElementById('arch-total').textContent    = archived.length;
+  } catch(e) { console.warn('updateArchiveStats error:', e); }
+}
+
+function renderArchive() {
+  try {
+    const archived = JSON.parse(localStorage.getItem('axtrader_archive') || '[]');
+    const list = document.getElementById('archive-list');
+    if (!archived.length) {
+      list.innerHTML = '<p style="text-align:center;color:var(--text3);padding:16px;font-size:.85rem">No archived signals yet. Check back after the next fetch.</p>';
+      return;
+    }
+    const outcomeStyle = {
+      'Active' : { color:'var(--blue)', bg:'var(--blue-bg)' },
+      'TP1'    : { color:'var(--green)', bg:'var(--green-bg)' },
+      'TP2'    : { color:'var(--green)', bg:'var(--green-bg)' },
+      'TP3'    : { color:'#166534', bg:'#dcfce7' },
+      'SL'     : { color:'var(--red)', bg:'var(--red-bg)' },
+      'Expired': { color:'var(--text3)', bg:'var(--surface2)' },
+    };
+    list.innerHTML = archived.map(s => {
+      const fired = s.ts ? new Date(s.ts).toLocaleDateString('en', {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+      const cat = getCatInfo(s.bot);
+      const style = outcomeStyle[s.outcome] || outcomeStyle['Active'];
+      return `<div class="signal-card" style="margin-bottom:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span class="cat-pill ${cat.cls}">${cat.emoji} ${cat.label}</span>
+          <span style="font-size:.7rem;padding:2px 8px;border-radius:10px;font-weight:700;color:${style.color};background:${style.bg}">${s.outcome}</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px">
+          <div class="sig-pair">${s.pair}</div>
+          <span class="sig-badge ${s.dir==='LONG'?'badge-long':'badge-short'}" style="font-size:.68rem">${s.dir}</span>
+          <span style="font-size:.7rem;color:var(--text3)">${s.tf}${s.rr?' · R:R '+s.rr:''}</span>
+        </div>
+        <div class="sig-row" style="margin-bottom:6px">
+          <div class="sig-cell"><div class="sig-cell-label">Entry</div><div class="sig-cell-val">${s.entry}</div></div>
+          <div class="sig-cell"><div class="sig-cell-label">SL</div><div class="sig-cell-val" style="color:var(--red)">${s.sl}</div></div>
+          <div class="sig-cell"><div class="sig-cell-label">TP1</div><div class="sig-cell-val" style="color:var(--green)">${s.tp1}</div></div>
+        </div>
+        <div style="font-size:.7rem;color:var(--text3)">Fired: ${fired}</div>
+      </div>`;
+    }).join('');
+  } catch(e) { console.warn('renderArchive error:', e); }
+}
+
+function toggleArchive() {
+  const list = document.getElementById('archive-list');
+  const btn  = document.getElementById('archive-toggle-btn');
+  if (list.style.display === 'none') {
+    list.style.display = 'block';
+    btn.textContent = 'Hide ▴';
+    renderArchive();
+  } else {
+    list.style.display = 'none';
+    btn.textContent = 'Show ▾';
+  }
+}
+
+// ============ FEATURE 3: NOTIFICATIONS ============
+
+async function requestNotificationPermission() {
+  if (!('Notification' in window)) {
+    showToast('Notifications not supported on this device');
+    return;
+  }
+  const result = await Notification.requestPermission();
+  localStorage.setItem('axtrader_notif_permission', result);
+  document.getElementById('notif-banner').style.display = 'none';
+  if (result === 'granted') {
+    showToast('Alerts enabled! You will be notified for every phase hit.');
+  } else {
+    showToast('Alerts blocked. Enable in browser settings to receive alerts.');
+  }
+}
+
+function dismissNotifBanner() {
+  localStorage.setItem('axtrader_notif_permission', 'dismissed');
+  document.getElementById('notif-banner').style.display = 'none';
+}
+
+function maybeShowNotifBanner() {
+  const perm = localStorage.getItem('axtrader_notif_permission');
+  if (perm) return;
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'granted') return;
+  setTimeout(() => {
+    const banner = document.getElementById('notif-banner');
+    if (banner) banner.style.display = 'block';
+  }, 3000);
+}
+
+function showPhaseNotification(signal, phase) {
+  if (Notification.permission !== 'granted') return;
+  const isPremium = appState.isPremium;
+  if (!isPremium && phase !== 'new' && phase !== 'tp1') return;
+  try {
+    const state = JSON.parse(localStorage.getItem('axtrader_notif_state') || '{}');
+    const id    = `${signal.pair}_${signal.ts}`;
+    if (!state[id]) state[id] = {};
+    const phaseKey = phase.toLowerCase().replace(/\s+/g,'_');
+    if (state[id][phaseKey]) return;
+    state[id][phaseKey] = true;
+    localStorage.setItem('axtrader_notif_state', JSON.stringify(state));
+    const messages = {
+      'new'  : { title: '🟢 New Signal: ' + signal.pair, body: `${signal.dir} · Entry ${signal.entry} · ${signal.tf} · GWP Score ${signal.score}%` },
+      'tp1'  : { title: '✅ TP1 Hit: '    + signal.pair, body: `First target reached at ${signal.tp1}. Consider moving SL to breakeven.` },
+      'tp2'  : { title: '✅ TP2 Hit: '    + signal.pair, body: `Second target reached at ${signal.tp}. Strong move — lock in profits!` },
+      'tp3'  : { title: '🏆 TP3 Runner: ' + signal.pair, body: `Maximum target hit at ${signal.tp3}. Full GWP setup completed!` },
+      'sl'   : { title: '🔴 Stop Loss: '  + signal.pair, body: `Position closed at SL ${signal.sl}. Protect your capital — wait for next setup.` },
+    };
+    const msg = messages[phaseKey];
+    if (!msg) return;
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.ready.then(reg => {
+        reg.showNotification(msg.title, {
+          body   : msg.body,
+          icon   : '/icon-192.png',
+          badge  : '/favicon-32.png',
+          tag    : id + '_' + phaseKey,
+          data   : { signalId: id, phase: phaseKey }
+        });
+      });
+    } else {
+      new Notification(msg.title, { body: msg.body, icon: '/icon-192.png' });
+    }
+  } catch(e) { console.warn('showPhaseNotification error:', e); }
+}
+
+function pruneNotifState() {
+  try {
+    const archived  = JSON.parse(localStorage.getItem('axtrader_archive') || '[]');
+    const activeIds = new Set(archived.filter(s=>s.outcome==='Active').map(s=>s.id));
+    const state     = JSON.parse(localStorage.getItem('axtrader_notif_state') || '{}');
+    let changed = false;
+    Object.keys(state).forEach(id => {
+      if (!activeIds.has(id)) { delete state[id]; changed = true; }
+    });
+    if (changed) localStorage.setItem('axtrader_notif_state', JSON.stringify(state));
+  } catch(e) { console.warn('pruneNotifState error:', e); }
+}
+
+// ============ FEATURE 4: PRICE MONITORING ============
+
+async function checkSignalPhases() {
+  if (Notification.permission !== 'granted') return;
+  try {
+    const archived = JSON.parse(localStorage.getItem('axtrader_archive') || '[]');
+    const active   = archived.filter(s => s.outcome === 'Active');
+    if (!active.length) return;
+    active.forEach(sig => {
+      const price = livePriceMap[sig.pair];
+      if (!price) return;
+      const [tp3, tp2, tp1, sl] = [sig.tp3, sig.tp2, sig.tp1, sig.sl].map(v => parseFloat((v||'0').replace(/,/g,'')));
+      const isLong = sig.dir === 'LONG';
+      if (isLong) {
+        if (price >= tp3)      showPhaseNotification(sig, 'tp3');
+        else if (price >= tp2) showPhaseNotification(sig, 'tp2');
+        else if (price >= tp1) showPhaseNotification(sig, 'tp1');
+        else if (price <= sl)  showPhaseNotification(sig, 'sl');
+      } else {
+        if (price <= tp3)      showPhaseNotification(sig, 'tp3');
+        else if (price <= tp2) showPhaseNotification(sig, 'tp2');
+        else if (price <= tp1) showPhaseNotification(sig, 'tp1');
+        else if (price >= sl)  showPhaseNotification(sig, 'sl');
+      }
+    });
+    updateArchiveOutcomes(livePriceMap);
+  } catch(e) { console.warn('checkSignalPhases error:', e); }
+}
+
+// Auto-refresh every 60 seconds with phase checking
+setInterval(async () => {
+  await fetchSignalsFromSheet();
+  await checkSignalPhases();
+}, 60000);
 
 // ============ RENDER SIGNALS ============
 function getCatInfo(bot) {
@@ -2050,8 +2356,24 @@ function renderSignals() {
   }
 
   const ageStr = s => {
-    const hrs = (Date.now() - (s.ts||0)) / 3600000;
-    return s.ts ? (hrs<1?'just now':hrs<24?Math.floor(hrs)+'h ago':Math.floor(hrs/24)+'d ago') : s.time;
+    if (!s.ts) return s.time || '--:--';
+    const ms = Date.now() - s.ts;
+    const mins = Math.floor(ms/60000);
+    const hrs  = Math.floor(ms/3600000);
+    const days = Math.floor(ms/86400000);
+    if (mins < 2)  return 'just now';
+    if (mins < 60) return `${mins}m ago`;
+    if (hrs  < 24) return `${hrs}h ${Math.floor((ms%3600000)/60000)}m ago`;
+    return `${days}d ago`;
+  };
+
+  const expiryStr = ts => {
+    if (!ts) return '';
+    const ms = ts - Date.now();
+    if (ms <= 0) return 'Expired';
+    const hrs  = Math.floor(ms/3600000);
+    const mins = Math.floor((ms%3600000)/60000);
+    return hrs > 0 ? `in ${hrs}h ${mins}m` : `in ${mins}m`;
   };
 
   let html = '';
@@ -2087,7 +2409,11 @@ function renderSignals() {
         <div class="sig-top" style="margin-bottom:8px">
           <div>
             <div class="sig-pair">${s.pair}<span class="grade-badge ${gradeClass}">${grade}</span></div>
-            <span style="font-size:.72rem;color:var(--text3)">${s.tf} · ${age}${s.rr?' · R:R '+s.rr:''}</span>
+            <span style="font-size:.72rem;color:var(--text3)">${s.tf}${s.rr?' · R:R '+s.rr:''}</span>
+            <div class="sig-time-row">
+              <span class="sig-fired-time">🕐 Fired ${age}</span>
+              ${s.expiresAt ? `<span class="sig-expiry ${Date.now()>s.expiresAt?'expired':s.expiresAt-Date.now()<3600000?'expiring-soon':''}">· Expires ${expiryStr(s.expiresAt)}</span>` : ''}
+            </div>
           </div>
         </div>
         <div class="sig-row">
@@ -2140,6 +2466,9 @@ function renderSignals() {
   container.innerHTML = html;
   const countEl = document.getElementById('ps-signals');
   if(countEl) countEl.textContent = signalsData.length;
+
+  // Update archive stats bar
+  updateArchiveStats();
 }
 
 function renderHomePreview() {
@@ -2359,17 +2688,30 @@ async function fetchLiveTicker() {
       };
     });
 
-    // Fetch forex via ExchangeRate-API (free tier)
+    // Fetch forex via ExchangeRate-API (free tier) and populate livePriceMap
+    let fxRates = {};
     try {
       const fx = await fetch('https://open.er-api.com/v6/latest/USD');
       if (fx.ok) {
         const fxd = await fx.json();
-        const rates = fxd.rates || {};
-        if (rates.EUR) items.push({s:'EUR/USD', p:(1/rates.EUR).toFixed(4), c:'', up:true});
-        if (rates.GBP) items.push({s:'GBP/USD', p:(1/rates.GBP).toFixed(4), c:'', up:true});
-        if (rates.JPY) items.push({s:'USD/JPY', p:rates.JPY.toFixed(2), c:'', up:true});
+        fxRates = fxd.rates || {};
+        if (fxRates.EUR) items.push({s:'EUR/USD', p:(1/fxRates.EUR).toFixed(4), c:'', up:true});
+        if (fxRates.GBP) items.push({s:'GBP/USD', p:(1/fxRates.GBP).toFixed(4), c:'', up:true});
+        if (fxRates.JPY) items.push({s:'USD/JPY', p:fxRates.JPY.toFixed(2), c:'', up:true});
       }
     } catch(e) {}
+
+    // Populate livePriceMap for phase monitoring
+    Object.entries(data).forEach(([id, vals]) => {
+      const label = TICKER_LABELS[id];
+      if (label && vals.usd) {
+        livePriceMap[label] = vals.usd;
+        if (label.endsWith('/USD')) livePriceMap[label.replace('/USD','/USDT')] = vals.usd;
+      }
+    });
+    if (fxRates.EUR) livePriceMap['EUR/USD'] = +(1/fxRates.EUR).toFixed(5);
+    if (fxRates.GBP) livePriceMap['GBP/USD'] = +(1/fxRates.GBP).toFixed(5);
+    if (fxRates.JPY) livePriceMap['USD/JPY'] = +fxRates.JPY.toFixed(3);
 
     liveTickerData = items;
     buildTicker(items);
@@ -3807,6 +4149,8 @@ function initApp() {
   document.querySelectorAll('.ad-slot').forEach(ad => {
     if (appState.isPremium) ad.classList.add('hidden');
   });
+  // Show notification permission banner
+  maybeShowNotifBanner();
 }
 </script>
 </body>

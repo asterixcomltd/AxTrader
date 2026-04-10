@@ -87,3 +87,34 @@ self.addEventListener('fetch', event => {
     })
   );
 });
+
+// ── Push notifications (for future VAPID backend integration) ────────────────
+self.addEventListener('push', event => {
+  if (!event.data) return;
+  let d = {};
+  try { d = event.data.json(); } catch(e) {}
+  event.waitUntil(
+    self.registration.showNotification(d.title || 'AxTrader', {
+      body   : d.body  || '',
+      icon   : '/icon-192.png',
+      badge  : '/favicon-32.png',
+      tag    : d.tag   || 'axtrader-push',
+      data   : d.data  || {}
+    })
+  );
+});
+
+// ── Notification click handler ──────────────────────────────────────────────
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type:'window', includeUncontrolled:true }).then(windowClients => {
+      for (const client of windowClients) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) return clients.openWindow('/');
+    })
+  );
+});
