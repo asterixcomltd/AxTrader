@@ -4126,11 +4126,48 @@ function candleCall(dir){
 
 // ============ PWA — SERVICE WORKER + INSTALL PROMPT ============
 // Register service worker (required for Android Chrome install prompt)
+// ============ SERVICE WORKER + AUTO-UPDATE ============
+const SW_UPDATE_CHECK_INTERVAL = 3600000; // Check every hour
+let swRegistration = null;
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('[SW] Registered:', reg.scope))
+    navigator.serviceWorker.register('/sw.js?v=' + Date.now())
+      .then(reg => {
+        swRegistration = reg;
+        console.log('[SW] Registered:', reg.scope);
+
+        // Check for updates immediately
+        reg.update();
+
+        // Check for updates periodically
+        setInterval(() => {
+          console.log('[SW] Checking for updates...');
+          reg.update();
+        }, SW_UPDATE_CHECK_INTERVAL);
+
+        // Listen for new service worker
+        reg.onupdatefound = () => {
+          const newWorker = reg.installing;
+          newWorker.onstatechange = () => {
+            if (newWorker.state === 'activated') {
+              console.log('[SW] New version available!');
+              // Force reload to get latest app
+              if (confirm('🟢 AxTrader has been updated! Reload to get the latest version?')) {
+                window.location.reload();
+              } else {
+                showToast('💡 New version ready. Reload anytime to update.');
+              }
+            }
+          };
+        };
+      })
       .catch(err => console.warn('[SW] Registration failed:', err));
+  });
+
+  // Listen for controller change (SW update applied)
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    console.log('[SW] Controller changed — new version active');
   });
 }
 

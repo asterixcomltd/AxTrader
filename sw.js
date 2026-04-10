@@ -1,7 +1,9 @@
 // AxTrader — GWP Signal App
-// Service Worker v1.1 — Network-first for HTML so deploys auto-update
+// Service Worker v1.3 — Aggressive auto-update with cache busting
 
-const CACHE_NAME = 'axtrader-v1.1';
+// Auto-increment version on deployment (CI/CD would update this)
+const CACHE_VERSION = '1.3';
+const CACHE_NAME = `axtrader-v${CACHE_VERSION}`;
 
 const SHELL_ASSETS = [
   '/manifest.json',
@@ -40,50 +42,69 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = event.request.url;
 
-  // Always network-first (no cache) for these:
+  // ALWAYS NETWORK-FIRST (bypass cache) for critical resources
   const alwaysNetwork = [
-    'gist.githubusercontent.com',
-    'api.coingecko.com',
-    'min-api.cryptocompare.com',
-    'api.alternative.me',
-    'open.er-api.com',
+    'gist.githubusercontent.com',        // Signal data
+    'api.coingecko.com',                 // Live prices
+    'min-api.cryptocompare.com',        // Hot news
+    'api.alternative.me',                // Fear & Greed
+    'open.er-api.com',                   // Forex
+    'cointelegraph.com',                 // News
+    'newsapi.org',                       // General news
     'fonts.googleapis.com',
     'fonts.gstatic.com',
-    'index.html',
+    'index.html',                        // Core app — ALWAYS FRESH
   ];
 
   if (alwaysNetwork.some(s => url.includes(s)) || event.request.method !== 'GET') {
     event.respondWith(
-      fetch(event.request).catch(() => new Response('', { status: 503 }))
+      fetch(event.request)
+        .then(r => r)
+        .catch(() => {
+          // Fallback gracefully for offline
+          if (event.request.mode === 'navigate') return caches.match('/index.html');
+          return new Response('', { status: 503 });
+        })
     );
     return;
   }
 
-  // Navigation (page loads): network-first so new deploys show immediately
+  // Navigation (page loads): NETWORK-FIRST with cache fallback
+  // This ensures new deploys appear immediately
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
         .then(response => {
-          // Update cache with fresh version
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
+          // Clone and cache fresh version
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
+          }
           return response;
         })
-        .catch(() => caches.match('/index.html'))
+        .catch(() => {
+          // Offline: return cached version
+          return caches.match(event.request)
+            .then(cached => cached || caches.match('/index.html'))
+            .catch(() => new Response('Offline', { status: 503 }));
+        })
     );
     return;
   }
 
-  // Static assets: cache-first
+  // Static assets (CSS, JS, images): cache-first for speed
+  // But still check for updates in background
   event.respondWith(
     caches.match(event.request).then(cached => {
-      if (cached) return cached;
-      return fetch(event.request).then(response => {
+      const fetchPromise = fetch(event.request).then(response => {
         if (response && response.status === 200 && response.type === 'basic') {
           caches.open(CACHE_NAME).then(c => c.put(event.request, response.clone()));
         }
         return response;
-      }).catch(() => new Response('', { status: 503 }));
+      });
+
+      // Return cached immediately, but fetch fresh in background
+      return cached || fetchPromise.catch(() => new Response('', { status: 503 }));
     })
   );
 });
