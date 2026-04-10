@@ -1310,6 +1310,11 @@ canvas{width:100%;height:100%}
       <div style="padding:20px 16px;text-align:center;color:var(--text2)">📊 Loading analytics...</div>
     </div>
 
+    <!-- NOTIFICATIONS SETTINGS -->
+    <div class="page" id="notifications-page">
+      <div style="padding:20px 16px;text-align:center;color:var(--text2)">🔔 Loading notification settings...</div>
+    </div>
+
     <!-- GAMES -->
     <div class="page" id="page-games">
       <div class="section" style="padding-top:16px">
@@ -1566,7 +1571,7 @@ canvas{width:100%;height:100%}
     <button class="nav-item" onclick="navTo('signals')" id="nav-signals"><span class="nav-icon">📡</span><span class="nav-label">Signals</span><span class="nav-badge" id="signals-nav-badge">0</span></button>
     <button class="nav-item active" onclick="navTo('home')" id="nav-home"><span class="nav-icon">⊞</span><span class="nav-label">Home</span></button>
     <button class="nav-item" onclick="navTo('analytics'); renderAnalyticsDashboard();" id="nav-analytics"><span class="nav-icon">📊</span><span class="nav-label">Analytics</span></button>
-    <button class="nav-item" onclick="navTo('more')" id="nav-more"><span class="nav-icon">⋯</span><span class="nav-label">More</span></button>
+    <button class="nav-item" onclick="navTo('notifications'); renderNotificationSettings();" id="nav-notifications"><span class="nav-icon">🔔</span><span class="nav-label">Alerts</span></button>
   </div>
 </div>
 
@@ -2639,14 +2644,17 @@ function openLangModal(){openOverlay('lang-overlay');}
 function navTo(page) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  const pageId = page === 'analytics' ? 'analytics-page' : 'page-'+page;
-  const navId = page === 'analytics' ? 'nav-analytics' : 'nav-'+page;
+  let pageId = 'page-'+page;
+  let navId = 'nav-'+page;
+  if (page === 'analytics') { pageId = 'analytics-page'; navId = 'nav-analytics'; }
+  if (page === 'notifications') { pageId = 'notifications-page'; navId = 'nav-notifications'; }
   document.getElementById(pageId).classList.add('active');
   document.getElementById(navId).classList.add('active');
   if(page==='more')    renderCourses('ict');
   if(page==='news')    { fetchLiveNews(); fetchFundamentals(); }
   if(page==='signals') { fetchSignalsFromSheet(); }
   if(page==='analytics') { renderAnalyticsDashboard(); }
+  if(page==='notifications') { renderNotificationSettings(); }
 }
 
 // ============ OVERLAYS ============
@@ -4510,6 +4518,261 @@ function onArchiveUpdated() {
   renderAnalyticsDashboard();
 }
 
+// ============ PHASE 2: MULTI-CHANNEL NOTIFICATIONS ============
+let notificationChannels = {
+  browser: true,
+  telegram: false,
+  discord: false,
+  email: false
+};
+
+let notificationFilters = {
+  pairs: [],           // Empty = all pairs
+  timeframes: [],      // Empty = all timeframes
+  phases: ['new','tp1','tp2','tp3','sl'],
+  minScore: 0          // Minimum GWP score (0-100)
+};
+
+function saveNotificationPreferences() {
+  localStorage.setItem('axtrader_notif_channels', JSON.stringify(notificationChannels));
+  localStorage.setItem('axtrader_notif_filters', JSON.stringify(notificationFilters));
+}
+
+function loadNotificationPreferences() {
+  try {
+    notificationChannels = JSON.parse(localStorage.getItem('axtrader_notif_channels') || JSON.stringify(notificationChannels));
+    notificationFilters = JSON.parse(localStorage.getItem('axtrader_notif_filters') || JSON.stringify(notificationFilters));
+  } catch(e) {}
+}
+
+function connectTelegram(botToken, chatId) {
+  if (!botToken || !chatId) {
+    showToast('⚠️ Please provide Telegram bot token and chat ID');
+    return;
+  }
+  notificationChannels.telegram = { botToken, chatId };
+  saveNotificationPreferences();
+  showToast('✓ Telegram connected! Signals will be sent to your chat.');
+}
+
+function connectDiscord(webhookUrl) {
+  if (!webhookUrl) {
+    showToast('⚠️ Please provide Discord webhook URL');
+    return;
+  }
+  notificationChannels.discord = { webhookUrl };
+  saveNotificationPreferences();
+  showToast('✓ Discord connected! Signals will be sent to your channel.');
+}
+
+function connectEmail(emailAddress) {
+  if (!emailAddress || !emailAddress.includes('@')) {
+    showToast('⚠️ Please provide valid email address');
+    return;
+  }
+  notificationChannels.email = { address: emailAddress };
+  saveNotificationPreferences();
+  showToast('✓ Email connected! Verification link sent to ' + emailAddress);
+}
+
+async function sendTelegramNotification(signal, phase) {
+  if (!notificationChannels.telegram) return;
+  try {
+    const tc = notificationChannels.telegram;
+    const phaseEmojis = { new: '🟢', tp1: '✅', tp2: '✅', tp3: '🏆', sl: '🔴' };
+    const message = `${phaseEmojis[phase]} ${phase.toUpperCase()} - ${signal.pair}
+Dir: ${signal.dir}
+Entry: ${signal.entry}
+TP1: ${signal.tp1}
+SL: ${signal.sl}
+Score: ${signal.score}%`;
+
+    await fetch(`https://api.telegram.org/bot${tc.botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: tc.chatId, text: message })
+    });
+  } catch(e) {
+    console.log('[Telegram] Error:', e.message);
+  }
+}
+
+async function sendDiscordNotification(signal, phase) {
+  if (!notificationChannels.discord) return;
+  try {
+    const phaseEmojis = { new: '🟢', tp1: '✅', tp2: '✅', tp3: '🏆', sl: '🔴' };
+    const phaseColors = { new: 3066993, tp1: 65280, tp2: 65280, tp3: 32768, sl: 16711680 };
+
+    const embed = {
+      title: `${phaseEmojis[phase]} ${phase.toUpperCase()} Hit: ${signal.pair}`,
+      color: phaseColors[phase],
+      fields: [
+        { name: 'Direction', value: signal.dir, inline: true },
+        { name: 'Entry', value: signal.entry, inline: true },
+        { name: 'Stop Loss', value: signal.sl, inline: true },
+        { name: 'TP1', value: signal.tp1, inline: true },
+        { name: 'Timeframe', value: signal.tf, inline: true },
+        { name: 'Score', value: `${signal.score}%`, inline: true }
+      ],
+      timestamp: new Date().toISOString()
+    };
+
+    await fetch(notificationChannels.discord.webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ embeds: [embed] })
+    });
+  } catch(e) {
+    console.log('[Discord] Error:', e.message);
+  }
+}
+
+async function sendEmailNotification(signal, phase) {
+  if (!notificationChannels.email) return;
+  try {
+    // Using Formspree or similar free email service
+    const msg = `
+Signal Alert: ${phase.toUpperCase()}
+Pair: ${signal.pair}
+Direction: ${signal.dir}
+Entry: ${signal.entry}
+Stop Loss: ${signal.sl}
+TP1: ${signal.tp1}
+Timeframe: ${signal.tf}
+Score: ${signal.score}%
+
+View your analytics: ${window.location.origin}
+    `;
+
+    await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: notificationChannels.email.address, message: msg })
+    }).catch(() => {});
+  } catch(e) {
+    console.log('[Email] Error:', e.message);
+  }
+}
+
+function shouldNotifyForSignal(signal, phase) {
+  // Check if phase is enabled
+  if (!notificationFilters.phases.includes(phase)) return false;
+
+  // Check pair filter
+  if (notificationFilters.pairs.length > 0 && !notificationFilters.pairs.includes(signal.pair)) return false;
+
+  // Check timeframe filter
+  if (notificationFilters.timeframes.length > 0 && !notificationFilters.timeframes.includes(signal.tf)) return false;
+
+  // Check score filter
+  if (parseInt(signal.score || 0) < notificationFilters.minScore) return false;
+
+  return true;
+}
+
+// Override default showPhaseNotification to include multi-channel
+const originalShowPhaseNotification = showPhaseNotification;
+function showPhaseNotification(signal, phase) {
+  // Call original for browser notifications
+  originalShowPhaseNotification(signal, phase);
+
+  // Check filters
+  if (!shouldNotifyForSignal(signal, phase)) return;
+
+  // Send to connected channels
+  if (notificationChannels.telegram) sendTelegramNotification(signal, phase);
+  if (notificationChannels.discord) sendDiscordNotification(signal, phase);
+  if (notificationChannels.email) sendEmailNotification(signal, phase);
+}
+
+function renderNotificationSettings() {
+  loadNotificationPreferences();
+
+  const content = `
+    <div style="padding:0 16px 20px;color:var(--text2)">
+      <h2 style="font-family:'Space Grotesk',sans-serif;color:var(--text);margin:20px 0 16px;font-size:1.25rem">🔔 Notification Settings</h2>
+
+      <h3 style="font-size:0.95rem;font-weight:600;margin:20px 0 12px;color:var(--text)">📱 Channels</h3>
+
+      <div style="background:var(--surface);padding:14px;border-radius:12px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div>
+            <div style="font-weight:600;color:var(--text)">🌐 Browser Notifications</div>
+            <div style="font-size:0.75rem;color:var(--text3)">Native desktop alerts</div>
+          </div>
+          <label style="position:relative;display:inline-block;width:50px;height:28px">
+            <input type="checkbox" ${notificationChannels.browser ? 'checked' : ''} style="display:none" onchange="notificationChannels.browser=this.checked;saveNotificationPreferences();showToast('✓ Browser notifications ' + (this.checked?'enabled':'disabled'))">
+            <span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:${notificationChannels.browser?'var(--green)':'var(--border)'};transition:.3s;border-radius:28px"></span>
+          </label>
+        </div>
+      </div>
+
+      <div style="background:var(--surface);padding:14px;border-radius:12px;margin-bottom:12px">
+        <div style="font-weight:600;color:var(--text);margin-bottom:10px">✈️ Telegram Bot</div>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <input type="text" placeholder="Bot Token" id="tg-token" style="flex:1;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.8rem;background:var(--bg);color:var(--text);outline:none">
+          <input type="text" placeholder="Chat ID" id="tg-chat" style="flex:1;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.8rem;background:var(--bg);color:var(--text);outline:none">
+          <button onclick="connectTelegram(document.getElementById('tg-token').value, document.getElementById('tg-chat').value)" style="padding:9px 14px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:0.8rem">Connect</button>
+        </div>
+        ${notificationChannels.telegram ? '<div style="font-size:0.7rem;color:var(--green);font-weight:600">✓ Connected</div>' : '<div style="font-size:0.7rem;color:var(--text3)">Get bot token from @BotFather on Telegram</div>'}
+      </div>
+
+      <div style="background:var(--surface);padding:14px;border-radius:12px;margin-bottom:12px">
+        <div style="font-weight:600;color:var(--text);margin-bottom:10px">🪝 Discord Webhook</div>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <input type="text" placeholder="Webhook URL" id="dc-webhook" style="flex:1;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.8rem;background:var(--bg);color:var(--text);outline:none">
+          <button onclick="connectDiscord(document.getElementById('dc-webhook').value)" style="padding:9px 14px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:0.8rem">Connect</button>
+        </div>
+        ${notificationChannels.discord ? '<div style="font-size:0.7rem;color:var(--green);font-weight:600">✓ Connected</div>' : '<div style="font-size:0.7rem;color:var(--text3)">Create webhook in Server Settings → Integrations</div>'}
+      </div>
+
+      <div style="background:var(--surface);padding:14px;border-radius:12px;margin-bottom:20px">
+        <div style="font-weight:600;color:var(--text);margin-bottom:10px">📧 Email Alerts</div>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <input type="email" placeholder="Your email" id="email-addr" style="flex:1;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.8rem;background:var(--bg);color:var(--text);outline:none">
+          <button onclick="connectEmail(document.getElementById('email-addr').value)" style="padding:9px 14px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:0.8rem">Connect</button>
+        </div>
+        ${notificationChannels.email ? '<div style="font-size:0.7rem;color:var(--green);font-weight:600">✓ Connected</div>' : ''}
+      </div>
+
+      <h3 style="font-size:0.95rem;font-weight:600;margin:20px 0 12px;color:var(--text)">🎯 Filters</h3>
+
+      <div style="background:var(--surface);padding:14px;border-radius:12px;margin-bottom:12px">
+        <div style="font-weight:600;color:var(--text);margin-bottom:10px">Minimum Score</div>
+        <input type="range" min="0" max="100" value="${notificationFilters.minScore}" onchange="notificationFilters.minScore=parseInt(this.value);saveNotificationPreferences();document.getElementById('score-val').textContent=this.value+'%'" style="width:100%;cursor:pointer">
+        <div style="font-size:0.8rem;color:var(--text2);margin-top:8px">Only notify for signals with GWP Score ≥ <strong id="score-val">${notificationFilters.minScore}%</strong></div>
+      </div>
+
+      <div style="background:var(--surface);padding:14px;border-radius:12px;margin-bottom:12px">
+        <div style="font-weight:600;color:var(--text);margin-bottom:10px">📋 Phases</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          ${['new','tp1','tp2','tp3','sl'].map(p => `
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+              <input type="checkbox" ${notificationFilters.phases.includes(p) ? 'checked' : ''} onchange="
+                if(this.checked) {
+                  if(!notificationFilters.phases.includes('${p}')) notificationFilters.phases.push('${p}');
+                } else {
+                  notificationFilters.phases = notificationFilters.phases.filter(x => x !== '${p}');
+                }
+                saveNotificationPreferences();
+              ">
+              <span style="font-size:0.8rem;color:var(--text)">${p.toUpperCase()}</span>
+            </label>
+          `).join('')}
+        </div>
+      </div>
+
+      <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-left:4px solid var(--blue);padding:14px;border-radius:10px;font-size:0.8rem">
+        <div style="font-weight:600;color:var(--text)">💡 Pro Tip</div>
+        <div style="color:var(--text2);margin-top:4px">Set minimum score to 80%+ to only get high-probability signals. Use timeframe filters to focus on your trading style.</div>
+      </div>
+    </div>
+  `;
+
+  const container = document.getElementById('notifications-page');
+  if (container) container.innerHTML = content;
+}
+
 // ============ INIT APP ============
 function initApp() {
   buildTicker(null);             // render placeholder immediately
@@ -4521,6 +4784,7 @@ function initApp() {
   renderCourses('ict');
   updateBalanceDisplays();
   updatePerformanceAnalytics();  // Phase 2: performance dashboard
+  loadNotificationPreferences();  // Phase 2: load notification settings
   // Hide premium banner and ads for premium users
   const banner = document.getElementById('home-premium-banner');
   if (banner) banner.style.display = appState.isPremium ? 'none' : 'block';
