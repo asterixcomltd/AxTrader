@@ -1642,8 +1642,10 @@ canvas{width:100%;height:100%}
             <span class="more-row-arrow">›</span>
           </div>
           <div class="more-row" id="pwa-install-btn" onclick="triggerInstallPrompt()" style="display:none">
-            <div class="more-row-icon" style="background:var(--gold-bg)">📲</div>
-            <div class="more-row-text"><h5>Install App</h5><p>Add to home screen — works offline</p></div>
+            <div class="more-row-icon" style="background:var(--text);border-radius:10px;padding:0;overflow:hidden;justify-content:center;align-items:center;display:flex">
+              <span style="color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:-.5px">Ax</span>
+            </div>
+            <div class="more-row-text"><h5>Install App</h5><p id="install-btn-sub">Add to Home Screen — works offline</p></div>
             <span class="more-row-arrow">›</span>
           </div>
         </div>
@@ -1848,6 +1850,44 @@ canvas{width:100%;height:100%}
       <button onclick="setLang('pt');closeOverlay('lang-overlay')" class="btn-primary" style="background:var(--surface2);color:var(--text)">🇧🇷 Português</button>
       <button onclick="setLang('ar');closeOverlay('lang-overlay')" class="btn-primary" style="background:var(--surface2);color:var(--text)">🇸🇦 العربية</button>
     </div>
+  </div>
+</div>
+
+<!-- iOS Install Guide Modal -->
+<div class="overlay center" id="ios-install-overlay" onclick="closeOverlay('ios-install-overlay')">
+  <div class="modal centered" onclick="event.stopPropagation()" style="position:relative;max-width:340px">
+    <button class="modal-close" onclick="closeOverlay('ios-install-overlay')">✕</button>
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="width:56px;height:56px;background:var(--text);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
+        <span style="color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.2rem;letter-spacing:-.5px">Ax</span>
+      </div>
+      <h2 style="margin-bottom:4px">Install AxTrader</h2>
+      <p style="font-size:.82rem;color:var(--text2)">Add to your Home Screen in 2 taps</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:12px;background:var(--surface2);padding:12px;border-radius:12px">
+        <div style="font-size:1.6rem;flex-shrink:0">1️⃣</div>
+        <div>
+          <div style="font-weight:600;font-size:.88rem">Tap the Share button</div>
+          <div style="font-size:.78rem;color:var(--text2)">The <strong>⬆</strong> icon at the bottom of Safari</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;background:var(--surface2);padding:12px;border-radius:12px">
+        <div style="font-size:1.6rem;flex-shrink:0">2️⃣</div>
+        <div>
+          <div style="font-weight:600;font-size:.88rem">Tap "Add to Home Screen"</div>
+          <div style="font-size:.78rem;color:var(--text2)">Scroll down in the share sheet to find it</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;background:var(--surface2);padding:12px;border-radius:12px">
+        <div style="font-size:1.6rem;flex-shrink:0">3️⃣</div>
+        <div>
+          <div style="font-weight:600;font-size:.88rem">Tap "Add" to confirm</div>
+          <div style="font-size:.78rem;color:var(--text2)">AxTrader will appear on your Home Screen</div>
+        </div>
+      </div>
+    </div>
+    <button onclick="closeOverlay('ios-install-overlay')" class="btn-primary" style="margin-top:16px">Got it</button>
   </div>
 </div>
 
@@ -4498,11 +4538,39 @@ function candleCall(dir){
   }
 }
 
-// ============ PWA — SERVICE WORKER + INSTALL PROMPT ============
-// Register service worker (required for Android Chrome install prompt)
 // ============ SERVICE WORKER + AUTO-UPDATE ============
 const SW_UPDATE_CHECK_INTERVAL = 3600000; // Check every hour
 let swRegistration = null;
+
+/** Show a slim non-blocking update banner at the bottom of the screen */
+function showUpdateBanner() {
+  if (document.getElementById('sw-update-banner')) return; // already showing
+  const banner = document.createElement('div');
+  banner.id = 'sw-update-banner';
+  banner.style.cssText = [
+    'position:fixed;bottom:72px;left:50%;transform:translateX(-50%)',
+    'background:#1a1814;color:#fff;padding:12px 18px',
+    'border-radius:14px;font-size:.82rem;font-weight:600',
+    'display:flex;align-items:center;gap:12px',
+    'box-shadow:0 4px 24px rgba(0,0,0,.35);z-index:9999',
+    'border:1px solid rgba(201,168,76,.35)',
+    'max-width:calc(100vw - 32px)',
+  ].join(';');
+  banner.innerHTML = `
+    <span>🟢 New version available</span>
+    <button onclick="window.location.reload()" style="
+      background:var(--gold,#c9a84c);color:#fff;border:none;border-radius:8px;
+      padding:5px 13px;font-size:.8rem;font-weight:700;cursor:pointer;
+      font-family:inherit;white-space:nowrap">
+      Update now
+    </button>
+    <button onclick="this.closest('#sw-update-banner').remove()" style="
+      background:transparent;border:none;color:rgba(255,255,255,.5);
+      font-size:1.1rem;cursor:pointer;padding:0 2px;line-height:1">✕</button>`;
+  document.body.appendChild(banner);
+  // Auto-dismiss after 12 s if user ignores
+  setTimeout(() => banner.remove(), 12000);
+}
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -4511,27 +4579,18 @@ if ('serviceWorker' in navigator) {
         swRegistration = reg;
         console.log('[SW] Registered:', reg.scope);
 
-        // Check for updates immediately
+        // Check for updates immediately + every hour
         reg.update();
+        setInterval(() => reg.update(), SW_UPDATE_CHECK_INTERVAL);
 
-        // Check for updates periodically
-        setInterval(() => {
-          console.log('[SW] Checking for updates...');
-          reg.update();
-        }, SW_UPDATE_CHECK_INTERVAL);
-
-        // Listen for new service worker
+        // New SW found — show non-blocking banner when it activates
         reg.onupdatefound = () => {
           const newWorker = reg.installing;
+          if (!newWorker) return;
           newWorker.onstatechange = () => {
-            if (newWorker.state === 'activated') {
-              console.log('[SW] New version available!');
-              // Force reload to get latest app
-              if (confirm('🟢 AxTrader has been updated! Reload to get the latest version?')) {
-                window.location.reload();
-              } else {
-                showToast('💡 New version ready. Reload anytime to update.');
-              }
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // A new version is waiting — let skipWaiting take over
+              showUpdateBanner();
             }
           };
         };
@@ -4539,36 +4598,62 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.warn('[SW] Registration failed:', err));
   });
 
-  // Listen for controller change (SW update applied)
+  // When the SW controller changes (skipWaiting fired), auto-reload silently
+  let refreshing = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    console.log('[SW] Controller changed — new version active');
+    if (refreshing) return;
+    refreshing = true;
+    console.log('[SW] New controller active — reloading for fresh code');
+    window.location.reload();
   });
 }
 
-// Catch the install prompt — show it when user taps the "Install App" button
+// ── PWA Install Prompt ──────────────────────────────────────────────────────
 let _deferredInstallPrompt = null;
+
+// Detect iOS (Safari doesn't fire beforeinstallprompt)
+const _isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const _isStandalone = window.matchMedia('(display-mode: standalone)').matches
+                   || window.navigator.standalone === true;
+
+// Android/Chrome: capture the native install prompt
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   _deferredInstallPrompt = e;
-  // Show install button in the More page
   const btn = document.getElementById('pwa-install-btn');
   if (btn) btn.style.display = 'flex';
-  console.log('[PWA] Install prompt captured — ready to show');
+  console.log('[PWA] Install prompt ready');
 });
+
 window.addEventListener('appinstalled', () => {
   _deferredInstallPrompt = null;
   const btn = document.getElementById('pwa-install-btn');
   if (btn) btn.style.display = 'none';
-  showToast('✅ App installed! Find it on your home screen.');
+  showToast('✅ AxTrader installed! Find it on your home screen.');
 });
+
+// iOS: show the button with different copy (manual instructions)
+if (_isIOS && !_isStandalone) {
+  window.addEventListener('load', () => {
+    const btn = document.getElementById('pwa-install-btn');
+    const sub = document.getElementById('install-btn-sub');
+    if (btn) btn.style.display = 'flex';
+    if (sub) sub.textContent = 'Tap Share → "Add to Home Screen"';
+  });
+}
+
 async function triggerInstallPrompt() {
   if (_deferredInstallPrompt) {
+    // Android / Chrome
     _deferredInstallPrompt.prompt();
     const { outcome } = await _deferredInstallPrompt.userChoice;
     console.log('[PWA] Install outcome:', outcome);
     _deferredInstallPrompt = null;
+  } else if (_isIOS && !_isStandalone) {
+    // iOS Safari — show step-by-step modal
+    openOverlay('ios-install-overlay', true);
   } else {
-    showToast('📱 Tap your browser menu → "Add to Home Screen"');
+    showToast('📱 Open browser menu → "Add to Home Screen"');
   }
 }
 
