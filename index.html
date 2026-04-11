@@ -1973,8 +1973,69 @@ canvas{width:100%;height:100%}
         </div>
         <a class="payment-opt" id="pay-opt-crypto" onclick="navigator.clipboard&&navigator.clipboard.writeText('TMHx2jrrKpoHiGtZmMogM9N1sqK2XJg7Wa').then(()=>showToast('USDT address copied! DM proof to @asterix_support1'))" style="cursor:pointer"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>USDT TRC-20</h5><p>TMHx2jrrKpoH… · tap to copy · DM proof</p></div><span>📋</span></a>
         <a class="payment-opt" href="https://t.me/asterix_support1" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Pay via Telegram</h5><p>DM @asterix_support1 to arrange</p></div><span>›</span></a>
+        <div class="payment-opt" onclick="openBankTransfer()" style="cursor:pointer"><span class="payment-opt-icon">🏦</span><div class="payment-opt-text"><h5>Bank Wire Transfer</h5><p>Ecobank Ghana · SWIFT ECOCGHAC · See full details</p></div><span>›</span></div>
       </div>
       <div style="font-size:.7rem;color:var(--text3);text-align:center;margin-bottom:20px">Trading involves risk. Premium provides tools — results depend on your execution. <span style="text-decoration:underline;cursor:pointer" onclick="closeOverlay('upgrade-overlay');openOverlay('disclaimer-overlay')">Read disclaimer</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- BANK WIRE TRANSFER MODAL -->
+<div class="overlay center" id="wire-overlay" onclick="closeOverlay('wire-overlay')">
+  <div class="modal centered" onclick="event.stopPropagation()" style="position:relative">
+    <button class="modal-close" onclick="closeOverlay('wire-overlay')" style="position:absolute;top:14px;right:14px">✕</button>
+    <h2>🏦 Wire Transfer Details</h2>
+    <p class="sub">Send <strong id="wire-amount-label">$12.99 USD</strong> to this account</p>
+
+    <!-- Bank details card -->
+    <div style="background:var(--surface2);border-radius:14px;padding:16px;margin-bottom:14px;display:grid;gap:10px;font-size:.875rem">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--text2)">Bank Name</span>
+        <strong>Ecobank Ghana</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--text2)">Account Name</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <strong>BEN ADAMA</strong>
+          <button onclick="copyWireField('BEN ADAMA','Account name')" style="border:none;background:none;cursor:pointer;font-size:.85rem;color:var(--text2);padding:2px 4px">📋</button>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--text2)">Account Number</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <strong id="wire-acc-num">1441005170611</strong>
+          <button onclick="copyWireField('1441005170611','Account number')" style="border:none;background:none;cursor:pointer;font-size:.85rem;color:var(--text2);padding:2px 4px">📋</button>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--text2)">SWIFT / BIC</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <strong>ECOCGHAC</strong>
+          <button onclick="copyWireField('ECOCGHAC','SWIFT code')" style="border:none;background:none;cursor:pointer;font-size:.85rem;color:var(--text2);padding:2px 4px">📋</button>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--text2)">Branch</span>
+        <strong style="text-align:right;max-width:55%">2 Morocco Lane, Off Independence Ave</strong>
+      </div>
+    </div>
+
+    <!-- Reference code -->
+    <div style="background:#fffbea;border:1.5px solid #fcd34d;border-radius:12px;padding:13px 14px;margin-bottom:14px">
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#92400e;margin-bottom:4px">⚠️ Include in payment memo / reference</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:#78350f" id="wire-ref">AXT-BT-??????</span>
+        <button onclick="copyWireField(document.getElementById('wire-ref').textContent,'Reference')" style="border:none;background:#fde68a;border-radius:8px;cursor:pointer;font-size:.8rem;padding:5px 10px;font-weight:600;color:#92400e">📋 Copy</button>
+      </div>
+    </div>
+
+    <!-- Notify button -->
+    <button class="btn-primary btn-gold" id="wire-notify-btn" onclick="notifyBankTransfer()" style="margin-bottom:10px">
+      ✅ I've Made the Transfer — Notify Admin
+    </button>
+    <div style="font-size:.7rem;color:var(--text3);text-align:center;line-height:1.5">
+      Tap above after sending. Our admin will verify and activate your Premium within <strong>24 hours</strong>.<br>
+      Questions? <a href="https://t.me/asterix_support1" target="_blank" style="color:var(--gold)">@asterix_support1</a>
     </div>
   </div>
 </div>
@@ -2267,12 +2328,21 @@ const GIST_ID   = "a4caaf2993eea50322f31478391743b0"; // 32-char hex Gist ID
 
 // ── PAYMENT CONFIG ──────────────────────────────────────────────────────────
 const PAYMENT_CONFIG = {
-  telegram_contact : 'https://t.me/asterix_support1',    // fallback for all methods
-  momo_mtn         : '+233541760074',                  // MTN MoMo (Ghana)
-  momo_telecel     : '+233508588238',                  // Telecel Cash (Ghana)
-  crypto_address   : 'TMHx2jrrKpoHiGtZmMogM9N1sqK2XJg7Wa',  // USDT TRC-20
-  premium_price    : 12.99,
-  premium_currency : 'USD',
+  telegram_contact    : 'https://t.me/asterix_support1',    // fallback for all methods
+  momo_mtn            : '+233541760074',                     // MTN MoMo (Ghana)
+  momo_telecel        : '+233508588238',                     // Telecel Cash (Ghana)
+  crypto_address      : 'TMHx2jrrKpoHiGtZmMogM9N1sqK2XJg7Wa',  // USDT TRC-20
+  premium_price       : 12.99,
+  premium_currency    : 'USD',
+  // Bank Wire Transfer — Ecobank Ghana
+  bank_name           : 'Ecobank Ghana',
+  bank_account_name   : 'BEN ADAMA',
+  bank_account_number : '1441005170611',
+  bank_swift_code     : 'ECOCGHAC',
+  bank_branch         : '2 Morocco Lane, Off Independence Ave',
+  // Telegram admin notification (wire transfer confirmations)
+  tg_bot_token        : '8686627057:AAHeJJNCHqy9x2A7Mg6i2dY96Iir_o-3_FI',
+  tg_admin_chat       : '6733601499',
 };
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -3361,6 +3431,69 @@ function closeOverlay(id){document.getElementById(id).classList.remove('active')
 function openProfile(){openOverlay('profile-overlay');}
 function openUpgrade(){openOverlay('upgrade-overlay',true);}
 function openAboutGWP(){openOverlay('gwp-overlay');}
+
+// ── BANK WIRE TRANSFER ────────────────────────────────────────────────────
+let _currentWireRef = '';
+function openBankTransfer() {
+  const ref = 'AXT-BT-' + Math.random().toString(36).substr(2,6).toUpperCase();
+  _currentWireRef = ref;
+  document.getElementById('wire-ref').textContent = ref;
+  document.getElementById('wire-amount-label').textContent =
+    '$' + PAYMENT_CONFIG.premium_price.toFixed(2) + ' ' + PAYMENT_CONFIG.premium_currency;
+  closeOverlay('upgrade-overlay');
+  openOverlay('wire-overlay', true);
+}
+function copyWireField(value, label) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(value).then(() => showToast(label + ' copied ✓'));
+  } else {
+    showToast(label + ': ' + value);
+  }
+}
+async function notifyBankTransfer() {
+  const btn = document.getElementById('wire-notify-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  const user = appState.user;
+  const name  = user?.name  || 'Unknown';
+  const email = user?.email || 'No email';
+  const ref   = _currentWireRef;
+  const price = '$' + PAYMENT_CONFIG.premium_price.toFixed(2) + ' USD';
+  const msg =
+    '🏦 *New Bank Transfer Request*\n' +
+    'Amount: *' + price + '*\n' +
+    'Ref: ' + ref + '\n' +
+    'User: ' + name + ' (' + email + ')\n\n' +
+    '✅ Confirm only after you see the transfer in your Ecobank account.';
+  try {
+    const res = await fetch(
+      'https://api.telegram.org/bot' + PAYMENT_CONFIG.tg_bot_token + '/sendMessage',
+      {
+        method : 'POST',
+        headers: {'Content-Type':'application/json'},
+        body   : JSON.stringify({
+          chat_id    : PAYMENT_CONFIG.tg_admin_chat,
+          text       : msg,
+          parse_mode : 'Markdown'
+        })
+      }
+    );
+    const json = await res.json();
+    if (json.ok) {
+      showToast('Admin notified ✅ — expect activation within 24h');
+      closeOverlay('wire-overlay');
+    } else {
+      throw new Error(json.description || 'Telegram error');
+    }
+  } catch(e) {
+    showToast('Sent! Also DM @asterix_support1 with ref: ' + ref);
+    closeOverlay('wire-overlay');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✅ I\'ve Made the Transfer — Notify Admin';
+  }
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 // ============ PROFILE ============
 function saveProfile() {
