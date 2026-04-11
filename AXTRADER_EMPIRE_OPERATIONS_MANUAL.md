@@ -1,11 +1,11 @@
 # 🏰 AXTRADER EMPIRE — OPERATIONS MANUAL
 ## Complete Control Document (Inheritance/Backup)
 
-**CONFIDENTIAL - KEEP SECURE**  
-**Last Updated:** April 10, 2026  
-**Version:** 1.0  
-**Owner:** [Your Name]  
-**Successor Access:** [Authorized Personnel Only]
+**CONFIDENTIAL - KEEP SECURE**
+**Last Updated:** April 11, 2026
+**Version:** 2.0
+**Owner:** Ben Abdin Adama
+**Successor Access:** Authorized Personnel Only
 
 ---
 
@@ -14,903 +14,512 @@
 If you're reading this, the original owner has passed control or this is for backup.
 
 **3-Step Activation:**
-1. Go to `/workspace/project/` (repo root)
-2. Open all files mentioned in "ACTIVE KEYS" section below
-3. Replace placeholder values with actual keys from accounts listed
-4. Commit & push to GitHub (Vercel auto-deploys)
+1. Go to https://github.com/asterixcomltd/AxTrader
+2. Set all Environment Variables in Vercel (Section C)
+3. Set NOWPayments IPN webhook URL (Section A5)
 
-**That's it. System is live and making money.**
+**That's it. System is live and making money automatically.**
 
 ---
 
 ## 🔐 SECTION A: ACTIVE PRODUCTION KEYS & CREDENTIALS
 
-### A1. ADSTERRA AD NETWORK (Primary Revenue)
+### A1. ADSTERRA AD NETWORK (Primary Ad Revenue)
 
-**Current Status:** ✅ LIVE - Making money  
-**Account Email:** [You MUST fill this]  
-**Account Password:** [Store in secure vault - NOT HERE]  
-**Publisher ID:** 25ab08d68e8b0c0eb45c7f62ba70f5a9  
-**Dashboard URL:** https://adsterra.com/dashboard  
+**Current Status:** ✅ LIVE
+**Publisher ID:** `25ab08d68e8b0c0eb45c7f62ba70f5a9`
+**Dashboard:** https://adsterra.com/dashboard
 
-**Implementation Location:**
-- File: `/workspace/project/index.html`
-- Lines: ~31-39 (head section)
-- Code:
-```html
-<script type="text/javascript">
-  atOptions = {
-    'key' : '25ab08d68e8b0c0eb45c7f62ba70f5a9',  <!-- PUBLISHER ID -->
-    'format' : 'banner',
-    'height' : 90,
-    'width' : 728,
-  };
-</script>
-```
-
-**Revenue Details:**
-- CPM (Cost Per 1000 impressions): $1.00 (varies by region)
-- Payout method: Bank transfer
-- Minimum payout: $100
-- Payment frequency: Monthly
+**Implementation:** `index.html` lines ~31-39 (head section)
+**Revenue:** CPM ~$1.00 · Payout monthly to bank
 
 **How to Update:**
-1. Change publisher ID if needed in index.html (search "25ab08d68e8b0c0eb45c7f62ba70f5a9")
-2. Commit change
-3. Push to GitHub (auto-deploys)
-4. Verify in Adsterra dashboard next day
+1. Search `25ab08d68e8b0c0eb45c7f62ba70f5a9` in index.html
+2. Replace with your Publisher ID
+3. Commit & push
 
 ---
 
-### A2. PAYPAL MERCHANT ACCOUNT (Cosmetics + Premium)
+### A2. PAYPAL (Cosmetics Payments)
 
-**Current Status:** ✅ LIVE - Cosmetics/Premium payments  
-**PayPal Account Email:** [You MUST fill this]  
-**PayPal Account Password:** [Store in secure vault - NOT HERE]  
-**PayPal.Me URL:** https://paypal.me/axtrader/  
+**Current Status:** ✅ LIVE
+**PayPal.Me URL:** https://paypal.me/axtrader/
+**Implementation:** index.html — search `paypal.me/axtrader` (6 instances)
 
-**Cosmetics Pricing:**
-- Premium Avatar: $0.99
-- Dark Theme: $1.99
-- Golden Nameplate: $0.49
-- VIP Badge: $2.99
-- Glow Effect: $0.99
-- Legend Status: $4.99
-- Premium Subscription (1st month): $4.99
-- Premium Subscription (recurring): $9.99/month
-
-**Implementation Location:**
-- File: `/workspace/project/index.html`
-- Functions: `buyCosmetic()`, `openPremiumCheckout()`
-- Line ~4600+
-
-**Revenue Details:**
-- PayPal takes 2.2% + $0.30 per transaction
-- You receive: 97.8% - $0.30
-- Payout: Daily to linked bank account
-- Refund window: 180 days
-
-**How to Update:**
-1. Change "axtrader" in PayPal.Me links to YOUR username
-2. Search in index.html: "paypal.me/axtrader"
-3. Replace all 6 instances with "paypal.me/YOUR_USERNAME"
-4. Commit & push
+**Cosmetics Pricing:** Avatar $0.99 · Theme $1.99 · Badge $2.99 · Legend $4.99
 
 ---
 
-### A3. AFFILIATE PARTNER IDs (Passive Commission Revenue)
+### A3. AFFILIATE PARTNER IDs
 
-#### A3a. BINANCE AFFILIATE
-**Status:** ✅ LIVE - 20% commission  
-**Affiliate ID:** H4GJ4NKG  
-**Referral URL:** https://www.binance.com/en/register?ref=H4GJ4NKG  
-**Commission:** 20% of user trading fees (lifetime)  
-**Payment:** Paid to Binance account directly  
-**Dashboard:** https://www.binance.com/en/referral  
-
-**Implementation Location:**
-- File: `/workspace/project/index.html`
-- Line: ~1360 (in games page)
-- Code shows: `ref=H4GJ4NKG`
-
-**How to Update:**
-1. Go to binance.com/en/referral
-2. Get YOUR affiliate ID
-3. Search "H4GJ4NKG" in index.html
-4. Replace with YOUR ID (search: "binance.com/en/register?ref=")
-5. Commit & push
+| Exchange | ID | Commission | Dashboard |
+|---|---|---|---|
+| Binance | `H4GJ4NKG` | 20% | binance.com/en/referral |
+| OKX | `88883488` | 30% | okx.com/partner |
+| Kraken | `RKD12345` | 30% | kraken.com/referral |
+| Luno | `AXX12345` | 40% | luno.com/referral |
 
 ---
 
-#### A3b. OKX EXCHANGE AFFILIATE
-**Status:** ✅ LIVE - 30% commission  
-**Affiliate ID:** 88883488  
-**Referral URL:** https://www.okx.com/join/88883488  
-**Commission:** 30% of user trading fees (lifetime)  
-**Payment:** Paid to OKX account directly  
-**Dashboard:** https://www.okx.com/partner  
+### A4. GITHUB & VERCEL (Infrastructure)
 
-**Implementation Location:**
-- File: `/workspace/project/index.html`
-- Line: ~1370
-- Code shows: `okx.com/join/88883488`
+**GitHub Repo:** https://github.com/asterixcomltd/AxTrader
+**Owner:** `asterixcomltd`
+**Production Branch:** `main`
+**Live URL:** https://axtrader.vercel.app
+**Vercel Dashboard:** https://vercel.com/dashboard
 
-**How to Update:**
-1. Go to okx.com/partner
-2. Get YOUR affiliate ID
-3. Search "88883488" in index.html
-4. Replace with YOUR ID
-5. Commit & push
+**Deploy process:** Push to `main` → Vercel auto-deploys in ~2 minutes.
 
 ---
 
-#### A3c. KRAKEN EXCHANGE AFFILIATE
-**Status:** ✅ LIVE - 30% commission  
-**Affiliate ID:** RKD12345  
-**Referral URL:** https://www.kraken.com/referral/RKD12345  
-**Commission:** 30% of user trading fees (lifetime)  
-**Payment:** Paid to Kraken account directly  
-**Dashboard:** https://www.kraken.com/referral  
+### A5. ⚡ NOWPAYMENTS — AUTO CRYPTO UPGRADE (NEW — April 2026)
 
-**Implementation Location:**
-- File: `/workspace/project/index.html`
-- Line: ~1375
-- Code shows: `kraken.com/referral/RKD12345`
+**Current Status:** ✅ FULLY LIVE & AUTOMATED
+**Account:** benabdinadama @ nowpayments.io
+**Dashboard:** https://nowpayments.io/merchant
+**Premium Price:** $12.99 / month
 
-**How to Update:**
-1. Go to kraken.com/referral
-2. Get YOUR affiliate ID
-3. Search "RKD12345" in index.html
-4. Replace with YOUR ID
-5. Commit & push
+#### How the Auto-Upgrade Works (Full Flow)
 
----
-
-#### A3d. LUNO EXCHANGE AFFILIATE (Africa-Focused)
-**Status:** ✅ LIVE - 40% commission  
-**Affiliate ID:** AXX12345  
-**Referral URL:** https://www.luno.com/en/register?referrer=AXX12345  
-**Commission:** 40% of user trading fees (lifetime)  
-**Payment:** Paid to Luno account directly  
-**Dashboard:** https://luno.com/referral  
-
-**Implementation Location:**
-- File: `/workspace/project/index.html`
-- Line: ~1380
-- Code shows: `referrer=AXX12345`
-
-**How to Update:**
-1. Go to luno.com/referral
-2. Get YOUR affiliate ID
-3. Search "AXX12345" in index.html
-4. Replace with YOUR ID
-5. Commit & push
-
----
-
-### A4. GITHUB & VERCEL (Deployment Infrastructure)
-
-#### A4a. GITHUB REPOSITORY
-**Status:** ✅ LIVE - Code hosted here  
-**Repository:** https://github.com/asterixcomltd/AxTrader  
-**Owner:** asterixcomltd  
-**Branch:** main (production) + omnara/precook-backboard (dev)  
-**GitHub Username:** omnara  
-**GitHub Password:** [Store in secure vault - NOT HERE]  
-**GitHub Token:** [See A4c]  
-
-**How to Access:**
-1. Go to https://github.com/asterixcomltd/AxTrader
-2. Login with GitHub username/password
-3. Make changes, commit, push
-4. Vercel auto-deploys
-
-**Important Files:**
-- `index.html` - Main app (4700+ lines)
-- `sw.js` - Service Worker (120 lines)
-- `manifest.json` - PWA config
-- AXTRADER_EMPIRE_OPERATIONS_MANUAL.md - THIS FILE
-
----
-
-#### A4b. VERCEL DEPLOYMENT
-**Status:** ✅ LIVE - Hosting & auto-deploy  
-**Project URL:** https://axtrader.vercel.app  
-**Vercel Account Email:** [You MUST fill this]  
-**Vercel Account Password:** [Store in secure vault - NOT HERE]  
-**Dashboard:** https://vercel.com/dashboard  
-**Project Name:** AxTrader  
-
-**How Deployment Works:**
-1. You push code to GitHub main branch
-2. Vercel sees the push
-3. Auto-builds in 2-3 minutes
-4. Deploys to axtrader.vercel.app
-5. Users see live changes instantly
-
-**To Redeploy:**
-1. Make code changes locally
-2. `git commit -m "your message"`
-3. `git push origin main`
-4. Check vercel.com/dashboard - deployment in progress
-5. Check axtrader.vercel.app in 3 minutes - live
-
----
-
-#### A4c. GITHUB PERSONAL ACCESS TOKEN (For CI/CD)
-**Status:** ✅ IN USE - For automated deployments  
-**Token:** ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  
-**Location:** Environment variable in Vercel  
-**Scope:** repo, workflow  
-**Expiry:** [Set your own - recommend never expiry]  
-
-**How to Regenerate (if leaked):**
-1. Go to github.com/settings/tokens
-2. Delete old token
-3. Create new token (Personal access tokens → Tokens classic)
-4. Enable "repo" + "workflow" scopes
-5. Copy new token
-6. Update in Vercel settings → Environment Variables
-7. Redeploy
-
----
-
-### A5. CUSTOM DOMAIN (When You Get One)
-
-**Status:** 🔴 NOT YET - Will be your main domain  
-**Domain Name:** [You will purchase: axtrader.com or yourname.com]  
-**Domain Registrar:** [Namecheap, GoDaddy, Google Domains, etc.]  
-**DNS Records to Add:**
 ```
-Type: CNAME
-Name: @ (or www)
-Value: cname.vercel-dns.com
+1. User opens Upgrade modal → taps "Crypto (USDT · BTC · ETH)"
+2. Picks currency → app calls /api/nowpayments?action=create
+3. Vercel serverless function creates payment via NOWPayments API
+4. Modal shows: QR code · exact amount · live countdown · status badge
+5. App polls /api/nowpayments?action=check every 15 seconds
+6. User sends crypto to the address shown
+
+ON PAYMENT CONFIRMED:
+   → NOWPayments sends signed IPN to webhook URL
+   → Vercel function verifies HMAC-SHA512 signature
+   → Writes SHA256(user_email) to premium_users.json in GitHub Gist
+   → Sends Telegram alert to admin
+   → App polling detects "finished" → grants Premium instantly
+   ✅ User is upgraded — zero admin action required
 ```
 
-**How to Setup:**
-1. Buy domain at registrar
-2. Go to Vercel dashboard
-3. Add custom domain in project settings
-4. Vercel shows DNS instructions
-5. Go to registrar, add CNAME record
-6. Wait 24-48 hours for DNS propagation
-7. axtrader.com will point to axtrader.vercel.app
+#### Supported Currencies
+- USDT TRC-20 (recommended — lowest fees)
+- USDT BEP-20 (BNB Chain)
+- Bitcoin (BTC)
+- Ethereum (ETH)
 
-**Cost:** $12-15/year for domain
-
----
-
-## 📋 SECTION B: API KEYS & DATA SOURCES (No Direct Keys - Free Services)
-
-### B1. COINGECKO API (Live Crypto Prices)
-**Status:** ✅ LIVE - Used for price monitoring  
-**Tier:** Free (50 calls/min)  
-**Endpoint:** https://api.coingecko.com/api/v3/  
-**Usage:** Fetch BTC, ETH, XAU prices every 60 seconds  
-**No authentication needed** - Public API  
-
-**How It Works:**
-- Fetches price data automatically
-- Used in signal phase detection
-- Archive outcome calculation
-- Real-time price display
-
-**Location:** index.html, function `fetchLiveTicker()`
-
----
-
-### B2. OPEN.ER-API.COM (Forex Rates)
-**Status:** ✅ LIVE - Used for forex prices  
-**Tier:** Free (unlimited)  
-**Endpoint:** https://open.er-api.com/v6/latest/USD  
-**Usage:** Fetch EUR/USD, GBP/USD rates  
-**No authentication needed** - Public API  
-
-**Location:** index.html, function `fetchLiveTicker()`
-
----
-
-### B3. ALTERNATIVE.ME (Fear & Greed Index)
-**Status:** ✅ LIVE - Market sentiment  
-**Tier:** Free (unlimited)  
-**Endpoint:** https://api.alternative.me/fng/?limit=1  
-**Usage:** Display fear/greed indicator on news page  
-**No authentication needed** - Public API  
-
-**Location:** index.html, function `fetchFundamentals()`
-
----
-
-### B4. NEWSAPI.ORG (News Headlines)
-**Status:** ✅ LIVE - Market news integration  
-**Tier:** Free (100 requests/day)  
-**API Key:** [NOT NEEDED YET - using free tier]  
-**Endpoint:** https://newsapi.org/v2/everything  
-**Usage:** News feed on news tab  
-
-**If you want to upgrade:**
-1. Go to newsapi.org
-2. Sign up for API key
-3. Add to index.html function `fetchMarketNews()`
-4. Higher rate limit (500/day)
-
----
-
-### B5. COINTELEGRAPH API (Crypto News)
-**Status:** ✅ LIVE - News integration  
-**Tier:** Free (unlimited)  
-**Endpoint:** https://cointelegraph.com/api/feed  
-**Usage:** Crypto-specific news  
-**No authentication needed** - Public API  
-
----
-
-## 🔧 SECTION C: GITHUB SECRETS & ENVIRONMENT VARIABLES
-
-### C1. WHAT'S STORED WHERE
-
-**Local Development:**
-- All keys in comments in code (easily replaceable)
-- No `.env` file needed
-- Direct values in index.html
-
-**Production (Vercel):**
-- Can store sensitive keys in Vercel Settings → Environment Variables
-- Currently: Not needed (all APIs are public)
-- If you add private services: Store there
-
-**How to Add Environment Variable to Vercel:**
-1. Go to https://vercel.com/dashboard
-2. Select AxTrader project
-3. Settings → Environment Variables
-4. Add Name/Value pairs
-5. Redeploy project
-6. Access in code via `process.env.VARIABLE_NAME`
-
----
-
-### C2. SENSITIVE INFORMATION CHECKLIST
-
-**Store SECURELY (not in git):**
-- [ ] PayPal account password
-- [ ] GitHub account password
-- [ ] Vercel account password
-- [ ] Adsterra account password
-- [ ] Bank account for payouts
-- [ ] Email passwords
-- [ ] Any future API keys with rate limits
-
-**Where to Store:**
-- Option 1: Password manager (1Password, Bitwarden, LastPass)
-- Option 2: Encrypted file (AES-256 encrypted file)
-- Option 3: Paper backup (printed, locked in safe)
-- Option 4: Hardware wallet (hardware security key)
-
-**Recommended:** Password manager + printed backup in safe
-
----
-
-## 📊 SECTION D: REVENUE TRACKING & PAYOUTS
-
-### D1. ADSTERRA PAYMENTS
-**Dashboard:** https://adsterra.com/dashboard  
-**Check:**
-1. Login to Adsterra
-2. Go to Statistics
-3. View: Impressions, Clicks, Earnings
-4. CPM shows in real-time
-5. Payments to bank every month
-
-**Track in Spreadsheet:**
+#### IPN Webhook URL ← CRITICAL
 ```
-Date | Impressions | Clicks | CTR | Earnings (USD)
-4/10 | 1,200 | 45 | 3.75% | $1.20
-4/11 | 1,500 | 52 | 3.47% | $1.50
-...
+https://axtrader.vercel.app/api/nowpayments?action=webhook
 ```
+**Must be set in:** nowpayments.io → Settings → IPN → Webhook URL
 
----
+#### Vercel Environment Variables (already set ✅)
+| Variable | Description |
+|---|---|
+| `NOWPAYMENTS_API_KEY` | From nowpayments.io → Settings → API keys |
+| `NOWPAYMENTS_IPN_SECRET` | From nowpayments.io → Settings → IPN (yellow field) |
+| `GH_PAT` | GitHub PAT with `gist` write scope |
+| `PREMIUM_PRICE` | Optional override — defaults to `12.99` |
 
-### D2. PAYPAL COSMETICS & PREMIUM
-**Dashboard:** https://paypal.com  
-**Check:**
-1. Login to PayPal
-2. Go to Activity
-3. View all transactions (cosmetics, premium payments)
-4. Filter by date range
-5. Export to CSV
+#### Serverless Function Location
+- **File:** `/api/nowpayments.js`
+- **Actions:** `create` · `check` · `webhook` · `is-premium`
 
-**Track:**
-```
-Date | Item | Price | Buyer | Fee | You Get
-4/10 | Avatar | $0.99 | User123 | -$0.31 | $0.68
-4/11 | Premium (1st) | $4.99 | User456 | -$0.41 | $4.58
-...
-```
+#### Premium Users Store
+- **Storage:** GitHub Gist `a4caaf2993eea50322f31478391743b0`
+- **File:** `premium_users.json`
+- **Format:** Array of `{hash, paymentId, activatedAt}` objects
+- **Security:** Emails stored as SHA-256 hashes — never in plaintext
 
----
-
-### D3. AFFILIATE COMMISSIONS (Passive Income)
-**Track 3 Exchanges:**
-
-**Binance Dashboard:**
-- URL: https://www.binance.com/en/referral
-- Commission: 20% of user trading fees
-- Payment: Direct to Binance account
-- Check monthly
-
-**OKX Dashboard:**
-- URL: https://www.okx.com/partner
-- Commission: 30% of user trading fees
-- Payment: Direct to OKX account
-- Check monthly
-
-**Kraken Dashboard:**
-- URL: https://www.kraken.com/referral
-- Commission: 30% of user trading fees
-- Payment: Direct to Kraken account
-- Check monthly
-
-**Luno Dashboard:**
-- URL: https://luno.com/referral
-- Commission: 40% of user trading fees
-- Payment: Direct to Luno account
-- Check monthly
-
-**Template for Tracking:**
-```
-APRIL 2026 AFFILIATE INCOME:
-
-Binance: 15 signups × $2(avg commission) = $30
-OKX: 8 signups × $3 = $24
-Kraken: 5 signups × $3 = $15
-Luno: 12 signups × $4 = $48
-TOTAL: $117
-
-Projected next month: $200-300 (with viral growth)
-```
-
----
-
-## ✅ SECTION E: CRITICAL TASKS TO COMPLETE NOW
-
-### URGENT (Do Today)
-
-**E1. Setup Accounts (IF NOT DONE)**
-- [ ] Create Adsterra account: https://adsterra.com (Publisher ID: 25ab08d68e8b0c0eb45c7f62ba70f5a9)
-- [ ] Verify PayPal account linked to bank
-- [ ] Get Binance affiliate ID (replace H4GJ4NKG)
-- [ ] Get OKX affiliate ID (replace 88883488)
-- [ ] Get Kraken affiliate ID (replace RKD12345)
-- [ ] Get Luno affiliate ID (replace AXX12345)
-
-**E2. Update Keys in Code**
+#### Verify Webhook is Live
 ```bash
-# In /workspace/project/index.html:
-# Search & Replace:
-# "25ab08d68e8b0c0eb45c7f62ba70f5a9" → YOUR Adsterra publisher ID
-# "H4GJ4NKG" → YOUR Binance ID
-# "88883488" → YOUR OKX ID
-# "RKD12345" → YOUR Kraken ID
-# "AXX12345" → YOUR Luno ID
-# "paypal.me/axtrader" → paypal.me/YOUR_USERNAME (6 instances)
+curl -X POST "https://axtrader.vercel.app/api/nowpayments?action=webhook" \
+  -H "Content-Type: application/json" \
+  -H "x-nowpayments-sig: badsig" \
+  -d '{"payment_status":"finished"}'
+# Expected: {"error":"invalid signature"} ← function running, HMAC guard active
 ```
 
-**E3. Commit & Deploy**
+#### If Something Breaks
+1. Check Vercel Functions logs → dashboard → AxTrader → Functions tab
+2. Re-check env vars are all set (Section C)
+3. Regenerate IPN secret in NOWPayments → update `NOWPAYMENTS_IPN_SECRET` in Vercel → redeploy
+4. Fallback: user can still DM `@asterix_support1` for manual upgrade
+
+---
+
+### A6. 🏦 BANK WIRE TRANSFER — ECOBANK GHANA (NEW — April 2026)
+
+**Current Status:** ✅ LIVE (manual confirmation by admin)
+**Bank:** Ecobank Ghana
+**Account Name:** BEN ADAMA
+**Account Number:** `1441005170611`
+**SWIFT / BIC:** `ECOCGHAC`
+**Branch:** 2 Morocco Lane, Off Independence Ave, Accra
+
+#### How It Works
+1. User opens Upgrade modal → taps "Bank Wire Transfer"
+2. Unique reference code generated: `AXT-BT-XXXXXX`
+3. User sees all bank details + reference (each field copyable with 📋)
+4. User taps "I've Made the Transfer — Notify Admin"
+5. App sends Telegram message to admin via bot API
+6. Admin verifies transfer in Ecobank app → manually upgrades user via promo URL
+
+#### Telegram Notification Format
+```
+🏦 New Bank Transfer Request
+Amount: $12.99 USD
+Ref: AXT-BT-XXXXXXX
+User: John Doe (john@email.com)
+
+✅ Confirm only after you see the transfer in your Ecobank account.
+```
+
+#### To Manually Upgrade a User
+Share this URL with the user (or open it on their device):
+```
+https://axtrader.vercel.app/?promo=AXPREM-ASTERIX
+```
+Or open DevTools on their device and run:
+```javascript
+grantPremium('AXPREM-ASTERIX')
+```
+
+#### Code Location
+- **HTML modal:** `#wire-overlay` in index.html
+- **JS functions:** `openBankTransfer()`, `notifyBankTransfer()`, `copyWireField()`
+- **Config:** `PAYMENT_CONFIG.bank_*` in index.html
+
+---
+
+### A7. 📱 MOBILE MONEY — GHANA (Existing)
+
+**MTN MoMo:** +233 541 760 074
+**Telecel Cash:** +233 508 588 238
+**Process:** User taps number to call/send · DMs proof to @asterix_support1 · admin upgrades manually
+
+---
+
+### A8. 🔑 GOOGLE SIGN-IN (NEW — April 2026)
+
+**Current Status:** ✅ Code live — needs 1 GCP setting to activate
+**Method:** Google Identity Services (GSI) — One-Tap popup
+**Client ID:** `688135725461-su1l15k9biemu8ki48apbth1gd6vhh9m.apps.googleusercontent.com`
+**GCP Console:** console.cloud.google.com → APIs & Services → Credentials
+
+#### How It Works
+1. User taps "Continue with Google" on auth screen
+2. Google One-Tap popup appears → user picks account → instantly logged in
+3. If One-Tap is suppressed by browser: a Google-rendered button appears automatically as fallback
+4. Google profile photo is used as AxTrader avatar automatically
+
+#### ⚠️ Required GCP Setting (not yet done)
+```
+Google Cloud Console → APIs & Services → Credentials
+→ OAuth Client (Bayiri) → Edit
+→ Authorized JavaScript Origins → Add URI:
+  https://axtrader.vercel.app
+→ Save (takes ~5 minutes to propagate)
+```
+
+#### Code Location
+- **Script:** `<script src="https://accounts.google.com/gsi/client" ...>` in `<head>`
+- **Config:** `const GOOGLE_CLIENT_ID = '688135...'` in index.html
+- **Functions:** `_initGSI()`, `loginWithGoogle()`, `_handleGoogleCred()`
+- **Fallback div:** `<div id="google-rendered-btn">` in auth screen
+
+---
+
+### A9. 📣 TELEGRAM BOT (Admin Notifications)
+
+**Current Status:** ✅ LIVE
+**Bot Name:** asterix_direct_bank_bot
+**Bot Token:** (stored in Vercel — see Section C)
+**Admin Chat ID:** (stored in Vercel — @asterix_support1)
+
+**Used for:**
+- NOWPayments auto-upgrade confirmation alerts
+- Bank wire transfer payment notification
+- Any future admin alerts
+
+**Test the bot:**
 ```bash
-git add index.html
-git commit -m "feat: Update all API keys and affiliate IDs for production"
-git push origin main
-# Vercel auto-deploys - live in 5 minutes
-```
-
-**E4. Verify Live**
-- [ ] Go to https://axtrader.vercel.app
-- [ ] Games page shows correct affiliate links
-- [ ] Cosmetics buttons link to YOUR PayPal.Me
-- [ ] Ads are displaying (Adsterra)
-- [ ] Test one affiliate link (opens Binance?)
-- [ ] Test one cosmetic buy button (goes to PayPal?)
-
----
-
-### HIGH PRIORITY (Do This Week)
-
-**E5. Domain Setup** (If you have custom domain)
-- [ ] Purchase domain (axtrader.com or yourname.com)
-- [ ] Get DNS CNAME records from Vercel
-- [ ] Add CNAME to domain registrar
-- [ ] Wait 24-48 hours for propagation
-- [ ] Verify: yourdomain.com shows app
-
-**E6. Enable All Payment Methods**
-- [ ] Verify PayPal account receives payments
-- [ ] Setup bank account for payout
-- [ ] Enable auto-payout (daily or weekly)
-- [ ] Create invoice template for future services
-- [ ] Test one cosmetic purchase (real payment)
-
-**E7. Monitor Analytics**
-- [ ] Setup Google Analytics (optional, for traffic tracking)
-- [ ] Check Adsterra dashboard daily (ad impressions)
-- [ ] Check PayPal daily (cosmetics sales)
-- [ ] Check affiliate dashboards weekly (commissions)
-- [ ] Track in spreadsheet (template above)
-
----
-
-### MEDIUM PRIORITY (Do This Month)
-
-**E8. Legal & Compliance**
-- [ ] Create ToS mentioning PlayCoins are fake currency
-- [ ] Add privacy policy
-- [ ] Add responsible disclosure statement
-- [ ] Register business name (if needed in your jurisdiction)
-- [ ] Setup business bank account
-
-**E9. Growth & Marketing**
-- [ ] Email announcement to 5K existing signal users
-- [ ] Post on social media (TikTok, Twitter, LinkedIn)
-- [ ] Join Discord/Telegram communities (gaming, crypto)
-- [ ] Create referral program incentives
-- [ ] Track viral coefficient (shares/signups)
-
-**E10. Optimization**
-- [ ] A/B test cosmetics pricing ($0.99 vs $1.99?)
-- [ ] Track which game is most popular
-- [ ] Optimize ad placement (moved, resized)
-- [ ] Improve CTR on affiliate links
-- [ ] Monitor Vercel performance
-
----
-
-### PLANNED (Do When Ready)
-
-**E11. Future: Real Money Deposits** (Requires licensing later)
-- [ ] Research gaming licenses in Ghana/your jurisdiction
-- [ ] Evaluate Stripe Crypto vs other payment processors
-- [ ] Design smart contract for ATX token
-- [ ] Plan KYC/AML flow
-- [ ] Timeline: 6+ months, $20K+ investment
-
-**E12. Future: Strike IQ Sports Betting** (Separate platform)
-- [ ] Gather sports data from free APIs
-- [ ] Train ML model for predictions
-- [ ] Design betting UI
-- [ ] Setup settlement system
-- [ ] Timeline: 8-12 weeks
-
----
-
-## 🗂️ SECTION F: FILE LOCATIONS & STRUCTURE
-
-### F1. REPO STRUCTURE
-```
-/workspace/project/
-├── index.html                               [MAIN APP - 4700+ lines]
-├── sw.js                                    [SERVICE WORKER - 120 lines]
-├── manifest.json                            [PWA MANIFEST]
-├── AXTRADER_EMPIRE_OPERATIONS_MANUAL.md     [THIS FILE]
-├── GHANA_LAUNCH_STRATEGY.md                 [Strategy docs]
-├── GHANA_QUICK_SNIPPETS.md                  [Implementation snippets]
-├── FINAL_GHANA_SUMMARY.md                   [Deployment summary]
-├── READY_FOR_CHECKLIST.md                   [Feature status]
-└── README.md                                [General info]
-```
-
-### F2. KEY CODE SECTIONS (In index.html)
-
-**Section** | **Lines** | **Purpose**
----|---|---
-Adsterra Ad Code | 31-39 | Ad network configuration
-ATX Wallet System | 1947-2020 | PlayCoins economy
-Game Functions | 3910-4200 | Crash, Mines, Plinko, Candle
-Cosmetics Shop | ~1520-1560 | Shop UI + PayPal
-Premium Modal | ~4600+ | JavaScript payment handler
-Affiliate Links | ~1350-1385 | Binance, OKX, Kraken, Luno
-News Integration | ~4150-4320 | Market news + sentiment
-Analytics | ~4450-4530 | Performance dashboard
-
----
-
-## 🔐 SECTION G: SECURITY BEST PRACTICES
-
-### G1. PASSWORDS (HIGH PRIORITY)
-**Never store in code, git, or this file.**
-
-**Accounts needing passwords:**
-- [ ] Adsterra: password________ (store in vault)
-- [ ] PayPal: password________ (store in vault)
-- [ ] GitHub: password________ (store in vault)
-- [ ] Vercel: password________ (store in vault)
-- [ ] Gmail: password________ (store in vault)
-
-**Use Password Manager:**
-```
-Recommended: 1Password ($4.99/month)
-- Stores all passwords encrypted
-- Can share with trusted people (succession)
-- Can set "emergency access" (inherits to trustee after 30 days inactivity)
-- Better option: self-hosted Bitwarden (free)
+curl "https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id={CHAT_ID}&text=Hello"
 ```
 
 ---
 
-### G2. GIT SECURITY
-**Currently:** All keys are PLACEHOLDER values (replaceable)  
-**Future:** Use GitHub Secrets for production keys
+## 📊 SECTION B: FREE API KEYS & DATA SOURCES
 
-**If you need to store secrets in GitHub:**
-1. Never commit actual keys to repo
-2. Use GitHub Secrets (Settings → Secrets and variables)
-3. Access in CI/CD via ${{ secrets.SECRET_NAME }}
-4. Rotate secrets quarterly
+| Service | Endpoint | Used For |
+|---|---|---|
+| CoinGecko | api.coingecko.com/api/v3 | Live crypto prices |
+| open.er-api.com | /v6/latest/USD | Forex rates |
+| alternative.me/fng | /fng/?limit=1 | Fear & Greed index |
+| CoinTelegraph | cointelegraph.com/api/feed | Crypto news |
+
+No authentication needed for any of the above — all public APIs.
 
 ---
 
-### G3. VERCEL SECURITY
-**Recommended settings:**
-1. Go to https://vercel.com/account/security
-2. Enable two-factor authentication
-3. Setup deployment protection
-4. Require approval for main branch deployments
-5. Regularly review allowed IPs
+## 🔧 SECTION C: VERCEL ENVIRONMENT VARIABLES
+
+**All variables set in:** vercel.com/dashboard → AxTrader → Settings → Environment Variables
+
+| Variable | Purpose | Status |
+|---|---|---|
+| `NOWPAYMENTS_API_KEY` | Create + check payments via NOWPayments API | ✅ Set |
+| `NOWPAYMENTS_IPN_SECRET` | Verify HMAC signature on incoming IPNs | ✅ Set |
+| `GH_PAT` | Write `premium_users.json` to GitHub Gist | ✅ Set |
+| `TELEGRAM_BOT_TOKEN` | Send payment alert messages to admin | ✅ Set |
+| `TELEGRAM_ADMIN_CHAT` | Admin Telegram chat ID for alerts | ✅ Set |
+| `GIST_ID` | Hardcoded in function — `a4caaf2993eea50322f31478391743b0` | N/A |
+| `PREMIUM_PRICE` | Optional — defaults to `12.99` if not set | Optional |
+
+**How to Add/Update:**
+1. vercel.com/dashboard → AxTrader → Settings → Environment Variables
+2. Add/edit variable
+3. Save → Vercel auto-triggers redeploy
+
+**How to Rotate a Secret (e.g., if leaked):**
+1. Generate new value in the relevant service
+2. Update in Vercel → redeploy
+3. Old value is immediately invalid after redeploy
+
+---
+
+## 📊 SECTION D: REVENUE TRACKING
+
+### D1. Crypto Payments (NOWPayments)
+- **Dashboard:** nowpayments.io/merchant
+- **Payments flow to:** Payout wallets set in NOWPayments (BTC main wallet + USDT Polygon)
+- **BTC Wallet:** `19vghapZgLn2...runDvhjWEUHQ` (main wallet — set in NOWPayments)
+- **USDT Polygon:** `0xe713a07b10...d34a8036584d`
+- **Admin alert:** Telegram message sent for every confirmed payment
+
+### D2. Bank Wire Transfers
+- **Check:** Ecobank Ghana mobile app / online banking
+- **Reference format:** `AXT-BT-XXXXXX` (user includes in memo)
+- **Confirmation:** Telegram alert when user submits — verify transfer before upgrading
+
+### D3. Mobile Money
+- **MTN MoMo:** Check MTN Mobile Money app
+- **Telecel:** Check Telecel Cash app
+- **Confirmation:** User DMs @asterix_support1 with screenshot
+
+### D4. Ad Revenue (Adsterra)
+- **Dashboard:** adsterra.com/dashboard
+- **Check:** Statistics → Impressions, Clicks, Earnings
+- **Payout:** Monthly to linked bank account
+
+### D5. Affiliate Commissions
+- **Check monthly** on all 4 exchange dashboards (Section A3)
+- **Passive income** — no action needed once IDs are set
+
+---
+
+## ✅ SECTION E: TASK CHECKLIST
+
+### Completed ✅
+- [x] NOWPayments crypto auto-upgrade (USDT, BTC, ETH)
+- [x] Webhook IPN with HMAC-SHA512 verification
+- [x] Auto premium activation (Gist store + login-time check)
+- [x] Bank wire transfer (Ecobank Ghana) with Telegram notify
+- [x] Mobile Money (MTN + Telecel)
+- [x] Google One-Tap Sign-In (code live)
+- [x] Telegram admin notifications for all payment types
+- [x] All Vercel env vars set and tested
+- [x] Webhook URL set in NOWPayments dashboard
+
+### Needs 1 Action ⚠️
+- [ ] **Google GCP:** Add `https://axtrader.vercel.app` to Authorized JavaScript Origins
+  → console.cloud.google.com → APIs & Services → Credentials → your OAuth client → Edit → Add URI → Save
+
+### High Priority 🔴
+- [ ] Update affiliate IDs (replace placeholder IDs in index.html with your real ones)
+- [ ] Update PayPal.Me username (`paypal.me/axtrader` → your username, 6 instances)
+- [ ] Test a real NOWPayments payment end-to-end (small amount)
+
+### Medium Priority 🟡
+- [ ] Custom domain setup (axtrader.com)
+- [ ] Add legal pages (ToS / Privacy Policy)
+- [ ] Setup Google Analytics for traffic tracking
+
+---
+
+## 🗂️ SECTION F: FILE STRUCTURE
+
+```
+AxTrader/
+├── index.html                               ← Main app (6,600+ lines)
+├── sw.js                                    ← Service Worker / PWA offline
+├── manifest.json                            ← PWA manifest
+├── vercel.json                              ← Vercel routing & cache headers
+├── api/
+│   └── nowpayments.js                       ← Serverless: payments + webhook
+├── .github/
+│   └── workflows/
+│       ├── deploy.yml                       ← Vercel auto-deploy trigger
+│       └── signal-bot.yml                   ← Signal bot scheduler
+├── scripts/
+│   └── signal_bot.py                        ← Trading signal generator
+└── docs/
+    ├── AXTRADER_EMPIRE_OPERATIONS_MANUAL.md ← This file
+    ├── README.md                            ← Developer quick-start
+    ├── CRITICAL_TASKS_CHECKLIST.md
+    ├── GHANA_LAUNCH_STRATEGY.md
+    └── READY_FOR_CHECKLIST.md
+```
+
+### Key Code Sections in index.html
+
+| Section | Purpose |
+|---|---|
+| Head (lines 1–10) | Google fonts + GSI script |
+| CSS vars (lines 41–60) | Design tokens (colors, spacing) |
+| Auth screen | Login / Signup / Google One-Tap |
+| Upgrade modal `#upgrade-overlay` | Payment options (MoMo, Crypto, Wire, Telegram) |
+| Currency picker `#np-currency-overlay` | NOWPayments currency selection |
+| Payment details `#np-payment-overlay` | Address, QR, countdown, live status |
+| Wire transfer `#wire-overlay` | Ecobank Ghana wire details |
+| `PAYMENT_CONFIG` (~line 2430) | All payment config in one object |
+| `GOOGLE_CLIENT_ID` (~line 2431) | Google OAuth client ID |
+| `_initGSI()` | Initialize Google Identity Services |
+| `loginWithGoogle()` | Trigger One-Tap popup |
+| `_handleGoogleCred()` | Decode JWT → loginUser() |
+| `openNowPayments()` | Open currency picker |
+| `createNowPayment(currency)` | Call API → show payment modal |
+| `startNpPolling(id)` | Poll payment status every 15s |
+| `grantPremiumAutomatically()` | Auto-upgrade user on confirmed payment |
+| `checkServerPremium(email)` | On login: check Gist for server-side premium |
+| `openBankTransfer()` | Open wire transfer modal |
+| `notifyBankTransfer()` | Send Telegram alert via Bot API |
+| `grantPremium(code)` | Manual upgrade via promo code |
+
+---
+
+## 🔐 SECTION G: SECURITY
+
+### G1. Secrets & Keys
+| Secret | Stored In | Rotation |
+|---|---|---|
+| `NOWPAYMENTS_API_KEY` | Vercel env vars | Rotate if leaked → update Vercel |
+| `NOWPAYMENTS_IPN_SECRET` | Vercel env vars | Regenerate in NOWPayments → update Vercel |
+| `GH_PAT` | Vercel env vars | github.com/settings/tokens → regenerate |
+| `TELEGRAM_BOT_TOKEN` | Vercel env vars | @BotFather → /revoke → /newbot |
+| Google Client ID | index.html (public) | Fine to be public — restrict in GCP |
+| Google Client Secret | NOT in AxTrader | Only needed in Bayiri backend |
+
+### G2. What's Safe to Be Public
+- `GOOGLE_CLIENT_ID` — by design, used in frontend JS
+- Adsterra Publisher ID — by design, in frontend JS
+- Gist ID — public gist, only contains hashed emails
+- NOWPayments Payout wallet addresses — public blockchain addresses
+
+### G3. Git Security Rules
+- **Never** commit `NOWPAYMENTS_API_KEY` or `IPN_SECRET` to the repo
+- **Never** commit `GH_PAT` or `TELEGRAM_BOT_TOKEN` to the repo
+- All secrets live in Vercel environment variables only
 
 ---
 
 ## 📞 SECTION H: SUCCESSION PLAN
 
-### H1. IF YOU NEED TO HAND OFF THE SYSTEM
+**What to hand to successor:**
+1. This file (updated version)
+2. Vercel account login + 2FA backup codes
+3. GitHub account (asterixcomltd) + 2FA backup codes
+4. NOWPayments account login
+5. Adsterra account login
+6. Ecobank Ghana online banking login
+7. Telegram bot token (from Vercel env vars)
 
-**What to provide to successor:**
-
-**Essential Documents:**
-1. ✅ This file (AXTRADER_EMPIRE_OPERATIONS_MANUAL.md)
-2. ✅ Password to this file's encrypted location
-3. ✅ GitHub account access + 2FA backup codes
-4. ✅ Vercel account access + 2FA backup codes
-5. ✅ PayPal account access details
-6. ✅ Adsterra account access details
-7. ✅ Affiliate account details (Binance, OKX, Kraken, Luno)
-8. ✅ Custom domain registrar access
-
-**What they need to do:**
-1. Update all passwords immediately
-2. Remove your 2FA phone number
-3. Add their own 2FA device
-4. Test all payment flows
-5. Verify affiliate links point to their accounts
-6. Check all revenue is flowing correctly
-7. Create their own backup of this file
-
----
-
-### H2. EMERGENCY RECOVERY
-
-**If accounts are compromised:**
-
-1. **Adsterra Hacked:**
-   - Change Adsterra password immediately
-   - Go to https://adsterra.com/settings
-   - Check payment method
-   - Verify no unauthorized withdrawals
-   - Contact support if needed
-
-2. **PayPal Hacked:**
-   - Change password
-   - Check linked accounts
-   - Verify no unauthorized payments
-   - Use resolution center for disputes
-   - Call PayPal support: 1-888-221-1161
-
-3. **GitHub Hacked:**
-   - Change password immediately
-   - Check personal access tokens (remove all)
-   - Review recent commits (revert if needed)
-   - Change SSH keys
-   - Enable security alerts
-
-4. **Vercel Hacked:**
-   - Change password
-   - Review deployments (redeploy if needed)
-   - Check environment variables (all exposed?)
-   - Check integrations (remove suspicious)
-   - Redeploy clean version
+**What successor must do immediately:**
+1. Change all account passwords
+2. Regenerate `GH_PAT`, `NOWPAYMENTS_API_KEY`, `TELEGRAM_BOT_TOKEN`
+3. Update all rotated secrets in Vercel environment variables
+4. Verify NOWPayments payout wallets point to THEIR addresses
+5. Test one real end-to-end payment
 
 ---
 
 ## 🎯 SECTION I: MONTHLY CHECKLIST
 
-**Do this every month to stay on top:**
-
-### Week 1:
-- [ ] Check Adsterra earnings (Dashboard → Statistics)
-- [ ] Check PayPal transactions (cosmetics, premium)
+**Week 1:**
+- [ ] Check NOWPayments dashboard — payments received?
+- [ ] Check Ecobank — wire transfers received?
+- [ ] Check Adsterra earnings
 - [ ] Check affiliate commissions (all 4 exchanges)
-- [ ] Update revenue tracking spreadsheet
-- [ ] Monitor Vercel deployment status
 
-### Week 2:
-- [ ] Review analytics (traffic, user growth)
-- [ ] Check GitHub activity (commits happening?)
-- [ ] Verify all affiliate links are correct
-- [ ] Verify PayPal links are correct
-- [ ] Test one purchase flow (cosmetic or premium)
+**Week 2:**
+- [ ] Verify Gist `premium_users.json` is growing
+- [ ] Check Vercel Functions logs for errors
+- [ ] Test payment flow with a small amount
 
-### Week 3:
-- [ ] Backup this file (updated version)
-- [ ] Backup GitHub (git clone to local)
-- [ ] Review security logs (GitHub, Vercel)
-- [ ] Update affiliate IDs if earnings are low
-- [ ] Optimize ad placement if CTR is low
+**Week 3:**
+- [ ] Rotate secrets if >90 days old
+- [ ] Backup this file
+- [ ] Review Telegram alert history
 
-### Week 4:
-- [ ] Calculate total revenue (all streams)
-- [ ] Plan next month optimizations
+**Week 4:**
+- [ ] Calculate total revenue (crypto + wire + MoMo + affiliates + ads)
 - [ ] Update this file with any changes
-- [ ] Commit updated file to repo
-- [ ] Prepare for password rotation (quarterly)
+- [ ] Plan next month optimizations
 
 ---
 
-## 🚀 FINAL SECTION: QUICK COMMAND REFERENCE
-
-**For future developers: Common commands needed**
+## 🚀 SECTION J: QUICK COMMAND REFERENCE
 
 ```bash
-# Clone repo (first time setup)
+# Clone repo
 git clone https://github.com/asterixcomltd/AxTrader.git
-cd AxTrader
 
-# Update your keys in index.html
-# Edit: search & replace all affiliate IDs and PayPal link
-
-# Commit changes
-git add index.html
-git commit -m "Update: API keys and affiliate IDs"
-
-# Push to production (auto-deploys to Vercel)
+# Push changes (triggers Vercel auto-deploy)
+git add .
+git commit -m "update: description"
 git push origin main
 
-# Verify live (wait 5 minutes for deployment)
-# Visit: https://axtrader.vercel.app
+# Test webhook is live
+curl -X POST "https://axtrader.vercel.app/api/nowpayments?action=webhook" \
+  -H "Content-Type: application/json" -H "x-nowpayments-sig: test" \
+  -d '{"payment_status":"finished"}' \
+  # Expected: {"error":"invalid signature"}
 
-# Check deployment status
-# Visit: https://vercel.com/dashboard
+# Check if email is premium
+curl "https://axtrader.vercel.app/api/nowpayments?action=is-premium&email=user@test.com"
+# Expected: {"premium":false} or {"premium":true}
 
-# Emergency rollback (revert to previous version)
-git reset --soft HEAD~1
-git checkout index.html
-git push -f origin main  # CAREFUL - force push
+# Send test Telegram alert
+curl "https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage?chat_id={CHAT_ID}&text=Test"
 
-# View recent commits
-git log --oneline -10
-
-# Create new branch for testing
-git checkout -b feature/test-new-feature
-# Make changes, commit, push
-git push origin feature/test-new-feature
+# Emergency rollback
+git log --oneline -5    # find commit to roll back to
+git revert HEAD         # creates a new revert commit
+git push origin main
 ```
 
 ---
 
-## 🎓 APPENDIX A: WHAT EACH REVENUE STREAM NEEDS
+## 🔗 APPENDIX: QUICK LINKS
 
-### Revenue Stream Independence Map:
-
-**Adsterra Ads:**
-- Needs: Adsterra publisher ID
-- Backup: Use different ad network (Google AdSense)
-- Failover: Still get ad revenue from users
-
-**PayPal Cosmetics:**
-- Needs: PayPal.Me link
-- Backup: Enable Stripe checkout for premium
-- Failover: Direct bank transfers (if user requests)
-
-**Binance Affiliate:**
-- Needs: Binance referral ID
-- Backup: Switch to Kraken if Binance fails
-- Failover: Manual commission from Binance account
-
-**OKX Affiliate:**
-- Needs: OKX referral ID
-- Backup: Use Binance more heavily
-- Failover: Negotiate direct partnership with OKX
-
-**Kraken Affiliate:**
-- Needs: Kraken referral ID
-- Backup: Use OKX as primary
-- Failover: Manually manage referrals
-
-**Luno Affiliate:**
-- Needs: Luno referral ID
-- Backup: Not needed for Ghana if others work
-- Failover: Less critical (Africa-specific)
-
-**Status:** All streams are INDEPENDENT. If one fails, others continue making money.
+| Resource | URL |
+|---|---|
+| **Live App** | https://axtrader.vercel.app |
+| **GitHub Repo** | https://github.com/asterixcomltd/AxTrader |
+| **Vercel Dashboard** | https://vercel.com/dashboard |
+| **NOWPayments Dashboard** | https://nowpayments.io/merchant |
+| **NOWPayments IPN Settings** | https://nowpayments.io/merchant (Settings → IPN) |
+| **Google Cloud Console** | https://console.cloud.google.com |
+| **GitHub Gist (signals + premium)** | https://gist.github.com/asterixcomltd/a4caaf2993eea50322f31478391743b0 |
+| **Adsterra Dashboard** | https://adsterra.com/dashboard |
+| **Ecobank Online** | https://ecobank.com |
+| **Telegram Bot API** | https://api.telegram.org |
 
 ---
 
-## 📄 APPENDIX B: WHAT KEYS MEAN (PLAIN LANGUAGE)
-
-**API Key / Publisher ID:**
-- Like your ID badge for a service
-- Proves it's YOU when accessing the service
-- Can regenerate if leaked
-- Different for each service
-
-**Affiliate ID:**
-- Your unique code in a referral link
-- When someone uses your link, you get commission
-- Must match between your account and the link in code
-- Can change anytime, but hurts short-term conversion
-
-**PayPal.Me Token:**
-- Your username in PayPal.Me link
-- People send you money directly to this
-- Simpler than creating shopping cart
-- No merchant fees in some countries
-
-**GitHub Token:**
-- Allows programmatic access to your repo
-- Like a password but for machines/CI
-- Should be rotated quarterly
-- Can be revoked anytime
-
-**Domain Name:**
-- Your custom URL (axtrader.com)
-- Points to Vercel hosting
-- You own it (paid annual fee)
-- Can move to different hosting anytime
-
----
-
-## 🔗 APPENDIX C: QUICK LINKS REFERENCE
-
-**Daily Use:**
-- Adsterra Dashboard: https://adsterra.com/dashboard
-- PayPal: https://paypal.com
-- GitHub: https://github.com/asterixcomltd/AxTrader
-- Vercel: https://vercel.com/dashboard
-- App: https://axtrader.vercel.app
-
-**Affiliate Dashboards:**
-- Binance: https://www.binance.com/en/referral
-- OKX: https://www.okx.com/partner
-- Kraken: https://www.kraken.com/referral
-- Luno: https://luno.com/referral
-
-**Account Settings:**
-- GitHub Settings: https://github.com/settings/repositories
-- GitHub Tokens: https://github.com/settings/tokens
-- Vercel Settings: https://vercel.com/account/security
-- PayPal Settings: https://paypal.com/myaccount/settings
-
----
-
-## ✨ FINAL NOTES
-
-**This document should:**
-- ✅ Be updated every time you change a key/ID
-- ✅ Be backed up securely (encrypted file, password manager)
-- ✅ Be committed to repo (but kept private, see .gitignore)
-- ✅ Be passed to successor with password protection
-- ✅ Be reviewed monthly to ensure accuracy
-- ✅ Have versions tracked (V1.0, V1.1, V2.0)
-
-**Sign-off:**
 ```
 Created: April 10, 2026
-Owner: [Your Name]
-Last Updated: [Today's Date]
-Next Review: [30 days from today]
-Version: 1.0
-Status: ACTIVE & MAKING MONEY
+Updated: April 11, 2026 (v2.0 — NOWPayments, Wire Transfer, Google Sign-In, Telegram)
+Owner: Ben Abdin Adama
+Status: LIVE & AUTOMATED
 ```
 
----
-
-**END OF OPERATIONS MANUAL**
-
-*This document is your inheritance. Guard it wisely. It's worth thousands in passive revenue streams.*
+*This document is your operational inheritance. Guard it wisely.*
