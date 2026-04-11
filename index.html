@@ -1693,6 +1693,16 @@ canvas{width:100%;height:100%}
           </div>
         </div>
 
+        <!-- ─── SECTION I: LIVE DATA STATUS ─────────────────── -->
+        <div class="more-section-label">📡 Live Data Status</div>
+        <div class="more-section" style="margin:0 16px 16px" id="status-section">
+          <div class="more-row" style="cursor:default;flex-wrap:wrap;gap:8px" id="status-panel">
+            <div style="width:100%;font-size:.75rem;color:var(--text2)">Tap refresh to check all data sources</div>
+            <div id="status-rows" style="width:100%;display:flex;flex-direction:column;gap:6px;margin-top:4px"></div>
+            <button onclick="runStatusCheck()" style="margin-top:8px;width:100%;padding:9px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--text)">🔄 Check All Sources</button>
+          </div>
+        </div>
+
         <!-- ─── SECTION I: SIGN OUT (always last) ────────────── -->
         <div class="more-section-label">🔐 Account Security</div>
         <div class="more-section" style="margin:0 16px 24px;border-color:#fde8e8">
@@ -2824,6 +2834,42 @@ function doLogout() {
   document.getElementById('app').style.display='none';
   document.getElementById('auth-screen').style.display='flex';
   navTo('home');
+}
+
+// ── LIVE DATA STATUS CHECK ────────────────────────────────────────────────
+async function runStatusCheck() {
+  const el = document.getElementById('status-rows');
+  if (!el) return;
+  el.innerHTML = '<div style="color:var(--text3);font-size:.8rem">Checking...</div>';
+
+  const sources = [
+    { name: 'Signal Gist',    url: `https://gist.githubusercontent.com/${GIST_USER}/${GIST_ID}/raw/crypto_signals.json`, label: 'Signal Bot' },
+    { name: 'CoinGecko',      url: 'https://api.coingecko.com/api/v3/ping',                                              label: 'Live Prices' },
+    { name: 'CryptoCompare',  url: 'https://min-api.cryptocompare.com/data/v2/news/?lang=EN&extraParams=AxTrader',       label: 'Crypto News' },
+    { name: 'Fear & Greed',   url: 'https://api.alternative.me/fng/',                                                    label: 'Market Mood' },
+    { name: 'Forex Rates',    url: 'https://open.er-api.com/v6/latest/USD',                                              label: 'Forex Data' },
+    { name: 'NewsAPI',        url: `https://newsapi.org/v2/everything?q=crypto&pageSize=1&apiKey=15fdb44b4d8b41c0966f0343f9854edf`, label: 'Macro News' },
+    { name: 'Adsterra Ads',   url: 'https://www.highperformanceformat.com/689acba615d238d033a802bb1f8547fc/invoke.js',   label: 'Ad Network' },
+  ];
+
+  const results = await Promise.allSettled(
+    sources.map(s => fetch(s.url, { method:'GET', mode:'cors', cache:'no-store', signal: AbortSignal.timeout(5000) })
+      .then(r => ({ ...s, ok: r.ok, status: r.status }))
+      .catch(() => ({ ...s, ok: false, status: 'timeout' }))
+    )
+  );
+
+  el.innerHTML = results.map(r => {
+    const s = r.value || r.reason;
+    const ok = r.status === 'fulfilled' && s.ok;
+    const dot = ok ? '🟢' : '🔴';
+    const tag = ok ? 'OK' : 'DOWN';
+    const tagColor = ok ? 'var(--green)' : 'var(--red)';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:.8rem;color:var(--text)">${dot} ${s.name} <span style="color:var(--text3);font-size:.72rem">· ${s.label}</span></span>
+      <span style="font-size:.72rem;font-weight:700;color:${tagColor}">${tag}</span>
+    </div>`;
+  }).join('') + `<div style="font-size:.68rem;color:var(--text3);margin-top:6px;text-align:right">Checked ${new Date().toLocaleTimeString()}</div>`;
 }
 
 // ============ LANGUAGE ============
