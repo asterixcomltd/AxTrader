@@ -3052,7 +3052,7 @@ async function runStatusCheck() {
     { name: 'CryptoCompare',  url: 'https://min-api.cryptocompare.com/data/v2/news/?lang=EN&extraParams=AxTrader',       label: 'Crypto News' },
     { name: 'Fear & Greed',   url: 'https://api.alternative.me/fng/',                                                    label: 'Market Mood' },
     { name: 'Forex Rates',    url: 'https://open.er-api.com/v6/latest/USD',                                              label: 'Forex Data' },
-    { name: 'NewsAPI',        url: `https://newsapi.org/v2/everything?q=crypto&pageSize=1&apiKey=15fdb44b4d8b41c0966f0343f9854edf`, label: 'Macro News' },
+    { name: 'NewsAPI',        url: `https://newsapi.org/v2/everything?q=crypto&pageSize=1&apiKey=baee18780bcf4fe4a1d9ba942aa66605`, label: 'Macro News' },
     { name: 'Adsterra Ads',   url: 'https://www.highperformanceformat.com/689acba615d238d033a802bb1f8547fc/invoke.js',   label: 'Ad Network' },
   ];
 
@@ -5019,7 +5019,7 @@ async function fetchMarketNews() {
     }
 
     // NewsAPI (general financial news) - free tier 100 req/day
-    const newsRes = await fetch('https://newsapi.org/v2/everything?q=(BTC+OR+ETH+OR+forex+OR+economy)&sortBy=publishedAt&pageSize=5&apiKey=15fdb44b4d8b41c0966f0343f9854edf');
+    const newsRes = await fetch('https://newsapi.org/v2/everything?q=(BTC+OR+ETH+OR+forex+OR+economy)&sortBy=publishedAt&pageSize=5&apiKey=baee18780bcf4fe4a1d9ba942aa66605');
     let generalNews = [];
     if (newsRes.ok) {
       const data = await newsRes.json();
