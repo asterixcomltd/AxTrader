@@ -56,9 +56,9 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .modal p.sub{color:var(--text2);font-size:.875rem;margin-bottom:20px}
 .modal-close{position:absolute;top:16px;right:20px;width:32px;height:32px;border:none;background:var(--surface2);border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;color:var(--text2)}
 #auth-screen{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
-.auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.auth-logo-icon{width:48px;height:48px;background:var(--text);border-radius:14px;display:flex;align-items:center;justify-content:center}
-.auth-logo-icon span{color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.25rem}
+.auth-logo{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:8px}
+.auth-logo-icon{width:80px;height:80px;background:#1a1814;border-radius:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1px rgba(201,168,76,.25),0 8px 32px rgba(201,168,76,.15)}
+.auth-logo-icon span{font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:2rem;letter-spacing:-1px;background:linear-gradient(135deg,#e8c96d 0%,#c9a84c 50%,#a07830 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .auth-logo h1{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700}
 .auth-tagline{color:var(--text2);font-size:.875rem;margin-bottom:32px;text-align:center}
 .auth-card{background:var(--surface);border-radius:24px;padding:28px 24px;width:100%;max-width:400px;box-shadow:var(--shadow-lg)}
@@ -84,8 +84,8 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 #app{position:fixed;inset:0;display:flex;flex-direction:column;display:none}
 .topbar{height:60px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;position:relative}
 .topbar-logo{display:flex;align-items:center;gap:8px;flex:1}
-.topbar-logo-icon{width:34px;height:34px;background:var(--text);border-radius:9px;display:flex;align-items:center;justify-content:center}
-.topbar-logo-icon span{color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.85rem}
+.topbar-logo-icon{width:34px;height:34px;background:#1a1814;border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1px rgba(201,168,76,.3)}
+.topbar-logo-icon span{font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:.8rem;letter-spacing:-.5px;background:linear-gradient(135deg,#e8c96d,#c9a84c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .topbar-logo h1{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:700}
 .live-badge{display:flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green);padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:600}
 .live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 1.4s infinite}
@@ -1051,7 +1051,7 @@ canvas{width:100%;height:100%}
 <!-- ============ AUTH SCREEN ============ -->
 <div id="auth-screen">
   <div class="auth-logo">
-    <div class="auth-logo-icon"><span style="font-size:1rem;letter-spacing:-.5px">Ax</span></div>
+    <div class="auth-logo-icon"><span>Ax</span></div>
     <h1>AxTrader</h1>
   </div>
   <p class="auth-tagline">Ghost Wick Protocol™ · Institutional Precision Trading Signals</p>
