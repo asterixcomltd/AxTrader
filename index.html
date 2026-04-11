@@ -2892,6 +2892,8 @@ function loginWithGoogle() {
 }
 function loginUser(user) {
   appState.user=user;
+  // Restore premium flag if stored in the user object
+  appState.isPremium = !!user.isPremium;
   try { localStorage.setItem('ax_user', JSON.stringify(user)); } catch(e) {}
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').style.display='flex';
@@ -2914,6 +2916,57 @@ function loginUser(user) {
   if(mde) mde.textContent = user.email;
   showToast('Welcome, '+user.name+'! 🎉');
 }
+// ── MANUAL PREMIUM GRANT (admin use) ────────────────────────────────────────
+// Valid codes — change these whenever you want to rotate/expire them.
+const PREMIUM_CODES = ['AXPREM-ASTERIX', 'GWP-VIP-2025', 'AXTRADER-PRO'];
+
+/**
+ * grantPremium(code)
+ *  — Call from browser DevTools console OR pass a ?promo=CODE URL param.
+ *  — Sets isPremium=true and persists it to localStorage on the current device.
+ *  — For admin manual upgrades: open devtools on the user's device and run:
+ *      grantPremium('AXPREM-ASTERIX')
+ *  — Or share the promo URL:
+ *      https://axtrader.vercel.app/?promo=AXPREM-ASTERIX
+ */
+function grantPremium(code) {
+  if (!appState.user) { showToast('Please log in first'); return false; }
+  const clean = (code || '').trim().toUpperCase();
+  const valid  = PREMIUM_CODES.map(c => c.toUpperCase());
+  if (!valid.includes(clean)) {
+    showToast('❌ Invalid code'); return false;
+  }
+  appState.isPremium = true;
+  appState.user.isPremium = true;
+  try { localStorage.setItem('ax_user', JSON.stringify(appState.user)); } catch(e) {}
+  // Update badge displays
+  ['profile-plan-badge','more-plan-badge'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent='⭐ PREMIUM'; el.className='badge-status badge-premium'; }
+  });
+  const hpb = document.getElementById('home-premium-banner');
+  if (hpb) hpb.style.display = 'none';
+  if (typeof sparkleBurst === 'function') sparkleBurst();
+  showToast('⭐ Premium activated! Welcome to the inner circle 🎉');
+  return true;
+}
+
+// Auto-check URL promo param on load
+(function checkPromoParam() {
+  const params = new URLSearchParams(window.location.search);
+  const promo  = params.get('promo');
+  if (!promo) return;
+  // Remove the param from the URL bar (clean up)
+  const clean = window.location.pathname;
+  window.history.replaceState({}, '', clean);
+  // Wait until user is logged in, then apply
+  const tryGrant = () => {
+    if (appState.user) { grantPremium(promo); }
+    else { setTimeout(tryGrant, 800); }
+  };
+  setTimeout(tryGrant, 1200);
+})();
+
 function doLogout() {
   appState.user=null;
   appState.isPremium=false;
