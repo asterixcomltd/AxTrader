@@ -1,19 +1,17 @@
+```yaml
 name: AxTrader Signal Bot
 
 on:
   schedule:
-    - cron: '*/30 * * * *'   # Every 30 minutes, 24/7
-  workflow_dispatch:           # Manual trigger from GitHub Actions tab
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
 
 jobs:
   generate-signals:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-
-    ```yaml
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-```
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout repo
@@ -31,3 +29,4 @@ env:
         run: python scripts/signal_bot.py
         env:
           GIST_PAT: ${{ secrets.GIST_PAT }}
+```
