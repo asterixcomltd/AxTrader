@@ -2959,6 +2959,7 @@ function loginUser(user) {
   const letter=(user.name||'U')[0].toUpperCase();
   document.getElementById('avatar-btn').textContent='Ax'; // always brand mark
   document.getElementById('profile-avatar-letter').textContent=letter;
+  if (user.avatarDataURL) { appState.avatarDataURL = user.avatarDataURL; const _ab = document.getElementById('profile-avatar-big'); if(_ab){_ab.style.backgroundImage=`url(${user.avatarDataURL})`;_ab.style.backgroundSize='cover';_ab.style.backgroundPosition='center';} const _al = document.getElementById('profile-avatar-letter'); if(_al) _al.style.display='none'; const _btn = document.getElementById('avatar-btn'); if(_btn){_btn.style.backgroundImage=`url(${user.avatarDataURL})`;_btn.style.backgroundSize='cover';_btn.style.backgroundPosition='center';_btn.textContent='';} }
   document.getElementById('profile-name-display').textContent=user.name;
   document.getElementById('profile-email-display').textContent=user.email;
   document.getElementById('pf-name').value=user.name;
@@ -3029,6 +3030,7 @@ function grantPremium(code) {
 
 function doLogout() {
   appState.user=null;
+  appState.avatarDataURL=null;
   appState.isPremium=false;
   try { localStorage.removeItem('ax_user'); } catch(e) {}
   document.getElementById('app').style.display='none';
@@ -3281,6 +3283,7 @@ function handleAvatarChange(e) {
   const reader=new FileReader();
   reader.onload=function(ev){
     appState.avatarDataURL=ev.target.result;
+    if (appState.user) { appState.user.avatarDataURL = ev.target.result; try { localStorage.setItem('ax_user', JSON.stringify(appState.user)); } catch(e) {} }
     const big=document.getElementById('profile-avatar-big');
     big.style.backgroundImage=`url(${ev.target.result})`;
     big.style.backgroundSize='cover';
