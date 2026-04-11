@@ -196,6 +196,59 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .more-row-text{flex:1}
 .more-row-text h5{font-weight:600;font-size:.9rem;margin-bottom:1px}
 .more-row-text p{font-size:.75rem;color:var(--text2)}
+
+/* ── SPARKLE PARTICLE SYSTEM ────────────────────────────────── */
+#sparkle-auth {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+/* Content above the canvas within auth screen */
+#auth-screen .auth-logo,
+#auth-screen .auth-tagline,
+#auth-screen .trust-strip,
+#auth-screen .auth-card {
+  position: relative;
+  z-index: 1;
+}
+/* CSS sparkle spans for hero card & general use */
+@keyframes spk-rise {
+  0%   { transform: translateY(0) scale(1) rotate(0deg); opacity: 0; }
+  12%  { opacity: 1; }
+  88%  { opacity: .75; }
+  100% { transform: translateY(-110px) scale(0) rotate(200deg); opacity: 0; }
+}
+@keyframes spk-drift {
+  0%   { margin-left: 0px; }
+  40%  { margin-left: 14px; }
+  100% { margin-left: -8px; }
+}
+@keyframes spk-burst {
+  0%   { transform: translate(0,0) scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--bx,20px),var(--by,-60px)) scale(0) rotate(360deg); opacity: 0; }
+}
+.spk {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+  animation: spk-rise var(--sd,3s) ease-out forwards, spk-drift var(--sd,3s) ease-in-out forwards;
+  text-shadow: 0 0 8px currentColor, 0 0 20px currentColor;
+  z-index: 10;
+}
+.spk-burst {
+  position: fixed;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+  animation: spk-burst var(--bd,1s) ease-out forwards;
+  text-shadow: 0 0 8px currentColor, 0 0 20px currentColor;
+  z-index: 9999;
+}
+
 .more-row-arrow{color:var(--text3);font-size:.85rem}
 .bottom-nav{height:64px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;flex-shrink:0;position:relative}
 .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;cursor:pointer;border:none;background:none;color:var(--text3);transition:.15s}
@@ -1050,6 +1103,7 @@ canvas{width:100%;height:100%}
 
 <!-- ============ AUTH SCREEN ============ -->
 <div id="auth-screen">
+  <canvas id="sparkle-auth"></canvas>
   <div class="auth-logo">
     <div class="auth-logo-icon"><span>Ax</span></div>
     <h1>AxTrader</h1>
@@ -4477,7 +4531,8 @@ function crashAction(){
     updateBalanceDisplays();
     btn.className='action-btn go';btn.textContent='🚀 Place Bet';
     msg.style.display='block';msg.className='game-msg msg-win';
-    msg.textContent=`✅ Cashed out at ${crashMult.toFixed(2)}x! +⚡ ${formatATX(winnings)} ATX`;crashRunning=false;return;
+    msg.textContent=`✅ Cashed out at ${crashMult.toFixed(2)}x! +⚡ ${formatATX(winnings)} ATX`;crashRunning=false;
+    if(typeof sparkle==='function') sparkle(24);return;
   }
   crashBet=parseInt(document.getElementById('crash-bet').value)||50;
   if(crashBet>getATXBalance()) return showToast('❌ Insufficient ATX balance');
@@ -4555,6 +4610,7 @@ function cashoutMines(){
   document.getElementById('mines-cashout-area').style.display='none';
   const msg=document.getElementById('mines-msg');msg.style.display='block';msg.className='game-msg msg-win';
   msg.textContent=`✅ Cashed out at ${minesMult.toFixed(2)}x! +⚡ ${formatATX(winnings)} ATX`;
+  if(typeof sparkle==='function') sparkle(20);
 }
 
 // ============ PLINKO GAME ============
@@ -4589,7 +4645,7 @@ function dropPlinko(){
   const mult=mults[idx],winnings=Math.floor(bet*mult);
   addATX(winnings, 'plinko');updateBalanceDisplays();
   const msg=document.getElementById('plinko-msg');msg.style.display='block';
-  if(winnings>=bet){msg.className='game-msg msg-win';msg.textContent=`✅ ${mult}x — Won ⚡ ${formatATX(winnings)} ATX!`;}
+  if(winnings>=bet){msg.className='game-msg msg-win';msg.textContent=`✅ ${mult}x — Won ⚡ ${formatATX(winnings)} ATX!`;if(typeof sparkle==='function') sparkle(mult>=5?36:18);}
   else{msg.className='game-msg msg-lose';msg.textContent=`${mult}x — Got ⚡ ${formatATX(winnings)} ATX`;}
 }
 
@@ -4643,6 +4699,7 @@ function candleCall(dir){
     updateBalanceDisplays();
     msg.className='game-msg msg-win';
     msg.textContent=`✅ ${dir} correct! +⚡ ${formatATX(winnings)} ATX (1.8x)`;
+    if(typeof sparkle==='function') sparkle(22);
   } else {
     msg.className='game-msg msg-lose';
     msg.textContent=`❌ ${dir} was wrong — next candle was ${realDir}. Lost ⚡ ${formatATX(bet)} ATX`;
@@ -5619,6 +5676,186 @@ function openPremiumModal() { openUpgrade(); }
 function openPremiumCheckout() {
   openPaymentSheet('✦ AxTrader Premium', PAYMENT_CONFIG.premium_price, 'premium');
 }
+
+// ══ SPARKLE PARTICLE ENGINE ══════════════════════════════════════
+(function SparkleEngine() {
+  // ── Canvas-based engine for the Auth screen ──────────────────
+  const authCanvas = document.getElementById('sparkle-auth');
+  const ctx = authCanvas ? authCanvas.getContext('2d') : null;
+  let authParticles = [];
+
+  function resizeAuthCanvas() {
+    if (!authCanvas) return;
+    const auth = document.getElementById('auth-screen');
+    authCanvas.width  = auth ? auth.offsetWidth  : window.innerWidth;
+    authCanvas.height = auth ? auth.offsetHeight : window.innerHeight;
+  }
+
+  class AuthParticle {
+    constructor() {
+      this.reset();
+    }
+    reset() {
+      this.x     = Math.random() * (authCanvas ? authCanvas.width : 400);
+      this.y     = authCanvas ? authCanvas.height + 10 : 800;
+      this.vx    = (Math.random() - .5) * 1.2;
+      this.vy    = -(Math.random() * 1.3 + 0.5);
+      this.size  = Math.random() * 3.5 + 1.5;
+      this.life  = 1;
+      this.decay = Math.random() * .007 + .004;
+      this.rot   = Math.random() * Math.PI * 2;
+      this.rotV  = (Math.random() - .5) * .08;
+      const hue  = Math.random();
+      this.color = hue > .55 ? '#c9a84c'
+                 : hue > .30 ? '#e8c96a'
+                 : hue > .12 ? '#ffe8a0'
+                 :              '#ffffff';
+      this.type  = Math.random() > .45 ? 'star' : 'circle';
+    }
+    update() {
+      this.x   += this.vx;
+      this.y   += this.vy;
+      this.rot += this.rotV;
+      this.vy  *= .998;
+      this.life -= this.decay;
+    }
+    draw() {
+      if (!ctx) return;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, this.life * .85);
+      ctx.fillStyle   = this.color;
+      ctx.shadowBlur  = 10;
+      ctx.shadowColor = '#c9a84c';
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rot);
+      if (this.type === 'star') {
+        drawFourPoint(ctx, 0, 0, this.size);
+      } else {
+        ctx.beginPath();
+        ctx.arc(0, 0, this.size * .5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+
+  function drawFourPoint(c, cx, cy, r) {
+    c.beginPath();
+    const arms = 4;
+    for (let i = 0; i < arms * 2; i++) {
+      const angle  = (i / (arms * 2)) * Math.PI * 2;
+      const radius = i % 2 === 0 ? r : r * .35;
+      const x = cx + Math.cos(angle) * radius;
+      const y = cy + Math.sin(angle) * radius;
+      i === 0 ? c.moveTo(x, y) : c.lineTo(x, y);
+    }
+    c.closePath();
+    c.fill();
+  }
+
+  let spawnTick = 0;
+  function animateAuthCanvas() {
+    if (!ctx || !authCanvas) return;
+    ctx.clearRect(0, 0, authCanvas.width, authCanvas.height);
+
+    // Spawn ~3 new particles every 12 frames
+    spawnTick++;
+    if (spawnTick >= 12) {
+      spawnTick = 0;
+      const auth = document.getElementById('auth-screen');
+      if (auth && auth.style.display !== 'none') {
+        // Keep pool capped at 70
+        if (authParticles.length < 70) {
+          authParticles.push(new AuthParticle());
+          authParticles.push(new AuthParticle());
+          authParticles.push(new AuthParticle());
+        }
+      }
+    }
+
+    // Update + draw
+    for (let i = authParticles.length - 1; i >= 0; i--) {
+      authParticles[i].update();
+      authParticles[i].draw();
+      if (authParticles[i].life <= 0) authParticles.splice(i, 1);
+    }
+    requestAnimationFrame(animateAuthCanvas);
+  }
+
+  // Start the canvas loop
+  resizeAuthCanvas();
+  window.addEventListener('resize', resizeAuthCanvas);
+  animateAuthCanvas();
+
+  // ── CSS-span sparkles for Hero card & game wins ───────────────
+  const SYMS   = ['✦','✧','⋆','✸','✺','⬡','◆','·'];
+  const COLORS = ['#c9a84c','#e8c96a','#ffd700','#ffe4a0','#ffffff'];
+
+  function spawnCSS(container, count, burst, bx, by) {
+    if (!container) return;
+    for (let i = 0; i < count; i++) {
+      const el  = document.createElement('span');
+      const dur = (Math.random() * 1.8 + (burst ? 1.2 : 2.4)).toFixed(2);
+      const sz  = (Math.random() * 9 + (burst ? 9 : 5)).toFixed(1);
+      const col = COLORS[Math.floor(Math.random() * COLORS.length)];
+      const lft = burst
+        ? (50 + (Math.random() - .5) * 30).toFixed(1)
+        : (Math.random() * 88 + 2).toFixed(1);
+      const btm = burst
+        ? (50 + (Math.random() - .5) * 20).toFixed(1)
+        : (Math.random() * 25).toFixed(1);
+      const delay = (burst ? Math.random() * .35 : 0).toFixed(2);
+      el.className = burst ? 'spk-burst' : 'spk';
+      el.textContent = SYMS[Math.floor(Math.random() * SYMS.length)];
+      if (burst) {
+        const bvx = ((Math.random() - .5) * 160).toFixed(0);
+        const bvy = (-(Math.random() * 130 + 50)).toFixed(0);
+        el.style.cssText =
+          `font-size:${sz}px;color:${col};` +
+          `left:${lft}%;top:${btm}%;` +
+          `--bx:${bvx}px;--by:${bvy}px;--bd:${dur}s;` +
+          `animation-delay:${delay}s`;
+        document.body.appendChild(el);
+      } else {
+        el.style.cssText =
+          `font-size:${sz}px;color:${col};` +
+          `left:${lft}%;bottom:${btm}%;--sd:${dur}s;` +
+          `animation-delay:0s`;
+        container.appendChild(el);
+      }
+      setTimeout(() => { try { el.parentNode && el.parentNode.removeChild(el); } catch(e){} },
+        (parseFloat(dur) + parseFloat(delay) + .6) * 1000);
+    }
+  }
+
+  // Ambient hero card sparkles (only when main app visible)
+  setInterval(() => {
+    const auth = document.getElementById('auth-screen');
+    if (auth && auth.style.display !== 'none') return; // auth is showing
+    const hero = document.querySelector('.hero-card-v3');
+    if (hero) spawnCSS(hero, 1, false);
+  }, 700);
+
+  // ── Public API ────────────────────────────────────────────────
+  /**
+   * window.sparkle(count, x%, y%) — burst sparkles at a position.
+   * Called on: game wins, signal alerts, upgrade confirmation.
+   */
+  window.sparkle = function(count, x, y) {
+    spawnCSS(null, count || 18, true, x, y);
+  };
+
+  /**
+   * window.sparkleBurst() — full-screen celebration.
+   * Called on: premium upgrade, big win.
+   */
+  window.sparkleBurst = function() {
+    for (let i = 0; i < 4; i++) {
+      setTimeout(() => spawnCSS(null, 12, true), i * 200);
+    }
+  };
+})();
+// ══════════════════════════════════════════════════════════════
 </script>
 </body>
 </html>
