@@ -1448,17 +1448,17 @@ canvas{width:100%;height:100%}
     <div class="page" id="page-games">
       <div class="section" style="padding-top:16px">
         <div class="section-header" style="margin-bottom:12px">
-          <div class="section-title">🎮 Training Arcade</div>
-          <span style="font-size:.72rem;color:var(--text2)">Practice · Not real money</span>
+          <div class="section-title" id="lbl-arcade-title">🎮 Training Arcade</div>
+          <span style="font-size:.72rem;color:var(--text2)" id="lbl-arcade-sub">Practice · Not real money</span>
         </div>
         <div class="atx-strip">
           <div>
-            <div class="atx-strip-label">Your PlayCoins Balance</div>
+            <div class="atx-strip-label" id="lbl-your-playcoins">Your PlayCoins Balance</div>
             <div class="atx-strip-val">🎮 <span id="atx-balance">1,000</span> PC</div>
           </div>
-          <div class="atx-strip-note">Simulated credits<br>for practice only</div>
+          <div class="atx-strip-note"><span id="lbl-playcoin-note">Simulated credits<br>for practice only</span></div>
         </div>
-        <div class="section-header" style="margin-top:4px"><div class="section-title" style="font-size:.85rem;color:var(--text2)">WEEKLY TOP</div></div>
+        <div class="section-header" style="margin-top:4px"><div class="section-title" style="font-size:.85rem;color:var(--text2)" id="lbl-weekly-top">WEEKLY TOP</div></div>
         <div class="leaderboard" style="margin-bottom:16px">
           <div class="lb-row"><div class="lb-rank gold">#1</div><div class="lb-avatar">CK</div><div class="lb-name">CryptoKwame<div class="lb-country">GH</div></div><div><div class="lb-score">+6,820 PC</div><div class="lb-mult">18.44x</div></div></div>
           <div class="lb-row"><div class="lb-rank">🏆</div><div class="lb-avatar">A</div><div class="lb-name">AxTrader<div class="lb-country">Official</div></div><div><div class="lb-score">+4,200 PC</div><div class="lb-mult">12.10x</div></div></div>
@@ -1478,8 +1478,8 @@ canvas{width:100%;height:100%}
         </div>
         <!-- AFFILIATE SECTION -->
         <div class="section-header" style="margin-bottom:12px;margin-top:20px">
-          <div class="section-title">💰 Make Real Money Trading</div>
-          <span style="font-size:.72rem;color:var(--text2)">Sign up via our partners · Earn commission</span>
+          <div class="section-title" id="lbl-make-money-title">💰 Exchange Partners</div>
+          <span style="font-size:.72rem;color:var(--text2)" id="lbl-make-money-sub">Sign up via our trusted partners</span>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
@@ -1487,7 +1487,7 @@ canvas{width:100%;height:100%}
             <div style="background:var(--surface);padding:14px;border-radius:12px;text-align:center;border:1px solid var(--border);cursor:pointer;transition:.2s;hover:{transform:translateY(-2px)}">
               <div style="font-size:2rem;margin-bottom:6px">💎</div>
               <div style="font-weight:600;color:var(--text);font-size:.85rem">Binance</div>
-              <div style="font-size:.7rem;color:var(--text2);margin-top:4px">Earn 20% commission</div>
+              <div style="font-size:.7rem;color:var(--text2);margin-top:4px">Trade on Binance</div>
             </div>
           </a>
 
@@ -1495,7 +1495,7 @@ canvas{width:100%;height:100%}
             <div style="background:var(--surface);padding:14px;border-radius:12px;text-align:center;border:1px solid var(--border);cursor:pointer;transition:.2s">
               <div style="font-size:2rem;margin-bottom:6px">⚡</div>
               <div style="font-weight:600;color:var(--text);font-size:.85rem">OKX</div>
-              <div style="font-size:.7rem;color:var(--text2);margin-top:4px">Earn 30% commission</div>
+              <div style="font-size:.7rem;color:var(--text2);margin-top:4px">Trade &amp; Earn</div>
             </div>
           </a>
 
@@ -1503,7 +1503,7 @@ canvas{width:100%;height:100%}
             <div style="background:var(--surface);padding:14px;border-radius:12px;text-align:center;border:1px solid var(--border);cursor:pointer;transition:.2s">
               <div style="font-size:2rem;margin-bottom:6px">🐙</div>
               <div style="font-weight:600;color:var(--text);font-size:.85rem">Kraken</div>
-              <div style="font-size:.7rem;color:var(--text2);margin-top:4px">Earn 30% commission</div>
+              <div style="font-size:.7rem;color:var(--text2);margin-top:4px">Trade &amp; Earn</div>
             </div>
           </a>
 
@@ -1511,7 +1511,7 @@ canvas{width:100%;height:100%}
             <div style="background:var(--surface);padding:14px;border-radius:12px;text-align:center;border:1px solid var(--border);cursor:pointer;transition:.2s">
               <div style="font-size:2rem;margin-bottom:6px">🪙</div>
               <div style="font-weight:600;color:var(--text);font-size:.85rem">Luno</div>
-              <div style="font-size:.7rem;color:var(--text2);margin-top:4px">Earn 40% commission</div>
+              <div style="font-size:.7rem;color:var(--text2);margin-top:4px">Trade on Luno</div>
             </div>
           </a>
         </div>
@@ -1528,15 +1528,15 @@ canvas{width:100%;height:100%}
 
         <!-- GAMES SECTION -->
         <div class="section-header" style="margin-bottom:12px">
-          <div class="section-title">🎮 Play & Compete</div>
-          <span style="font-size:.72rem;color:var(--text2)">PlayCoins for practice (not real money)</span>
+          <div class="section-title" id="lbl-play-compete">🎮 Play & Compete</div>
+          <span style="font-size:.72rem;color:var(--text2)" id="lbl-playcoins-sub">PlayCoins for practice (not real money)</span>
         </div>
 
         <div class="games-grid">
-          <div class="game-card" onclick="openGame('crash')"><div class="game-icon">🚀</div><h4>Crash</h4><p>Cash out before it crashes</p><button class="btn-play" style="background:#22c55e;color:#fff">Play</button></div>
-          <div class="game-card" onclick="openGame('mines')"><div class="game-icon">💣</div><h4>Mines</h4><p>Reveal tiles, avoid mines</p><button class="btn-play" style="background:#ef4444;color:#fff">Play</button></div>
-          <div class="game-card" onclick="openGame('plinko')"><div class="game-icon">🎯</div><h4>Plinko</h4><p>Drop the ball, hit multiplier</p><button class="btn-play" style="background:var(--gold);color:#fff">Play</button></div>
-          <div class="game-card" onclick="openGame('candle')"><div class="game-icon">🕯️</div><h4>Candle Call</h4><p>Predict LONG or SHORT</p><button class="btn-play" style="background:#8b5cf6;color:#fff">Play</button></div>
+          <div class="game-card" onclick="openGame('crash')"><div class="game-icon">🚀</div><h4>Crash</h4><p id="lbl-game-crash-desc">Cash out before it crashes</p><button class="btn-play" id="lbl-play-crash" style="background:#22c55e;color:#fff">Play</button></div>
+          <div class="game-card" onclick="openGame('mines')"><div class="game-icon">💣</div><h4>Mines</h4><p id="lbl-game-mines-desc">Reveal tiles, avoid mines</p><button class="btn-play" id="lbl-play-mines" style="background:#ef4444;color:#fff">Play</button></div>
+          <div class="game-card" onclick="openGame('plinko')"><div class="game-icon">🎯</div><h4>Plinko</h4><p id="lbl-game-plinko-desc">Drop the ball, hit multiplier</p><button class="btn-play" id="lbl-play-plinko" style="background:var(--gold);color:#fff">Play</button></div>
+          <div class="game-card" onclick="openGame('candle')"><div class="game-icon">🕯️</div><h4>Candle Call</h4><p id="lbl-game-candle-desc">Predict LONG or SHORT</p><button class="btn-play" id="lbl-play-candle" style="background:#8b5cf6;color:#fff">Play</button></div>
         </div>
       </div>
     </div>
@@ -1607,7 +1607,7 @@ canvas{width:100%;height:100%}
       <div style="padding-top:16px">
 
         <!-- ─── SECTION A: ACCOUNT ─────────────────────────────── -->
-        <div class="more-section-label">👤 My Account</div>
+        <div class="more-section-label" id="lbl-section-account">👤 My Account</div>
         <div class="account-card" onclick="openProfile()">
           <div class="account-avatar" id="more-avatar-btn">A</div>
           <div class="account-info">
@@ -1621,8 +1621,8 @@ canvas{width:100%;height:100%}
           <div class="more-row" onclick="openUpgrade()">
             <div class="more-row-icon" style="background:var(--premium-bg)">⭐</div>
             <div class="more-row-text">
-              <h5>Upgrade to Premium</h5>
-              <p>Unlock all signals, zero ads, full academy</p>
+              <h5 id="lbl-upgrade-title">Upgrade to Premium</h5>
+              <p id="lbl-upgrade-sub">Unlock all signals, zero ads, full academy</p>
             </div>
             <span class="more-row-badge">$12.99/mo</span>
             <span class="more-row-arrow" style="margin-left:6px">›</span>
@@ -1630,7 +1630,7 @@ canvas{width:100%;height:100%}
         </div>
 
         <!-- ─── SECTION B: PREMIUM & SHOP ────────────────────── -->
-        <div class="more-section-label">🛍️ Premium + Cosmetics</div>
+        <div class="more-section-label" id="lbl-section-premium">🛍️ Premium + Cosmetics</div>
         <div class="more-section" style="margin:0 16px 16px">
           <div class="more-row" onclick="openPremiumModal()">
             <div class="more-row-icon" style="background:var(--premium-bg)">⭐</div>
@@ -1690,7 +1690,7 @@ canvas{width:100%;height:100%}
         </div>
 
         <!-- ─── SECTION C: TRADING ACADEMY ────────────────────── -->
-        <div class="more-section-label">📚 Trading Academy</div>
+        <div class="more-section-label" id="lbl-section-academy">📚 Trading Academy</div>
         <div style="padding:0 16px 6px">
           <div class="courses-tabs" id="courses-tabs">
             <button class="course-tab active" onclick="switchCourseTab('ict',this)">ICT</button>
@@ -1702,7 +1702,7 @@ canvas{width:100%;height:100%}
         </div>
 
         <!-- ─── SECTION C: SIGNAL BOTS ────────────────────────── -->
-        <div class="more-section-label">🤖 Our Signal Bots</div>
+        <div class="more-section-label" id="lbl-section-bots">🤖 Our Signal Bots</div>
         <div class="more-section" style="margin:0 16px 16px">
           <div class="more-row" onclick="window.open('https://t.me/gwp_crypto_bot','_blank')">
             <div class="more-row-icon" style="background:#fef3c7">🟡</div>
@@ -1725,7 +1725,7 @@ canvas{width:100%;height:100%}
         </div>
 
         <!-- ─── SECTION D: COMMUNITY ──────────────────────────── -->
-        <div class="more-section-label">✈️ Community & Social</div>
+        <div class="more-section-label" id="lbl-section-community">✈️ Community & Social</div>
         <div class="more-section" style="margin:0 16px 16px">
           <div class="more-row" onclick="window.open('https://t.me/asterix_trading_signal_hub','_blank')">
             <div class="more-row-icon" style="background:#e8f4fd">✈️</div>
@@ -1739,60 +1739,60 @@ canvas{width:100%;height:100%}
           </div>
           <div class="more-row" onclick="showToast('Referral link copied! Share to earn PlayCoins.')">
             <div class="more-row-icon" style="background:var(--green-bg)">🔗</div>
-            <div class="more-row-text"><h5>Referral Program</h5><p>Invite friends · Earn PlayCoins rewards</p></div>
+            <div class="more-row-text"><h5 id="lbl-referral-title">Referral Program</h5><p id="lbl-referral-sub">Invite friends · Earn PlayCoins rewards</p></div>
             <span class="more-row-arrow">›</span>
           </div>
         </div>
 
         <!-- ─── SECTION E: TOOLS ──────────────────────────────── -->
-        <div class="more-section-label">🛠️ Tools</div>
+        <div class="more-section-label" id="lbl-section-tools">🛠️ Tools</div>
         <div class="more-section" style="margin:0 16px 16px">
           <div class="more-row" onclick="navTo('analytics')">
             <div class="more-row-icon" style="background:var(--blue-bg)">📊</div>
-            <div class="more-row-text"><h5>Analytics</h5><p>Performance stats · Win rate · P&amp;L tracking</p></div>
+            <div class="more-row-text"><h5 id="lbl-analytics-title">Analytics</h5><p id="lbl-analytics-sub">Performance stats · Win rate · P&amp;L tracking</p></div>
             <span class="more-row-arrow">›</span>
           </div>
           <div class="more-row" onclick="navTo('notifications')">
             <div class="more-row-icon" style="background:var(--gold-bg)">🔔</div>
-            <div class="more-row-text"><h5>Signal Alerts</h5><p>Push notifications · Alert preferences</p></div>
+            <div class="more-row-text"><h5 id="lbl-signal-alerts-title">Signal Alerts</h5><p id="lbl-signal-alerts-sub">Push notifications · Alert preferences</p></div>
             <span class="more-row-arrow">›</span>
           </div>
         </div>
 
         <!-- ─── SECTION F: APP SETTINGS ───────────────────────── -->
-        <div class="more-section-label">⚙️ App Settings</div>
+        <div class="more-section-label" id="lbl-section-settings">⚙️ App Settings</div>
         <div class="more-section" style="margin:0 16px 16px">
           <div class="more-row" onclick="openLangModal()">
             <div class="more-row-icon" style="background:var(--blue-bg)">🌐</div>
-            <div class="more-row-text"><h5>Language</h5><p id="current-lang-label">English</p></div>
+            <div class="more-row-text"><h5 id="lbl-language-title">Language</h5><p id="current-lang-label">English</p></div>
             <span class="more-row-arrow">›</span>
           </div>
           <div class="more-row" id="pwa-install-btn" onclick="triggerInstallPrompt()" style="display:none">
             <div class="more-row-icon" style="background:var(--text);border-radius:10px;padding:0;overflow:hidden;justify-content:center;align-items:center;display:flex">
               <span style="color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:-.5px">Ax</span>
             </div>
-            <div class="more-row-text"><h5>Install App</h5><p id="install-btn-sub">Add to Home Screen — works offline</p></div>
+            <div class="more-row-text"><h5 id="lbl-install-title">Install App</h5><p id="lbl-install-sub">Add to Home Screen — works offline</p></div>
             <span class="more-row-arrow">›</span>
           </div>
         </div>
 
         <!-- ─── SECTION F: KNOWLEDGE & SYSTEM ────────────────── -->
-        <div class="more-section-label">🧠 Knowledge & System</div>
+        <div class="more-section-label" id="lbl-section-knowledge">🧠 Knowledge & System</div>
         <div class="more-section" style="margin:0 16px 16px">
           <div class="more-row" onclick="openAboutGWP()">
             <div class="more-row-icon" style="background:var(--gold-bg)">🧠</div>
-            <div class="more-row-text"><h5>What is GWP?</h5><p>The 5-Pillar Ghost Wick Protocol explained</p></div>
+            <div class="more-row-text"><h5 id="lbl-gwp-title">What is GWP?</h5><p id="lbl-gwp-sub">The 5-Pillar Ghost Wick Protocol explained</p></div>
             <span class="more-row-arrow">›</span>
           </div>
           <div class="more-row" onclick="openSystemStatus()">
             <div class="more-row-icon" style="background:var(--green-bg)"><span class="sys-dot" style="margin:0"></span></div>
-            <div class="more-row-text"><h5>System Status</h5><p>Live · All systems operational</p></div>
+            <div class="more-row-text"><h5 id="lbl-system-status-title">System Status</h5><p id="lbl-system-status-sub">Live · All systems operational</p></div>
             <span class="more-row-arrow">›</span>
           </div>
         </div>
 
         <!-- ─── SECTION G: CONTACT ────────────────────────────── -->
-        <div class="more-section-label">✉️ Contact & Support</div>
+        <div class="more-section-label" id="lbl-section-contact">✉️ Contact & Support</div>
         <div class="more-section" style="margin:0 16px 16px">
           <div class="more-row" onclick="window.open('mailto:asterixcomltd@gmail.com')">
             <div class="more-row-icon" style="background:var(--surface2)">✉️</div>
@@ -1837,7 +1837,7 @@ canvas{width:100%;height:100%}
           <div class="more-row" onclick="doLogout()" style="border-bottom:none">
             <div class="more-row-icon" style="background:var(--red-bg)">🚪</div>
             <div class="more-row-text">
-              <h5 style="color:var(--red)">Sign Out</h5>
+              <h5 style="color:var(--red)" id="lbl-sign-out">Sign Out</h5>
               <p id="logout-email-hint" style="color:var(--text3)">Signed in as…</p>
             </div>
             <span class="more-row-arrow" style="color:var(--red)">›</span>
@@ -3089,7 +3089,29 @@ const i18n={
     load_more:'Load More News ↓',
     fear_greed:'Fear & Greed',
     sign_in:'Sign In', sign_up:'Sign Up',
-    google_auth:'Continue with Google'
+    google_auth:'Continue with Google',
+    arcade_title:'🎮 Training Arcade', arcade_sub:'Practice · Not real money',
+    your_playcoins:'Your PlayCoins Balance', playcoin_note:'Simulated credits for practice only',
+    weekly_top:'WEEKLY TOP', play_compete:'🎮 Play & Compete',
+    playcoins_sub:'PlayCoins for practice (not real money)',
+    game_crash_desc:'Cash out before it crashes', game_mines_desc:'Reveal tiles, avoid mines',
+    game_plinko_desc:'Drop the ball, hit multiplier', game_candle_desc:'Predict LONG or SHORT',
+    play_btn:'Play',
+    section_account:'👤 My Account', section_premium:'🛍️ Premium + Cosmetics',
+    section_academy:'📚 Trading Academy', section_bots:'🤖 Our Signal Bots',
+    section_community:'✈️ Community & Social', section_tools:'🛠️ Tools',
+    section_settings:'⚙️ App Settings', section_knowledge:'🧠 Knowledge & System',
+    section_contact:'✉️ Contact & Support', section_legal:'⚖️ Legal',
+    upgrade_title:'Upgrade to Premium', upgrade_sub:'Unlock all signals, zero ads, full academy',
+    referral_title:'Referral Program', referral_sub:'Invite friends · Earn PlayCoins rewards',
+    analytics_title:'Analytics', analytics_sub:'Performance stats · Win rate · P&L tracking',
+    signal_alerts_title:'Signal Alerts', signal_alerts_sub:'Push notifications · Alert preferences',
+    language_title:'Language', install_title:'Install App',
+    install_sub:'Add to home screen · Offline access',
+    gwp_title:'What is GWP?', gwp_sub:'The 5-Pillar Ghost Wick Protocol explained',
+    system_status_title:'System Status', system_status_sub:'Live · All systems operational',
+    sign_out:'Sign Out', deep_dive:'Deep dive ↓', show_less:'Show less ↑',
+    make_money_title:'💰 Exchange Partners', make_money_sub:'Sign up via our trusted partners'
   },
   fr:{
     home:'Accueil', signals:'Signaux', games:'Jeux', news:'Actualités', more:'Plus',
@@ -3104,7 +3126,29 @@ const i18n={
     load_more:'Charger plus ↓',
     fear_greed:'Peur & Avidité',
     sign_in:'Se connecter', sign_up:'S\'inscrire',
-    google_auth:'Continuer avec Google'
+    google_auth:'Continuer avec Google',
+    arcade_title:'🎮 Arcade d\'Entraînement', arcade_sub:'Pratique · Pas d\'argent réel',
+    your_playcoins:'Votre Solde PlayCoins', playcoin_note:'Crédits simulés pour la pratique uniquement',
+    weekly_top:'TOP SEMAINE', play_compete:'🎮 Jouer & Concourir',
+    playcoins_sub:'PlayCoins pour la pratique (pas d\'argent réel)',
+    game_crash_desc:'Encaisser avant le crash', game_mines_desc:'Révéler les cases, éviter les mines',
+    game_plinko_desc:'Lâchez la balle, visez le multiplicateur', game_candle_desc:'Prédire LONG ou SHORT',
+    play_btn:'Jouer',
+    section_account:'👤 Mon Compte', section_premium:'🛍️ Premium + Cosmétiques',
+    section_academy:'📚 Académie de Trading', section_bots:'🤖 Nos Bots de Signaux',
+    section_community:'✈️ Communauté & Social', section_tools:'🛠️ Outils',
+    section_settings:'⚙️ Paramètres', section_knowledge:'🧠 Connaissance & Système',
+    section_contact:'✉️ Contact & Support', section_legal:'⚖️ Légal',
+    upgrade_title:'Passer à Premium', upgrade_sub:'Débloquer tous les signaux, sans pub, académie complète',
+    referral_title:'Programme de Parrainage', referral_sub:'Inviter des amis · Gagner des PlayCoins',
+    analytics_title:'Analytique', analytics_sub:'Stats de performance · Taux de réussite · Suivi P&L',
+    signal_alerts_title:'Alertes de Signaux', signal_alerts_sub:'Notifications push · Préférences d\'alertes',
+    language_title:'Langue', install_title:'Installer l\'App',
+    install_sub:'Ajouter à l\'écran d\'accueil · Accès hors ligne',
+    gwp_title:'Qu\'est-ce que le GWP?', gwp_sub:'Le Protocole Ghost Wick à 5 Piliers expliqué',
+    system_status_title:'État du Système', system_status_sub:'En direct · Tous les systèmes opérationnels',
+    sign_out:'Se Déconnecter', deep_dive:'Approfondir ↓', show_less:'Réduire ↑',
+    make_money_title:'💰 Partenaires d\'Échange', make_money_sub:'Inscrivez-vous via nos partenaires de confiance'
   },
   es:{
     home:'Inicio', signals:'Señales', games:'Juegos', news:'Noticias', more:'Más',
@@ -3218,6 +3262,62 @@ function setLang(lang) {
 
   if(lang==='ar') document.body.setAttribute('dir','rtl');
   else document.body.removeAttribute('dir');
+
+  // Games page
+  function setEl(id, val) { const el=document.getElementById(id); if(el) el.textContent=val; }
+  if(t.arcade_title) setEl('lbl-arcade-title', t.arcade_title);
+  if(t.arcade_sub) setEl('lbl-arcade-sub', t.arcade_sub);
+  if(t.your_playcoins) setEl('lbl-your-playcoins', t.your_playcoins);
+  if(t.playcoin_note) { const pn=document.getElementById('lbl-playcoin-note'); if(pn) pn.innerHTML=t.playcoin_note.replace('\n','<br>'); }
+  if(t.weekly_top) setEl('lbl-weekly-top', t.weekly_top);
+  if(t.play_compete) setEl('lbl-play-compete', t.play_compete);
+  if(t.playcoins_sub) setEl('lbl-playcoins-sub', t.playcoins_sub);
+  if(t.game_crash_desc) setEl('lbl-game-crash-desc', t.game_crash_desc);
+  if(t.game_mines_desc) setEl('lbl-game-mines-desc', t.game_mines_desc);
+  if(t.game_plinko_desc) setEl('lbl-game-plinko-desc', t.game_plinko_desc);
+  if(t.game_candle_desc) setEl('lbl-game-candle-desc', t.game_candle_desc);
+  if(t.play_btn) { ['lbl-play-crash','lbl-play-mines','lbl-play-plinko','lbl-play-candle'].forEach(id=>setEl(id,t.play_btn)); }
+
+  // More page section labels
+  if(t.section_account) setEl('lbl-section-account', t.section_account);
+  if(t.section_premium) setEl('lbl-section-premium', t.section_premium);
+  if(t.section_academy) setEl('lbl-section-academy', t.section_academy);
+  if(t.section_bots) setEl('lbl-section-bots', t.section_bots);
+  if(t.section_community) setEl('lbl-section-community', t.section_community);
+  if(t.section_tools) setEl('lbl-section-tools', t.section_tools);
+  if(t.section_settings) setEl('lbl-section-settings', t.section_settings);
+  if(t.section_knowledge) setEl('lbl-section-knowledge', t.section_knowledge);
+  if(t.section_contact) setEl('lbl-section-contact', t.section_contact);
+
+  // More page rows
+  if(t.upgrade_title) setEl('lbl-upgrade-title', t.upgrade_title);
+  if(t.upgrade_sub) setEl('lbl-upgrade-sub', t.upgrade_sub);
+  if(t.referral_title) setEl('lbl-referral-title', t.referral_title);
+  if(t.referral_sub) setEl('lbl-referral-sub', t.referral_sub);
+  if(t.analytics_title) setEl('lbl-analytics-title', t.analytics_title);
+  if(t.analytics_sub) setEl('lbl-analytics-sub', t.analytics_sub);
+  if(t.signal_alerts_title) setEl('lbl-signal-alerts-title', t.signal_alerts_title);
+  if(t.signal_alerts_sub) setEl('lbl-signal-alerts-sub', t.signal_alerts_sub);
+  if(t.language_title) setEl('lbl-language-title', t.language_title);
+  if(t.install_title) setEl('lbl-install-title', t.install_title);
+  if(t.install_sub) setEl('lbl-install-sub', t.install_sub);
+  if(t.gwp_title) setEl('lbl-gwp-title', t.gwp_title);
+  if(t.gwp_sub) setEl('lbl-gwp-sub', t.gwp_sub);
+  if(t.system_status_title) setEl('lbl-system-status-title', t.system_status_title);
+  if(t.system_status_sub) setEl('lbl-system-status-sub', t.system_status_sub);
+  if(t.sign_out) setEl('lbl-sign-out', t.sign_out);
+
+  // Exchange partners section
+  if(t.make_money_title) setEl('lbl-make-money-title', t.make_money_title);
+  if(t.make_money_sub) setEl('lbl-make-money-sub', t.make_money_sub);
+
+  // Update Deep dive buttons on currently open courses
+  if(t.deep_dive || t.show_less) {
+    document.querySelectorAll('.dive-btn').forEach(btn => {
+      const c = btn.nextElementSibling;
+      if(c) btn.textContent = c.classList.contains('open') ? (t.show_less||'Show less ↑') : (t.deep_dive||'Deep dive ↓');
+    });
+  }
 
   // Re-render news in new language (use cache or kick off translation)
   if (allNewsData && allNewsData.length) {
@@ -4265,7 +4365,7 @@ function renderCourses(tab){
 function toggleCourse(btn){
   const c=btn.nextElementSibling;
   c.classList.toggle('open');
-  btn.textContent=c.classList.contains('open')?'Show less ↑':'Deep dive ↓';
+  const _t=i18n[appState&&appState.lang||'en']||i18n.en;btn.textContent=c.classList.contains('open')?(_t.show_less||'Show less ↑'):(_t.deep_dive||'Deep dive ↓');
 }
 
 // ============ NEWS — Live from CryptoCompare (free, no key) ============
