@@ -1971,11 +1971,106 @@ canvas{width:100%;height:100%}
           <a href="tel:+233541760074" style="display:block;padding:9px 14px;background:var(--surface2);border-radius:9px;text-decoration:none;color:var(--text);font-size:.86rem;font-weight:700;width:100%;box-sizing:border-box">🟡 MTN MoMo &nbsp;&nbsp; +233 541 760 074</a>
           <a href="tel:+233508588238" style="display:block;padding:9px 14px;background:var(--surface2);border-radius:9px;text-decoration:none;color:var(--text);font-size:.86rem;font-weight:700;width:100%;box-sizing:border-box">🔴 Telecel Cash &nbsp; +233 508 588 238</a>
         </div>
-        <a class="payment-opt" id="pay-opt-crypto" onclick="navigator.clipboard&&navigator.clipboard.writeText('TMHx2jrrKpoHiGtZmMogM9N1sqK2XJg7Wa').then(()=>showToast('USDT address copied! DM proof to @asterix_support1'))" style="cursor:pointer"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>USDT TRC-20</h5><p>TMHx2jrrKpoH… · tap to copy · DM proof</p></div><span>📋</span></a>
+        <div class="payment-opt" id="pay-opt-crypto" onclick="openNowPayments()" style="cursor:pointer;position:relative"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>Crypto (USDT · BTC · ETH)</h5><p>Auto-activated instantly on payment ⚡</p></div><span style="background:var(--green-bg);color:var(--green);font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap">AUTO</span></div>
         <a class="payment-opt" href="https://t.me/asterix_support1" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Pay via Telegram</h5><p>DM @asterix_support1 to arrange</p></div><span>›</span></a>
         <div class="payment-opt" onclick="openBankTransfer()" style="cursor:pointer"><span class="payment-opt-icon">🏦</span><div class="payment-opt-text"><h5>Bank Wire Transfer</h5><p>Ecobank Ghana · SWIFT ECOCGHAC · See full details</p></div><span>›</span></div>
       </div>
       <div style="font-size:.7rem;color:var(--text3);text-align:center;margin-bottom:20px">Trading involves risk. Premium provides tools — results depend on your execution. <span style="text-decoration:underline;cursor:pointer" onclick="closeOverlay('upgrade-overlay');openOverlay('disclaimer-overlay')">Read disclaimer</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NOWPAYMENTS: CURRENCY PICKER ════════════════════════════════════════ -->
+<div class="overlay center" id="np-currency-overlay" onclick="closeOverlay('np-currency-overlay')">
+  <div class="modal centered" onclick="event.stopPropagation()" style="position:relative">
+    <button class="modal-close" onclick="closeOverlay('np-currency-overlay')" style="position:absolute;top:14px;right:14px">✕</button>
+    <h2>₿ Pay with Crypto</h2>
+    <p class="sub">Instant activation after payment is confirmed ⚡</p>
+
+    <!-- Auto badge explanation -->
+    <div style="background:var(--green-bg);border:1px solid var(--green);border-radius:12px;padding:11px 14px;margin-bottom:16px;font-size:.8rem;color:var(--green);font-weight:600;display:flex;align-items:center;gap:8px">
+      <span style="font-size:1.1rem">⚡</span>
+      <span>Your account upgrades <strong>automatically</strong> the moment the blockchain confirms your payment — no manual review, no DMs needed.</span>
+    </div>
+
+    <p style="font-size:.82rem;font-weight:700;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em">Choose currency:</p>
+    <div style="display:grid;gap:10px;margin-bottom:16px">
+      <button onclick="createNowPayment('usdttrc20')" style="display:flex;align-items:center;gap:14px;padding:14px;border:1.5px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;font-family:inherit;text-align:left;transition:.15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="font-size:1.6rem">💚</span>
+        <div><div style="font-weight:700;font-size:.92rem">USDT — TRC-20 (Tron)</div><div style="font-size:.75rem;color:var(--text2)">Lowest fees · Most popular</div></div>
+        <span style="margin-left:auto;background:var(--green-bg);color:var(--green);font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px">Recommended</span>
+      </button>
+      <button onclick="createNowPayment('usdtbsc')" style="display:flex;align-items:center;gap:14px;padding:14px;border:1.5px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;font-family:inherit;text-align:left;transition:.15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="font-size:1.6rem">🟡</span>
+        <div><div style="font-weight:700;font-size:.92rem">USDT — BEP-20 (BNB Chain)</div><div style="font-size:.75rem;color:var(--text2)">Fast · Low cost</div></div>
+      </button>
+      <button onclick="createNowPayment('btc')" style="display:flex;align-items:center;gap:14px;padding:14px;border:1.5px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;font-family:inherit;text-align:left;transition:.15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="font-size:1.6rem">🟠</span>
+        <div><div style="font-weight:700;font-size:.92rem">Bitcoin (BTC)</div><div style="font-size:.75rem;color:var(--text2)">~10-60 min confirmation</div></div>
+      </button>
+      <button onclick="createNowPayment('eth')" style="display:flex;align-items:center;gap:14px;padding:14px;border:1.5px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;font-family:inherit;text-align:left;transition:.15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="font-size:1.6rem">🔷</span>
+        <div><div style="font-weight:700;font-size:.92rem">Ethereum (ETH)</div><div style="font-size:.75rem;color:var(--text2)">ERC-20 network</div></div>
+      </button>
+    </div>
+    <div style="font-size:.72rem;color:var(--text3);text-align:center">Powered by NOWPayments · Secure · Non-custodial</div>
+  </div>
+</div>
+
+<!-- ══ NOWPAYMENTS: PAYMENT DETAILS ════════════════════════════════════════ -->
+<div class="overlay center" id="np-payment-overlay" onclick="event.stopPropagation()">
+  <div class="modal centered" onclick="event.stopPropagation()" style="position:relative;max-width:400px">
+    <button class="modal-close" onclick="cancelNowPayment()" style="position:absolute;top:14px;right:14px">✕</button>
+
+    <!-- Loading state -->
+    <div id="np-loading" style="text-align:center;padding:40px 20px">
+      <div style="font-size:2rem;margin-bottom:12px;animation:pulse 1.4s infinite">⏳</div>
+      <div style="font-weight:700;font-size:.95rem">Creating your payment…</div>
+      <div style="font-size:.8rem;color:var(--text2);margin-top:6px">Contacting NOWPayments</div>
+    </div>
+
+    <!-- Payment details (shown after creation) -->
+    <div id="np-details" style="display:none">
+      <h2 style="margin-bottom:2px">Send Exactly</h2>
+
+      <!-- Amount chip -->
+      <div style="background:var(--gold-bg);border:1.5px solid var(--gold);border-radius:12px;padding:12px 16px;margin:10px 0;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:800;color:var(--text)" id="np-pay-amount">—</div>
+          <div style="font-size:.72rem;color:var(--text2);margin-top:2px">Send this exact amount</div>
+        </div>
+        <button onclick="copyNpField('np-pay-amount','Amount')" style="border:none;background:var(--gold-bg);border:1px solid var(--gold);border-radius:8px;cursor:pointer;padding:6px 10px;font-size:.78rem;font-weight:600;color:var(--gold)">📋 Copy</button>
+      </div>
+
+      <!-- QR + address -->
+      <div style="background:var(--surface2);border-radius:14px;padding:14px;margin-bottom:12px;text-align:center">
+        <img id="np-qr" src="" alt="Payment QR" style="width:140px;height:140px;border-radius:10px;background:#fff;margin-bottom:10px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;word-break:break-all;color:var(--text);margin-bottom:8px" id="np-address">—</div>
+        <button onclick="copyNpField('np-address','Address')" style="border:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;padding:6px 14px;font-size:.78rem;font-weight:600;color:var(--text2)">📋 Copy Address</button>
+      </div>
+
+      <!-- Status + timer row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span id="np-status-dot" style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block;animation:pulse 1.4s infinite"></span>
+          <span id="np-status-label" style="font-size:.8rem;font-weight:700;color:var(--text2)">Waiting for payment…</span>
+        </div>
+        <div style="font-size:.78rem;color:var(--text2)">Expires in <strong id="np-countdown" style="color:var(--text)">—</strong></div>
+      </div>
+
+      <!-- Warning -->
+      <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;padding:10px 12px;font-size:.75rem;color:#92400e;margin-bottom:12px">
+        ⚠️ Send <strong>only the exact amount</strong> shown above to this address. Your Premium activates automatically once the blockchain confirms the transaction.
+      </div>
+
+      <!-- Confirmed state (hidden until confirmed) -->
+      <div id="np-confirmed" style="display:none;background:var(--green-bg);border:1.5px solid var(--green);border-radius:12px;padding:14px;text-align:center;margin-bottom:12px">
+        <div style="font-size:1.8rem;margin-bottom:6px">⭐</div>
+        <div style="font-weight:800;font-size:1rem;color:var(--green)">Payment Confirmed!</div>
+        <div style="font-size:.8rem;color:var(--green);margin-top:4px">Your Premium is now active. Enjoy! 🎉</div>
+      </div>
+
+      <button class="btn-primary" style="background:var(--surface2);color:var(--text2);font-size:.85rem" onclick="cancelNowPayment()">Close</button>
     </div>
   </div>
 </div>
@@ -2343,6 +2438,15 @@ const PAYMENT_CONFIG = {
   // Telegram admin notification (wire transfer confirmations)
   tg_bot_token        : '8686627057:AAHeJJNCHqy9x2A7Mg6i2dY96Iir_o-3_FI',
   tg_admin_chat       : '6733601499',
+  // NOWPayments — server-side env vars (set in Vercel dashboard):
+  //   NOWPAYMENTS_API_KEY      — from nowpayments.io → Settings → API keys
+  //   NOWPAYMENTS_IPN_SECRET   — from nowpayments.io → Settings → IPN → secret key
+  //   GH_PAT                   — GitHub PAT with gist write scope (stores premium users)
+  //   GIST_ID                  — already set to the signals gist (reuses same gist)
+  //   PREMIUM_PRICE            — optional override, defaults to 12.99
+  //   TELEGRAM_BOT_TOKEN       — same bot token as above (for auto-upgrade notifications)
+  //   TELEGRAM_ADMIN_CHAT      — same chat id as above
+  // NOWPayments IPN webhook URL: https://axtrader.vercel.app/api/nowpayments?action=webhook
 };
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -3043,6 +3147,8 @@ function loginUser(user) {
   const mde = document.getElementById('more-display-email');
   if(mde) mde.textContent = user.email;
   showToast('Welcome, '+user.name+'! 🎉');
+  // Silently check server-side premium store (handles webhook activations on other devices)
+  if (user.email && !user.isPremium) checkServerPremium(user.email);
 }
 // ── MANUAL PREMIUM GRANT (admin use) ────────────────────────────────────────
 // Valid codes — change these whenever you want to rotate/expire them.
@@ -3494,6 +3600,198 @@ async function notifyBankTransfer() {
   }
 }
 // ─────────────────────────────────────────────────────────────────────────────
+
+// ══ NOWPAYMENTS AUTO-UPGRADE ══════════════════════════════════════════════════
+let _npPollTimer   = null;  // setInterval handle
+let _npCountdown   = null;  // setInterval for expiry timer
+let _npPaymentId   = null;  // active payment id
+
+const NP_CURRENCIES = {
+  usdttrc20 : { label: 'USDT TRC-20', icon: '💚' },
+  usdtbsc   : { label: 'USDT BEP-20', icon: '🟡' },
+  btc       : { label: 'BTC',         icon: '🟠' },
+  eth       : { label: 'ETH',         icon: '🔷' },
+};
+
+function openNowPayments() {
+  if (!appState.user) { showToast('Please log in first'); return; }
+  closeOverlay('upgrade-overlay');
+  openOverlay('np-currency-overlay', true);
+}
+
+async function createNowPayment(currency) {
+  if (!appState.user?.email) { showToast('Please log in first'); return; }
+  closeOverlay('np-currency-overlay');
+
+  // Show loading state
+  document.getElementById('np-loading').style.display  = 'block';
+  document.getElementById('np-details').style.display  = 'none';
+  document.getElementById('np-confirmed').style.display = 'none';
+  openOverlay('np-payment-overlay', true);
+
+  try {
+    const res  = await fetch('/api/nowpayments?action=create', {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body   : JSON.stringify({ email: appState.user.email, currency }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.pay_address) throw new Error(data.error || 'Failed to create payment');
+
+    _npPaymentId = String(data.payment_id);
+
+    // Persist so we can resume polling if browser closes
+    try { localStorage.setItem('ax_np_pending', JSON.stringify({ id: _npPaymentId, email: appState.user.email })); } catch(e) {}
+
+    // Fill in UI
+    const cur = NP_CURRENCIES[currency] || { label: currency.toUpperCase(), icon: '₿' };
+    document.getElementById('np-pay-amount').textContent = `${data.pay_amount} ${(data.pay_currency||currency).toUpperCase()}`;
+    document.getElementById('np-address').textContent    = data.pay_address;
+    document.getElementById('np-qr').src =
+      `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(data.pay_address)}&format=png&margin=8`;
+
+    // Reset status badge
+    _setNpStatus('waiting', 'Waiting for payment…');
+
+    // Countdown timer
+    if (_npCountdown) clearInterval(_npCountdown);
+    const expiry = data.expiration_estimate_date ? new Date(data.expiration_estimate_date).getTime() : Date.now() + 20 * 60 * 1000;
+    _npCountdown = setInterval(() => {
+      const left = Math.max(0, expiry - Date.now());
+      const m = Math.floor(left / 60000);
+      const s = Math.floor((left % 60000) / 1000);
+      const el = document.getElementById('np-countdown');
+      if (el) el.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+      if (left === 0) clearInterval(_npCountdown);
+    }, 1000);
+
+    // Show details panel
+    document.getElementById('np-loading').style.display = 'none';
+    document.getElementById('np-details').style.display = 'block';
+
+    // Start polling
+    startNpPolling(_npPaymentId);
+
+  } catch (err) {
+    console.error('NOWPayments create error:', err);
+    closeOverlay('np-payment-overlay');
+    showToast('Could not create payment — try again or use another method');
+  }
+}
+
+function _setNpStatus(state, label) {
+  const dot = document.getElementById('np-status-dot');
+  const lbl = document.getElementById('np-status-label');
+  if (!dot || !lbl) return;
+  const colors = { waiting: '#f59e0b', confirming: '#3b82f6', confirmed: 'var(--green)', failed: 'var(--red)' };
+  dot.style.background   = colors[state] || '#f59e0b';
+  dot.style.animation    = state === 'confirmed' ? 'none' : 'pulse 1.4s infinite';
+  lbl.textContent        = label;
+  lbl.style.color        = state === 'confirmed' ? 'var(--green)' : '';
+}
+
+function startNpPolling(paymentId) {
+  if (_npPollTimer) clearInterval(_npPollTimer);
+  _npPollTimer = setInterval(() => _checkNpStatus(paymentId), 15000);
+  // Also check immediately after 5s
+  setTimeout(() => _checkNpStatus(paymentId), 5000);
+}
+
+async function _checkNpStatus(paymentId) {
+  try {
+    const res  = await fetch(`/api/nowpayments?action=check&id=${paymentId}`);
+    const data = await res.json();
+    const st   = data.payment_status || '';
+
+    if (['confirming','sending'].includes(st)) {
+      _setNpStatus('confirming', 'Confirming on blockchain…');
+    } else if (['finished','confirmed','complete'].includes(st)) {
+      _setNpStatus('confirmed', 'Payment confirmed! ✅');
+      clearInterval(_npPollTimer);
+      clearInterval(_npCountdown);
+      try { localStorage.removeItem('ax_np_pending'); } catch(e) {}
+      // Show success panel
+      const confEl = document.getElementById('np-confirmed');
+      if (confEl) confEl.style.display = 'block';
+      // Auto-activate premium
+      grantPremiumAutomatically();
+      // Close modal after 3s
+      setTimeout(() => closeOverlay('np-payment-overlay'), 3000);
+    } else if (['failed','refunded','expired'].includes(st)) {
+      _setNpStatus('failed', `Payment ${st}`);
+      clearInterval(_npPollTimer);
+      clearInterval(_npCountdown);
+      try { localStorage.removeItem('ax_np_pending'); } catch(e) {}
+    }
+  } catch(e) { /* network hiccup — retry next tick */ }
+}
+
+function grantPremiumAutomatically() {
+  if (appState.isPremium) return;
+  appState.isPremium = true;
+  if (appState.user) appState.user.isPremium = true;
+  try { localStorage.setItem('ax_user', JSON.stringify(appState.user)); } catch(e) {}
+  ['profile-plan-badge','more-plan-badge'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = '⭐ PREMIUM'; el.className = 'badge-status badge-premium'; }
+  });
+  const hpb = document.getElementById('home-premium-banner');
+  if (hpb) hpb.style.display = 'none';
+  if (typeof stopInterstitialTimer === 'function') stopInterstitialTimer();
+  if (typeof sparkleBurst === 'function') sparkleBurst();
+  showToast('⭐ Premium activated automatically! Welcome 🎉');
+}
+
+function cancelNowPayment() {
+  clearInterval(_npPollTimer);
+  clearInterval(_npCountdown);
+  _npPollTimer = null;
+  _npCountdown = null;
+  closeOverlay('np-payment-overlay');
+}
+
+function copyNpField(elementId, label) {
+  const val = document.getElementById(elementId)?.textContent?.trim();
+  if (!val) return;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(val).then(() => showToast(label + ' copied ✓'));
+  } else {
+    showToast(label + ': ' + val);
+  }
+}
+
+// On login, silently check the server-side premium store (covers other devices / webhook activations)
+async function checkServerPremium(email) {
+  if (!email || appState.isPremium) return;
+  try {
+    const res  = await fetch(`/api/nowpayments?action=is-premium&email=${encodeURIComponent(email)}`);
+    const data = await res.json();
+    if (data.premium) {
+      grantPremiumAutomatically();
+    }
+  } catch(e) { /* non-critical */ }
+}
+
+// Resume any pending payment that was open when the browser closed
+(function resumePendingNpPayment() {
+  try {
+    const raw = localStorage.getItem('ax_np_pending');
+    if (!raw) return;
+    const { id, email } = JSON.parse(raw);
+    if (!id) return;
+    _npPaymentId = id;
+    // Wait until user is logged in, then resume polling quietly
+    const tryResume = () => {
+      if (appState.user?.email === email) {
+        startNpPolling(id);
+      } else {
+        setTimeout(tryResume, 1000);
+      }
+    };
+    setTimeout(tryResume, 1500);
+  } catch(e) {}
+})();
+// ══ END NOWPAYMENTS ════════════════════════════════════════════════════════════
 
 // ============ PROFILE ============
 function saveProfile() {
