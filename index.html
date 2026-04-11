@@ -5173,7 +5173,7 @@ Score: ${signal.score}%
 View your analytics: ${window.location.origin}
     `;
 
-    await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+    await fetch('https://formspree.io/f/meepyqyd', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: notificationChannels.email.address, message: msg })
