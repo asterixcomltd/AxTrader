@@ -1673,9 +1673,9 @@ canvas{width:100%;height:100%}
             <div class="more-row-text"><h5>Email Support</h5><p>asterixcomltd@gmail.com</p></div>
             <span class="more-row-arrow">›</span>
           </div>
-          <div class="more-row" onclick="window.open('https://t.me/Asterix_Abdin','_blank')">
+          <div class="more-row" onclick="window.open('https://t.me/asterix_support1','_blank')">
             <div class="more-row-icon" style="background:#e8f4fd">💬</div>
-            <div class="more-row-text"><h5>Direct Message</h5><p>@Asterix_Abdin on Telegram</p></div>
+            <div class="more-row-text"><h5>Direct Message</h5><p>@asterix_support1 on Telegram</p></div>
             <span class="more-row-arrow">›</span>
           </div>
         </div>
@@ -1830,14 +1830,14 @@ canvas{width:100%;height:100%}
       <!-- Payment options -->
       <p style="font-size:.78rem;color:var(--text2);text-align:center;margin-bottom:10px;font-weight:600">Choose your payment method:</p>
       <div class="payment-options" style="margin-bottom:14px">
-        <a class="payment-opt" id="pay-opt-flutterwave" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">🌍</span><div class="payment-opt-text"><h5>Flutterwave / Card</h5><p>Cards, bank transfer, mobile money</p></div><span>›</span></a>
+        <a class="payment-opt" id="pay-opt-flutterwave" href="https://t.me/asterix_support1" target="_blank"><span class="payment-opt-icon">🌍</span><div class="payment-opt-text"><h5>Flutterwave / Card</h5><p>Cards, bank transfer, mobile money</p></div><span>›</span></a>
         <div class="payment-opt" id="pay-opt-momo" style="flex-direction:column;align-items:flex-start;gap:8px;cursor:default">
-          <div style="display:flex;align-items:center;gap:10px;width:100%"><span class="payment-opt-icon">📱</span><div class="payment-opt-text"><h5>Mobile Money (Ghana)</h5><p>Tap a number · then DM proof to @Asterix_Abdin</p></div></div>
+          <div style="display:flex;align-items:center;gap:10px;width:100%"><span class="payment-opt-icon">📱</span><div class="payment-opt-text"><h5>Mobile Money (Ghana)</h5><p>Tap a number · then DM proof to @asterix_support1</p></div></div>
           <a href="tel:+233541760074" style="display:block;padding:9px 14px;background:var(--surface2);border-radius:9px;text-decoration:none;color:var(--text);font-size:.86rem;font-weight:700;width:100%;box-sizing:border-box">🟡 MTN MoMo &nbsp;&nbsp; +233 541 760 074</a>
           <a href="tel:+233508588238" style="display:block;padding:9px 14px;background:var(--surface2);border-radius:9px;text-decoration:none;color:var(--text);font-size:.86rem;font-weight:700;width:100%;box-sizing:border-box">🔴 Telecel Cash &nbsp; +233 508 588 238</a>
         </div>
-        <a class="payment-opt" id="pay-opt-crypto" onclick="navigator.clipboard&&navigator.clipboard.writeText('TMHx2jrrKpoHiGtZmMogM9N1sqK2XJg7Wa').then(()=>showToast('USDT address copied! DM proof to @Asterix_Abdin'))" style="cursor:pointer"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>USDT TRC-20</h5><p>TMHx2jrrKpoH… · tap to copy · DM proof</p></div><span>📋</span></a>
-        <a class="payment-opt" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Pay via Telegram</h5><p>DM @Asterix_Abdin to arrange</p></div><span>›</span></a>
+        <a class="payment-opt" id="pay-opt-crypto" onclick="navigator.clipboard&&navigator.clipboard.writeText('TMHx2jrrKpoHiGtZmMogM9N1sqK2XJg7Wa').then(()=>showToast('USDT address copied! DM proof to @asterix_support1'))" style="cursor:pointer"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>USDT TRC-20</h5><p>TMHx2jrrKpoH… · tap to copy · DM proof</p></div><span>📋</span></a>
+        <a class="payment-opt" href="https://t.me/asterix_support1" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Pay via Telegram</h5><p>DM @asterix_support1 to arrange</p></div><span>›</span></a>
       </div>
       <div style="font-size:.7rem;color:var(--text3);text-align:center;margin-bottom:20px">Trading involves risk. Premium provides tools — results depend on your execution. <span style="text-decoration:underline;cursor:pointer" onclick="closeOverlay('upgrade-overlay');openOverlay('disclaimer-overlay')">Read disclaimer</span></div>
     </div>
@@ -2132,8 +2132,8 @@ const GIST_ID   = "a4caaf2993eea50322f31478391743b0"; // 32-char hex Gist ID
 
 // ── PAYMENT CONFIG ──────────────────────────────────────────────────────────
 const PAYMENT_CONFIG = {
-  telegram_contact : 'https://t.me/Asterix_Abdin',    // fallback for all methods
-  flutterwave_link : 'https://t.me/Asterix_Abdin',    // TODO: replace with your Flutterwave payment link
+  telegram_contact : 'https://t.me/asterix_support1',    // fallback for all methods
+  flutterwave_link : 'https://t.me/asterix_support1',    // TODO: replace with your Flutterwave payment link
   momo_mtn         : '+233541760074',                  // MTN MoMo (Ghana)
   momo_telecel     : '+233508588238',                  // Telecel Cash (Ghana)
   crypto_address   : 'TMHx2jrrKpoHiGtZmMogM9N1sqK2XJg7Wa',  // USDT TRC-20
@@ -5457,7 +5457,7 @@ function initApp() {
 // ============ PAYMENT HELPERS ============
 function getPaymentLink(amountUSD, label) {
   // Priority: Flutterwave link → Telegram fallback
-  if (PAYMENT_CONFIG.flutterwave_link && PAYMENT_CONFIG.flutterwave_link !== 'https://t.me/Asterix_Abdin') {
+  if (PAYMENT_CONFIG.flutterwave_link && PAYMENT_CONFIG.flutterwave_link !== 'https://t.me/asterix_support1') {
     return PAYMENT_CONFIG.flutterwave_link + `?amount=${amountUSD}&ref=${encodeURIComponent(label)}`;
   }
   return PAYMENT_CONFIG.telegram_contact;
@@ -5472,17 +5472,17 @@ function openPaymentSheet(title, amountUSD, ref) {
     ? `<div class="payment-opt" style="flex-direction:column;align-items:flex-start;gap:8px;cursor:default">
          <div style="display:flex;align-items:center;gap:10px;width:100%">
            <span class="payment-opt-icon">📱</span>
-           <div class="payment-opt-text"><h5>Mobile Money (Ghana)</h5><p>Tap a number to call · then DM proof to @Asterix_Abdin</p></div>
+           <div class="payment-opt-text"><h5>Mobile Money (Ghana)</h5><p>Tap a number to call · then DM proof to @asterix_support1</p></div>
          </div>
          ${PAYMENT_CONFIG.momo_mtn ? `<a href="tel:${PAYMENT_CONFIG.momo_mtn}" onclick="event.stopPropagation()" style="display:block;padding:9px 14px;background:var(--surface2);border-radius:9px;text-decoration:none;color:var(--text);font-size:.86rem;font-weight:700;width:100%;box-sizing:border-box">🟡 MTN MoMo &nbsp;&nbsp; ${PAYMENT_CONFIG.momo_mtn.replace(/(\+233)(\d{3})(\d{3})(\d{3})/,'$1 $2 $3 $4')}</a>` : ''}
          ${PAYMENT_CONFIG.momo_telecel ? `<a href="tel:${PAYMENT_CONFIG.momo_telecel}" onclick="event.stopPropagation()" style="display:block;padding:9px 14px;background:var(--surface2);border-radius:9px;text-decoration:none;color:var(--text);font-size:.86rem;font-weight:700;width:100%;box-sizing:border-box">🔴 Telecel Cash &nbsp; ${PAYMENT_CONFIG.momo_telecel.replace(/(\+233)(\d{3})(\d{3})(\d{3})/,'$1 $2 $3 $4')}</a>` : ''}
-         <p style="font-size:.72rem;color:var(--text3);margin:0">Send GHS equivalent of $${amountUSD} then screenshot proof to @Asterix_Abdin</p>
+         <p style="font-size:.72rem;color:var(--text3);margin:0">Send GHS equivalent of $${amountUSD} then screenshot proof to @asterix_support1</p>
        </div>`
-    : `<a class="payment-opt" href="${PAYMENT_CONFIG.telegram_contact}" target="_blank"><span class="payment-opt-icon">📱</span><div class="payment-opt-text"><h5>MTN MoMo / Mobile Money</h5><p>DM @Asterix_Abdin for number</p></div><span>›</span></a>`;
+    : `<a class="payment-opt" href="${PAYMENT_CONFIG.telegram_contact}" target="_blank"><span class="payment-opt-icon">📱</span><div class="payment-opt-text"><h5>MTN MoMo / Mobile Money</h5><p>DM @asterix_support1 for number</p></div><span>›</span></a>`;
 
   const cryptoLine = PAYMENT_CONFIG.crypto_address
     ? `<a class="payment-opt" onclick="navigator.clipboard&&navigator.clipboard.writeText('${PAYMENT_CONFIG.crypto_address}').then(()=>showToast('Address copied!'))" style="cursor:pointer"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>USDT / BTC / ETH</h5><p>${PAYMENT_CONFIG.crypto_address.slice(0,18)}… · tap to copy · DM proof</p></div><span>📋</span></a>`
-    : `<a class="payment-opt" href="${PAYMENT_CONFIG.telegram_contact}" target="_blank"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>USDT / BTC / ETH</h5><p>DM @Asterix_Abdin for wallet address</p></div><span>›</span></a>`;
+    : `<a class="payment-opt" href="${PAYMENT_CONFIG.telegram_contact}" target="_blank"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>USDT / BTC / ETH</h5><p>DM @asterix_support1 for wallet</p></div><span>›</span></a>`;
 
   const sheet = document.createElement('div');
   sheet.id = 'payment-sheet';
@@ -5499,9 +5499,9 @@ function openPaymentSheet(title, amountUSD, ref) {
         <a class="payment-opt" href="${PAYMENT_CONFIG.flutterwave_link}" target="_blank"><span class="payment-opt-icon">🌍</span><div class="payment-opt-text"><h5>Flutterwave</h5><p>Card · Bank · Mobile Money</p></div><span>›</span></a>
         ${momoLine}
         ${cryptoLine}
-        <a class="payment-opt" href="${PAYMENT_CONFIG.telegram_contact}" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Arrange via Telegram</h5><p>DM @Asterix_Abdin — any method</p></div><span>›</span></a>
+        <a class="payment-opt" href="${PAYMENT_CONFIG.telegram_contact}" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Arrange via Telegram</h5><p>DM @asterix_support1 — any method</p></div><span>›</span></a>
       </div>
-      <div style="font-size:.72rem;color:var(--text3);text-align:center;margin-top:14px">After payment, DM the proof to @Asterix_Abdin to activate your access.</div>
+      <div style="font-size:.72rem;color:var(--text3);text-align:center;margin-top:14px">After payment, DM the proof to @asterix_support1 to activate your access.</div>
     </div>`;
   sheet.addEventListener('click', () => sheet.remove());
   document.body.appendChild(sheet);
