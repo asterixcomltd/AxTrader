@@ -1836,7 +1836,7 @@ canvas{width:100%;height:100%}
           <a href="tel:0541760074" style="display:block;padding:9px 14px;background:var(--surface2);border-radius:9px;text-decoration:none;color:var(--text);font-size:.86rem;font-weight:700;width:100%;box-sizing:border-box">🟡 MTN MoMo &nbsp;&nbsp; 0541760074</a>
           <a href="tel:0508588238" style="display:block;padding:9px 14px;background:var(--surface2);border-radius:9px;text-decoration:none;color:var(--text);font-size:.86rem;font-weight:700;width:100%;box-sizing:border-box">🔴 Telecel Cash &nbsp; 0508588238</a>
         </div>
-        <a class="payment-opt" id="pay-opt-crypto" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>Crypto (USDT / BTC)</h5><p>Send proof to @Asterix_Abdin</p></div><span>›</span></a>
+        <a class="payment-opt" id="pay-opt-crypto" onclick="navigator.clipboard&&navigator.clipboard.writeText('TMHx2jrrKpoHiGtZmMogM9N1sqK2XJg7Wa').then(()=>showToast('USDT address copied! DM proof to @Asterix_Abdin'))" style="cursor:pointer"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>USDT TRC-20</h5><p>TMHx2jrrKpoH… · tap to copy · DM proof</p></div><span>📋</span></a>
         <a class="payment-opt" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Pay via Telegram</h5><p>DM @Asterix_Abdin to arrange</p></div><span>›</span></a>
       </div>
       <div style="font-size:.7rem;color:var(--text3);text-align:center;margin-bottom:20px">Trading involves risk. Premium provides tools — results depend on your execution. <span style="text-decoration:underline;cursor:pointer" onclick="closeOverlay('upgrade-overlay');openOverlay('disclaimer-overlay')">Read disclaimer</span></div>
@@ -2136,7 +2136,7 @@ const PAYMENT_CONFIG = {
   flutterwave_link : 'https://t.me/Asterix_Abdin',    // TODO: replace with your Flutterwave payment link
   momo_mtn         : '0541760074',                     // MTN MoMo (Ghana)
   momo_telecel     : '0508588238',                     // Telecel Cash (Ghana)
-  crypto_address   : null,                             // TODO: replace with your USDT (TRC-20) wallet address
+  crypto_address   : 'TMHx2jrrKpoHiGtZmMogM9N1sqK2XJg7Wa',  // USDT TRC-20
   premium_price    : 12.99,
   premium_currency : 'USD',
 };
