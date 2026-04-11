@@ -1831,7 +1831,11 @@ canvas{width:100%;height:100%}
       <p style="font-size:.78rem;color:var(--text2);text-align:center;margin-bottom:10px;font-weight:600">Choose your payment method:</p>
       <div class="payment-options" style="margin-bottom:14px">
         <a class="payment-opt" id="pay-opt-flutterwave" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">🌍</span><div class="payment-opt-text"><h5>Flutterwave / Card</h5><p>Cards, bank transfer, mobile money</p></div><span>›</span></a>
-        <a class="payment-opt" id="pay-opt-momo" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">📱</span><div class="payment-opt-text"><h5>MTN MoMo / Telecel Cash</h5><p>Send to: <strong id="momo-number">Contact @Asterix_Abdin</strong></p></div><span>›</span></a>
+        <div class="payment-opt" id="pay-opt-momo" style="flex-direction:column;align-items:flex-start;gap:8px;cursor:default">
+          <div style="display:flex;align-items:center;gap:10px;width:100%"><span class="payment-opt-icon">📱</span><div class="payment-opt-text"><h5>Mobile Money (Ghana)</h5><p>Tap a number · then DM proof to @Asterix_Abdin</p></div></div>
+          <a href="tel:0541760074" style="display:block;padding:9px 14px;background:var(--surface2);border-radius:9px;text-decoration:none;color:var(--text);font-size:.86rem;font-weight:700;width:100%;box-sizing:border-box">🟡 MTN MoMo &nbsp;&nbsp; 0541760074</a>
+          <a href="tel:0508588230" style="display:block;padding:9px 14px;background:var(--surface2);border-radius:9px;text-decoration:none;color:var(--text);font-size:.86rem;font-weight:700;width:100%;box-sizing:border-box">🔴 Telecel Cash &nbsp; 0508588230</a>
+        </div>
         <a class="payment-opt" id="pay-opt-crypto" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>Crypto (USDT / BTC)</h5><p>Send proof to @Asterix_Abdin</p></div><span>›</span></a>
         <a class="payment-opt" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Pay via Telegram</h5><p>DM @Asterix_Abdin to arrange</p></div><span>›</span></a>
       </div>
@@ -2126,11 +2130,12 @@ canvas{width:100%;height:100%}
 const GIST_USER = 'asterixcomltd';          // your GitHub username
 const GIST_ID   = "a4caaf2993eea50322f31478391743b0"; // 32-char hex Gist ID
 
-// ── PAYMENT CONFIG — update these when you have your accounts ──────────────
+// ── PAYMENT CONFIG ──────────────────────────────────────────────────────────
 const PAYMENT_CONFIG = {
   telegram_contact : 'https://t.me/Asterix_Abdin',    // fallback for all methods
   flutterwave_link : 'https://t.me/Asterix_Abdin',    // TODO: replace with your Flutterwave payment link
-  momo_number      : null,                             // TODO: replace with your MTN MoMo number e.g. '0241234567'
+  momo_mtn         : '0541760074',                     // MTN MoMo (Ghana)
+  momo_telecel     : '0508588230',                     // Telecel Cash (Ghana)
   crypto_address   : null,                             // TODO: replace with your USDT (TRC-20) wallet address
   premium_price    : 12.99,
   premium_currency : 'USD',
@@ -2779,7 +2784,9 @@ function doSignup() {
   if(pw.length<8) return showToast('Password min 8 characters');
   loginUser({name,email});
 }
-function loginWithGoogle() { loginUser({name:'Google User',email:'user@gmail.com',google:true}); }
+function loginWithGoogle() {
+  showToast('Google Sign-In coming soon — use Email/Password for now');
+}
 function loginUser(user) {
   appState.user=user;
   document.getElementById('auth-screen').style.display='none';
@@ -5461,8 +5468,16 @@ function openPaymentSheet(title, amountUSD, ref) {
   const existing = document.getElementById('payment-sheet');
   if (existing) existing.remove();
 
-  const momoLine = PAYMENT_CONFIG.momo_number
-    ? `<a class="payment-opt" href="https://t.me/Asterix_Abdin" target="_blank"><span class="payment-opt-icon">📱</span><div class="payment-opt-text"><h5>MTN MoMo / Telecel Cash</h5><p>Send $${amountUSD} to <strong>${PAYMENT_CONFIG.momo_number}</strong> · DM proof</p></div><span>›</span></a>`
+  const momoLine = (PAYMENT_CONFIG.momo_mtn || PAYMENT_CONFIG.momo_telecel)
+    ? `<div class="payment-opt" style="flex-direction:column;align-items:flex-start;gap:8px;cursor:default">
+         <div style="display:flex;align-items:center;gap:10px;width:100%">
+           <span class="payment-opt-icon">📱</span>
+           <div class="payment-opt-text"><h5>Mobile Money (Ghana)</h5><p>Tap a number to call · then DM proof to @Asterix_Abdin</p></div>
+         </div>
+         ${PAYMENT_CONFIG.momo_mtn ? `<a href="tel:${PAYMENT_CONFIG.momo_mtn}" onclick="event.stopPropagation()" style="display:block;padding:9px 14px;background:var(--surface2);border-radius:9px;text-decoration:none;color:var(--text);font-size:.86rem;font-weight:700;width:100%;box-sizing:border-box">🟡 MTN MoMo &nbsp;&nbsp; ${PAYMENT_CONFIG.momo_mtn}</a>` : ''}
+         ${PAYMENT_CONFIG.momo_telecel ? `<a href="tel:${PAYMENT_CONFIG.momo_telecel}" onclick="event.stopPropagation()" style="display:block;padding:9px 14px;background:var(--surface2);border-radius:9px;text-decoration:none;color:var(--text);font-size:.86rem;font-weight:700;width:100%;box-sizing:border-box">🔴 Telecel Cash &nbsp; ${PAYMENT_CONFIG.momo_telecel}</a>` : ''}
+         <p style="font-size:.72rem;color:var(--text3);margin:0">Send GHS equivalent of $${amountUSD} then screenshot proof to @Asterix_Abdin</p>
+       </div>`
     : `<a class="payment-opt" href="${PAYMENT_CONFIG.telegram_contact}" target="_blank"><span class="payment-opt-icon">📱</span><div class="payment-opt-text"><h5>MTN MoMo / Mobile Money</h5><p>DM @Asterix_Abdin for number</p></div><span>›</span></a>`;
 
   const cryptoLine = PAYMENT_CONFIG.crypto_address
