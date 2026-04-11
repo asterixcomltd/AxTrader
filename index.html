@@ -197,6 +197,64 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .more-row-text h5{font-weight:600;font-size:.9rem;margin-bottom:1px}
 .more-row-text p{font-size:.75rem;color:var(--text2)}
 
+/* ── INTERSTITIAL AD OVERLAY ─────────────────────────────────── */
+@keyframes intros-in  { from{opacity:0;transform:scale(.94)} to{opacity:1;transform:scale(1)} }
+@keyframes intros-out { from{opacity:1;transform:scale(1)}   to{opacity:0;transform:scale(.94)} }
+#interstitial-overlay {
+  position: fixed; inset: 0; z-index: 8000;
+  background: rgba(14,12,10,.95);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 20px;
+  animation: intros-in .3s ease forwards;
+  backdrop-filter: blur(6px);
+}
+#interstitial-overlay.closing { animation: intros-out .25s ease forwards; }
+.intros-card {
+  width: 100%; max-width: 340px;
+  background: #1a1814;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(201,168,76,.25);
+  box-shadow: 0 20px 60px rgba(0,0,0,.6);
+}
+.intros-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.intros-label { font-size: .65rem; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .1em; }
+.intros-timer-pill {
+  background: rgba(201,168,76,.15); color: var(--gold2);
+  font-size: .72rem; font-weight: 700; padding: 3px 10px;
+  border-radius: 20px; border: 1px solid rgba(201,168,76,.3);
+  min-width: 52px; text-align: center;
+  transition: background .3s;
+}
+.intros-timer-pill.ready { background: var(--gold); color: #fff; cursor: pointer; border-color: var(--gold); }
+.intros-ad-wrap {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 260px; padding: 12px;
+  background: #111;
+}
+.intros-footer {
+  padding: 12px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.intros-upgrade {
+  font-size: .72rem; color: var(--gold2); cursor: pointer;
+  text-decoration: none; opacity: .85;
+}
+.intros-upgrade:hover { opacity: 1; }
+.intros-close-btn {
+  padding: 7px 20px; background: var(--gold); color: #fff;
+  border: none; border-radius: 8px; font-weight: 700;
+  font-size: .82rem; cursor: pointer; font-family: inherit;
+  display: none; transition: .15s;
+}
+.intros-close-btn:hover { opacity: .88; }
+
 /* ── SPARKLE PARTICLE SYSTEM ────────────────────────────────── */
 #sparkle-auth {
   position: absolute;
@@ -2951,6 +3009,7 @@ function grantPremium(code) {
   });
   const hpb = document.getElementById('home-premium-banner');
   if (hpb) hpb.style.display = 'none';
+  if (typeof stopInterstitialTimer === 'function') stopInterstitialTimer();
   if (typeof sparkleBurst === 'function') sparkleBurst();
   showToast('⭐ Premium activated! Welcome to the inner circle 🎉');
   return true;
@@ -5659,6 +5718,8 @@ function initApp() {
   }
   // Show notification permission banner
   maybeShowNotifBanner();
+  // Start interstitial ad timer (free users only — skipped for premium)
+  if (typeof startInterstitialTimer === 'function') startInterstitialTimer();
   // Refresh news every 5 minutes
   setInterval(fetchMarketNews, 300000);
   // Refresh analytics every fetch cycle
@@ -5740,6 +5801,111 @@ function openPremiumModal() { openUpgrade(); }
 function openPremiumCheckout() {
   openPaymentSheet('✦ AxTrader Premium', PAYMENT_CONFIG.premium_price, 'premium');
 }
+
+// ══ INTERSTITIAL AD SYSTEM ═══════════════════════════════════════
+// Shows a full-screen ad every 2 min 30 sec — users must wait 8 s before close.
+// Premium users and non-logged-in screens are skipped automatically.
+(function InterstitialAds() {
+  const INTERVAL  = 150000;  // 2 min 30 sec between each interstitial
+  const FIRST_IN  =  45000;  // wait 45 s after login before first show
+  const COUNTDOWN =      8;  // seconds user must watch before close appears
+
+  // Adsterra 300×250 unit — shown inside the overlay
+  const AD_KEY  = '689acba615d238d033a802bb1f8547fc';
+  const AD_SRC  = `https://www.highperformanceformat.com/${AD_KEY}/invoke.js`;
+  const AD_OPTS = { key: AD_KEY, format: 'iframe', height: 250, width: 300, params: {} };
+
+  let interstitialTimer = null;
+  let active = false;
+
+  function canShow() {
+    if (active) return false;
+    if (appState.isPremium) return false;
+    if (!appState.user) return false;
+    const authEl = document.getElementById('auth-screen');
+    if (authEl && authEl.style.display !== 'none') return false;
+    return true;
+  }
+
+  function loadAdInto(container) {
+    // Must use createElement — innerHTML scripts don't execute
+    window.atOptions = AD_OPTS;
+    const s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.src  = AD_SRC;
+    container.appendChild(s);
+  }
+
+  window.showInterstitial = function () {
+    if (!canShow()) return;
+    active = true;
+
+    const overlay = document.createElement('div');
+    overlay.id = 'interstitial-overlay';
+
+    overlay.innerHTML = `
+      <div class="intros-card">
+        <div class="intros-top">
+          <span class="intros-label">📢 Advertisement</span>
+          <span class="intros-timer-pill" id="intros-pill">Close in ${COUNTDOWN}s</span>
+        </div>
+        <div class="intros-ad-wrap" id="intros-ad-wrap">
+          <div style="color:rgba(255,255,255,.3);font-size:.8rem">Loading ad…</div>
+        </div>
+        <div class="intros-footer">
+          <a class="intros-upgrade" onclick="closeInterstitial();openUpgrade()">
+            ⭐ Remove ads — Go Premium
+          </a>
+          <button class="intros-close-btn" id="intros-close-btn" onclick="closeInterstitial()">
+            ✕ Close
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+    loadAdInto(document.getElementById('intros-ad-wrap'));
+
+    // Countdown
+    let remaining = COUNTDOWN;
+    const pill = document.getElementById('intros-pill');
+    const btn  = document.getElementById('intros-close-btn');
+
+    const tick = setInterval(() => {
+      remaining--;
+      if (remaining > 0) {
+        if (pill) pill.textContent = `Close in ${remaining}s`;
+      } else {
+        clearInterval(tick);
+        if (pill) { pill.textContent = '✕ Close'; pill.classList.add('ready'); pill.onclick = closeInterstitial; }
+        if (btn)  { btn.style.display = 'block'; }
+      }
+    }, 1000);
+  };
+
+  window.closeInterstitial = function () {
+    const el = document.getElementById('interstitial-overlay');
+    if (!el) return;
+    el.classList.add('closing');
+    setTimeout(() => { try { el.remove(); } catch(e){} active = false; }, 280);
+  };
+
+  window.startInterstitialTimer = function () {
+    if (interstitialTimer) return; // already running
+    // First show after FIRST_IN ms
+    setTimeout(() => {
+      showInterstitial();
+      // Then repeat every INTERVAL ms
+      interstitialTimer = setInterval(showInterstitial, INTERVAL);
+    }, FIRST_IN);
+  };
+
+  window.stopInterstitialTimer = function () {
+    if (interstitialTimer) { clearInterval(interstitialTimer); interstitialTimer = null; }
+    closeInterstitial();
+  };
+})();
+// ═════════════════════════════════════════════════════════════════
 
 // ══ SPARKLE PARTICLE ENGINE ══════════════════════════════════════
 (function SparkleEngine() {
