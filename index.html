@@ -1278,7 +1278,13 @@ canvas{width:100%;height:100%}
         </div>
       </div>
 
-      <div class="ad-slot" id="ad-home" style="margin:14px 16px">📢 Advertisement — <a href="#" onclick="openUpgrade()" style="color:var(--gold);margin-left:4px">Go Premium to remove</a></div>
+      <!-- Adsterra 300x250 — Home page -->
+      <div id="ad-home" style="text-align:center;margin:14px 16px;overflow:hidden;min-height:250px">
+        <script type="text/javascript">
+          atOptions = { 'key':'689acba615d238d033a802bb1f8547fc','format':'iframe','height':250,'width':300,'params':{} };
+        </script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/689acba615d238d033a802bb1f8547fc/invoke.js"></script>
+      </div>
 
       <!-- ⑥ MARKET NEWS PREVIEW ────────────────────────── -->
       <div class="section-divider">📰 Market Intelligence</div>
@@ -1367,7 +1373,6 @@ canvas{width:100%;height:100%}
           <div id="archive-list" style="display:none"></div>
         </div>
 
-        <div class="ad-slot" id="ad-signals">📢 Advertisement — <a href="#" onclick="openUpgrade()" style="color:var(--gold);margin-left:4px">Remove ads</a></div>
       </div>
     </div>
 
@@ -5640,12 +5645,18 @@ function initApp() {
   updateBalanceDisplays();
   updatePerformanceAnalytics();  // Phase 2: performance dashboard
   loadNotificationPreferences();  // Phase 2: load notification settings
-  // Hide premium banner and ads for premium users
+  // Hide premium banner and ALL ad containers for premium users
   const banner = document.getElementById('home-premium-banner');
   if (banner) banner.style.display = appState.isPremium ? 'none' : 'block';
-  document.querySelectorAll('.ad-slot').forEach(ad => {
-    if (appState.isPremium) ad.classList.add('hidden');
-  });
+  if (appState.isPremium) {
+    // Hide Adsterra banner containers
+    ['ad-home','ad-placement-1','ad-placement-2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    // Also hide any remaining placeholder slots
+    document.querySelectorAll('.ad-slot').forEach(ad => ad.classList.add('hidden'));
+  }
   // Show notification permission banner
   maybeShowNotifBanner();
   // Refresh news every 5 minutes
