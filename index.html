@@ -90,7 +90,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .live-badge{display:flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green);padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:600}
 .live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 1.4s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.avatar-btn{width:36px;height:36px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;color:#fff;font-family:'Space Grotesk',sans-serif;flex-shrink:0}
+.avatar-btn{width:36px;height:36px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.72rem;letter-spacing:-.5px;color:#fff;font-family:'Space Grotesk',sans-serif;flex-shrink:0}
 .content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .page{display:none;padding-bottom:80px}
 .page.active{display:block}
@@ -1231,7 +1231,7 @@ canvas{width:100%;height:100%}
     </div>
     <div class="live-badge"><span class="live-dot"></span> LIVE</div>
     <div class="session-label" id="session-label">NY Session<br><span id="session-time">--:--</span></div>
-    <button class="avatar-btn" id="avatar-btn" onclick="openProfile()">A</button>
+    <button class="avatar-btn" id="avatar-btn" onclick="openProfile()">Ax</button>
   </div>
   <div class="content">
     <div class="ticker-wrap"><div class="ticker" id="ticker"></div></div>
@@ -2961,7 +2961,7 @@ function loginUser(user) {
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').style.display='flex';
   const letter=(user.name||'U')[0].toUpperCase();
-  document.getElementById('avatar-btn').textContent=letter;
+  document.getElementById('avatar-btn').textContent='Ax'; // always brand mark
   document.getElementById('profile-avatar-letter').textContent=letter;
   document.getElementById('profile-name-display').textContent=user.name;
   document.getElementById('profile-email-display').textContent=user.email;
@@ -3273,7 +3273,7 @@ function saveProfile() {
   document.getElementById('profile-name-display').textContent=appState.user.name;
   document.getElementById('profile-email-display').textContent=appState.user.email;
   const l=(appState.user.name||'U')[0].toUpperCase();
-  document.getElementById('avatar-btn').textContent=l;
+  document.getElementById('avatar-btn').textContent='Ax'; // always brand mark
   if(!appState.avatarDataURL) document.getElementById('profile-avatar-letter').textContent=l;
   try { localStorage.setItem('ax_user', JSON.stringify(appState.user)); } catch(e) {}
   closeOverlay('profile-overlay');
