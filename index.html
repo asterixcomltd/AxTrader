@@ -4753,7 +4753,7 @@ async function fetchMarketNews() {
     }
 
     // NewsAPI (general financial news) - free tier 100 req/day
-    const newsRes = await fetch('https://newsapi.org/v2/everything?q=(BTC+OR+ETH+OR+forex+OR+economy)&sortBy=publishedAt&pageSize=5&apiKey=demo');
+    const newsRes = await fetch('https://newsapi.org/v2/everything?q=(BTC+OR+ETH+OR+forex+OR+economy)&sortBy=publishedAt&pageSize=5&apiKey=15fdb44b4d8b41c0966f0343f9854edf');
     let generalNews = [];
     if (newsRes.ok) {
       const data = await newsRes.json();
