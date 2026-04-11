@@ -2152,6 +2152,21 @@ const PAYMENT_CONFIG = {
 
 let signalsData = [];
 let appState = { user:null, isPremium:false, lang:'en', avatarDataURL:null };
+
+// ── Restore session on page load (survives SW updates & reloads) ──────────
+(function restoreSession() {
+  try {
+    const saved = localStorage.getItem('ax_user');
+    if (!saved) return;
+    const user = JSON.parse(saved);
+    if (!user || !user.name) return;
+    // Defer until DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      loginUser(user);
+    });
+  } catch(e) { localStorage.removeItem('ax_user'); }
+})();
+
 const gameState = {
   get balance() { return getATXBalance(); },
   set balance(val) {
@@ -2808,6 +2823,7 @@ function loginWithGoogle() {
 }
 function loginUser(user) {
   appState.user=user;
+  try { localStorage.setItem('ax_user', JSON.stringify(user)); } catch(e) {}
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').style.display='flex';
   const letter=(user.name||'U')[0].toUpperCase();
@@ -2831,6 +2847,8 @@ function loginUser(user) {
 }
 function doLogout() {
   appState.user=null;
+  appState.isPremium=false;
+  try { localStorage.removeItem('ax_user'); } catch(e) {}
   document.getElementById('app').style.display='none';
   document.getElementById('auth-screen').style.display='flex';
   navTo('home');
@@ -3068,6 +3086,7 @@ function saveProfile() {
   const l=(appState.user.name||'U')[0].toUpperCase();
   document.getElementById('avatar-btn').textContent=l;
   if(!appState.avatarDataURL) document.getElementById('profile-avatar-letter').textContent=l;
+  try { localStorage.setItem('ax_user', JSON.stringify(appState.user)); } catch(e) {}
   closeOverlay('profile-overlay');
   showToast('Profile saved ✓');
 }
@@ -4648,7 +4667,7 @@ function showUpdateBanner() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js?v=' + Date.now())
+    navigator.serviceWorker.register('/sw.js')
       .then(reg => {
         swRegistration = reg;
         console.log('[SW] Registered:', reg.scope);
