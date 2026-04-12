@@ -2624,7 +2624,7 @@ async function fetchSignalsFromSheet() {
       let expiresAt = null;
       if (base) {
         const tf = (s.tf || s.timeframe || '4H').toUpperCase();
-        const addMs = tf === '1H' ? 4*3600000 : tf === '1D' ? 72*3600000 : 16*3600000;
+        const addMs = tf === '1H' ? 4*3600000 : tf === '1D' ? 78*3600000 : 16*3600000; // v3.6: 1D 72→78h
         expiresAt = base + addMs;
       }
 
@@ -4078,11 +4078,15 @@ function handleAvatarChange(e) {
 }
 
 // ============ LIVE TICKER (CoinGecko — free, no key) ============
-const COINGECKO_IDS = 'bitcoin,ethereum,solana,avalanche-2,uniswap,sushiswap,decentralized-social,tether';
+// v3.6: 16-pair universe — removed SUSHI, added AAVE, ARB, INJ, DOT, FIL, SUI, ATOM
+const COINGECKO_IDS = 'bitcoin,ethereum,solana,avalanche-2,uniswap,decentralized-social,chainlink,near,aave,arbitrum,injective-protocol,polkadot,filecoin,sui,cosmos,tether';
 const TICKER_LABELS = {
   bitcoin:'BTC/USD', ethereum:'ETH/USD', solana:'SOL/USD',
-  'avalanche-2':'AVAX/USD', uniswap:'UNI/USD', sushiswap:'SUSHI/USD',
-  'decentralized-social':'DEXE/USD', tether:'USDT/USD'
+  'avalanche-2':'AVAX/USD', uniswap:'UNI/USD',
+  'decentralized-social':'DEXE/USD', chainlink:'LINK/USD', near:'NEAR/USD',
+  aave:'AAVE/USD', arbitrum:'ARB/USD', 'injective-protocol':'INJ/USD',
+  polkadot:'DOT/USD', filecoin:'FIL/USD', sui:'SUI/USD', cosmos:'ATOM/USD',
+  tether:'USDT/USD'
 };
 
 // Static fallback prices shown immediately, then replaced by live data

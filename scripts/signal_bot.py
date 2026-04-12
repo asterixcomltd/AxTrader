@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-AxTrader Signal Bot v3.0 — Pure Price Action / Smart Money Concepts
+AxTrader Signal Bot v3.6 — Pure Price Action / Smart Money Concepts
 Runs every 30 min via GitHub Actions.
 
 ZERO LAGGING INDICATORS. No EMA. No RSI. No MACD. No Bollinger.
@@ -44,13 +44,24 @@ BINANCE_URL = "https://api.binance.com/api/v3/klines"
 YAHOO_URL   = "https://query1.finance.yahoo.com/v8/finance/chart/{}"
 
 CRYPTO_PAIRS = [
+    # v3.6: 16 pairs — removed SUSHI (0% WR), aligned with gwp-bots v3.6
     ("BTCUSDT",  "BTC/USDT",  "crypto", "4h"),
     ("ETHUSDT",  "ETH/USDT",  "crypto", "4h"),
     ("SOLUSDT",  "SOL/USDT",  "crypto", "4h"),
     ("LINKUSDT", "LINK/USDT", "crypto", "4h"),
     ("BNBUSDT",  "BNB/USDT",  "crypto", "4h"),
-    ("AVAXUSDT", "AVAX/USDT", "crypto", "4h"),
     ("DEXEUSDT", "DEXE/USDT", "crypto", "4h"),
+    ("UNIUSDT",  "UNI/USDT",  "crypto", "4h"),
+    ("COMPUSDT", "COMP/USDT", "crypto", "4h"),
+    ("NEARUSDT", "NEAR/USDT", "crypto", "4h"),
+    ("AVAXUSDT", "AVAX/USDT", "crypto", "4h"),
+    ("AAVEUSDT", "AAVE/USDT", "crypto", "4h"),
+    ("ARBUSDT",  "ARB/USDT",  "crypto", "4h"),
+    ("INJUSDT",  "INJ/USDT",  "crypto", "4h"),
+    ("DOTUSDT",  "DOT/USDT",  "crypto", "4h"),
+    ("FILUSDT",  "FIL/USDT",  "crypto", "4h"),
+    ("SUIUSDT",  "SUI/USDT",  "crypto", "4h"),
+    ("ATOMUSDT", "ATOM/USDT", "crypto", "4h"),
 ]
 FOREX_PAIRS = [
     ("XAUUSDT", "XAU/USD", "forex", "1h"),
@@ -65,7 +76,7 @@ STOCK_SYMBOLS = [
     ("PLTR",  "PLTR",  "stocks"),
 ]
 
-EXPIRY_HOURS = {"1H": 4, "4H": 16, "1D": 72}
+EXPIRY_HOURS = {"1H": 4, "4H": 16, "1D": 78}  # v3.6: 1D raised 72→78 (aligned with CT gate)
 
 # ── Data Fetching ─────────────────────────────────────────────────────────────
 def fetch_binance(symbol, interval, limit=150):
@@ -452,7 +463,7 @@ def get_daily_bias(symbol):
     if struct == "bearish": return -1
     return 0
 
-# ── Main Signal Generator v3.0 ────────────────────────────────────────────────
+# ── Main Signal Generator v3.6 ────────────────────────────────────────────────
 def generate(candles, pair, bot, tf, daily_bias=0):
     """
     Pure price action signal. Zero lagging indicators.
@@ -667,7 +678,7 @@ def main():
     utc_h     = now_utc.hour
     kz_active = (2 <= utc_h < 6) or (13 <= utc_h < 17)
 
-    print(f"🤖 AxTrader Signal Bot v3.0 — {now_utc.strftime('%Y-%m-%d %H:%M')} UTC")
+    print(f"🤖 AxTrader Signal Bot v3.6 — {now_utc.strftime('%Y-%m-%d %H:%M')} UTC")
     print(f"   Mode: Pure Price Action | Zero Lagging Indicators")
     print(f"   Engine: Market Structure → BOS/CHoCH → Order Block → FVG → GWP Sweep")
     print(f"   Kill Zone: {'✅ London/NY active' if kz_active else '⏳ Off-hours'}\n")
