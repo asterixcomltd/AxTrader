@@ -1,8 +1,7 @@
 // AxTrader — GWP Signal App
-// Service Worker v1.5 — Force cache bust
+// Service Worker v1.7 — Force icon + cache bust
 
-// Auto-increment version on deployment (CI/CD would update this)
-const CACHE_VERSION = '1.6';
+const CACHE_VERSION = '1.7';
 const CACHE_NAME = `axtrader-v${CACHE_VERSION}`;
 
 const SHELL_ASSETS = [
