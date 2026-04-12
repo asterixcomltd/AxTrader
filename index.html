@@ -1811,7 +1811,7 @@ canvas{width:100%;height:100%}
         </div>
 
         <!-- ─── SECTION H: LEGAL ──────────────────────────────── -->
-        <div class="more-section-label">⚖️ Legal</div>
+        <div class="more-section-label" id="lbl-section-legal">⚖️ Legal</div>
         <div class="more-section" style="margin:0 16px 16px">
           <div class="more-row" onclick="openOverlay('disclaimer-overlay')">
             <div class="more-row-icon" style="background:#fef3c7">⚠️</div>
@@ -3365,7 +3365,9 @@ const i18n={
     gwp_title:'What is GWP?', gwp_sub:'The 5-Pillar Ghost Wick Protocol explained',
     system_status_title:'System Status', system_status_sub:'Live · All systems operational',
     sign_out:'Sign Out', deep_dive:'Deep dive ↓', show_less:'Show less ↑',
-    make_money_title:'💰 Exchange Partners', make_money_sub:'Sign up via our trusted partners'
+    make_money_title:'💰 Exchange Partners', make_money_sub:'Sign up via our trusted partners',
+    badge_free:'FREE', badge_premium:'⭐ PREMIUM BOOK',
+    course_locked:'🔒 Premium Book — Full Access', course_unlock:'Unlock $12.99'
   },
   fr:{
     home:'Accueil', signals:'Signaux', games:'Jeux', news:'Actualités', more:'Plus',
@@ -3402,7 +3404,9 @@ const i18n={
     gwp_title:'Qu\'est-ce que le GWP?', gwp_sub:'Le Protocole Ghost Wick à 5 Piliers expliqué',
     system_status_title:'État du Système', system_status_sub:'En direct · Tous les systèmes opérationnels',
     sign_out:'Se Déconnecter', deep_dive:'Approfondir ↓', show_less:'Réduire ↑',
-    make_money_title:'💰 Partenaires d\'Échange', make_money_sub:'Inscrivez-vous via nos partenaires de confiance'
+    make_money_title:'💰 Partenaires d\'Échange', make_money_sub:'Inscrivez-vous via nos partenaires de confiance',
+    badge_free:'GRATUIT', badge_premium:'⭐ LIVRE PREMIUM',
+    course_locked:'🔒 Livre Premium — Accès Complet', course_unlock:'Débloquer 12,99$'
   },
   es:{
     home:'Inicio', signals:'Señales', games:'Juegos', news:'Noticias', more:'Más',
@@ -3417,7 +3421,31 @@ const i18n={
     load_more:'Cargar más ↓',
     fear_greed:'Miedo & Codicia',
     sign_in:'Iniciar sesión', sign_up:'Registrarse',
-    google_auth:'Continuar con Google'
+    google_auth:'Continuar con Google',
+    arcade_title:'🎮 Arcade de Entrenamiento', arcade_sub:'Práctica · Sin dinero real',
+    your_playcoins:'Tu Saldo PlayCoins', playcoin_note:'Créditos simulados para práctica únicamente',
+    weekly_top:'TOP SEMANA', play_compete:'🎮 Jugar & Competir',
+    playcoins_sub:'PlayCoins para práctica (no es dinero real)',
+    game_crash_desc:'Retira antes del crash', game_mines_desc:'Revela casillas, evita minas',
+    game_plinko_desc:'Lanza la bola, toca el multiplicador', game_candle_desc:'Predice LARGO o CORTO',
+    play_btn:'Jugar',
+    section_account:'👤 Mi Cuenta', section_premium:'🛍️ Premium + Cosméticos',
+    section_academy:'📚 Academia de Trading', section_bots:'🤖 Nuestros Bots de Señales',
+    section_community:'✈️ Comunidad & Social', section_tools:'🛠️ Herramientas',
+    section_settings:'⚙️ Configuración', section_knowledge:'🧠 Conocimiento & Sistema',
+    section_contact:'✉️ Contacto & Soporte', section_legal:'⚖️ Legal',
+    upgrade_title:'Mejorar a Premium', upgrade_sub:'Desbloquear todas las señales, sin anuncios, academia completa',
+    referral_title:'Programa de Referidos', referral_sub:'Invitar amigos · Ganar recompensas PlayCoins',
+    analytics_title:'Analítica', analytics_sub:'Estadísticas · Tasa de éxito · Seguimiento P&L',
+    signal_alerts_title:'Alertas de Señales', signal_alerts_sub:'Notificaciones push · Preferencias de alertas',
+    language_title:'Idioma', install_title:'Instalar App',
+    install_sub:'Añadir a pantalla de inicio · Acceso sin conexión',
+    gwp_title:'¿Qué es GWP?', gwp_sub:'El Protocolo Ghost Wick de 5 Pilares explicado',
+    system_status_title:'Estado del Sistema', system_status_sub:'En vivo · Todos los sistemas operativos',
+    sign_out:'Cerrar Sesión', deep_dive:'Inmersión ↓', show_less:'Mostrar menos ↑',
+    make_money_title:'💰 Socios de Exchange', make_money_sub:'Regístrate vía nuestros socios de confianza',
+    badge_free:'GRATIS', badge_premium:'⭐ LIBRO PREMIUM',
+    course_locked:'🔒 Libro Premium — Acceso Completo', course_unlock:'Desbloquear $12.99'
   },
   pt:{
     home:'Início', signals:'Sinais', games:'Jogos', news:'Notícias', more:'Mais',
@@ -3432,7 +3460,31 @@ const i18n={
     load_more:'Carregar mais ↓',
     fear_greed:'Medo & Ganância',
     sign_in:'Entrar', sign_up:'Cadastrar',
-    google_auth:'Continuar com Google'
+    google_auth:'Continuar com Google',
+    arcade_title:'🎮 Arcade de Treinamento', arcade_sub:'Prática · Sem dinheiro real',
+    your_playcoins:'Seu Saldo PlayCoins', playcoin_note:'Créditos simulados apenas para prática',
+    weekly_top:'TOP SEMANA', play_compete:'🎮 Jogar & Competir',
+    playcoins_sub:'PlayCoins para prática (não é dinheiro real)',
+    game_crash_desc:'Retire antes do crash', game_mines_desc:'Revelar caselas, evitar minas',
+    game_plinko_desc:'Solta a bola, acerta o multiplicador', game_candle_desc:'Prever COMPRA ou VENDA',
+    play_btn:'Jogar',
+    section_account:'👤 Minha Conta', section_premium:'🛍️ Premium + Cosméticos',
+    section_academy:'📚 Academia de Trading', section_bots:'🤖 Nossos Bots de Sinais',
+    section_community:'✈️ Comunidade & Social', section_tools:'🛠️ Ferramentas',
+    section_settings:'⚙️ Configurações', section_knowledge:'🧠 Conhecimento & Sistema',
+    section_contact:'✉️ Contato & Suporte', section_legal:'⚖️ Legal',
+    upgrade_title:'Atualizar para Premium', upgrade_sub:'Desbloquear todos os sinais, sem anúncios, academia completa',
+    referral_title:'Programa de Indicação', referral_sub:'Convidar amigos · Ganhar recompensas PlayCoins',
+    analytics_title:'Análises', analytics_sub:'Estatísticas · Taxa de acerto · Rastreamento P&L',
+    signal_alerts_title:'Alertas de Sinais', signal_alerts_sub:'Notificações push · Preferências de alertas',
+    language_title:'Idioma', install_title:'Instalar App',
+    install_sub:'Adicionar à tela inicial · Acesso offline',
+    gwp_title:'O que é GWP?', gwp_sub:'O Protocolo Ghost Wick de 5 Pilares explicado',
+    system_status_title:'Status do Sistema', system_status_sub:'Ao vivo · Todos os sistemas operacionais',
+    sign_out:'Sair', deep_dive:'Mergulhar ↓', show_less:'Mostrar menos ↑',
+    make_money_title:'💰 Parceiros de Exchange', make_money_sub:'Cadastre-se via nossos parceiros de confiança',
+    badge_free:'GRÁTIS', badge_premium:'⭐ LIVRO PREMIUM',
+    course_locked:'🔒 Livro Premium — Acesso Completo', course_unlock:'Desbloquear $12.99'
   },
   ar:{
     home:'الرئيسية', signals:'إشارات', games:'ألعاب', news:'أخبار', more:'المزيد',
@@ -3447,7 +3499,31 @@ const i18n={
     load_more:'تحميل المزيد ↓',
     fear_greed:'الخوف والجشع',
     sign_in:'تسجيل الدخول', sign_up:'إنشاء حساب',
-    google_auth:'المتابعة مع Google'
+    google_auth:'المتابعة مع Google',
+    arcade_title:'🎮 أركيد التدريب', arcade_sub:'تدريب · بدون أموال حقيقية',
+    your_playcoins:'رصيد PlayCoins الخاص بك', playcoin_note:'أرصدة محاكاة للتدريب فقط',
+    weekly_top:'أفضل الأسبوع', play_compete:'🎮 العب وتنافس',
+    playcoins_sub:'PlayCoins للتدريب (ليست أموالاً حقيقية)',
+    game_crash_desc:'اسحب قبل الانهيار', game_mines_desc:'اكشف البلاط، تجنب الألغام',
+    game_plinko_desc:'أسقط الكرة، اضرب المضاعف', game_candle_desc:'توقع صعود أو هبوط',
+    play_btn:'العب',
+    section_account:'👤 حسابي', section_premium:'🛍️ مميز + تخصيص',
+    section_academy:'📚 أكاديمية التداول', section_bots:'🤖 بوتات إشاراتنا',
+    section_community:'✈️ المجتمع والتواصل', section_tools:'🛠️ الأدوات',
+    section_settings:'⚙️ الإعدادات', section_knowledge:'🧠 المعرفة والنظام',
+    section_contact:'✉️ التواصل والدعم', section_legal:'⚖️ قانوني',
+    upgrade_title:'الترقية إلى المميز', upgrade_sub:'إلغاء قفل جميع الإشارات، بدون إعلانات، أكاديمية كاملة',
+    referral_title:'برنامج الإحالة', referral_sub:'دعوة الأصدقاء · ربح مكافآت PlayCoins',
+    analytics_title:'التحليلات', analytics_sub:'إحصاءات الأداء · معدل الفوز · تتبع الأرباح',
+    signal_alerts_title:'تنبيهات الإشارات', signal_alerts_sub:'إشعارات الدفع · تفضيلات التنبيهات',
+    language_title:'اللغة', install_title:'تثبيت التطبيق',
+    install_sub:'إضافة إلى الشاشة الرئيسية · الوصول دون اتصال',
+    gwp_title:'ما هو GWP؟', gwp_sub:'بروتوكول Ghost Wick بـ 5 ركائز موضح',
+    system_status_title:'حالة النظام', system_status_sub:'مباشر · جميع الأنظمة تعمل',
+    sign_out:'تسجيل الخروج', deep_dive:'تعمق ↓', show_less:'عرض أقل ↑',
+    make_money_title:'💰 شركاء البورصة', make_money_sub:'سجل عبر شركائنا الموثوقين',
+    badge_free:'مجاني', badge_premium:'⭐ كتاب مميز',
+    course_locked:'🔒 كتاب مميز — وصول كامل', course_unlock:'إلغاء القفل $12.99'
   }
 };
 function setLang(lang) {
@@ -3542,6 +3618,7 @@ function setLang(lang) {
   if(t.section_settings) setEl('lbl-section-settings', t.section_settings);
   if(t.section_knowledge) setEl('lbl-section-knowledge', t.section_knowledge);
   if(t.section_contact) setEl('lbl-section-contact', t.section_contact);
+  if(t.section_legal) setEl('lbl-section-legal', t.section_legal);
 
   // More page rows
   if(t.upgrade_title) setEl('lbl-upgrade-title', t.upgrade_title);
@@ -4837,6 +4914,7 @@ function renderCourses(tab){
   const container=document.getElementById('courses-content');
   if(!container) return;
   const data=coursesData[tab]||[];
+  const _t=i18n[appState&&appState.lang||'en']||i18n.en;
   let html='';
   data.forEach((c,i)=>{
     const isPrem=c.badge==='premium';
@@ -4850,8 +4928,8 @@ function renderCourses(tab){
         <div style="background:linear-gradient(135deg,#1a1814,#2d2418);border-radius:12px;padding:14px 16px;margin-top:8px">
           <div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:rgba(255,255,255,.4);line-height:1.7;max-height:60px;overflow:hidden;mask-image:linear-gradient(black 20%,transparent)">${c.illus||''}</div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
-            <span style="color:var(--gold2);font-size:.78rem;font-weight:700">🔒 Premium Book — Full Access</span>
-            <button class="btn-upgrade" style="width:auto;padding:8px 14px;font-size:.78rem;border-radius:8px" onclick="openUpgrade()">Unlock $12.99</button>
+            <span style="color:var(--gold2);font-size:.78rem;font-weight:700">${_t.course_locked||'🔒 Premium Book — Full Access'}</span>
+            <button class="btn-upgrade" style="width:auto;padding:8px 14px;font-size:.78rem;border-radius:8px" onclick="openUpgrade()">${_t.course_unlock||'Unlock $12.99'}</button>
           </div>
         </div>
       </div>`;
@@ -4861,10 +4939,10 @@ function renderCourses(tab){
           <div class="course-icon ${tab==='advanced'?'prem':tab}">${c.icon}</div>
           <div class="course-meta"><h4>${c.title}</h4></div>
         </div>
-        <span class="course-badge ${c.badge}">${isPrem?'⭐ PREMIUM BOOK':'FREE'}</span>
+        <span class="course-badge ${c.badge}">${isPrem?(_t.badge_premium||'⭐ PREMIUM BOOK'):(_t.badge_free||'FREE')}</span>
         <div class="course-body" style="margin:10px 0 6px">${c.body}</div>
         ${c.illus?`<div class="course-illus" style="font-size:.74rem;line-height:1.75">${c.illus}</div>`:''}
-        ${c.detail?`<button class="course-expand-btn" onclick="toggleCourse(this)" style="margin-top:10px">Deep dive ↓</button>
+        ${c.detail?`<button class="course-expand-btn dive-btn" onclick="toggleCourse(this)" style="margin-top:10px">${_t.deep_dive||'Deep dive ↓'}</button>
           <div class="course-content"><div style="background:var(--gold-bg);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 14px;margin-top:10px;font-size:.82rem;color:var(--text2);line-height:1.75">${c.detail}</div></div>`:``}
       </div>`;
     }
