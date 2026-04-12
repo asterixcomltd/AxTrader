@@ -21,6 +21,7 @@
 <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png">
 
 <!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 
@@ -1500,7 +1501,7 @@ canvas{width:100%;height:100%}
               <div class="section-title">📂 Signal Archive</div>
               <div style="font-size:.72rem;color:var(--text3)">Last 50 signals · effectiveness tracking</div>
             </div>
-            <button onclick="toggleArchive()" id="archive-toggle-btn" class="notif-banner-action" style="background:none;border:1.5px solid var(--border);border-radius:8px;padding:5px 12px;font-size:.75rem;font-weight:600;cursor:pointer;color:var(--text2);font-family:inherit">Show ▾</button>
+            <button onclick="toggleArchive()" id="archive-toggle-btn" class="notif-banner-action" style="background:none;border:1.5px solid var(--border);border-radius:8px;padding:5px 12px;font-size:.75rem;font-weight:600;cursor:pointer;color:var(--text2);font-family:inherit">Hide ▴</button>
           </div>
           <!-- Stats bar — visible to all users -->
           <div id="archive-stats-bar" style="display:flex;gap:16px;padding:10px 12px;background:var(--surface);border-radius:12px;border:1px solid var(--border);font-size:.78rem;margin-bottom:10px">
@@ -1508,8 +1509,8 @@ canvas{width:100%;height:100%}
             <span>Avg R:R: <strong id="arch-avg-rr" style="color:var(--gold)">—</strong></span>
             <span>Total: <strong id="arch-total">0</strong></span>
           </div>
-          <!-- Cards list — collapsed by default -->
-          <div id="archive-list" style="display:none"></div>
+          <!-- Cards list — visible by default -->
+          <div id="archive-list" style="display:block"></div>
         </div>
 
       </div>
@@ -2862,6 +2863,15 @@ function toggleArchive() {
   }
 }
 
+// Initialise archive as visible on first load
+function initArchive() {
+  const list = document.getElementById('archive-list');
+  if (list && list.style.display !== 'none') {
+    renderArchive();
+    updateArchiveStats();
+  }
+}
+
 // ============ FEATURE 3: NOTIFICATIONS ============
 
 async function requestNotificationPermission() {
@@ -3742,6 +3752,12 @@ function setLang(lang) {
       translateAllNews(lang);
     }
   }
+
+  // Re-render courses in new language (use cache or kick off translation)
+  renderCourses(currentCourseTab);
+  if (lang !== 'en' && !coursesTranslatedCache[lang] && !coursesTranslating) {
+    translateCourses(lang);
+  }
 }
 function openLangModal(){openOverlay('lang-overlay');}
 
@@ -3758,7 +3774,7 @@ function navTo(page) {
   const navEl  = document.getElementById(navId);
   if (pageEl) pageEl.classList.add('active');
   if (navEl)  navEl.classList.add('active');
-  if(page==='more')          renderCourses('ict');
+  if(page==='more')          { renderCourses(currentCourseTab); if(appState.lang!=='en'&&!coursesTranslatedCache[appState.lang]&&!coursesTranslating) translateCourses(appState.lang); }
   if(page==='news')          { fetchLiveNews(); fetchFundamentals(); }
   if(page==='signals')       { fetchSignalsFromSheet(); }
   if(page==='analytics')     { renderAnalyticsDashboard(); }
@@ -4981,16 +4997,50 @@ const coursesData={
   ]
 };
 
+let currentCourseTab = 'ict';
+const coursesTranslatedCache = {};  // key: lang → { ict:[...], smc:[...], gwp:[...], advanced:[...] }
+let coursesTranslating = false;
+
 function switchCourseTab(tab,btn){
+  currentCourseTab = tab;
   document.querySelectorAll('.course-tab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
   renderCourses(tab);
 }
 
+/** Translate all courses for a given lang and cache */
+async function translateCourses(lang) {
+  if (!lang || lang === 'en' || coursesTranslating) return;
+  if (coursesTranslatedCache[lang]) { renderCourses(currentCourseTab); return; }
+  coursesTranslating = true;
+  const tabs = Object.keys(coursesData);
+  const result = {};
+  for (const tab of tabs) {
+    result[tab] = [];
+    for (const c of coursesData[tab]) {
+      try {
+        const [title, body] = await Promise.all([
+          translateText(c.title, lang),
+          translateText(c.body,  lang)
+        ]);
+        result[tab].push({ ...c, title, body });
+      } catch(e) {
+        result[tab].push({ ...c });
+      }
+      await new Promise(r => setTimeout(r, 30));
+    }
+  }
+  coursesTranslatedCache[lang] = result;
+  coursesTranslating = false;
+  if (appState.lang === lang) renderCourses(currentCourseTab);
+}
+
 function renderCourses(tab){
   const container=document.getElementById('courses-content');
   if(!container) return;
-  const data=coursesData[tab]||[];
+  const lang = appState && appState.lang || 'en';
+  const translated = (lang !== 'en' && coursesTranslatedCache[lang]) ? coursesTranslatedCache[lang][tab] : null;
+  const data = translated || coursesData[tab] || [];
   const _t=i18n[appState&&appState.lang||'en']||i18n.en;
   let html='';
   data.forEach((c,i)=>{
@@ -5163,20 +5213,21 @@ function getActiveNewsData() {
 // ============ NEWS FETCH ============
 async function fetchLiveNews() {
   try {
-    const url = 'https://min-api.cryptocompare.com/data/v2/news/?lang=EN&sortOrder=latest&limit=50';
+    // Use server-side proxy to avoid CORS issues and combine multiple sources
+    const url = '/api/news';
     const res = await fetch(url);
-    if (!res.ok) throw new Error('CC ' + res.status);
+    if (!res.ok) throw new Error('News API ' + res.status);
     const data = await res.json();
-    const articles = data.Data || [];
+    const articles = data.articles || [];
 
     allNewsData = articles.map(a => ({
-      tag: mapNewsTag(a.categories),
+      tag: a.tag || mapNewsTag(''),
       title: a.title,
-      body: a.body ? a.body.substring(0, 200) + '…' : '',
-      time: timeAgo(a.published_on),
-      source: a.source_info?.name || a.source || 'Source',
+      body: a.body || '',
+      time: a.ts ? timeAgo(a.ts / 1000) : (a.time ? new Date(a.time).toLocaleTimeString() : ''),
+      source: a.source || 'Source',
       url: a.url || '#',
-      img: a.imageurl || ''
+      img: a.img || ''
     }));
 
     // Clear stale translation cache when new articles arrive
@@ -6463,6 +6514,7 @@ function initApp() {
   fetchMarketNews();             // Phase 2: institutional news context
   fetchFundamentals();           // Fear & Greed, BTC dominance
   renderCourses('ict');
+  initArchive();                 // Show signal archive on load
   loadATXWallet();               // Games: Load ATX wallet from localStorage
   updateBalanceDisplays();
   updatePerformanceAnalytics();  // Phase 2: performance dashboard

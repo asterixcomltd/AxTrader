@@ -2,11 +2,12 @@
 // Service Worker v1.5 — Force cache bust
 
 // Auto-increment version on deployment (CI/CD would update this)
-const CACHE_VERSION = '1.5';
+const CACHE_VERSION = '1.6';
 const CACHE_NAME = `axtrader-v${CACHE_VERSION}`;
 
 const SHELL_ASSETS = [
   '/manifest.json',
+  '/icon.svg',
   '/icon-192.png',
   '/icon-512.png',
   '/apple-touch-icon.png',
