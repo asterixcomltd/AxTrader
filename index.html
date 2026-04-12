@@ -4090,11 +4090,16 @@ const TICKER_LABELS = {
 };
 
 // Static fallback prices shown immediately, then replaced by live data
+// v3.6: updated to match 16-pair crypto universe + forex
 const TICKER_FALLBACK = [
   {s:'BTC/USD',p:'--',c:'',up:true},{s:'ETH/USD',p:'--',c:'',up:true},
   {s:'SOL/USD',p:'--',c:'',up:true},{s:'AVAX/USD',p:'--',c:'',up:true},
-  {s:'UNI/USD',p:'--',c:'',up:true},{s:'XAU/USD',p:'--',c:'',up:true},
-  {s:'EUR/USD',p:'--',c:'',up:true},{s:'TSLA',p:'--',c:'',up:true},
+  {s:'LINK/USD',p:'--',c:'',up:true},{s:'NEAR/USD',p:'--',c:'',up:true},
+  {s:'AAVE/USD',p:'--',c:'',up:true},{s:'ARB/USD',p:'--',c:'',up:true},
+  {s:'INJ/USD',p:'--',c:'',up:true},{s:'DOT/USD',p:'--',c:'',up:true},
+  {s:'FIL/USD',p:'--',c:'',up:true},{s:'SUI/USD',p:'--',c:'',up:true},
+  {s:'ATOM/USD',p:'--',c:'',up:true},{s:'UNI/USD',p:'--',c:'',up:true},
+  {s:'DEXE/USD',p:'--',c:'',up:true},{s:'EUR/USD',p:'--',c:'',up:true},
 ];
 
 let liveTickerData = [...TICKER_FALLBACK];
@@ -4835,7 +4840,7 @@ const coursesData={
   │    → Telegram push                 │
   │    → AxTrader feed update          │
   └────────────────────────────────────┘`,
-     detail:'The Crypto bot (ASTERIX_5PILLAR_BOT) monitors: BTC/USDT, SOL/USDT, UNI/USDT, COMP/USDT, LINK/USDT, DEXE/USDT on the 4H chart with 1H and 15M confirmation. The Forex bot (ASTERIX_PRECISION_BOT) monitors: EUR/USD, GBP/USD, USD/JPY, XAU/USD using the same 4H primary with session-based Kill Zone filtering. Both bots run on GitHub Actions (scheduled workflow, Node.js 22) and push signals to the AxTrader Signals feed and Telegram channels.'},
+     detail:'The Crypto bot (ASTERIX_5PILLAR_BOT) monitors 17 pairs: BTC, ETH, SOL, LINK, BNB, DEXE, UNI, COMP, NEAR, AVAX, AAVE, ARB, INJ, DOT, FIL, SUI, ATOM — all on the 4H chart with 1H and 15M confirmation. The Forex bot (ASTERIX_PRECISION_BOT) monitors: EUR/USD, GBP/USD, XAU/USD using the same 4H primary with session-based Kill Zone filtering. Both bots run on GitHub Actions (scheduled workflow) and push signals to the AxTrader Signals feed and Telegram channels.'},
 
     // ── GWP 109 ──────────────────────────────────────────────
     {title:'GWP 109 — Reading a GWP Signal Card',icon:'📋',badge:'free',
