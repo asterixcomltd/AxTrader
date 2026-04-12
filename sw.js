@@ -1,7 +1,7 @@
 // AxTrader — GWP Signal App
-// Service Worker v1.7 — Force icon + cache bust
+// Service Worker v1.8 — Refer & Earn + affiliate updates
 
-const CACHE_VERSION = '1.8';
+const CACHE_VERSION = '1.9';
 const CACHE_NAME = `axtrader-v${CACHE_VERSION}`;
 
 const SHELL_ASSETS = [

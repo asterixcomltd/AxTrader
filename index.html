@@ -1408,13 +1408,19 @@ canvas{width:100%;height:100%}
           <div style="font-size:1.3rem;margin-bottom:5px">🟡</div>
           <h4>ByBit</h4>
           <p>Up to $30,000 welcome bonus for new users</p>
-          <a href="https://www.bybit.com/invite?ref=ASTERIX" target="_blank">Join ByBit →</a>
+          <a href="https://www.bybit.com/invite?ref=VPGWE1P" target="_blank">Join ByBit →</a>
         </div>
         <div class="broker-card">
           <div style="font-size:1.3rem;margin-bottom:5px">🟢</div>
           <h4>KuCoin</h4>
           <p>10% lifetime fee discount via our link</p>
-          <a href="https://www.kucoin.com/r/ASTERIX" target="_blank">Join KuCoin →</a>
+          <a href="https://www.kucoin.com/r/rf/CXEJAXK2" target="_blank">Join KuCoin →</a>
+        </div>
+        <div class="broker-card">
+          <div style="font-size:1.3rem;margin-bottom:5px">🔵</div>
+          <h4>Exness</h4>
+          <p>$10,000 virtual funds to learn trading</p>
+          <a href="https://one.exnessonelink.com/a/j1fsvi6ixw?source=app&platform=mobile&pid=mobile_share" target="_blank">Join Exness →</a>
         </div>
       </div>
 
@@ -1526,6 +1532,173 @@ canvas{width:100%;height:100%}
       <div style="padding:20px 16px;text-align:center;color:var(--text2)">🔔 Loading notification settings...</div>
     </div>
 
+    <!-- REFER & EARN PAGE -->
+    <div class="page" id="referral-page">
+      <div style="padding:16px">
+        <!-- Back Button -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+          <button onclick="navTo('more')" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:1rem;cursor:pointer;color:var(--text)">← Back</button>
+          <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.2rem;color:var(--text);margin:0" id="lbl-refer-page-title">Refer &amp; Earn</h2>
+        </div>
+
+        <!-- Hero Banner -->
+        <div style="background:linear-gradient(135deg,#FFD700,#FFA500);border-radius:16px;padding:24px 20px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden">
+          <div style="font-size:3rem;margin-bottom:8px">🎁</div>
+          <h3 style="font-family:'Space Grotesk',sans-serif;color:#1a1a2e;font-size:1.1rem;margin-bottom:8px" id="lbl-refer-hero-title">Invite Friends, Earn Rewards!</h3>
+          <p style="color:#1a1a2e;opacity:.8;font-size:.82rem;line-height:1.5" id="lbl-refer-hero-sub">Share AxTrader with your friends and earn ATX Coins + free Premium days! The more you refer, the more you earn.</p>
+        </div>
+
+        <!-- Share Link Card -->
+        <div style="background:var(--surface);border-radius:14px;padding:18px;border:1px solid var(--border);margin-bottom:16px">
+          <div style="font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:10px;font-family:'Space Grotesk',sans-serif" id="lbl-refer-share-title">📤 Share AxTrader</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="text" id="referral-link-input" value="https://axtrader.vercel.app?ref=axtrader" readonly style="flex:1;padding:11px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;font-size:.82rem;color:var(--text);font-family:inherit;outline:none">
+            <button onclick="copyReferralLink()" style="padding:11px 16px;background:var(--gold);color:#1a1a2e;border:none;border-radius:10px;font-weight:700;font-size:.82rem;cursor:pointer;white-space:nowrap;font-family:inherit">Copy</button>
+          </div>
+          <!-- Social Share Buttons -->
+          <div style="display:flex;gap:10px;margin-top:14px;justify-content:center;flex-wrap:wrap">
+            <button onclick="shareReferral('whatsapp')" style="padding:10px 16px;background:#25D366;color:#fff;border:none;border-radius:10px;font-weight:600;font-size:.78rem;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit">💬 WhatsApp</button>
+            <button onclick="shareReferral('telegram')" style="padding:10px 16px;background:#0088cc;color:#fff;border:none;border-radius:10px;font-weight:600;font-size:.78rem;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit">✈️ Telegram</button>
+            <button onclick="shareReferral('twitter')" style="padding:10px 16px;background:#1DA1F2;color:#fff;border:none;border-radius:10px;font-weight:600;font-size:.78rem;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit">𝕏 Twitter</button>
+            <button onclick="shareReferral('native')" style="padding:10px 16px;background:var(--surface);color:var(--text);border:1.5px solid var(--border);border-radius:10px;font-weight:600;font-size:.78rem;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit">📱 More</button>
+          </div>
+        </div>
+
+        <!-- How It Works -->
+        <div style="background:var(--surface);border-radius:14px;padding:18px;border:1px solid var(--border);margin-bottom:16px">
+          <div style="font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:14px;font-family:'Space Grotesk',sans-serif" id="lbl-refer-how-title">🔄 How It Works</div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;gap:12px;align-items:flex-start">
+              <div style="min-width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#FFD700,#FFA500);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a1a2e;font-size:.85rem">1</div>
+              <div>
+                <div style="font-weight:600;color:var(--text);font-size:.85rem" id="lbl-refer-step1-title">Share Your Link</div>
+                <div style="color:var(--text2);font-size:.78rem;margin-top:2px" id="lbl-refer-step1-sub">Send your unique referral link to friends via WhatsApp, Telegram, or any platform</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start">
+              <div style="min-width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#FFD700,#FFA500);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a1a2e;font-size:.85rem">2</div>
+              <div>
+                <div style="font-weight:600;color:var(--text);font-size:.85rem" id="lbl-refer-step2-title">Friends Join AxTrader</div>
+                <div style="color:var(--text2);font-size:.78rem;margin-top:2px" id="lbl-refer-step2-sub">When friends install AxTrader using your link, they get access to free trading signals</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start">
+              <div style="min-width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#FFD700,#FFA500);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a1a2e;font-size:.85rem">3</div>
+              <div>
+                <div style="font-weight:600;color:var(--text);font-size:.85rem" id="lbl-refer-step3-title">Both Earn Rewards</div>
+                <div style="color:var(--text2);font-size:.78rem;margin-top:2px" id="lbl-refer-step3-sub">You earn ATX Coins + free Premium days for every friend who joins. When they go Premium, you get 500 ATX + 7 days free Premium!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rewards Breakdown -->
+        <div style="background:var(--surface);border-radius:14px;padding:18px;border:1px solid var(--border);margin-bottom:16px">
+          <div style="font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:14px;font-family:'Space Grotesk',sans-serif" id="lbl-refer-rewards-title">💰 Rewards Breakdown</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="padding:12px;background:var(--bg);border-radius:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div style="font-weight:600;color:var(--text);font-size:.83rem">Friend Signs Up</div>
+                  <div style="font-size:.72rem;color:var(--text2)">Free account created</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-weight:700;color:var(--gold);font-size:.9rem">+50 ATX</div>
+                  <div style="font-weight:600;color:#0088cc;font-size:.75rem">+1 day Premium</div>
+                </div>
+              </div>
+            </div>
+            <div style="padding:12px;background:var(--bg);border-radius:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div style="font-weight:600;color:var(--text);font-size:.83rem">Friend Goes Premium</div>
+                  <div style="font-size:.72rem;color:var(--text2)">Subscribes to $12.99/mo</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-weight:700;color:var(--gold);font-size:.9rem">+500 ATX</div>
+                  <div style="font-weight:600;color:#0088cc;font-size:.75rem">+7 days Premium</div>
+                </div>
+              </div>
+            </div>
+            <div style="padding:12px;background:var(--bg);border-radius:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div style="font-weight:600;color:var(--text);font-size:.83rem">Friend Joins Exchange</div>
+                  <div style="font-size:.72rem;color:var(--text2)">Signs up via partner link</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-weight:700;color:var(--gold);font-size:.9rem">+100 ATX</div>
+                  <div style="font-weight:600;color:#0088cc;font-size:.75rem">+3 days Premium</div>
+                </div>
+              </div>
+            </div>
+            <div style="padding:12px;background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,165,0,.1));border-radius:10px;border:1px solid var(--gold)">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div style="font-weight:600;color:var(--text);font-size:.83rem">Top Referrer Bonus</div>
+                  <div style="font-size:.72rem;color:var(--text2)">Weekly #1 referrer prize</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-weight:700;color:var(--gold);font-size:.9rem">+2000 ATX</div>
+                  <div style="font-weight:600;color:#0088cc;font-size:.75rem">+30 days Premium</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exchange Partners Quick Links -->
+        <div style="background:var(--surface);border-radius:14px;padding:18px;border:1px solid var(--border);margin-bottom:16px">
+          <div style="font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:6px;font-family:'Space Grotesk',sans-serif">🏦 Exchange Partners</div>
+          <div style="font-size:.78rem;color:var(--text2);margin-bottom:14px">Sign up on our partner exchanges and earn extra benefits</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <a href="https://www.binance.com/en/register?ref=H4GJ4NKG" target="_blank" style="text-decoration:none;display:block;padding:14px;background:var(--bg);border-radius:10px;text-align:center;border:1px solid var(--border)">
+              <div style="font-size:1.5rem;margin-bottom:4px">💎</div>
+              <div style="font-weight:600;color:var(--text);font-size:.8rem">Binance</div>
+              <div style="font-size:.68rem;color:var(--gold);margin-top:2px">Top Exchange</div>
+            </a>
+            <a href="https://www.bybit.com/invite?ref=VPGWE1P" target="_blank" style="text-decoration:none;display:block;padding:14px;background:var(--bg);border-radius:10px;text-align:center;border:1px solid var(--border)">
+              <div style="font-size:1.5rem;margin-bottom:4px">🟡</div>
+              <div style="font-weight:600;color:var(--text);font-size:.8rem">ByBit</div>
+              <div style="font-size:.68rem;color:var(--gold);margin-top:2px">$30K Bonus</div>
+            </a>
+            <a href="https://www.kucoin.com/r/rf/CXEJAXK2" target="_blank" style="text-decoration:none;display:block;padding:14px;background:var(--bg);border-radius:10px;text-align:center;border:1px solid var(--border)">
+              <div style="font-size:1.5rem;margin-bottom:4px">🟢</div>
+              <div style="font-weight:600;color:var(--text);font-size:.8rem">KuCoin</div>
+              <div style="font-size:.68rem;color:var(--gold);margin-top:2px">10% Discount</div>
+            </a>
+            <a href="https://one.exnessonelink.com/a/j1fsvi6ixw?source=app&platform=mobile&pid=mobile_share" target="_blank" style="text-decoration:none;display:block;padding:14px;background:var(--bg);border-radius:10px;text-align:center;border:1px solid var(--border)">
+              <div style="font-size:1.5rem;margin-bottom:4px">🔵</div>
+              <div style="font-weight:600;color:var(--text);font-size:.8rem">Exness</div>
+              <div style="font-size:.68rem;color:var(--gold);margin-top:2px">$10K Virtual</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- FAQ -->
+        <div style="background:var(--surface);border-radius:14px;padding:18px;border:1px solid var(--border);margin-bottom:20px">
+          <div style="font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:14px;font-family:'Space Grotesk',sans-serif">❓ FAQ</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div>
+              <div style="font-weight:600;color:var(--text);font-size:.82rem">What are ATX Coins?</div>
+              <div style="color:var(--text2);font-size:.76rem;margin-top:3px">ATX (Asterix) Coins are AxTrader's reward currency. Earn them by referring friends, playing arcade games, and completing achievements. Use them to play games and redeem for Premium access!</div>
+            </div>
+            <div style="height:1px;background:var(--border)"></div>
+            <div>
+              <div style="font-weight:600;color:var(--text);font-size:.82rem">Is there a referral limit?</div>
+              <div style="color:var(--text2);font-size:.76rem;margin-top:3px">No limit! The more friends you refer, the more you earn. Top referrers also get exclusive weekly bonuses.</div>
+            </div>
+            <div style="height:1px;background:var(--border)"></div>
+            <div>
+              <div style="font-weight:600;color:var(--text);font-size:.82rem">When do I receive my rewards?</div>
+              <div style="color:var(--text2);font-size:.76rem;margin-top:3px">ATX Coins are credited instantly when your friend signs up. Premium days and bonus ATX are credited within 24 hours of their subscription.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <!-- GAMES -->
     <div class="page" id="page-games">
       <div class="section" style="padding-top:16px">
@@ -1535,18 +1708,18 @@ canvas{width:100%;height:100%}
         </div>
         <div class="atx-strip">
           <div>
-            <div class="atx-strip-label" id="lbl-your-playcoins">Your PlayCoins Balance</div>
+            <div class="atx-strip-label" id="lbl-your-playcoins">Your ATX Coins Balance</div>
             <div class="atx-strip-val">🎮 <span id="atx-balance">1,000</span> PC</div>
           </div>
           <div class="atx-strip-note"><span id="lbl-playcoin-note">Simulated credits<br>for practice only</span></div>
         </div>
         <div class="section-header" style="margin-top:4px"><div class="section-title" style="font-size:.85rem;color:var(--text2)" id="lbl-weekly-top">WEEKLY TOP</div></div>
         <div class="leaderboard" style="margin-bottom:16px">
-          <div class="lb-row"><div class="lb-rank gold">#1</div><div class="lb-avatar">CK</div><div class="lb-name">CryptoKwame<div class="lb-country">GH</div></div><div><div class="lb-score">+6,820 PC</div><div class="lb-mult">18.44x</div></div></div>
-          <div class="lb-row"><div class="lb-rank">🏆</div><div class="lb-avatar">A</div><div class="lb-name">AxTrader<div class="lb-country">Official</div></div><div><div class="lb-score">+4,200 PC</div><div class="lb-mult">12.10x</div></div></div>
-          <div class="lb-row"><div class="lb-rank">#3</div><div class="lb-avatar">TN</div><div class="lb-name">TradingNana<div class="lb-country">NG</div></div><div><div class="lb-score">+3,140 PC</div><div class="lb-mult">9.88x</div></div></div>
-          <div class="lb-row"><div class="lb-rank">#4</div><div class="lb-avatar">DK</div><div class="lb-name">DeFiKofi<div class="lb-country">GH</div></div><div><div class="lb-score">+2,010 PC</div><div class="lb-mult">7.22x</div></div></div>
-          <div class="lb-row"><div class="lb-rank">#5</div><div class="lb-avatar">CM</div><div class="lb-name">CoinMaestro<div class="lb-country">ZA</div></div><div><div class="lb-score">+980 PC</div><div class="lb-mult">5.60x</div></div></div>
+          <div class="lb-row"><div class="lb-rank gold">#1</div><div class="lb-avatar">CK</div><div class="lb-name">CryptoKwame<div class="lb-country">GH</div></div><div><div class="lb-score">+6,820 ATX</div><div class="lb-mult">18.44x</div></div></div>
+          <div class="lb-row"><div class="lb-rank">🏆</div><div class="lb-avatar">A</div><div class="lb-name">AxTrader<div class="lb-country">Official</div></div><div><div class="lb-score">+4,200 ATX</div><div class="lb-mult">12.10x</div></div></div>
+          <div class="lb-row"><div class="lb-rank">#3</div><div class="lb-avatar">TN</div><div class="lb-name">TradingNana<div class="lb-country">NG</div></div><div><div class="lb-score">+3,140 ATX</div><div class="lb-mult">9.88x</div></div></div>
+          <div class="lb-row"><div class="lb-rank">#4</div><div class="lb-avatar">DK</div><div class="lb-name">DeFiKofi<div class="lb-country">GH</div></div><div><div class="lb-score">+2,010 ATX</div><div class="lb-mult">7.22x</div></div></div>
+          <div class="lb-row"><div class="lb-rank">#5</div><div class="lb-avatar">CM</div><div class="lb-name">CoinMaestro<div class="lb-country">ZA</div></div><div><div class="lb-score">+980 ATX</div><div class="lb-mult">5.60x</div></div></div>
         </div>
 
         <!-- AD #2 — Adsterra Banner 320x50 -->
@@ -1573,27 +1746,27 @@ canvas{width:100%;height:100%}
             </div>
           </a>
 
-          <a href="https://www.okx.com/join/88883488" target="_blank" style="text-decoration:none">
+          <a href="https://www.bybit.com/invite?ref=VPGWE1P" target="_blank" style="text-decoration:none">
             <div style="background:var(--surface);padding:14px;border-radius:12px;text-align:center;border:1px solid var(--border);cursor:pointer;transition:.2s">
-              <div style="font-size:2rem;margin-bottom:6px">⚡</div>
-              <div style="font-weight:600;color:var(--text);font-size:.85rem">OKX</div>
-              <div style="font-size:.7rem;color:var(--text2);margin-top:4px">Trade &amp; Earn</div>
+              <div style="font-size:2rem;margin-bottom:6px">🟡</div>
+              <div style="font-weight:600;color:var(--text);font-size:.85rem">ByBit</div>
+              <div style="font-size:.7rem;color:var(--text2);margin-top:4px">$30K Welcome Bonus</div>
             </div>
           </a>
 
-          <a href="https://www.kraken.com/referral/RKD12345" target="_blank" style="text-decoration:none">
+          <a href="https://www.kucoin.com/r/rf/CXEJAXK2" target="_blank" style="text-decoration:none">
             <div style="background:var(--surface);padding:14px;border-radius:12px;text-align:center;border:1px solid var(--border);cursor:pointer;transition:.2s">
-              <div style="font-size:2rem;margin-bottom:6px">🐙</div>
-              <div style="font-weight:600;color:var(--text);font-size:.85rem">Kraken</div>
-              <div style="font-size:.7rem;color:var(--text2);margin-top:4px">Trade &amp; Earn</div>
+              <div style="font-size:2rem;margin-bottom:6px">🟢</div>
+              <div style="font-weight:600;color:var(--text);font-size:.85rem">KuCoin</div>
+              <div style="font-size:.7rem;color:var(--text2);margin-top:4px">10% Fee Discount</div>
             </div>
           </a>
 
-          <a href="https://www.luno.com/en/register?referrer=AXX12345" target="_blank" style="text-decoration:none">
+          <a href="https://one.exnessonelink.com/a/j1fsvi6ixw?source=app&platform=mobile&pid=mobile_share" target="_blank" style="text-decoration:none">
             <div style="background:var(--surface);padding:14px;border-radius:12px;text-align:center;border:1px solid var(--border);cursor:pointer;transition:.2s">
-              <div style="font-size:2rem;margin-bottom:6px">🪙</div>
-              <div style="font-weight:600;color:var(--text);font-size:.85rem">Luno</div>
-              <div style="font-size:.7rem;color:var(--text2);margin-top:4px">Trade on Luno</div>
+              <div style="font-size:2rem;margin-bottom:6px">🔵</div>
+              <div style="font-weight:600;color:var(--text);font-size:.85rem">Exness</div>
+              <div style="font-size:.7rem;color:var(--text2);margin-top:4px">$10K Virtual Funds</div>
             </div>
           </a>
         </div>
@@ -1611,7 +1784,7 @@ canvas{width:100%;height:100%}
         <!-- GAMES SECTION -->
         <div class="section-header" style="margin-bottom:12px">
           <div class="section-title" id="lbl-play-compete">🎮 Play & Compete</div>
-          <span style="font-size:.72rem;color:var(--text2)" id="lbl-playcoins-sub">PlayCoins for practice (not real money)</span>
+          <span style="font-size:.72rem;color:var(--text2)" id="lbl-playcoins-sub">ATX Coins for practice (not real money)</span>
         </div>
 
         <div class="games-grid">
@@ -1819,9 +1992,9 @@ canvas{width:100%;height:100%}
             <div class="more-row-text"><h5>Follow on X</h5><p>@Asterix_Abdin — market insights daily</p></div>
             <span class="more-row-arrow">›</span>
           </div>
-          <div class="more-row" onclick="showToast('Referral link copied! Share to earn PlayCoins.')">
+          <div class="more-row" onclick="navTo('referral')">
             <div class="more-row-icon" style="background:var(--green-bg)">🔗</div>
-            <div class="more-row-text"><h5 id="lbl-referral-title">Referral Program</h5><p id="lbl-referral-sub">Invite friends · Earn PlayCoins rewards</p></div>
+            <div class="more-row-text"><h5 id="lbl-referral-title">Refer &amp; Earn</h5><p id="lbl-referral-sub">Invite friends · Earn ATX Coins &amp; Premium days</p></div>
             <span class="more-row-arrow">›</span>
           </div>
         </div>
@@ -1945,7 +2118,7 @@ canvas{width:100%;height:100%}
     </div>
     <div class="profile-stats">
       <div class="profile-stat"><div class="profile-stat-val" id="ps-signals">0</div><div class="profile-stat-lbl">Signals</div></div>
-      <div class="profile-stat"><div class="profile-stat-val" id="ps-atx">1,000</div><div class="profile-stat-lbl">PC</div></div>
+      <div class="profile-stat"><div class="profile-stat-val" id="ps-atx">1,000</div><div class="profile-stat-lbl">ATX</div></div>
       <div class="profile-stat"><div class="profile-stat-val" id="ps-days">1</div><div class="profile-stat-lbl">Days</div></div>
     </div>
     <div class="profile-field"><label>Display Name</label><input type="text" id="pf-name" placeholder="Your name"></div>
@@ -2293,7 +2466,7 @@ canvas{width:100%;height:100%}
 
 <!-- ============ GAME SCREENS ============ -->
 <div class="game-screen" id="game-crash">
-  <div class="game-topbar"><button class="game-back" onclick="closeGame('crash')">←</button><div class="game-title">🚀 Crash</div><div class="game-balance">🎮 <span class="atx-display">1000</span> PC</div></div>
+  <div class="game-topbar"><button class="game-back" onclick="closeGame('crash')">←</button><div class="game-title">🚀 Crash</div><div class="game-balance">🎮 <span class="atx-display">1000</span> ATX</div></div>
   <div class="game-body">
     <div class="game-canvas-wrap"><canvas id="crash-canvas"></canvas></div>
     <div class="game-controls">
@@ -2309,7 +2482,7 @@ canvas{width:100%;height:100%}
 </div>
 
 <div class="game-screen" id="game-mines">
-  <div class="game-topbar"><button class="game-back" onclick="closeGame('mines')">←</button><div class="game-title">💣 Mines</div><div class="game-balance">🎮 <span class="atx-display">1000</span> PC</div></div>
+  <div class="game-topbar"><button class="game-back" onclick="closeGame('mines')">←</button><div class="game-title">💣 Mines</div><div class="game-balance">🎮 <span class="atx-display">1000</span> ATX</div></div>
   <div class="game-body">
     <div class="game-controls">
       <div class="bet-row">
@@ -2329,7 +2502,7 @@ canvas{width:100%;height:100%}
 </div>
 
 <div class="game-screen" id="game-plinko">
-  <div class="game-topbar"><button class="game-back" onclick="closeGame('plinko')">←</button><div class="game-title">🎯 Plinko</div><div class="game-balance">🎮 <span class="atx-display">1000</span> PC</div></div>
+  <div class="game-topbar"><button class="game-back" onclick="closeGame('plinko')">←</button><div class="game-title">🎯 Plinko</div><div class="game-balance">🎮 <span class="atx-display">1000</span> ATX</div></div>
   <div class="game-body">
     <div class="game-canvas-wrap"><canvas id="plinko-canvas"></canvas></div>
     <div class="game-controls">
@@ -2345,7 +2518,7 @@ canvas{width:100%;height:100%}
 </div>
 
 <div class="game-screen" id="game-candle">
-  <div class="game-topbar"><button class="game-back" onclick="closeGame('candle')">←</button><div class="game-title">🕯️ Candle Call</div><div class="game-balance">🎮 <span class="atx-display">1000</span> PC</div></div>
+  <div class="game-topbar"><button class="game-back" onclick="closeGame('candle')">←</button><div class="game-title">🕯️ Candle Call</div><div class="game-balance">🎮 <span class="atx-display">1000</span> ATX</div></div>
   <div class="game-body">
     <div class="game-canvas-wrap"><canvas id="candle-canvas"></canvas></div>
     <div class="game-controls">
@@ -3465,9 +3638,9 @@ const i18n={
     sign_in:'Sign In', sign_up:'Sign Up',
     google_auth:'Continue with Google',
     arcade_title:'🎮 Training Arcade', arcade_sub:'Practice · Not real money',
-    your_playcoins:'Your PlayCoins Balance', playcoin_note:'Simulated credits for practice only',
+    your_playcoins:'Your ATX Coins Balance', playcoin_note:'Simulated credits for practice only',
     weekly_top:'WEEKLY TOP', play_compete:'🎮 Play & Compete',
-    playcoins_sub:'PlayCoins for practice (not real money)',
+    playcoins_sub:'ATX Coins for practice (not real money)',
     game_crash_desc:'Cash out before it crashes', game_mines_desc:'Reveal tiles, avoid mines',
     game_plinko_desc:'Drop the ball, hit multiplier', game_candle_desc:'Predict LONG or SHORT',
     play_btn:'Play',
@@ -3477,7 +3650,7 @@ const i18n={
     section_settings:'⚙️ App Settings', section_knowledge:'🧠 Knowledge & System',
     section_contact:'✉️ Contact & Support', section_legal:'⚖️ Legal',
     upgrade_title:'Upgrade to Premium', upgrade_sub:'Unlock all signals, zero ads, full academy',
-    referral_title:'Referral Program', referral_sub:'Invite friends · Earn PlayCoins rewards',
+    referral_title:'Refer & Earn', referral_sub:'Invite friends · Earn ATX Coins & Premium days',
     analytics_title:'Analytics', analytics_sub:'Performance stats · Win rate · P&L tracking',
     signal_alerts_title:'Signal Alerts', signal_alerts_sub:'Push notifications · Alert preferences',
     language_title:'Language', install_title:'Install App',
@@ -3552,9 +3725,9 @@ const i18n={
     sign_in:'Se connecter', sign_up:'S\'inscrire',
     google_auth:'Continuer avec Google',
     arcade_title:'🎮 Arcade d\'Entraînement', arcade_sub:'Pratique · Pas d\'argent réel',
-    your_playcoins:'Votre Solde PlayCoins', playcoin_note:'Crédits simulés pour la pratique uniquement',
+    your_playcoins:'Votre Solde ATX Coins', playcoin_note:'Crédits simulés pour la pratique uniquement',
     weekly_top:'TOP SEMAINE', play_compete:'🎮 Jouer & Concourir',
-    playcoins_sub:'PlayCoins pour la pratique (pas d\'argent réel)',
+    playcoins_sub:'ATX Coins pour la pratique (pas d\'argent réel)',
     game_crash_desc:'Encaisser avant le crash', game_mines_desc:'Révéler les cases, éviter les mines',
     game_plinko_desc:'Lâchez la balle, visez le multiplicateur', game_candle_desc:'Prédire LONG ou SHORT',
     play_btn:'Jouer',
@@ -3564,7 +3737,7 @@ const i18n={
     section_settings:'⚙️ Paramètres', section_knowledge:'🧠 Connaissance & Système',
     section_contact:'✉️ Contact & Support', section_legal:'⚖️ Légal',
     upgrade_title:'Passer à Premium', upgrade_sub:'Débloquer tous les signaux, sans pub, académie complète',
-    referral_title:'Programme de Parrainage', referral_sub:'Inviter des amis · Gagner des PlayCoins',
+    referral_title:'Parrainage & Gains', referral_sub:'Inviter des amis · Gagner des ATX Coins & Premium',
     analytics_title:'Analytique', analytics_sub:'Stats de performance · Taux de réussite · Suivi P&L',
     signal_alerts_title:'Alertes de Signaux', signal_alerts_sub:'Notifications push · Préférences d\'alertes',
     language_title:'Langue', install_title:'Installer l\'App',
@@ -3638,9 +3811,9 @@ const i18n={
     sign_in:'Iniciar sesión', sign_up:'Registrarse',
     google_auth:'Continuar con Google',
     arcade_title:'🎮 Arcade de Entrenamiento', arcade_sub:'Práctica · Sin dinero real',
-    your_playcoins:'Tu Saldo PlayCoins', playcoin_note:'Créditos simulados para práctica únicamente',
+    your_playcoins:'Tu Saldo ATX Coins', playcoin_note:'Créditos simulados para práctica únicamente',
     weekly_top:'TOP SEMANA', play_compete:'🎮 Jugar & Competir',
-    playcoins_sub:'PlayCoins para práctica (no es dinero real)',
+    playcoins_sub:'ATX Coins para práctica (no es dinero real)',
     game_crash_desc:'Retira antes del crash', game_mines_desc:'Revela casillas, evita minas',
     game_plinko_desc:'Lanza la bola, toca el multiplicador', game_candle_desc:'Predice LARGO o CORTO',
     play_btn:'Jugar',
@@ -3650,7 +3823,7 @@ const i18n={
     section_settings:'⚙️ Configuración', section_knowledge:'🧠 Conocimiento & Sistema',
     section_contact:'✉️ Contacto & Soporte', section_legal:'⚖️ Legal',
     upgrade_title:'Mejorar a Premium', upgrade_sub:'Desbloquear todas las señales, sin anuncios, academia completa',
-    referral_title:'Programa de Referidos', referral_sub:'Invitar amigos · Ganar recompensas PlayCoins',
+    referral_title:'Referir & Ganar', referral_sub:'Invitar amigos · Ganar ATX Coins & Premium',
     analytics_title:'Analítica', analytics_sub:'Estadísticas · Tasa de éxito · Seguimiento P&L',
     signal_alerts_title:'Alertas de Señales', signal_alerts_sub:'Notificaciones push · Preferencias de alertas',
     language_title:'Idioma', install_title:'Instalar App',
@@ -3724,9 +3897,9 @@ const i18n={
     sign_in:'Entrar', sign_up:'Cadastrar',
     google_auth:'Continuar com Google',
     arcade_title:'🎮 Arcade de Treinamento', arcade_sub:'Prática · Sem dinheiro real',
-    your_playcoins:'Seu Saldo PlayCoins', playcoin_note:'Créditos simulados apenas para prática',
+    your_playcoins:'Seu Saldo ATX Coins', playcoin_note:'Créditos simulados apenas para prática',
     weekly_top:'TOP SEMANA', play_compete:'🎮 Jogar & Competir',
-    playcoins_sub:'PlayCoins para prática (não é dinheiro real)',
+    playcoins_sub:'ATX Coins para prática (não é dinheiro real)',
     game_crash_desc:'Retire antes do crash', game_mines_desc:'Revelar caselas, evitar minas',
     game_plinko_desc:'Solta a bola, acerta o multiplicador', game_candle_desc:'Prever COMPRA ou VENDA',
     play_btn:'Jogar',
@@ -3736,7 +3909,7 @@ const i18n={
     section_settings:'⚙️ Configurações', section_knowledge:'🧠 Conhecimento & Sistema',
     section_contact:'✉️ Contato & Suporte', section_legal:'⚖️ Legal',
     upgrade_title:'Atualizar para Premium', upgrade_sub:'Desbloquear todos os sinais, sem anúncios, academia completa',
-    referral_title:'Programa de Indicação', referral_sub:'Convidar amigos · Ganhar recompensas PlayCoins',
+    referral_title:'Indicar & Ganhar', referral_sub:'Convidar amigos · Ganhar ATX Coins & Premium',
     analytics_title:'Análises', analytics_sub:'Estatísticas · Taxa de acerto · Rastreamento P&L',
     signal_alerts_title:'Alertas de Sinais', signal_alerts_sub:'Notificações push · Preferências de alertas',
     language_title:'Idioma', install_title:'Instalar App',
@@ -3810,9 +3983,9 @@ const i18n={
     sign_in:'تسجيل الدخول', sign_up:'إنشاء حساب',
     google_auth:'المتابعة مع Google',
     arcade_title:'🎮 أركيد التدريب', arcade_sub:'تدريب · بدون أموال حقيقية',
-    your_playcoins:'رصيد PlayCoins الخاص بك', playcoin_note:'أرصدة محاكاة للتدريب فقط',
+    your_playcoins:'رصيد ATX Coins الخاص بك', playcoin_note:'أرصدة محاكاة للتدريب فقط',
     weekly_top:'أفضل الأسبوع', play_compete:'🎮 العب وتنافس',
-    playcoins_sub:'PlayCoins للتدريب (ليست أموالاً حقيقية)',
+    playcoins_sub:'ATX Coins للتدريب (ليست أموالاً حقيقية)',
     game_crash_desc:'اسحب قبل الانهيار', game_mines_desc:'اكشف البلاط، تجنب الألغام',
     game_plinko_desc:'أسقط الكرة، اضرب المضاعف', game_candle_desc:'توقع صعود أو هبوط',
     play_btn:'العب',
@@ -3822,7 +3995,7 @@ const i18n={
     section_settings:'⚙️ الإعدادات', section_knowledge:'🧠 المعرفة والنظام',
     section_contact:'✉️ التواصل والدعم', section_legal:'⚖️ قانوني',
     upgrade_title:'الترقية إلى المميز', upgrade_sub:'إلغاء قفل جميع الإشارات، بدون إعلانات، أكاديمية كاملة',
-    referral_title:'برنامج الإحالة', referral_sub:'دعوة الأصدقاء · ربح مكافآت PlayCoins',
+    referral_title:'إحالة واربح', referral_sub:'دعوة الأصدقاء · ربح ATX Coins & Premium',
     analytics_title:'التحليلات', analytics_sub:'إحصاءات الأداء · معدل الفوز · تتبع الأرباح',
     signal_alerts_title:'تنبيهات الإشارات', signal_alerts_sub:'إشعارات الدفع · تفضيلات التنبيهات',
     language_title:'اللغة', install_title:'تثبيت التطبيق',
@@ -4045,6 +4218,7 @@ function navTo(page) {
   // These sub-pages live under the MORE tab
   if (page === 'analytics') { pageId = 'analytics-page'; navId = 'nav-more'; }
   if (page === 'notifications') { pageId = 'notifications-page'; navId = 'nav-more'; }
+  if (page === 'referral') { pageId = 'referral-page'; navId = 'nav-more'; }
   const pageEl = document.getElementById(pageId);
   const navEl  = document.getElementById(navId);
   if (pageEl) pageEl.classList.add('active');
@@ -4062,6 +4236,56 @@ function closeOverlay(id){document.getElementById(id).classList.remove('active')
 function openProfile(){openOverlay('profile-overlay');}
 function openUpgrade(){openOverlay('upgrade-overlay',true);}
 function openAboutGWP(){openOverlay('gwp-overlay');}
+
+// ── REFER & EARN ─────────────────────────────────────────────────────────
+function copyReferralLink() {
+  const input = document.getElementById('referral-link-input');
+  const link = input.value;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(link).then(() => {
+      showToast('Referral link copied!');
+    }).catch(() => {
+      fallbackCopy(input);
+    });
+  } else {
+    fallbackCopy(input);
+  }
+}
+function fallbackCopy(input) {
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand('copy');
+  showToast('Referral link copied!');
+}
+function shareReferral(platform) {
+  const link = document.getElementById('referral-link-input').value;
+  const text = 'Check out AxTrader — Get institutional-grade trading signals powered by Ghost Wick Protocol! Free signals daily + earn ATX Coins. Join here: ' + link;
+  const encodedText = encodeURIComponent(text);
+  const encodedLink = encodeURIComponent(link);
+  switch(platform) {
+    case 'whatsapp':
+      window.open('https://wa.me/?text=' + encodedText, '_blank');
+      break;
+    case 'telegram':
+      window.open('https://t.me/share/url?url=' + encodedLink + '&text=' + encodeURIComponent('Check out AxTrader — Free institutional-grade trading signals!'), '_blank');
+      break;
+    case 'twitter':
+      window.open('https://twitter.com/intent/tweet?text=' + encodedText, '_blank');
+      break;
+    case 'native':
+      if (navigator.share) {
+        navigator.share({
+          title: 'AxTrader — Trading Signals',
+          text: 'Get institutional-grade trading signals powered by Ghost Wick Protocol! Free signals daily.',
+          url: link
+        }).catch(() => {});
+      } else {
+        copyReferralLink();
+        showToast('Link copied! Share it anywhere.');
+      }
+      break;
+  }
+}
 
 // ── BANK WIRE TRANSFER ────────────────────────────────────────────────────
 let _currentWireRef = '';
