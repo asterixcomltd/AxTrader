@@ -5308,33 +5308,235 @@ function switchCourseTab(tab,btn){
   renderCourses(tab);
 }
 
-/** Translate all courses for a given lang and cache */
+// ── Pre-translated course titles & bodies (instant, no API calls) ────────────
+const coursesTitleBody = {
+  fr: {
+    'ICT 101':'ICT 101 — Qu\'est-ce que l\'ICT ?','ICT 102':'ICT 102 — Les Fair Value Gaps (FVG)','ICT 103':'ICT 103 — Les Order Blocks (OB)','ICT 104':'ICT 104 — Liquidité & Chasses aux Stops','ICT 105':'ICT 105 — Kill Zones & Sessions','ICT 106':'ICT 106 — Power of 3 (AMD)','ICT 107':'ICT 107 — Zones Premium & Discount','ICT 108':'ICT 108 — Entrée Optimale (OTE)','ICT 109':'ICT 109 — Analyse quotidienne des biais et du FTC',
+    'SMC 101':'SMC 101 — Vue d\'ensemble du Smart Money','SMC 102':'SMC 102 — Structure du Marché : BOS & CHoCH','SMC 103':'SMC 103 — Zones d\'Offre & Demande','SMC 104':'SMC 104 — L\'Inducement','SMC 105':'SMC 105 — MMXM : Le Modèle Market Maker','SMC 106':'SMC 106 — Checklist d\'Entrée Complète','SMC 107':'SMC 107 — Confluence Multi-Timeframe','SMC 108':'SMC 108 — Gestion des Trades & Partiels','SMC 109':'SMC 109 — Corrélations & Moteurs du Marché',
+    'GWP 101':'GWP 101 — Le Ghost Wick : Origines','GWP 102':'GWP 102 — Le Piège à Liquidité','GWP 103':'GWP 103 — Le Système de Confluence à 5 Piliers','GWP 104':'GWP 104 — Stop Loss & Règles ATR','GWP 105':'GWP 105 — Dimensionnement Kelly & Scores de Conviction','GWP 106':'GWP 106 — Objectifs TP1 / TP2 / TP3','GWP 107':'GWP 107 — Filtre Vol + AVWAP (v8)','GWP 108':'GWP 108 — L\'Architecture du Bot','GWP 109':'GWP 109 — Lire une Carte Signal GWP',
+    'BOOK 1':'📖 LIVRE 1 : Flux Institutionnel — Guide Complet','BOOK 2':'📖 LIVRE 2 : SMC Avancé — Cartographie MMXM','BOOK 3':'📖 LIVRE 3 : Maîtrise Ghost Wick — Vol. 2','BOOK 4':'📖 LIVRE 4 : Gestion du Risque & Drawdown','BOOK 5':'📖 LIVRE 5 : Backtesting & Journal de Trading','BOOK 6':'📖 LIVRE 6 : Maîtrise des Signaux Live — Revues Mensuelles','BOOK 7':'📖 LIVRE 7 : Adaptations GWP pour la Crypto',
+    // Bodies
+    'b_ICT 101':'Inner Circle Trader (ICT) est une méthodologie enseignée par Michael J. Huddleston. Elle se concentre sur la compréhension de comment les grandes institutions — banques, fonds spéculatifs, banques centrales — manipulent le prix pour créer de la liquidité avant d\'exécuter leurs vrais ordres. Oubliez les indicateurs. Le prix lui-même raconte l\'histoire.',
+    'b_ICT 102':'Un Fair Value Gap (FVG) est un pattern de 3 bougies qui révèle où les institutions ont bougé le prix si agressivement qu\'aucune vraie découverte de prix n\'a eu lieu. Ces gaps agissent comme des aimants — le prix revient presque toujours les combler avant de continuer.',
+    'b_ICT 103':'Un Order Block est l\'origine d\'un mouvement institutionnel. C\'est la dernière bougie opposée avant une poussée directionnelle significative. Ce sont les véritables zones où les gros ordres ont été remplis — et les institutions les défendront au retour.',
+    'b_ICT 104':'Les banques et institutions ne peuvent pas remplir des millions de contrats sur une seule bougie sans glissement. Ils ont besoin d\'une contrepartie. Les stop loss des particuliers SONT la contrepartie. Comprendre ce fait unique transforme votre vision de chaque mouvement du marché.',
+    'b_ICT 105':'L\'ICT définit des fenêtres spécifiques de 2-4 heures dans chaque session de trading où l\'activité institutionnelle est la plus élevée et les configurations ont la plus grande probabilité. En dehors des Kill Zones, le prix est souvent erratique, conçu pour la confusion, ou simplement en range.',
+    'b_ICT 106':'Chaque journée de trading suit un cycle prévisible en 3 phases : Accumulation (construction silencieuse de positions), Manipulation (la chasse aux stops, le faux mouvement), et Distribution (le vrai mouvement directionnel soutenu). Une fois que vous le voyez, vous ne pouvez plus ne pas le voir.',
+    'b_ICT 107':'L\'ICT utilise un cadre simple : acheter en discount (sous le point médian d\'un range), vendre en premium (au-dessus du point médian). Les institutions n\'achètent jamais à la résistance ni ne vendent au support — elles font l\'opposé de ce que font les particuliers.',
+    'b_ICT 108':'L\'OTE est le modèle d\'entrée précis de l\'ICT dans un retracement. Il utilise les niveaux de Fibonacci pour identifier la zone exacte où les institutions ré-entrent après un déplacement. Cela élimine les suppositions de votre timing d\'entrée.',
+    'b_ICT 109':'Avant toute transaction, vous avez besoin d\'un biais directionnel. ICT utilise les graphiques Daily et 4H pour définir la direction macro, puis tombe à 1H et 15M pour l\'entrée. Trader contre le biais quotidien sans confluence convaincante est la façon dont la plupart des traders de détail perdent.',
+    'b_SMC 101':'SMC (Smart Money Concepts) est un cadre de lecture du marché du point de vue des traders institutionnels. Il affine les principes ICT en une approche systématique centrée sur trois piliers : Structure du Marché, Zones d\'Offre/Demande, et Liquidité.',
+    'b_SMC 102':'La structure du marché est la colonne vertébrale de l\'analyse SMC. Un Break of Structure (BOS) confirme que la tendance continue. Un Change of Character (CHoCH) signale un potentiel retournement. Ces deux patterns seuls vous donnent votre biais directionnel.',
+    'b_SMC 103':'Les zones d\'offre sont des zones de prix où les institutions avaient des ordres de vente massifs. Les zones de demande sont celles avec des ordres d\'achat massifs. Contrairement au support/résistance (lignes horizontales), ce sont des boîtes couvrant une plage de prix spécifique.',
+    'b_SMC 104':'L\'inducement est un balayage mineur de liquidité qui survient juste avant que le prix n\'atteigne la vraie zone. Il crée un faux point d\'entrée qui piège les traders impatients — puis le vrai mouvement commence depuis la zone.',
+    'b_SMC 105':'MMXM (Market Maker Model) est le cycle complet que le prix suit quand les institutions se déplacent d\'un pool de liquidité à un autre. C\'est l\'image la plus complète de comment une tendance se déroule, stagne, s\'inverse et accélère.',
+    'b_SMC 106':'Une entrée SMC systématique exige que chaque point de contrôle soit validé. Sauter même un seul filtre réduit dramatiquement le taux de réussite. Cette checklist s\'applique à tous les timeframes et marchés.',
+    'b_SMC 107':'L\'analyse sur un seul timeframe est la plus grande erreur des nouveaux traders SMC. Le signal sur le 15M ne signifie rien sans alignement sur les timeframes supérieurs. Apprenez à lire la même structure sur trois timeframes simultanément.',
+    'b_SMC 108':'Entrer dans un trade n\'est que la moitié du travail. Le gérer pour maximiser le profit tout en protégeant le capital est l\'autre moitié. Le SMC a une approche structurée qui élimine la prise de décision émotionnelle.',
+    'b_SMC 109':'Les marchés ne bougent pas isolément. Comprendre les corrélations entre DXY, or, crypto et actions vous donne un avantage puissant — confirmez votre biais avec plusieurs signaux indépendants avant de risquer du capital.',
+    'b_GWP 101':'Le Ghost Wick est le pattern fondamental du système GWP. C\'est une bougie unique dont la mèche représente ≥60% de la plage totale. La mèche représente la manipulation institutionnelle — un balayage délibéré de liquidité — avant le vrai mouvement directionnel.',
+    'b_GWP 102':'Le Piège à Liquidité est la version multi-bougies du Ghost Wick. Le prix casse un niveau structurel clé, piégeant les acheteurs de breakout — puis s\'inverse agressivement en 1-2 bougies. C\'est le pattern le plus fiable du GWP.',
+    'b_GWP 103':'Un signal GWP ne se déclenche que lorsque les 5 piliers s\'alignent sur le même timeframe. Chaque pilier seul a un taux de réussite de 60-70%. Combinés, la précision historique atteint 97%. C\'est le moteur principal des bots AxTrader.',
+    'b_GWP 104':'GWP v8 a introduit les stop loss planchers ATR — une mise à jour critique qui empêche les stops d\'être placés trop serrés. Un stop trop serré garantit d\'être sorti sur la volatilité normale avant le vrai mouvement.',
+    'b_GWP 105':'GWP utilise un critère de Kelly modifié pour calculer la taille de position. Plutôt que la formule brute (qui produit des tailles dangereusement grandes), GWP plafonne l\'allocation à 2% et la calibre selon le score de conviction.',
+    'b_GWP 106':'GWP v8 a introduit des objectifs de prise de profit plus élevés basés sur le backtesting montrant que les signaux premium étaient fermés trop tôt. Le système à trois objectifs verrouille le profit tout en maximisant la course du gagnant.',
+    'b_GWP 107':'GWP v8 a ajouté un filtre Volume + AVWAP comme nouveau critère. Aucun signal ne se déclenche sans que le volume de la bougie ghost wick ne dépasse la moyenne 20 périodes ET que le prix soit du bon côté de l\'AVWAP.',
+    'b_GWP 108':'Les bots de signaux AxTrader sont des systèmes Node.js entièrement automatisés qui scannent les paires configurées toutes les 30 minutes. Ils appliquent les 5 piliers GWP, calculent les scores de conviction et publient les signaux.',
+    'b_GWP 109':'Chaque signal publié par AxTrader suit un format cohérent. Comprendre chaque champ vous permet de prendre une décision éclairée avant d\'entrer. N\'entrez jamais un signal que vous ne comprenez pas.',
+    'b_BOOK 1':'Un plongeon de 12 chapitres dans la façon dont les banques centrales, les primary dealers, les fonds spéculatifs et les prop desks déplacent réellement les marchés — pas la version simplifiée.',
+    'b_BOOK 2':'Cartographiez les cycles institutionnels complets sur les timeframes mensuel, hebdomadaire, quotidien et intraday simultanément. Inclut la matrice Premium/Discount et le mapping de corrélation multi-paires.',
+    'b_BOOK 3':'Les 7 variantes avancées du Ghost Wick qui produisent une précision historique de 99%+ combinées avec leurs confluences uniques. Ces patterns sont rares — 2-4 fois par mois par paire — mais offrent les plus grands R:R.',
+    'b_BOOK 4':'Cadre complet de gestion du risque au niveau portefeuille utilisé par les desks de trading propriétaire. Va bien au-delà du dimensionnement par trade — couvre le hedging de corrélation et les protocoles de récupération.',
+    'b_BOOK 5':'Une approche systématique et scientifique du backtesting des signaux GWP et du maintien d\'un journal de trading qui améliore réellement les performances.',
+    'b_BOOK 6':'Revues mensuelles annotées de trades live du flux de signaux AxTrader. Chaque signal A+ SUPREME du mois précédent, revu avec justification complète.',
+    'b_BOOK 7':'GWP a été développé pour le Forex. Ce livre couvre toutes les adaptations critiques pour les marchés crypto — taux de financement, cascades de liquidation, intégration des données on-chain.'
+  },
+  es: {
+    'ICT 101':'ICT 101 — ¿Qué es ICT?','ICT 102':'ICT 102 — Fair Value Gaps (FVG)','ICT 103':'ICT 103 — Order Blocks (OB)','ICT 104':'ICT 104 — Liquidez y Caza de Stops','ICT 105':'ICT 105 — Kill Zones y Sesiones','ICT 106':'ICT 106 — Power of 3 (AMD)','ICT 107':'ICT 107 — Zonas Premium y Discount','ICT 108':'ICT 108 — Entrada Óptima (OTE)','ICT 109':'ICT 109 — Análisis Diario de Sesgo',
+    'SMC 101':'SMC 101 — Visión General del Smart Money','SMC 102':'SMC 102 — Estructura del Mercado: BOS y CHoCH','SMC 103':'SMC 103 — Zonas de Oferta y Demanda','SMC 104':'SMC 104 — El Inducement','SMC 105':'SMC 105 — MMXM: Modelo Market Maker','SMC 106':'SMC 106 — Checklist de Entrada Completa','SMC 107':'SMC 107 — Confluencia Multi-Timeframe','SMC 108':'SMC 108 — Gestión de Trades y Parciales','SMC 109':'SMC 109 — Correlaciones y Motores del Mercado',
+    'GWP 101':'GWP 101 — El Ghost Wick: Orígenes','GWP 102':'GWP 102 — La Trampa de Liquidez','GWP 103':'GWP 103 — Sistema de Confluencia de 5 Pilares','GWP 104':'GWP 104 — Stop Loss y Reglas ATR','GWP 105':'GWP 105 — Dimensionamiento Kelly y Scores','GWP 106':'GWP 106 — Objetivos TP1 / TP2 / TP3','GWP 107':'GWP 107 — Filtro Vol + AVWAP (v8)','GWP 108':'GWP 108 — Arquitectura del Bot','GWP 109':'GWP 109 — Leer una Tarjeta de Señal GWP',
+    'BOOK 1':'📖 LIBRO 1: Flujo Institucional — Guía Completa','BOOK 2':'📖 LIBRO 2: SMC Avanzado — Mapeo MMXM','BOOK 3':'📖 LIBRO 3: Dominio Ghost Wick — Vol. 2','BOOK 4':'📖 LIBRO 4: Gestión de Riesgo y Drawdown','BOOK 5':'📖 LIBRO 5: Backtesting y Diario de Trading','BOOK 6':'📖 LIBRO 6: Dominio de Señales Live — Revisiones','BOOK 7':'📖 LIBRO 7: Adaptaciones GWP para Crypto',
+    'b_ICT 101':'Inner Circle Trader (ICT) es una metodología enseñada por Michael J. Huddleston. Se enfoca en entender cómo las grandes instituciones — bancos, fondos de cobertura, bancos centrales — manipulan el precio para generar liquidez antes de ejecutar sus órdenes reales.',
+    'b_ICT 102':'Un Fair Value Gap (FVG) es un patrón de 3 velas que revela dónde las instituciones movieron el precio tan agresivamente que no hubo descubrimiento real de precio. Estos gaps actúan como imanes — el precio casi siempre vuelve a llenarlos.',
+    'b_ICT 103':'Un Order Block es el origen de un movimiento institucional. Es la última vela opuesta antes de un empuje direccional significativo. Son las zonas reales donde se llenaron grandes órdenes.',
+    'b_ICT 104':'Los bancos e instituciones no pueden llenar millones de contratos en una sola vela sin deslizamiento. Necesitan contraparte. Los stop loss de los minoristas SON la contraparte.',
+    'b_ICT 105':'ICT define ventanas específicas de 2-4 horas en cada sesión donde la actividad institucional es más alta y las configuraciones tienen mayor probabilidad. Fuera de las Kill Zones, el precio suele ser errático.',
+    'b_ICT 106':'Cada día de trading sigue un ciclo predecible de 3 fases: Acumulación (construir posiciones silenciosamente), Manipulación (la caza de stops), y Distribución (el movimiento direccional real).',
+    'b_ICT 107':'ICT usa un marco simple: comprar en descuento (bajo el punto medio del rango), vender en premium (sobre el punto medio). Las instituciones nunca compran en resistencia ni venden en soporte.',
+    'b_ICT 108':'El OTE es el modelo de entrada precisa de ICT dentro de un retroceso. Usa niveles de Fibonacci para identificar la zona exacta donde las instituciones re-entran después de un desplazamiento.',
+    'b_ICT 109':'Antes de cualquier operación, necesitas un sesgo direccional. ICT usa los gráficos Daily y 4H para definir la dirección macro, luego baja a 1H y 15M para la entrada.',
+    'b_SMC 101':'SMC (Smart Money Concepts) es un marco para leer el mercado desde la perspectiva de traders institucionales. Refina los principios ICT en un enfoque sistemático centrado en tres pilares: Estructura, Oferta/Demanda y Liquidez.',
+    'b_SMC 102':'La estructura del mercado es la columna vertebral del análisis SMC. Un BOS confirma que la tendencia continúa. Un CHoCH señala un posible cambio de tendencia. Estos dos patrones solos dan tu sesgo direccional.',
+    'b_SMC 103':'Las zonas de oferta son áreas donde las instituciones tenían órdenes de venta masivas. Las de demanda, órdenes de compra masivas. Son cajas que cubren un rango de precio específico, no líneas.',
+    'b_SMC 104':'El inducement es un barrido menor de liquidez justo antes de que el precio llegue a la zona real. Crea un punto de entrada falso que atrapa traders impacientes.',
+    'b_SMC 105':'MMXM es el ciclo completo que el precio sigue cuando las instituciones se mueven de un pool de liquidez a otro. La imagen más completa de cómo se desarrolla una tendencia.',
+    'b_SMC 106':'Una entrada SMC sistemática requiere que cada punto de control pase. Saltar incluso un filtro reduce dramáticamente la tasa de acierto.',
+    'b_SMC 107':'El análisis de un solo timeframe es el mayor error de los nuevos traders SMC. La señal en 15M no significa nada sin alineación de timeframes superiores.',
+    'b_SMC 108':'Entrar en un trade es solo la mitad del trabajo. Gestionarlo para maximizar beneficio protegiendo capital es la otra mitad.',
+    'b_SMC 109':'Los mercados no se mueven aisladamente. Entender las correlaciones entre DXY, oro, crypto y acciones da una ventaja poderosa.',
+    'b_GWP 101':'El Ghost Wick es el patrón fundamental del sistema GWP. Es una vela única cuya mecha representa ≥60% del rango total — manipulación institucional antes del movimiento real.',
+    'b_GWP 102':'La Trampa de Liquidez es la versión multi-vela del Ghost Wick. El precio rompe un nivel clave, atrapa compradores de breakout — luego se revierte en 1-2 velas.',
+    'b_GWP 103':'Una señal GWP solo se dispara cuando los 5 pilares se alinean. Cada pilar solo tiene 60-70% de acierto. Combinados, la precisión histórica alcanza 97%.',
+    'b_GWP 104':'GWP v8 introdujo stop loss con piso ATR — una actualización crítica que previene stops demasiado ajustados que garantizan ser sacado por la volatilidad normal.',
+    'b_GWP 105':'GWP usa un criterio Kelly modificado para el tamaño de posición. Limita la asignación al 2% y la escala según el score de convicción.',
+    'b_GWP 106':'GWP v8 introdujo objetivos de profit más altos. El sistema de tres objetivos asegura ganancias mientras maximiza la carrera del ganador.',
+    'b_GWP 107':'GWP v8 añadió un filtro Volume + AVWAP. Ninguna señal se dispara sin que el volumen supere la media de 20 periodos Y el precio esté del lado correcto del AVWAP.',
+    'b_GWP 108':'Los bots AxTrader son sistemas Node.js automatizados que escanean pares cada 30 minutos, aplican los 5 pilares GWP y publican señales.',
+    'b_GWP 109':'Cada señal sigue un formato consistente. Entender cada campo permite tomar decisiones informadas. Nunca entres en una señal que no comprendas.',
+    'b_BOOK 1':'Inmersión de 12 capítulos en cómo bancos centrales, fondos especulativos y mesas de trading mueven realmente los mercados.',
+    'b_BOOK 2':'Mapea ciclos institucionales completos a través de timeframes mensual, semanal, diario e intradía simultáneamente.',
+    'b_BOOK 3':'Las 7 variantes avanzadas del Ghost Wick con precisión histórica del 99%+. Patrones raros pero con el mayor R:R del sistema.',
+    'b_BOOK 4':'Marco completo de gestión de riesgo a nivel portafolio usado por mesas de trading propietario.',
+    'b_BOOK 5':'Enfoque sistemático y científico de backtesting de señales GWP y mantenimiento de un diario de trading efectivo.',
+    'b_BOOK 6':'Revisiones mensuales anotadas de trades live del feed de señales AxTrader.',
+    'b_BOOK 7':'GWP fue desarrollado para Forex. Este libro cubre todas las adaptaciones críticas para mercados crypto.'
+  },
+  pt: {
+    'ICT 101':'ICT 101 — O que é ICT?','ICT 102':'ICT 102 — Fair Value Gaps (FVG)','ICT 103':'ICT 103 — Order Blocks (OB)','ICT 104':'ICT 104 — Liquidez & Caça aos Stops','ICT 105':'ICT 105 — Kill Zones & Sessões','ICT 106':'ICT 106 — Power of 3 (AMD)','ICT 107':'ICT 107 — Zonas Premium & Discount','ICT 108':'ICT 108 — Entrada Ideal (OTE)','ICT 109':'ICT 109 — Análise Diária de Viés',
+    'SMC 101':'SMC 101 — Visão Geral do Smart Money','SMC 102':'SMC 102 — Estrutura do Mercado: BOS & CHoCH','SMC 103':'SMC 103 — Zonas de Oferta & Demanda','SMC 104':'SMC 104 — O Inducement','SMC 105':'SMC 105 — MMXM: Modelo Market Maker','SMC 106':'SMC 106 — Checklist de Entrada Completa','SMC 107':'SMC 107 — Confluência Multi-Timeframe','SMC 108':'SMC 108 — Gerenciamento de Trades & Parciais','SMC 109':'SMC 109 — Correlações & Motores do Mercado',
+    'GWP 101':'GWP 101 — O Ghost Wick: Origens','GWP 102':'GWP 102 — A Armadilha de Liquidez','GWP 103':'GWP 103 — Sistema de Confluência de 5 Pilares','GWP 104':'GWP 104 — Stop Loss & Regras ATR','GWP 105':'GWP 105 — Dimensionamento Kelly & Scores','GWP 106':'GWP 106 — Alvos TP1 / TP2 / TP3','GWP 107':'GWP 107 — Filtro Vol + AVWAP (v8)','GWP 108':'GWP 108 — Arquitetura do Bot','GWP 109':'GWP 109 — Ler um Cartão de Sinal GWP',
+    'BOOK 1':'📖 LIVRO 1: Fluxo Institucional — Guia Completo','BOOK 2':'📖 LIVRO 2: SMC Avançado — Mapeamento MMXM','BOOK 3':'📖 LIVRO 3: Domínio Ghost Wick — Vol. 2','BOOK 4':'📖 LIVRO 4: Gestão de Risco & Drawdown','BOOK 5':'📖 LIVRO 5: Backtesting & Diário de Trading','BOOK 6':'📖 LIVRO 6: Domínio de Sinais Live — Revisões','BOOK 7':'📖 LIVRO 7: Adaptações GWP para Crypto',
+    'b_ICT 101':'Inner Circle Trader (ICT) é uma metodologia ensinada por Michael J. Huddleston. Foca em entender como grandes instituições — bancos, fundos hedge, bancos centrais — manipulam o preço para gerar liquidez antes de executar ordens reais.',
+    'b_ICT 102':'Um Fair Value Gap (FVG) é um padrão de 3 velas que revela onde instituições moveram o preço tão agressivamente que não houve descoberta real de preço. Esses gaps agem como ímãs.',
+    'b_ICT 103':'Um Order Block é a origem de um movimento institucional. É a última vela oposta antes de um impulso direcional significativo.',
+    'b_ICT 104':'Bancos e instituições não podem preencher milhões de contratos em uma única vela sem derrapagem. Eles precisam de contraparte. Os stop losses dos varejistas SÃO a contraparte.',
+    'b_ICT 105':'ICT define janelas específicas de 2-4 horas em cada sessão onde a atividade institucional é mais alta e as configurações têm maior probabilidade.',
+    'b_ICT 106':'Cada dia de trading segue um ciclo previsível de 3 fases: Acumulação, Manipulação e Distribuição.',
+    'b_ICT 107':'ICT usa um framework simples: comprar em desconto (abaixo do ponto médio), vender em premium (acima do ponto médio).',
+    'b_ICT 108':'O OTE é o modelo de entrada preciso do ICT dentro de um retrocesso. Usa níveis de Fibonacci para identificar a zona exata de re-entrada institucional.',
+    'b_ICT 109':'Antes de qualquer operação, você precisa de um viés direcional. ICT usa gráficos Daily e 4H para definir a direção macro.',
+    'b_SMC 101':'SMC é um framework para ler o mercado pela perspectiva de traders institucionais. Refina os princípios ICT em três pilares: Estrutura, Oferta/Demanda e Liquidez.',
+    'b_SMC 102':'A estrutura do mercado é a espinha dorsal da análise SMC. BOS confirma continuação de tendência. CHoCH sinaliza possível reversão.',
+    'b_SMC 103':'Zonas de oferta são áreas com ordens de venda massivas institucionais. Zonas de demanda têm ordens de compra massivas. São caixas, não linhas.',
+    'b_SMC 104':'O inducement é um varredura menor de liquidez antes que o preço alcance a zona real. Cria um ponto de entrada falso que prende traders impacientes.',
+    'b_SMC 105':'MMXM é o ciclo completo que o preço segue quando instituições se movem de um pool de liquidez para outro.',
+    'b_SMC 106':'Uma entrada SMC sistemática exige que cada ponto de controle seja aprovado. Pular um filtro reduz dramaticamente a taxa de acerto.',
+    'b_SMC 107':'Análise de timeframe único é o maior erro de novos traders SMC. O sinal em 15M não significa nada sem alinhamento de timeframes superiores.',
+    'b_SMC 108':'Entrar em um trade é metade do trabalho. Gerenciá-lo para maximizar lucro protegendo capital é a outra metade.',
+    'b_SMC 109':'Mercados não se movem isoladamente. Entender correlações entre DXY, ouro, crypto e ações dá uma vantagem poderosa.',
+    'b_GWP 101':'O Ghost Wick é o padrão fundamental do sistema GWP. Uma vela cuja mecha representa ≥60% do range total — manipulação institucional antes do movimento real.',
+    'b_GWP 102':'A Armadilha de Liquidez é a versão multi-vela do Ghost Wick. O preço rompe um nível chave, prende compradores — depois reverte em 1-2 velas.',
+    'b_GWP 103':'Um sinal GWP só dispara quando os 5 pilares se alinham. Cada pilar tem 60-70% de acerto. Combinados, a precisão atinge 97%.',
+    'b_GWP 104':'GWP v8 introduziu stop loss com piso ATR — impede stops muito apertados que seriam atingidos pela volatilidade normal.',
+    'b_GWP 105':'GWP usa um critério Kelly modificado para tamanho de posição. Limita a alocação em 2% e escala pelo score de convicção.',
+    'b_GWP 106':'GWP v8 introduziu alvos de lucro mais altos. O sistema de três alvos trava o lucro enquanto maximiza a corrida do vencedor.',
+    'b_GWP 107':'GWP v8 adicionou um filtro Volume + AVWAP. Nenhum sinal dispara sem que o volume supere a média de 20 períodos.',
+    'b_GWP 108':'Os bots AxTrader são sistemas Node.js automatizados que escaneiam pares a cada 30 minutos e aplicam os 5 pilares GWP.',
+    'b_GWP 109':'Cada sinal segue um formato consistente. Entender cada campo permite decisões informadas. Nunca entre em um sinal que não compreende.',
+    'b_BOOK 1':'Mergulho de 12 capítulos em como bancos centrais, fundos e mesas de trading realmente movem mercados.',
+    'b_BOOK 2':'Mapeie ciclos institucionais completos em timeframes mensais, semanais, diários e intraday simultaneamente.',
+    'b_BOOK 3':'As 7 variantes avançadas do Ghost Wick com precisão de 99%+. Padrões raros mas com o maior R:R do sistema.',
+    'b_BOOK 4':'Framework completo de gestão de risco ao nível de portfólio usado por mesas proprietárias.',
+    'b_BOOK 5':'Abordagem sistemática de backtesting de sinais GWP e manutenção de diário de trading efetivo.',
+    'b_BOOK 6':'Revisões mensais anotadas de trades live do feed de sinais AxTrader.',
+    'b_BOOK 7':'GWP foi desenvolvido para Forex. Este livro cobre todas as adaptações para mercados crypto.'
+  },
+  ar: {
+    'ICT 101':'ICT 101 — ما هو ICT؟','ICT 102':'ICT 102 — فجوات القيمة العادلة (FVG)','ICT 103':'ICT 103 — كتل الأوامر (OB)','ICT 104':'ICT 104 — السيولة وصيد الستوبات','ICT 105':'ICT 105 — مناطق القتل والجلسات','ICT 106':'ICT 106 — قوة الثلاثة (AMD)','ICT 107':'ICT 107 — مناطق البريميوم والديسكاونت','ICT 108':'ICT 108 — الدخول الأمثل (OTE)','ICT 109':'ICT 109 — التحيز اليومي والتحليل',
+    'SMC 101':'SMC 101 — نظرة عامة على Smart Money','SMC 102':'SMC 102 — هيكل السوق: BOS و CHoCH','SMC 103':'SMC 103 — مناطق العرض والطلب','SMC 104':'SMC 104 — الإغراء (Inducement)','SMC 105':'SMC 105 — نموذج صانع السوق MMXM','SMC 106':'SMC 106 — قائمة فحص الدخول الكاملة','SMC 107':'SMC 107 — التقاء الأطر الزمنية المتعددة','SMC 108':'SMC 108 — إدارة الصفقات والإغلاق الجزئي','SMC 109':'SMC 109 — الارتباطات ومحركات السوق',
+    'GWP 101':'GWP 101 — Ghost Wick: الأصول','GWP 102':'GWP 102 — فخ السيولة','GWP 103':'GWP 103 — نظام التقاء الأعمدة الخمسة','GWP 104':'GWP 104 — وقف الخسارة وقواعد ATR','GWP 105':'GWP 105 — حجم المركز حسب معيار Kelly','GWP 106':'GWP 106 — أهداف TP1 / TP2 / TP3','GWP 107':'GWP 107 — فلتر الحجم + AVWAP','GWP 108':'GWP 108 — هندسة البوت','GWP 109':'GWP 109 — قراءة بطاقة إشارة GWP',
+    'BOOK 1':'📖 كتاب 1: التدفق المؤسسي — دليل شامل','BOOK 2':'📖 كتاب 2: SMC متقدم — خرائط MMXM','BOOK 3':'📖 كتاب 3: إتقان Ghost Wick — المجلد 2','BOOK 4':'📖 كتاب 4: إدارة المخاطر والتراجع','BOOK 5':'📖 كتاب 5: الاختبار الخلفي ودفتر التداول','BOOK 6':'📖 كتاب 6: إتقان الإشارات الحية — مراجعات شهرية','BOOK 7':'📖 كتاب 7: تكييفات GWP للعملات الرقمية',
+    'b_ICT 101':'ICT هي منهجية يُدرّسها مايكل هادلستون. تركز على فهم كيف تتلاعب المؤسسات الكبرى بالأسعار لخلق السيولة قبل تنفيذ أوامرها الحقيقية.',
+    'b_ICT 102':'FVG هو نمط من 3 شموع يكشف أين حركت المؤسسات السعر بعنف شديد. هذه الفجوات تعمل كمغناطيس — السعر يعود دائماً تقريباً لملئها.',
+    'b_ICT 103':'كتلة الأوامر هي أصل الحركة المؤسسية. آخر شمعة معاكسة قبل دفعة اتجاهية كبيرة.',
+    'b_ICT 104':'البنوك لا تستطيع ملء ملايين العقود في شمعة واحدة. يحتاجون طرفاً مقابلاً. ستوبات المتداولين الأفراد هي الطرف المقابل.',
+    'b_ICT 105':'يحدد ICT نوافذ من 2-4 ساعات حيث النشاط المؤسسي في أعلى مستوياته واحتمالية التداولات أكبر.',
+    'b_ICT 106':'كل يوم تداول يتبع دورة من 3 مراحل: التجميع والتلاعب والتوزيع.',
+    'b_ICT 107':'يستخدم ICT إطاراً بسيطاً: الشراء في الخصم والبيع في البريميوم. المؤسسات لا تشتري عند المقاومة.',
+    'b_ICT 108':'OTE هو نموذج الدخول الدقيق ضمن الارتداد. يستخدم مستويات فيبوناتشي لتحديد منطقة إعادة دخول المؤسسات.',
+    'b_ICT 109':'قبل أي صفقة تحتاج تحيزاً اتجاهياً. يستخدم ICT الرسوم اليومية و4 ساعات لتحديد الاتجاه الكلي.',
+    'b_SMC 101':'SMC هو إطار لقراءة السوق من منظور المتداولين المؤسسيين. يركز على ثلاثة أعمدة: الهيكل والعرض/الطلب والسيولة.',
+    'b_SMC 102':'هيكل السوق هو العمود الفقري لتحليل SMC. BOS يؤكد استمرار الاتجاه. CHoCH يشير لانعكاس محتمل.',
+    'b_SMC 103':'مناطق العرض هي مناطق بأوامر بيع مؤسسية ضخمة. مناطق الطلب بأوامر شراء ضخمة. هي مربعات وليست خطوطاً.',
+    'b_SMC 104':'الإغراء هو مسح سيولة صغير قبل وصول السعر للمنطقة الحقيقية. يخلق نقطة دخول وهمية.',
+    'b_SMC 105':'MMXM هي الدورة الكاملة التي يتبعها السعر عندما تتنقل المؤسسات بين مجمعات السيولة.',
+    'b_SMC 106':'دخول SMC منهجي يتطلب اجتياز كل نقطة فحص. تخطي فلتر واحد يقلل نسبة النجاح بشكل كبير.',
+    'b_SMC 107':'التحليل على إطار زمني واحد هو أكبر خطأ. الإشارة على 15 دقيقة لا تعني شيئاً بدون توافق الأطر الأعلى.',
+    'b_SMC 108':'الدخول في صفقة نصف العمل فقط. إدارتها لتعظيم الربح مع حماية رأس المال هو النصف الآخر.',
+    'b_SMC 109':'الأسواق لا تتحرك بمعزل. فهم الارتباطات بين DXY والذهب والعملات الرقمية والأسهم يعطي ميزة قوية.',
+    'b_GWP 101':'Ghost Wick هو النمط الأساسي لنظام GWP. شمعة واحدة فتيلها ≥60% من المدى — تلاعب مؤسسي قبل الحركة الحقيقية.',
+    'b_GWP 102':'فخ السيولة هو النسخة متعددة الشموع من Ghost Wick. السعر يكسر مستوى رئيسي ثم ينعكس بعنف.',
+    'b_GWP 103':'إشارة GWP تنطلق فقط عندما تتوافق الأعمدة الخمسة. كل عمود بمفرده 60-70%. مجتمعة تصل الدقة إلى 97%.',
+    'b_GWP 104':'GWP v8 أضاف أرضية ATR لوقف الخسارة — يمنع الستوبات الضيقة جداً.',
+    'b_GWP 105':'يستخدم GWP معيار Kelly معدّل لحجم المركز. يحدد التخصيص بـ2% ويعدّله حسب درجة الاقتناع.',
+    'b_GWP 106':'GWP v8 رفع أهداف الربح. نظام الثلاثة أهداف يؤمّن الأرباح مع تعظيم مكاسب الفائزين.',
+    'b_GWP 107':'GWP v8 أضاف فلتر الحجم + AVWAP. لا إشارة بدون حجم يتجاوز المتوسط.',
+    'b_GWP 108':'بوتات AxTrader أنظمة Node.js آلية تمسح الأزواج كل 30 دقيقة وتطبق الأعمدة الخمسة.',
+    'b_GWP 109':'كل إشارة تتبع تنسيقاً ثابتاً. فهم كل حقل يتيح قرارات مدروسة. لا تدخل إشارة لا تفهمها.',
+    'b_BOOK 1':'غوص في 12 فصلاً عن كيفية تحريك البنوك المركزية والمؤسسات للأسواق فعلياً.',
+    'b_BOOK 2':'خريطة دورات مؤسسية كاملة عبر الأطر الشهرية والأسبوعية واليومية واللحظية.',
+    'b_BOOK 3':'7 متغيرات متقدمة من Ghost Wick بدقة 99%+. أنماط نادرة لكن بأعلى R:R.',
+    'b_BOOK 4':'إطار شامل لإدارة المخاطر على مستوى المحفظة.',
+    'b_BOOK 5':'نهج منهجي للاختبار الخلفي والتسجيل في دفتر تداول فعّال.',
+    'b_BOOK 6':'مراجعات شهرية مشروحة لصفقات حية من بث إشارات AxTrader.',
+    'b_BOOK 7':'GWP طُوّر للفوركس. هذا الكتاب يغطي التكييفات للعملات الرقمية.'
+  }
+};
+
+// Helper: get course title/body key from English title
+function _courseKey(engTitle) {
+  // Extract "ICT 101", "SMC 102", "BOOK 1" etc from title
+  const m = engTitle.match(/(ICT|SMC|GWP)\s*\d+/) || engTitle.match(/BOOK\s*\d+/);
+  return m ? m[0] : null;
+}
+
+/** Translate all courses — uses pre-translated data (instant) + detail cache */
 async function translateCourses(lang) {
-  if (!lang || lang === 'en' || coursesTranslating) return;
+  if (!lang || lang === 'en') return;
   if (coursesTranslatedCache[lang]) { renderCourses(currentCourseTab); return; }
-  coursesTranslating = true;
+
+  const pre = coursesTitleBody[lang] || {};
   const tabs = Object.keys(coursesData);
   const result = {};
+
+  // Try loading cached detail translations from localStorage
+  let detailCache = {};
+  try { detailCache = JSON.parse(localStorage.getItem('ax_course_details_' + lang) || '{}'); } catch(e) {}
+
   for (const tab of tabs) {
     result[tab] = [];
     for (const c of coursesData[tab]) {
-      try {
-        const [title, body, detail, illus] = await Promise.all([
-          translateText(c.title, lang),
-          translateText(c.body,  lang),
-          c.detail ? translateText(c.detail, lang) : Promise.resolve(c.detail),
-          c.illus  ? translateText(c.illus,  lang) : Promise.resolve(c.illus)
-        ]);
-        result[tab].push({ ...c, title, body, detail, illus });
-      } catch(e) {
-        result[tab].push({ ...c });
+      const key = _courseKey(c.title);
+      const translated = { ...c };
+      // Instant: use pre-translated title & body
+      if (key && pre[key]) translated.title = pre[key];
+      if (key && pre['b_' + key]) translated.body = pre['b_' + key];
+      // Illustrations stay in English (ASCII diagrams break when translated)
+      // Details: use localStorage cache or translate in background
+      if (c.detail && detailCache[key]) {
+        translated.detail = detailCache[key];
       }
-      await new Promise(r => setTimeout(r, 30));
+      result[tab].push(translated);
     }
   }
+
   coursesTranslatedCache[lang] = result;
-  coursesTranslating = false;
-  if (appState.lang === lang) renderCourses(currentCourseTab);
+  renderCourses(currentCourseTab);
+
+  // Background: translate details that aren't cached yet
+  if (!coursesTranslating) {
+    coursesTranslating = true;
+    for (const tab of tabs) {
+      for (let i = 0; i < coursesData[tab].length; i++) {
+        const c = coursesData[tab][i];
+        const key = _courseKey(c.title);
+        if (c.detail && key && !detailCache[key]) {
+          try {
+            const td = await translateText(c.detail, lang);
+            if (td && td !== c.detail) {
+              detailCache[key] = td;
+              result[tab][i].detail = td;
+            }
+          } catch(e) {}
+          await new Promise(r => setTimeout(r, 50));
+        }
+      }
+    }
+    // Persist detail cache
+    try { localStorage.setItem('ax_course_details_' + lang, JSON.stringify(detailCache)); } catch(e) {}
+    coursesTranslating = false;
+    if (appState.lang === lang) renderCourses(currentCourseTab);
+  }
 }
 
 function renderCourses(tab){
