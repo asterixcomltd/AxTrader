@@ -3285,16 +3285,20 @@ function loginUser(user) {
   appState.user=user;
   // Restore premium flag if stored in the user object
   appState.isPremium = !!user.isPremium;
+  // Restore language from user profile if present, or from localStorage
+  if (user.lang) { appState.lang = user.lang; }
   try { localStorage.setItem('ax_user', JSON.stringify(user)); } catch(e) {}
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').style.display='flex';
   const letter=(user.name||'U')[0].toUpperCase();
   document.getElementById('avatar-btn').textContent='Ax'; // always brand mark
   document.getElementById('profile-avatar-letter').textContent=letter;
-  // Use uploaded avatar, or Google profile picture, in that priority order
-  const avatarSrc = user.avatarDataURL || user.picture || null;
+  // Use uploaded avatar, or Google profile picture, or localStorage fallback
+  let avatarSrc = user.avatarDataURL || user.picture || null;
+  if (!avatarSrc) { try { avatarSrc = localStorage.getItem('ax_avatar'); } catch(e) {} }
   if (avatarSrc) {
     appState.avatarDataURL = avatarSrc;
+    user.avatarDataURL = avatarSrc; // ensure it's on user obj for next save
     const _ab = document.getElementById('profile-avatar-big');
     if(_ab){_ab.style.backgroundImage=`url(${avatarSrc})`;_ab.style.backgroundSize='cover';_ab.style.backgroundPosition='center';}
     const _al = document.getElementById('profile-avatar-letter');
@@ -3316,7 +3320,7 @@ function loginUser(user) {
   if(mdn) mdn.textContent = user.name;
   const mde = document.getElementById('more-display-email');
   if(mde) mde.textContent = user.email;
-  showToast('Welcome, '+user.name+'! 🎉');
+  showToast(T('welcome')+user.name+'! 🎉');
   // Silently check server-side premium store (handles webhook activations on other devices)
   if (user.email && !user.isPremium) checkServerPremium(user.email);
 }
@@ -3808,6 +3812,8 @@ function T(key) { return (i18n[appState.lang] || i18n.en)[key] || i18n.en[key] |
 function setLang(lang) {
   appState.lang=lang;
   try { localStorage.setItem('ax_lang', lang); } catch(e) {}
+  // Save to user profile so it persists with account
+  if (appState.user) { appState.user.lang = lang; try { localStorage.setItem('ax_user', JSON.stringify(appState.user)); } catch(e) {} }
   const t=i18n[lang]||i18n.en;
 
   // Nav labels
@@ -4254,20 +4260,43 @@ function handleAvatarChange(e) {
   const file=e.target.files[0]; if(!file) return;
   const reader=new FileReader();
   reader.onload=function(ev){
-    appState.avatarDataURL=ev.target.result;
-    if (appState.user) { appState.user.avatarDataURL = ev.target.result; try { localStorage.setItem('ax_user', JSON.stringify(appState.user)); } catch(e) {} }
-    const big=document.getElementById('profile-avatar-big');
-    big.style.backgroundImage=`url(${ev.target.result})`;
-    big.style.backgroundSize='cover';
-    big.style.backgroundPosition='center';
-    document.getElementById('profile-avatar-letter').style.display='none';
-    const btn=document.getElementById('avatar-btn');
-    btn.style.backgroundImage=`url(${ev.target.result})`;
-    btn.style.backgroundSize='cover';
-    btn.textContent='';
-    showToast(T('pic_updated'));
+    // v3.6: Resize avatar to max 128x128 to prevent localStorage overflow
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const max = 128;
+      let w = img.width, h = img.height;
+      if (w > max || h > max) {
+        if (w > h) { h = Math.round(h * max / w); w = max; }
+        else { w = Math.round(w * max / h); h = max; }
+      }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const compressed = canvas.toDataURL('image/jpeg', 0.7);
+      applyAvatar(compressed);
+    };
+    img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
+}
+function applyAvatar(dataURL) {
+  appState.avatarDataURL = dataURL;
+  if (appState.user) {
+    appState.user.avatarDataURL = dataURL;
+    try { localStorage.setItem('ax_user', JSON.stringify(appState.user)); } catch(e) {}
+  }
+  // Also save separately as fallback in case ax_user exceeds quota
+  try { localStorage.setItem('ax_avatar', dataURL); } catch(e) {}
+  const big=document.getElementById('profile-avatar-big');
+  big.style.backgroundImage=`url(${dataURL})`;
+  big.style.backgroundSize='cover';
+  big.style.backgroundPosition='center';
+  document.getElementById('profile-avatar-letter').style.display='none';
+  const btn=document.getElementById('avatar-btn');
+  btn.style.backgroundImage=`url(${dataURL})`;
+  btn.style.backgroundSize='cover';
+  btn.textContent='';
+  showToast(T('pic_updated'));
 }
 
 // ============ LIVE TICKER (CoinGecko — free, no key) ============
@@ -7160,5 +7189,18 @@ function openPremiumCheckout() {
     </div>
   </div>
 
+<script>
+// v3.6: Apply saved language immediately on page load (even before login)
+(function() {
+  const sl = localStorage.getItem('ax_lang');
+  if (sl && sl !== 'en') {
+    // Set auth dropdown
+    const sel = document.getElementById('auth-lang');
+    if (sel) sel.value = sl;
+    // Apply translations to auth screen & nav
+    if (typeof setLang === 'function') setLang(sl);
+  }
+})();
+</script>
 </body>
 </html>
