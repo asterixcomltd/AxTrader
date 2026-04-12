@@ -42,11 +42,13 @@ module.exports = async (req, res) => {
 
   const articles = [];
 
-  // ── Source 1: CryptoCompare (free, no key needed) ─────────────────────────
+  // ── Source 1: CryptoCompare (free tier API key required since 2025) ────────
+  const ccApiKey = process.env.CRYPTOCOMPARE_KEY || '';
   try {
-    const cc = await httpsGet(
-      'https://min-api.cryptocompare.com/data/v2/news/?lang=EN&sortOrder=latest&limit=30'
-    );
+    const ccUrl = ccApiKey
+      ? `https://min-api.cryptocompare.com/data/v2/news/?lang=EN&sortOrder=latest&limit=30&api_key=${ccApiKey}`
+      : 'https://min-api.cryptocompare.com/data/v2/news/?lang=EN&sortOrder=latest&limit=30';
+    const cc = await httpsGet(ccUrl);
     if (cc.ok && cc.json && cc.json.Data) {
       cc.json.Data.forEach(a => {
         articles.push({
@@ -95,6 +97,30 @@ module.exports = async (req, res) => {
     }
   } catch (e) {
     console.error('[News API] NewsAPI error:', e.message);
+  }
+
+  // ── Source 3: CoinGecko status/trending as fallback (free, no key) ────────
+  if (articles.length === 0) {
+    try {
+      const cg = await httpsGet('https://api.coingecko.com/api/v3/news?per_page=20');
+      if (cg.ok && cg.json && cg.json.data) {
+        cg.json.data.forEach(a => {
+          const ts = new Date(a.updated_at || a.created_at).getTime();
+          articles.push({
+            tag:    mapTag(a.title || ''),
+            title:  a.title,
+            body:   a.description ? a.description.substring(0, 220) + '…' : '',
+            time:   new Date(ts).toISOString(),
+            ts,
+            source: a.author || 'CoinGecko',
+            url:    a.url || '#',
+            img:    a.thumb_2x || '',
+          });
+        });
+      }
+    } catch (e) {
+      console.error('[News API] CoinGecko error:', e.message);
+    }
   }
 
   if (articles.length === 0) {

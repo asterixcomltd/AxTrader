@@ -2541,6 +2541,9 @@ const PAYMENT_CONFIG = {
 let signalsData = [];
 let appState = { user:null, isPremium:false, lang:'en', avatarDataURL:null };
 
+// v3.6: Restore language preference from localStorage
+try { const sl = localStorage.getItem('ax_lang'); if (sl && ['en','fr','es','pt','ar'].includes(sl)) appState.lang = sl; } catch(e) {}
+
 // ── Restore session on page load (survives SW updates & reloads) ──────────
 (function restoreSession() {
   try {
@@ -2876,16 +2879,16 @@ function initArchive() {
 
 async function requestNotificationPermission() {
   if (!('Notification' in window)) {
-    showToast('Notifications not supported on this device');
+    showToast(T('notif_unsupported'));
     return;
   }
   const result = await Notification.requestPermission();
   localStorage.setItem('axtrader_notif_permission', result);
   document.getElementById('notif-banner').style.display = 'none';
   if (result === 'granted') {
-    showToast('Alerts enabled! You will be notified for every phase hit.');
+    showToast(T('alerts_enabled'));
   } else {
-    showToast('Alerts blocked. Enable in browser settings to receive alerts.');
+    showToast(T('alerts_blocked'));
   }
 }
 
@@ -3197,22 +3200,22 @@ function showForgot(show=true) {
 }
 function sendReset() {
   const email = document.getElementById('forgot-email').value;
-  if(!email) return showToast('Enter your email first');
+  if(!email) return showToast(T('enter_email'));
   document.getElementById('reset-sent').style.display='block';
   showToast('Reset link sent to '+email);
 }
 function doLogin() {
   const email=document.getElementById('login-email').value;
   const pw=document.getElementById('login-pw').value;
-  if(!email||!pw) return showToast('Fill all fields');
+  if(!email||!pw) return showToast(T('fill_fields'));
   loginUser({name:email.split('@')[0],email});
 }
 function doSignup() {
   const name=document.getElementById('signup-name').value;
   const email=document.getElementById('signup-email').value;
   const pw=document.getElementById('signup-pw').value;
-  if(!name||!email||!pw) return showToast('Fill all fields');
-  if(pw.length<8) return showToast('Password min 8 characters');
+  if(!name||!email||!pw) return showToast(T('fill_fields'));
+  if(pw.length<8) return showToast(T('pass_min'));
   loginUser({name,email});
 }
 // ── GOOGLE IDENTITY SERVICES ─────────────────────────────────────────────────
@@ -3331,11 +3334,11 @@ const PREMIUM_CODES = ['AXPREM-ASTERIX', 'GWP-VIP-2025', 'AXTRADER-PRO'];
  *      https://axtrader.vercel.app/?promo=AXPREM-ASTERIX
  */
 function grantPremium(code) {
-  if (!appState.user) { showToast('Please log in first'); return false; }
+  if (!appState.user) { showToast(T('login_first')); return false; }
   const clean = (code || '').trim().toUpperCase();
   const valid  = PREMIUM_CODES.map(c => c.toUpperCase());
   if (!valid.includes(clean)) {
-    showToast('❌ Invalid code'); return false;
+    showToast(T('invalid_code')); return false;
   }
   appState.isPremium = true;
   appState.user.isPremium = true;
@@ -3349,7 +3352,7 @@ function grantPremium(code) {
   if (hpb) hpb.style.display = 'none';
   if (typeof stopInterstitialTimer === 'function') stopInterstitialTimer();
   if (typeof sparkleBurst === 'function') sparkleBurst();
-  showToast('⭐ Premium activated! Welcome to the inner circle 🎉');
+  showToast(T('premium_activated'));
   return true;
 }
 
@@ -3454,7 +3457,45 @@ const i18n={
     sign_out:'Sign Out', deep_dive:'Deep dive ↓', show_less:'Show less ↑',
     make_money_title:'💰 Exchange Partners', make_money_sub:'Sign up via our trusted partners',
     badge_free:'FREE', badge_premium:'⭐ PREMIUM BOOK',
-    course_locked:'🔒 Premium Book — Full Access', course_unlock:'Unlock $12.99'
+    course_locked:'🔒 Premium Book — Full Access', course_unlock:'Unlock $12.99',
+    // v3.6: expanded translations — signals, archive, auth, payments, toasts, legal
+    no_signals:'No archived signals yet. Check back after the next fetch.',
+    hide:'Hide ▴', show:'Show ▾', win_rate_lbl:'Win Rate:', avg_rr:'Avg R:R:', total:'Total:',
+    entry:'Entry', sl:'SL', tp1:'TP1', fired:'Fired:', fetching:'Fetching...',
+    auto_refresh:'Auto-refresh 60s', archive_sub:'Last 50 signals · effectiveness tracking',
+    loading_analytics:'📊 Loading analytics...', loading_notif:'🔔 Loading notification settings...',
+    or_divider:'or', email_placeholder:'you@email.com', password_placeholder:'Password',
+    name_placeholder:'Your name', min_chars:'Min 8 characters',
+    forgot_msg:'Enter your email and we\'ll send a reset link.',
+    active_members:'2,847 Active Members', signal_accuracy:'97% Signal Accuracy', markets_covered:'3 Markets Covered',
+    crypto_bot:'Crypto Signals Bot', forex_bot:'Forex Signals Bot', stocks_bot:'Stocks Signals Bot',
+    tg_community:'Telegram Community', premium_desc:'Signal copier, no ads, analytics',
+    email_support:'Email Support', direct_msg:'Direct Message',
+    risk_disclaimer:'Risk Disclaimer', risk_sub:'Important — please read before trading',
+    terms:'Terms & Conditions', terms_sub:'Usage policy · Intellectual property',
+    live_data:'📡 Live Data Status', live_data_sub:'Tap refresh to check all data sources',
+    check_sources:'🔄 Check All Sources', account_security:'🔐 Account Security',
+    auto_activated:'Auto-activated instantly on payment ⚡',
+    pay_telegram:'Pay via Telegram', dm_support:'DM @asterix_support1 to arrange',
+    powered_nowpay:'Powered by NOWPayments · Secure · Non-custodial',
+    payment_confirmed:'Payment Confirmed!', close_btn:'Close',
+    place_bet:'🚀 Place Bet', cash_out:'💰 Cash Out',
+    enter_email:'Enter your email first', fill_fields:'Fill all fields',
+    pass_min:'Password min 8 characters', login_first:'Please log in first',
+    invalid_code:'❌ Invalid code', premium_activated:'⭐ Premium activated! Welcome to the inner circle 🎉',
+    admin_notified:'Admin notified ✅ — expect activation within 24h',
+    payment_failed:'Could not create payment — try again or use another method',
+    premium_auto:'⭐ Premium activated automatically! Welcome 🎉',
+    profile_saved:'Profile saved ✓', pic_updated:'Profile picture updated ✓',
+    insuf_balance:'❌ Insufficient ATX balance',
+    installed:'✅ AxTrader installed! Find it on your home screen.',
+    install_howto:'📱 Open browser menu → \'Add to Home Screen\'',
+    notif_unsupported:'Notifications not supported on this device',
+    alerts_enabled:'Alerts enabled! You will be notified for every phase hit.',
+    alerts_blocked:'Alerts blocked. Enable in browser settings to receive alerts.',
+    welcome:'Welcome, ', signed_as:'Signed in as…',
+    new_signal:'🟢 New Signal:', tp1_hit:'✅ TP1 Hit:', tp2_hit:'✅ TP2 Hit:',
+    tp3_hit:'🏆 TP3 Runner:', sl_hit:'🔴 Stop Loss:'
   },
   fr:{
     home:'Accueil', signals:'Signaux', games:'Jeux', news:'Actualités', more:'Plus',
@@ -3493,7 +3534,44 @@ const i18n={
     sign_out:'Se Déconnecter', deep_dive:'Approfondir ↓', show_less:'Réduire ↑',
     make_money_title:'💰 Partenaires d\'Échange', make_money_sub:'Inscrivez-vous via nos partenaires de confiance',
     badge_free:'GRATUIT', badge_premium:'⭐ LIVRE PREMIUM',
-    course_locked:'🔒 Livre Premium — Accès Complet', course_unlock:'Débloquer 12,99$'
+    course_locked:'🔒 Livre Premium — Accès Complet', course_unlock:'Débloquer 12,99$',
+    no_signals:'Aucun signal archivé. Revenez après la prochaine mise à jour.',
+    hide:'Masquer ▴', show:'Afficher ▾', win_rate_lbl:'Taux de Réussite:', avg_rr:'R:R Moy:', total:'Total:',
+    entry:'Entrée', sl:'SL', tp1:'TP1', fired:'Déclenché:', fetching:'Chargement...',
+    auto_refresh:'Rafraîchissement auto 60s', archive_sub:'50 derniers signaux · suivi d\'efficacité',
+    loading_analytics:'📊 Chargement des analyses...', loading_notif:'🔔 Chargement des paramètres de notification...',
+    or_divider:'ou', email_placeholder:'vous@email.com', password_placeholder:'Mot de passe',
+    name_placeholder:'Votre nom', min_chars:'8 caractères minimum',
+    forgot_msg:'Entrez votre email et nous vous enverrons un lien de réinitialisation.',
+    active_members:'2 847 Membres Actifs', signal_accuracy:'97% Précision des Signaux', markets_covered:'3 Marchés Couverts',
+    crypto_bot:'Bot Signaux Crypto', forex_bot:'Bot Signaux Forex', stocks_bot:'Bot Signaux Actions',
+    tg_community:'Communauté Telegram', premium_desc:'Copieur de signaux, sans pub, analytique',
+    email_support:'Support Email', direct_msg:'Message Direct',
+    risk_disclaimer:'Avertissement sur les Risques', risk_sub:'Important — à lire avant de trader',
+    terms:'Conditions Générales', terms_sub:'Politique d\'utilisation · Propriété intellectuelle',
+    live_data:'📡 État des Données en Direct', live_data_sub:'Appuyez pour vérifier toutes les sources',
+    check_sources:'🔄 Vérifier les Sources', account_security:'🔐 Sécurité du Compte',
+    auto_activated:'Activation automatique instantanée au paiement ⚡',
+    pay_telegram:'Payer via Telegram', dm_support:'DM @asterix_support1 pour organiser',
+    powered_nowpay:'Propulsé par NOWPayments · Sécurisé · Non-custodial',
+    payment_confirmed:'Paiement Confirmé!', close_btn:'Fermer',
+    place_bet:'🚀 Miser', cash_out:'💰 Encaisser',
+    enter_email:'Entrez d\'abord votre email', fill_fields:'Remplissez tous les champs',
+    pass_min:'Mot de passe de 8 caractères minimum', login_first:'Veuillez vous connecter d\'abord',
+    invalid_code:'❌ Code invalide', premium_activated:'⭐ Premium activé ! Bienvenue dans le cercle 🎉',
+    admin_notified:'Admin notifié ✅ — activation sous 24h',
+    payment_failed:'Impossible de créer le paiement — réessayez ou utilisez une autre méthode',
+    premium_auto:'⭐ Premium activé automatiquement ! Bienvenue 🎉',
+    profile_saved:'Profil enregistré ✓', pic_updated:'Photo de profil mise à jour ✓',
+    insuf_balance:'❌ Solde ATX insuffisant',
+    installed:'✅ AxTrader installé ! Retrouvez-le sur votre écran d\'accueil.',
+    install_howto:'📱 Ouvrez le menu du navigateur → \'Ajouter à l\'écran d\'accueil\'',
+    notif_unsupported:'Notifications non supportées sur cet appareil',
+    alerts_enabled:'Alertes activées ! Vous serez notifié à chaque signal.',
+    alerts_blocked:'Alertes bloquées. Activez-les dans les paramètres du navigateur.',
+    welcome:'Bienvenue, ', signed_as:'Connecté en tant que…',
+    new_signal:'🟢 Nouveau Signal:', tp1_hit:'✅ TP1 Atteint:', tp2_hit:'✅ TP2 Atteint:',
+    tp3_hit:'🏆 TP3 Runner:', sl_hit:'🔴 Stop Loss:'
   },
   es:{
     home:'Inicio', signals:'Señales', games:'Juegos', news:'Noticias', more:'Más',
@@ -3532,7 +3610,44 @@ const i18n={
     sign_out:'Cerrar Sesión', deep_dive:'Inmersión ↓', show_less:'Mostrar menos ↑',
     make_money_title:'💰 Socios de Exchange', make_money_sub:'Regístrate vía nuestros socios de confianza',
     badge_free:'GRATIS', badge_premium:'⭐ LIBRO PREMIUM',
-    course_locked:'🔒 Libro Premium — Acceso Completo', course_unlock:'Desbloquear $12.99'
+    course_locked:'🔒 Libro Premium — Acceso Completo', course_unlock:'Desbloquear $12.99',
+    no_signals:'Aún no hay señales archivadas. Vuelva después de la próxima actualización.',
+    hide:'Ocultar ▴', show:'Mostrar ▾', win_rate_lbl:'Tasa de Éxito:', avg_rr:'R:R Prom:', total:'Total:',
+    entry:'Entrada', sl:'SL', tp1:'TP1', fired:'Disparado:', fetching:'Cargando...',
+    auto_refresh:'Auto-actualización 60s', archive_sub:'Últimas 50 señales · seguimiento de eficacia',
+    loading_analytics:'📊 Cargando análisis...', loading_notif:'🔔 Cargando ajustes de notificaciones...',
+    or_divider:'o', email_placeholder:'tu@email.com', password_placeholder:'Contraseña',
+    name_placeholder:'Tu nombre', min_chars:'Mínimo 8 caracteres',
+    forgot_msg:'Ingresa tu email y te enviaremos un enlace para restablecer.',
+    active_members:'2.847 Miembros Activos', signal_accuracy:'97% Precisión de Señales', markets_covered:'3 Mercados Cubiertos',
+    crypto_bot:'Bot Señales Cripto', forex_bot:'Bot Señales Forex', stocks_bot:'Bot Señales Acciones',
+    tg_community:'Comunidad Telegram', premium_desc:'Copiador de señales, sin anuncios, analítica',
+    email_support:'Soporte Email', direct_msg:'Mensaje Directo',
+    risk_disclaimer:'Descargo de Responsabilidad', risk_sub:'Importante — leer antes de operar',
+    terms:'Términos y Condiciones', terms_sub:'Política de uso · Propiedad intelectual',
+    live_data:'📡 Estado de Datos en Vivo', live_data_sub:'Toca para verificar todas las fuentes',
+    check_sources:'🔄 Verificar Fuentes', account_security:'🔐 Seguridad de la Cuenta',
+    auto_activated:'Activación automática instantánea al pagar ⚡',
+    pay_telegram:'Pagar vía Telegram', dm_support:'DM @asterix_support1 para coordinar',
+    powered_nowpay:'Impulsado por NOWPayments · Seguro · No custodial',
+    payment_confirmed:'¡Pago Confirmado!', close_btn:'Cerrar',
+    place_bet:'🚀 Apostar', cash_out:'💰 Cobrar',
+    enter_email:'Ingresa tu email primero', fill_fields:'Completa todos los campos',
+    pass_min:'Contraseña mínimo 8 caracteres', login_first:'Inicia sesión primero',
+    invalid_code:'❌ Código inválido', premium_activated:'⭐ ¡Premium activado! Bienvenido al círculo 🎉',
+    admin_notified:'Admin notificado ✅ — activación en 24h',
+    payment_failed:'No se pudo crear el pago — intenta otra vez u otro método',
+    premium_auto:'⭐ ¡Premium activado automáticamente! Bienvenido 🎉',
+    profile_saved:'Perfil guardado ✓', pic_updated:'Foto de perfil actualizada ✓',
+    insuf_balance:'❌ Saldo ATX insuficiente',
+    installed:'✅ ¡AxTrader instalado! Encuéntralo en tu pantalla de inicio.',
+    install_howto:'📱 Abre menú del navegador → \'Añadir a pantalla de inicio\'',
+    notif_unsupported:'Notificaciones no soportadas en este dispositivo',
+    alerts_enabled:'¡Alertas activadas! Serás notificado en cada señal.',
+    alerts_blocked:'Alertas bloqueadas. Actívalas en los ajustes del navegador.',
+    welcome:'Bienvenido, ', signed_as:'Sesión como…',
+    new_signal:'🟢 Nueva Señal:', tp1_hit:'✅ TP1 Alcanzado:', tp2_hit:'✅ TP2 Alcanzado:',
+    tp3_hit:'🏆 TP3 Runner:', sl_hit:'🔴 Stop Loss:'
   },
   pt:{
     home:'Início', signals:'Sinais', games:'Jogos', news:'Notícias', more:'Mais',
@@ -3571,7 +3686,44 @@ const i18n={
     sign_out:'Sair', deep_dive:'Mergulhar ↓', show_less:'Mostrar menos ↑',
     make_money_title:'💰 Parceiros de Exchange', make_money_sub:'Cadastre-se via nossos parceiros de confiança',
     badge_free:'GRÁTIS', badge_premium:'⭐ LIVRO PREMIUM',
-    course_locked:'🔒 Livro Premium — Acesso Completo', course_unlock:'Desbloquear $12.99'
+    course_locked:'🔒 Livro Premium — Acesso Completo', course_unlock:'Desbloquear $12.99',
+    no_signals:'Nenhum sinal arquivado ainda. Volte após a próxima atualização.',
+    hide:'Ocultar ▴', show:'Mostrar ▾', win_rate_lbl:'Taxa de Acerto:', avg_rr:'R:R Méd:', total:'Total:',
+    entry:'Entrada', sl:'SL', tp1:'TP1', fired:'Disparado:', fetching:'Carregando...',
+    auto_refresh:'Atualização auto 60s', archive_sub:'Últimos 50 sinais · rastreamento de eficácia',
+    loading_analytics:'📊 Carregando análises...', loading_notif:'🔔 Carregando configurações de notificação...',
+    or_divider:'ou', email_placeholder:'voce@email.com', password_placeholder:'Senha',
+    name_placeholder:'Seu nome', min_chars:'Mínimo 8 caracteres',
+    forgot_msg:'Digite seu email e enviaremos um link de redefinição.',
+    active_members:'2.847 Membros Ativos', signal_accuracy:'97% Precisão dos Sinais', markets_covered:'3 Mercados Cobertos',
+    crypto_bot:'Bot Sinais Cripto', forex_bot:'Bot Sinais Forex', stocks_bot:'Bot Sinais Ações',
+    tg_community:'Comunidade Telegram', premium_desc:'Copiador de sinais, sem anúncios, análises',
+    email_support:'Suporte Email', direct_msg:'Mensagem Direta',
+    risk_disclaimer:'Aviso de Risco', risk_sub:'Importante — leia antes de operar',
+    terms:'Termos e Condições', terms_sub:'Política de uso · Propriedade intelectual',
+    live_data:'📡 Status dos Dados ao Vivo', live_data_sub:'Toque para verificar todas as fontes',
+    check_sources:'🔄 Verificar Fontes', account_security:'🔐 Segurança da Conta',
+    auto_activated:'Ativação automática instantânea ao pagar ⚡',
+    pay_telegram:'Pagar via Telegram', dm_support:'DM @asterix_support1 para combinar',
+    powered_nowpay:'Powered by NOWPayments · Seguro · Non-custodial',
+    payment_confirmed:'Pagamento Confirmado!', close_btn:'Fechar',
+    place_bet:'🚀 Apostar', cash_out:'💰 Sacar',
+    enter_email:'Digite seu email primeiro', fill_fields:'Preencha todos os campos',
+    pass_min:'Senha mínimo 8 caracteres', login_first:'Faça login primeiro',
+    invalid_code:'❌ Código inválido', premium_activated:'⭐ Premium ativado! Bem-vindo ao círculo 🎉',
+    admin_notified:'Admin notificado ✅ — ativação em 24h',
+    payment_failed:'Não foi possível criar o pagamento — tente novamente ou use outro método',
+    premium_auto:'⭐ Premium ativado automaticamente! Bem-vindo 🎉',
+    profile_saved:'Perfil salvo ✓', pic_updated:'Foto de perfil atualizada ✓',
+    insuf_balance:'❌ Saldo ATX insuficiente',
+    installed:'✅ AxTrader instalado! Encontre-o na tela inicial.',
+    install_howto:'📱 Abra o menu do navegador → \'Adicionar à tela inicial\'',
+    notif_unsupported:'Notificações não suportadas neste dispositivo',
+    alerts_enabled:'Alertas ativados! Você será notificado a cada sinal.',
+    alerts_blocked:'Alertas bloqueados. Ative nas configurações do navegador.',
+    welcome:'Bem-vindo, ', signed_as:'Conectado como…',
+    new_signal:'🟢 Novo Sinal:', tp1_hit:'✅ TP1 Atingido:', tp2_hit:'✅ TP2 Atingido:',
+    tp3_hit:'🏆 TP3 Runner:', sl_hit:'🔴 Stop Loss:'
   },
   ar:{
     home:'الرئيسية', signals:'إشارات', games:'ألعاب', news:'أخبار', more:'المزيد',
@@ -3610,11 +3762,52 @@ const i18n={
     sign_out:'تسجيل الخروج', deep_dive:'تعمق ↓', show_less:'عرض أقل ↑',
     make_money_title:'💰 شركاء البورصة', make_money_sub:'سجل عبر شركائنا الموثوقين',
     badge_free:'مجاني', badge_premium:'⭐ كتاب مميز',
-    course_locked:'🔒 كتاب مميز — وصول كامل', course_unlock:'إلغاء القفل $12.99'
+    course_locked:'🔒 كتاب مميز — وصول كامل', course_unlock:'إلغاء القفل $12.99',
+    no_signals:'لا توجد إشارات مؤرشفة بعد. تحقق بعد التحديث القادم.',
+    hide:'إخفاء ▴', show:'عرض ▾', win_rate_lbl:'معدل الفوز:', avg_rr:'متوسط R:R:', total:'المجموع:',
+    entry:'دخول', sl:'وقف', tp1:'هدف1', fired:'أُطلق:', fetching:'جاري التحميل...',
+    auto_refresh:'تحديث تلقائي 60ث', archive_sub:'آخر 50 إشارة · تتبع الفعالية',
+    loading_analytics:'📊 جاري تحميل التحليلات...', loading_notif:'🔔 جاري تحميل إعدادات الإشعارات...',
+    or_divider:'أو', email_placeholder:'you@email.com', password_placeholder:'كلمة المرور',
+    name_placeholder:'اسمك', min_chars:'8 أحرف كحد أدنى',
+    forgot_msg:'أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين.',
+    active_members:'2,847 عضو نشط', signal_accuracy:'97% دقة الإشارات', markets_covered:'3 أسواق مغطاة',
+    crypto_bot:'بوت إشارات الكريبتو', forex_bot:'بوت إشارات الفوركس', stocks_bot:'بوت إشارات الأسهم',
+    tg_community:'مجتمع تيليجرام', premium_desc:'ناسخ إشارات، بدون إعلانات، تحليلات',
+    email_support:'دعم البريد', direct_msg:'رسالة مباشرة',
+    risk_disclaimer:'إخلاء المسؤولية', risk_sub:'مهم — يرجى القراءة قبل التداول',
+    terms:'الشروط والأحكام', terms_sub:'سياسة الاستخدام · الملكية الفكرية',
+    live_data:'📡 حالة البيانات المباشرة', live_data_sub:'اضغط للتحقق من جميع المصادر',
+    check_sources:'🔄 فحص المصادر', account_security:'🔐 أمان الحساب',
+    auto_activated:'تفعيل تلقائي فوري عند الدفع ⚡',
+    pay_telegram:'الدفع عبر تيليجرام', dm_support:'أرسل رسالة @asterix_support1 للترتيب',
+    powered_nowpay:'مدعوم من NOWPayments · آمن · غير احتجازي',
+    payment_confirmed:'تم تأكيد الدفع!', close_btn:'إغلاق',
+    place_bet:'🚀 رهان', cash_out:'💰 سحب',
+    enter_email:'أدخل بريدك أولاً', fill_fields:'املأ جميع الحقول',
+    pass_min:'كلمة المرور 8 أحرف كحد أدنى', login_first:'يرجى تسجيل الدخول أولاً',
+    invalid_code:'❌ رمز غير صالح', premium_activated:'⭐ تم تفعيل المميز! مرحباً بك 🎉',
+    admin_notified:'تم إخطار المسؤول ✅ — توقع التفعيل خلال 24 ساعة',
+    payment_failed:'تعذر إنشاء الدفع — حاول مرة أخرى أو استخدم طريقة أخرى',
+    premium_auto:'⭐ تم تفعيل المميز تلقائياً! مرحباً 🎉',
+    profile_saved:'تم حفظ الملف ✓', pic_updated:'تم تحديث صورة الملف ✓',
+    insuf_balance:'❌ رصيد ATX غير كافٍ',
+    installed:'✅ تم تثبيت AxTrader! ابحث عنه في شاشتك الرئيسية.',
+    install_howto:'📱 افتح قائمة المتصفح → \'إضافة إلى الشاشة الرئيسية\'',
+    notif_unsupported:'الإشعارات غير مدعومة على هذا الجهاز',
+    alerts_enabled:'تم تفعيل التنبيهات! سيتم إخطارك عند كل إشارة.',
+    alerts_blocked:'التنبيهات محظورة. فعّلها في إعدادات المتصفح.',
+    welcome:'مرحباً، ', signed_as:'مسجل الدخول كـ…',
+    new_signal:'🟢 إشارة جديدة:', tp1_hit:'✅ الهدف1:', tp2_hit:'✅ الهدف2:',
+    tp3_hit:'🏆 الهدف3:', sl_hit:'🔴 وقف الخسارة:'
   }
 };
+// v3.6: Global translation helper — returns translated string or English fallback
+function T(key) { return (i18n[appState.lang] || i18n.en)[key] || i18n.en[key] || key; }
+
 function setLang(lang) {
   appState.lang=lang;
+  try { localStorage.setItem('ax_lang', lang); } catch(e) {}
   const t=i18n[lang]||i18n.en;
 
   // Nav labels
@@ -3836,7 +4029,7 @@ async function notifyBankTransfer() {
     );
     const json = await res.json();
     if (json.ok) {
-      showToast('Admin notified ✅ — expect activation within 24h');
+      showToast(T('admin_notified'));
       closeOverlay('wire-overlay');
     } else {
       throw new Error(json.description || 'Telegram error');
@@ -3864,13 +4057,13 @@ const NP_CURRENCIES = {
 };
 
 function openNowPayments() {
-  if (!appState.user) { showToast('Please log in first'); return; }
+  if (!appState.user) { showToast(T('login_first')); return; }
   closeOverlay('upgrade-overlay');
   openOverlay('np-currency-overlay', true);
 }
 
 async function createNowPayment(currency) {
-  if (!appState.user?.email) { showToast('Please log in first'); return; }
+  if (!appState.user?.email) { showToast(T('login_first')); return; }
   closeOverlay('np-currency-overlay');
 
   // Show loading state
@@ -3925,7 +4118,7 @@ async function createNowPayment(currency) {
   } catch (err) {
     console.error('NOWPayments create error:', err);
     closeOverlay('np-payment-overlay');
-    showToast('Could not create payment — try again or use another method');
+    showToast(T('payment_failed'));
   }
 }
 
@@ -3989,7 +4182,7 @@ function grantPremiumAutomatically() {
   if (hpb) hpb.style.display = 'none';
   if (typeof stopInterstitialTimer === 'function') stopInterstitialTimer();
   if (typeof sparkleBurst === 'function') sparkleBurst();
-  showToast('⭐ Premium activated automatically! Welcome 🎉');
+  showToast(T('premium_auto'));
 }
 
 function cancelNowPayment() {
@@ -4054,7 +4247,7 @@ function saveProfile() {
   if(!appState.avatarDataURL) document.getElementById('profile-avatar-letter').textContent=l;
   try { localStorage.setItem('ax_user', JSON.stringify(appState.user)); } catch(e) {}
   closeOverlay('profile-overlay');
-  showToast('Profile saved ✓');
+  showToast(T('profile_saved'));
 }
 function triggerAvatarUpload(){document.getElementById('avatar-upload').click();}
 function handleAvatarChange(e) {
@@ -4072,7 +4265,7 @@ function handleAvatarChange(e) {
     btn.style.backgroundImage=`url(${ev.target.result})`;
     btn.style.backgroundSize='cover';
     btn.textContent='';
-    showToast('Profile picture updated ✓');
+    showToast(T('pic_updated'));
   };
   reader.readAsDataURL(file);
 }
@@ -5272,15 +5465,17 @@ async function fetchLiveNews() {
 }
 
 function renderFallbackNews() {
+  // v3.6: Use dynamic timestamps so fallback doesn't look stale
+  const now = Date.now();
   allNewsData = [
-    {tag:'BITCOIN', title:'BTC Breaks $68K — Analysts Target $72K', body:'Bitcoin surged past $68,000 after a significant liquidity sweep below $65K. On-chain data shows whale accumulation consistent with GWP Liquidity Trap patterns.', time:'2h ago', source:'CoinDesk', url:'https://coindesk.com'},
-    {tag:'ETHEREUM', title:'ETH Accumulation — ETF Inflows Record High', body:'Ethereum spot ETFs recorded highest single-day inflows since launch. Textbook Order Block behavior visible at $3,400 on the daily chart.', time:'4h ago', source:'CoinTelegraph', url:'https://cointelegraph.com'},
-    {tag:'FOREX', title:'XAU/USD Approaches All-Time High at $2,350', body:'Gold continues its institutional accumulation phase. Ghost Wick detected at $2,278 on the daily chart — one of the clearest GWP setups this quarter.', time:'6h ago', source:'Reuters', url:'https://reuters.com'},
-    {tag:'MACRO', title:'Fed Minutes Signal Rate Cut Timeline Uncertainty', body:'Federal Reserve minutes revealed ongoing disagreement on rate cuts. Higher-for-longer expectations weigh on risk assets, though BTC shows relative strength.', time:'8h ago', source:'Bloomberg', url:'https://bloomberg.com'},
-    {tag:'DEFI', title:'DEXE Protocol Surges 18% — Governance Passes', body:'DEXE rallied sharply after governance proposal passed. GWP bot detected a Liquidity Trap at $11.90 before the surge.', time:'12h ago', source:'The Block', url:'https://theblock.co'},
-    {tag:'STOCKS', title:'NVDA Reports Record Earnings — AI Demand Soars', body:'NVIDIA posted record quarterly results driven by AI chip demand. Institutional inflows into tech correlate with risk-on sentiment in crypto markets.', time:'14h ago', source:'MarketWatch', url:'https://marketwatch.com'},
-    {tag:'MACRO', title:'IMF Warns of Global Debt Levels Reaching Record Highs', body:'The IMF flagged systemic risks from sovereign debt exceeding $100 trillion globally. Hard assets and crypto see renewed safe-haven interest.', time:'18h ago', source:'FT', url:'https://ft.com'},
-    {tag:'ALTCOIN', title:'SOL Ecosystem Sees Record DEX Volume', body:'Solana DEXs hit $4.2B daily volume. On-chain metrics confirm institutional-level activity consistent with accumulation patterns.', time:'22h ago', source:'CoinDesk', url:'https://coindesk.com'},
+    {tag:'BITCOIN', title:'BTC Breaks $68K — Analysts Target $72K', body:'Bitcoin surged past $68,000 after a significant liquidity sweep below $65K. On-chain data shows whale accumulation consistent with GWP Liquidity Trap patterns.', ts:now-2*3600000, time:timeAgo((now-2*3600000)/1000), source:'CoinDesk', url:'https://coindesk.com'},
+    {tag:'ETHEREUM', title:'ETH Accumulation — ETF Inflows Record High', body:'Ethereum spot ETFs recorded highest single-day inflows since launch. Textbook Order Block behavior visible at $3,400 on the daily chart.', ts:now-4*3600000, time:timeAgo((now-4*3600000)/1000), source:'CoinTelegraph', url:'https://cointelegraph.com'},
+    {tag:'FOREX', title:'XAU/USD Approaches All-Time High at $2,350', body:'Gold continues its institutional accumulation phase. Ghost Wick detected at $2,278 on the daily chart — one of the clearest GWP setups this quarter.', ts:now-6*3600000, time:timeAgo((now-6*3600000)/1000), source:'Reuters', url:'https://reuters.com'},
+    {tag:'MACRO', title:'Fed Minutes Signal Rate Cut Timeline Uncertainty', body:'Federal Reserve minutes revealed ongoing disagreement on rate cuts. Higher-for-longer expectations weigh on risk assets, though BTC shows relative strength.', ts:now-8*3600000, time:timeAgo((now-8*3600000)/1000), source:'Bloomberg', url:'https://bloomberg.com'},
+    {tag:'DEFI', title:'DEXE Protocol Surges 18% — Governance Passes', body:'DEXE rallied sharply after governance proposal passed. GWP bot detected a Liquidity Trap at $11.90 before the surge.', ts:now-12*3600000, time:timeAgo((now-12*3600000)/1000), source:'The Block', url:'https://theblock.co'},
+    {tag:'STOCKS', title:'NVDA Reports Record Earnings — AI Demand Soars', body:'NVIDIA posted record quarterly results driven by AI chip demand. Institutional inflows into tech correlate with risk-on sentiment in crypto markets.', ts:now-14*3600000, time:timeAgo((now-14*3600000)/1000), source:'MarketWatch', url:'https://marketwatch.com'},
+    {tag:'MACRO', title:'IMF Warns of Global Debt Levels Reaching Record Highs', body:'The IMF flagged systemic risks from sovereign debt exceeding $100 trillion globally. Hard assets and crypto see renewed safe-haven interest.', ts:now-18*3600000, time:timeAgo((now-18*3600000)/1000), source:'FT', url:'https://ft.com'},
+    {tag:'ALTCOIN', title:'SOL Ecosystem Sees Record DEX Volume', body:'Solana DEXs hit $4.2B daily volume. On-chain metrics confirm institutional-level activity consistent with accumulation patterns.', ts:now-22*3600000, time:timeAgo((now-22*3600000)/1000), source:'CoinDesk', url:'https://coindesk.com'},
   ];
   renderNews();
   renderHomePreviewNews();
@@ -5475,7 +5670,7 @@ function crashAction(){
     if(typeof sparkle==='function') sparkle(24);return;
   }
   crashBet=parseInt(document.getElementById('crash-bet').value)||50;
-  if(crashBet>getATXBalance()) return showToast('❌ Insufficient ATX balance');
+  if(crashBet>getATXBalance()) return showToast(T('insuf_balance'));
   if(!removeATX(crashBet, 'crash')) return;
   updateBalanceDisplays();
   msg.style.display='none';crashMult=1.0;crashRunning=true;crashCashedOut=false;
@@ -5517,7 +5712,7 @@ function initMinesGrid(){
 function startMines(){
   minesBet=parseInt(document.getElementById('mines-bet').value)||50;
   minesCount=Math.min(parseInt(document.getElementById('mines-count').value)||3,20);
-  if(minesBet>getATXBalance()) return showToast('❌ Insufficient ATX balance');
+  if(minesBet>getATXBalance()) return showToast(T('insuf_balance'));
   if(!removeATX(minesBet, 'mines')) return;
   updateBalanceDisplays();
   minesRevealed=0;minesMult=1.0;minesActive=true;minesGrid=Array(25).fill(false);
@@ -5576,7 +5771,7 @@ function drawPlinkoBoard(){
 }
 function dropPlinko(){
   const bet=parseInt(document.getElementById('plinko-bet').value)||50;
-  if(bet>getATXBalance()) return showToast('❌ Insufficient ATX balance');
+  if(bet>getATXBalance()) return showToast(T('insuf_balance'));
   if(!removeATX(bet, 'plinko')) return;
   updateBalanceDisplays();
   const mults=[0.2,0.5,1,2,5,2,1,0.5,0.2],weights=[5,10,15,20,25,20,15,10,5];
@@ -5622,7 +5817,7 @@ function drawCandles(){
 }
 function candleCall(dir){
   const bet=parseInt(document.getElementById('candle-bet').value)||50;
-  if(bet>getATXBalance()) return showToast('❌ Insufficient ATX balance');
+  if(bet>getATXBalance()) return showToast(T('insuf_balance'));
   if(!removeATX(bet, 'candle')) return;
   updateBalanceDisplays();
   const last=candleHistory[candleHistory.length-1];
@@ -5737,7 +5932,7 @@ window.addEventListener('appinstalled', () => {
   _deferredInstallPrompt = null;
   const btn = document.getElementById('pwa-install-btn');
   if (btn) btn.style.display = 'none';
-  showToast('✅ AxTrader installed! Find it on your home screen.');
+  showToast(T('installed'));
 });
 
 // iOS: show the button with different copy (manual instructions)
@@ -5761,7 +5956,7 @@ async function triggerInstallPrompt() {
     // iOS Safari — show step-by-step modal
     openOverlay('ios-install-overlay', true);
   } else {
-    showToast('📱 Open browser menu → "Add to Home Screen"');
+    showToast(T('install_howto'));
   }
 }
 
@@ -6516,6 +6711,8 @@ function renderATXHistory() {
 
 // ============ INIT APP ============
 function initApp() {
+  // v3.6: Apply saved language on startup
+  if (appState.lang && appState.lang !== 'en') setLang(appState.lang);
   buildTicker(null);             // render placeholder immediately
   fetchLiveTicker();             // then replace with live prices
   fetchSignalsFromSheet();
