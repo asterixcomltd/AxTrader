@@ -1474,7 +1474,7 @@ canvas{width:100%;height:100%}
         <div class="section-header">
           <div>
             <div class="section-title">🎯 AxTrader Signals</div>
-            <div style="font-size:.72rem;color:var(--text3);margin-top:1px">GWP™ Powered · 3 Markets · Live</div>
+            <div style="font-size:.72rem;color:var(--text3);margin-top:1px">GWP™ Powered · 3 Markets</div>
           </div>
           <button class="refresh-btn" id="refresh-btn" onclick="manualRefresh()">
             <span class="spin-icon">↻</span><span id="signal-last-update">Fetching...</span>
@@ -2601,10 +2601,19 @@ async function fetchSignalsFromSheet() {
     (Array.isArray(forex)?forex:[]).forEach(s=>{ if(!s.bot) s.bot='forex'; });
     (Array.isArray(stocks)?stocks:[]).forEach(s=>{ if(!s.bot) s.bot='stocks'; });
 
-    // Merge all, sort newest-first
+    // Merge all, sort newest-first, filter out expired signals
     const merged = [...(Array.isArray(crypto)?crypto:[]), ...(Array.isArray(forex)?forex:[]), ...(Array.isArray(stocks)?stocks:[])]
       .filter(s => s && (s.pair || s.symbol))
       .map(s => { if (!s.pair && s.symbol) s.pair = s.symbol; return s; })
+      .filter(s => {
+        // Remove expired signals from main display — they move to archive automatically
+        const base = s.ts || s.timestamp;
+        if (!base) return true;
+        const tf = (s.tf || s.timeframe || '4H').toUpperCase();
+        const addMs = tf === '1H' ? 4*3600000 : tf === '1D' ? 78*3600000 : 16*3600000;
+        const expiresAt = s.expiresAt || (base + addMs);
+        return Date.now() < expiresAt;
+      })
       .sort((a, b) => (b.ts || b.timestamp || 0) - (a.ts || a.timestamp || 0))
       .slice(0, 30);
 
@@ -2674,7 +2683,7 @@ async function fetchSignalsFromSheet() {
     const top2F = pickSecond(forexPool, topF);
     const top2S = pickSecond(stocksPool, topS);
 
-    // Build 6-slot array — only use real live signals, no fallbacks
+    // Build 6-slot array — only use real active signals, no fallbacks
     const ordered = [topC, topF, topS, top2C, top2F, top2S].filter(Boolean);
 
     signalsData = ordered.slice(0, 6).map((s, i) => normalizeSignal(s, i >= 3));
@@ -2704,7 +2713,7 @@ async function fetchSignalsFromSheet() {
 }
 
 function renderFallbackSignals() {
-  // No live signals yet — show clean empty state
+  // No active signals — show clean empty state
   signalsData = [];
   const el = document.getElementById('signal-last-update');
   if(el) el.textContent = 'Waiting for bot...';
@@ -2720,7 +2729,7 @@ function setSignalSourceBadge(isLive, count) {
   if (!badge) return;
   if (isLive) {
     badge.className = 'live-source-badge live';
-    badge.textContent = '● LIVE — ' + count + ' signal' + (count !== 1 ? 's' : '') + ' from sheet';
+    badge.textContent = '● Active — ' + count + ' signal' + (count !== 1 ? 's' : '');
   } else {
     badge.className = 'live-source-badge demo';
     badge.textContent = '⏳ Waiting for bot signal...';
@@ -3018,11 +3027,15 @@ function getGrade(s) {
 function renderSignals() {
   const container = document.getElementById('signals-list');
   if (!container) return;
+
+  // Filter out signals that expired since last fetch
+  signalsData = signalsData.filter(s => !s.expiresAt || Date.now() < s.expiresAt);
+
   if (signalsData.length === 0) {
     container.innerHTML = `<div style="text-align:center;padding:40px 24px;background:var(--surface);border-radius:16px;border:1.5px dashed var(--border);margin:16px">
       <div style="font-size:2.5rem;margin-bottom:12px">📡</div>
-      <div style="font-weight:700;color:var(--text);font-size:1rem;margin-bottom:6px">No live signals yet</div>
-      <div style="font-size:.82rem;color:var(--text2);margin-bottom:16px">The bot scans markets every 30 minutes.<br>Live signals will appear here automatically.</div>
+      <div style="font-weight:700;color:var(--text);font-size:1rem;margin-bottom:6px">${T('no_active_signals')}</div>
+      <div style="font-size:.82rem;color:var(--text2);margin-bottom:16px">${T('active_signals_desc')}</div>
       <button onclick="manualRefresh()" style="padding:9px 20px;background:var(--gold);color:#fff;border:none;border-radius:10px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit">↻ Check Now</button>
     </div>`;
     return;
@@ -3151,8 +3164,12 @@ function renderSignals() {
   const countEl = document.getElementById('ps-signals');
   if(countEl) countEl.textContent = signalsData.length;
 
-  // Update archive stats bar
+  // Update archive outcomes with live prices, then refresh archive + stats
+  if (typeof livePriceMap !== 'undefined' && Object.keys(livePriceMap).length) {
+    updateArchiveOutcomes(livePriceMap);
+  }
   updateArchiveStats();
+  renderArchive();
 }
 
 function renderHomePreview() {
@@ -3161,8 +3178,8 @@ function renderHomePreview() {
   if(signalsData.length === 0) {
     preview.innerHTML = `<div style="text-align:center;padding:24px 16px;background:var(--surface);border-radius:16px;border:1.5px dashed var(--border);margin-bottom:8px">
       <div style="font-size:2rem;margin-bottom:8px">📡</div>
-      <div style="font-weight:700;color:var(--text);margin-bottom:4px">No live signals yet</div>
-      <div style="font-size:.8rem;color:var(--text2)">Bot scans every 30 minutes. Check back soon.</div>
+      <div style="font-weight:700;color:var(--text);margin-bottom:4px">${T('no_active_signals')}</div>
+      <div style="font-size:.8rem;color:var(--text2)">${T('active_signals_desc_short')}</div>
     </div>`;
     return;
   }
@@ -3499,7 +3516,11 @@ const i18n={
     alerts_blocked:'Alerts blocked. Enable in browser settings to receive alerts.',
     welcome:'Welcome, ', signed_as:'Signed in as…',
     new_signal:'🟢 New Signal:', tp1_hit:'✅ TP1 Hit:', tp2_hit:'✅ TP2 Hit:',
-    tp3_hit:'🏆 TP3 Runner:', sl_hit:'🔴 Stop Loss:'
+    tp3_hit:'🏆 TP3 Runner:', sl_hit:'🔴 Stop Loss:',
+    no_active_signals:'No active signals yet',
+    active_signals_desc:'The bot scans markets every 30 minutes.<br>Active signals will appear here automatically.',
+    active_signals_desc_short:'Bot scans every 30 minutes. Check back soon.',
+    waiting_bot:'Waiting for bot signal...'
   },
   fr:{
     home:'Accueil', signals:'Signaux', games:'Jeux', news:'Actualités', more:'Plus',
@@ -3575,7 +3596,11 @@ const i18n={
     alerts_blocked:'Alertes bloquées. Activez-les dans les paramètres du navigateur.',
     welcome:'Bienvenue, ', signed_as:'Connecté en tant que…',
     new_signal:'🟢 Nouveau Signal:', tp1_hit:'✅ TP1 Atteint:', tp2_hit:'✅ TP2 Atteint:',
-    tp3_hit:'🏆 TP3 Runner:', sl_hit:'🔴 Stop Loss:'
+    tp3_hit:'🏆 TP3 Runner:', sl_hit:'🔴 Stop Loss:',
+    no_active_signals:'Aucun signal actif pour le moment',
+    active_signals_desc:'Le bot analyse les marchés toutes les 30 minutes.<br>Les signaux actifs apparaîtront ici automatiquement.',
+    active_signals_desc_short:'Le bot analyse toutes les 30 min. Revenez bientôt.',
+    waiting_bot:'En attente du signal du bot...'
   },
   es:{
     home:'Inicio', signals:'Señales', games:'Juegos', news:'Noticias', more:'Más',
@@ -3651,7 +3676,11 @@ const i18n={
     alerts_blocked:'Alertas bloqueadas. Actívalas en los ajustes del navegador.',
     welcome:'Bienvenido, ', signed_as:'Sesión como…',
     new_signal:'🟢 Nueva Señal:', tp1_hit:'✅ TP1 Alcanzado:', tp2_hit:'✅ TP2 Alcanzado:',
-    tp3_hit:'🏆 TP3 Runner:', sl_hit:'🔴 Stop Loss:'
+    tp3_hit:'🏆 TP3 Runner:', sl_hit:'🔴 Stop Loss:',
+    no_active_signals:'No hay señales activas aún',
+    active_signals_desc:'El bot escanea los mercados cada 30 minutos.<br>Las señales activas aparecerán aquí automáticamente.',
+    active_signals_desc_short:'El bot escanea cada 30 min. Vuelve pronto.',
+    waiting_bot:'Esperando señal del bot...'
   },
   pt:{
     home:'Início', signals:'Sinais', games:'Jogos', news:'Notícias', more:'Mais',
@@ -3727,7 +3756,11 @@ const i18n={
     alerts_blocked:'Alertas bloqueados. Ative nas configurações do navegador.',
     welcome:'Bem-vindo, ', signed_as:'Conectado como…',
     new_signal:'🟢 Novo Sinal:', tp1_hit:'✅ TP1 Atingido:', tp2_hit:'✅ TP2 Atingido:',
-    tp3_hit:'🏆 TP3 Runner:', sl_hit:'🔴 Stop Loss:'
+    tp3_hit:'🏆 TP3 Runner:', sl_hit:'🔴 Stop Loss:',
+    no_active_signals:'Nenhum sinal ativo ainda',
+    active_signals_desc:'O bot analisa os mercados a cada 30 minutos.<br>Sinais ativos aparecerão aqui automaticamente.',
+    active_signals_desc_short:'O bot analisa a cada 30 min. Volte em breve.',
+    waiting_bot:'Aguardando sinal do bot...'
   },
   ar:{
     home:'الرئيسية', signals:'إشارات', games:'ألعاب', news:'أخبار', more:'المزيد',
@@ -3803,7 +3836,11 @@ const i18n={
     alerts_blocked:'التنبيهات محظورة. فعّلها في إعدادات المتصفح.',
     welcome:'مرحباً، ', signed_as:'مسجل الدخول كـ…',
     new_signal:'🟢 إشارة جديدة:', tp1_hit:'✅ الهدف1:', tp2_hit:'✅ الهدف2:',
-    tp3_hit:'🏆 الهدف3:', sl_hit:'🔴 وقف الخسارة:'
+    tp3_hit:'🏆 الهدف3:', sl_hit:'🔴 وقف الخسارة:',
+    no_active_signals:'لا توجد إشارات نشطة بعد',
+    active_signals_desc:'يقوم البوت بمسح الأسواق كل 30 دقيقة.<br>ستظهر الإشارات النشطة هنا تلقائياً.',
+    active_signals_desc_short:'يمسح البوت كل 30 دقيقة. عد قريباً.',
+    waiting_bot:'في انتظار إشارة البوت...'
   }
 };
 // v3.6: Global translation helper — returns translated string or English fallback
@@ -5250,11 +5287,13 @@ async function translateCourses(lang) {
     result[tab] = [];
     for (const c of coursesData[tab]) {
       try {
-        const [title, body] = await Promise.all([
+        const [title, body, detail, illus] = await Promise.all([
           translateText(c.title, lang),
-          translateText(c.body,  lang)
+          translateText(c.body,  lang),
+          c.detail ? translateText(c.detail, lang) : Promise.resolve(c.detail),
+          c.illus  ? translateText(c.illus,  lang) : Promise.resolve(c.illus)
         ]);
-        result[tab].push({ ...c, title, body });
+        result[tab].push({ ...c, title, body, detail, illus });
       } catch(e) {
         result[tab].push({ ...c });
       }
