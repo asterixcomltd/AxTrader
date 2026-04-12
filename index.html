@@ -255,6 +255,83 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 }
 .intros-close-btn:hover { opacity: .88; }
 
+/* ── Ad Nag Toast ───────────────────────────────────────────────── */
+#adnag-toast {
+  display: none;
+  position: fixed;
+  bottom: 82px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9000;
+  width: calc(100% - 40px);
+  max-width: 360px;
+  animation: slideUp .28s ease;
+}
+#adnag-toast .adnag-card {
+  background: #1a1814;
+  border: 1px solid rgba(201,168,76,.35);
+  border-radius: 18px;
+  padding: 14px 16px 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.65);
+  position: relative;
+  overflow: hidden;
+}
+#adnag-progress {
+  position: absolute;
+  top: 0; left: 0;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold2));
+  transform-origin: left;
+  transition: transform 7s linear;
+}
+#adnag-close {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,.09);
+  color: rgba(255,255,255,.55);
+  font-size: 11px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 1;
+}
+.adnag-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding-right: 22px;
+  margin-bottom: 11px;
+}
+.adnag-icon { font-size: 20px; margin-top: 1px; flex-shrink: 0; }
+.adnag-title {
+  color: #fff;
+  font-weight: 700;
+  font-size: .88rem;
+  font-family: 'Space Grotesk', sans-serif;
+  margin-bottom: 2px;
+}
+.adnag-sub {
+  color: rgba(255,255,255,.5);
+  font-size: .72rem;
+  line-height: 1.4;
+}
+.adnag-btn {
+  width: 100%;
+  padding: 9px;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  border: none;
+  border-radius: 10px;
+  color: #1a1814;
+  font-weight: 800;
+  font-size: .8rem;
+  font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer;
+  letter-spacing: .3px;
+}
+
 /* ── SPARKLE PARTICLE SYSTEM ────────────────────────────────── */
 #sparkle-auth {
   position: absolute;
@@ -6564,7 +6641,51 @@ function openPremiumCheckout() {
     const el = document.getElementById('interstitial-overlay');
     if (!el) return;
     el.classList.add('closing');
-    setTimeout(() => { try { el.remove(); } catch(e){} active = false; }, 280);
+    setTimeout(() => { try { el.remove(); } catch(e){} active = false; setTimeout(() => showAdNag(), 350); }, 280);
+  };
+
+    /* ── Ad Nag Toast ──────────────────────────────────────────── */
+  let _adNagTimer = null;
+
+  window.showAdNag = function () {
+    if (appState.isPremium) return;
+    const count = parseInt(localStorage.getItem('ax_ad_count') || '0') + 1;
+    localStorage.setItem('ax_ad_count', count);
+    if (count < 2) return; // skip first ad — ease them in
+
+    const toast = document.getElementById('adnag-toast');
+    const bar   = document.getElementById('adnag-progress');
+    if (!toast) return;
+
+    toast.style.display = 'block';
+
+    // Progress bar: reset to full width, then drain over 7s
+    if (bar) {
+      bar.style.transition = 'none';
+      bar.style.transform  = 'scaleX(1)';
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        bar.style.transition = 'transform 7s linear';
+        bar.style.transform  = 'scaleX(0)';
+      }));
+    }
+
+    clearTimeout(_adNagTimer);
+    _adNagTimer = setTimeout(window.closeAdNag, 7000);
+  };
+
+  window.closeAdNag = function () {
+    clearTimeout(_adNagTimer);
+    const toast = document.getElementById('adnag-toast');
+    if (!toast || toast.style.display === 'none') return;
+    toast.style.transition = 'opacity .2s ease, transform .2s ease';
+    toast.style.opacity    = '0';
+    toast.style.transform  = 'translateX(-50%) translateY(16px)';
+    setTimeout(() => {
+      toast.style.display    = 'none';
+      toast.style.opacity    = '';
+      toast.style.transform  = 'translateX(-50%)';
+      toast.style.transition = '';
+    }, 220);
   };
 
   window.startInterstitialTimer = function () {
@@ -6764,5 +6885,22 @@ function openPremiumCheckout() {
 })();
 // ══════════════════════════════════════════════════════════════
 </script>
+
+  <!-- ── Ad Nag Toast ─────────────────────────────────────────── -->
+  <div id="adnag-toast">
+    <div class="adnag-card">
+      <div id="adnag-progress"></div>
+      <button id="adnag-close" onclick="closeAdNag()">✕</button>
+      <div class="adnag-body">
+        <div class="adnag-icon">⚡</div>
+        <div>
+          <div class="adnag-title">Go ad-free</div>
+          <div class="adnag-sub">Premium removes all interruptions &amp; unlocks every signal</div>
+        </div>
+      </div>
+      <button class="adnag-btn" onclick="closeAdNag();openUpgrade();">Upgrade — $12.99 / mo</button>
+    </div>
+  </div>
+
 </body>
 </html>
