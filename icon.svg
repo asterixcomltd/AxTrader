@@ -1,11 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="92" fill="#1a1814"/>
-  <!-- A glyph -->
   <g fill="#c9a84c">
-    <!-- A letter (bold, institutional) -->
-    <path d="M 80 380 L 140 132 L 200 132 L 260 380 L 220 380 L 205 320 L 135 320 L 120 380 Z
-             M 145 280 L 195 280 L 170 190 Z"/>
-    <!-- x letter -->
-    <path d="M 290 200 L 320 200 L 360 260 L 400 200 L 430 200 L 378 280 L 430 360 L 400 360 L 360 300 L 320 360 L 290 360 L 342 280 Z"/>
+    <!-- A letter (bold, institutional, centered left) -->
+    <path d="M 62 380 L 132 132 L 202 132 L 272 380 L 228 380 L 210 310 L 124 310 L 106 380 Z
+             M 136 270 L 198 270 L 167 172 Z"/>
+    <!-- x letter (bold, matching weight, centered right) -->
+    <path d="M 280 180 L 316 180 L 363 252 L 410 180 L 446 180 L 384 280 L 448 380 L 412 380 L 363 306 L 314 380 L 278 380 L 342 280 Z"/>
   </g>
 </svg>
