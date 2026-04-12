@@ -33,12 +33,19 @@ v3 vs v2:
   ADDED:   Daily bias from daily swing structure (pure price)
 """
 
-import requests, json, os, time, sys
+import requests
+import json
+import os
+import time
+import sys
 from datetime import datetime, timezone
 
 # ── Config ────────────────────────────────────────────────────────────────────
-GIST_ID  = "a4caaf2993eea50322f31478391743b0"
+GIST_ID  = os.environ.get("GIST_ID", "a4caaf2993eea50322f31478391743b0")
 GIST_PAT = os.environ.get("GIST_PAT", "")
+
+# Daily bias cache — avoid redundant API calls per symbol
+_daily_bias_cache = {}
 
 BINANCE_URL = "https://api.binance.com/api/v3/klines"
 YAHOO_URL   = "https://query1.finance.yahoo.com/v8/finance/chart/{}"
@@ -78,41 +85,74 @@ STOCK_SYMBOLS = [
 
 EXPIRY_HOURS = {"1H": 4, "4H": 16, "1D": 78}  # v3.6: 1D raised 72→78 (aligned with CT gate)
 
-# ── Data Fetching ─────────────────────────────────────────────────────────────
-def fetch_binance(symbol, interval, limit=150):
-    try:
-        r = requests.get(BINANCE_URL,
-                         params={"symbol": symbol, "interval": interval, "limit": limit},
-                         timeout=10)
-        r.raise_for_status()
-        return [{"t": d[0], "o": float(d[1]), "h": float(d[2]),
-                 "l": float(d[3]), "c": float(d[4]), "v": float(d[5])}
-                for d in r.json()]
-    except Exception as e:
-        print(f"  ⚠ Binance fetch failed for {symbol} {interval}: {e}")
-        return []
+# ── Data Fetching (with retry + validation) ──────────────────────────────────
+def fetch_binance(symbol, interval, limit=150, retries=2):
+    for attempt in range(retries + 1):
+        try:
+            r = requests.get(BINANCE_URL,
+                             params={"symbol": symbol, "interval": interval, "limit": limit},
+                             timeout=10)
+            r.raise_for_status()
+            data = r.json()
+            if not isinstance(data, list) or not data:
+                print(f"  ⚠ Binance returned empty/invalid data for {symbol} {interval}")
+                return []
+            candles = []
+            for d in data:
+                if len(d) < 6:
+                    continue
+                try:
+                    candles.append({"t": d[0], "o": float(d[1]), "h": float(d[2]),
+                                    "l": float(d[3]), "c": float(d[4]), "v": float(d[5])})
+                except (ValueError, TypeError):
+                    continue
+            return candles
+        except Exception as e:
+            if attempt < retries:
+                time.sleep(1)
+                continue
+            print(f"  ⚠ Binance fetch failed for {symbol} {interval}: {e}")
+            return []
 
-def fetch_yahoo(symbol, limit=80):
-    try:
-        url = YAHOO_URL.format(symbol)
-        r = requests.get(url,
-                         params={"interval": "1d", "range": "6mo"},
-                         headers={"User-Agent": "Mozilla/5.0"},
-                         timeout=10)
-        r.raise_for_status()
-        res = r.json()["chart"]["result"][0]
-        ts  = res["timestamp"]
-        q   = res["indicators"]["quote"][0]
-        candles = []
-        for i in range(len(ts)):
-            if q["close"][i] is None: continue
-            candles.append({"t": ts[i]*1000, "o": q["open"][i],
-                            "h": q["high"][i], "l": q["low"][i],
-                            "c": q["close"][i], "v": q["volume"][i] or 0})
-        return candles[-limit:]
-    except Exception as e:
-        print(f"  ⚠ Yahoo fetch failed for {symbol}: {e}")
-        return []
+def fetch_yahoo(symbol, limit=80, retries=2):
+    for attempt in range(retries + 1):
+        try:
+            url = YAHOO_URL.format(symbol)
+            r = requests.get(url,
+                             params={"interval": "1d", "range": "6mo"},
+                             headers={"User-Agent": "Mozilla/5.0"},
+                             timeout=10)
+            r.raise_for_status()
+            body = r.json()
+            if "chart" not in body or "result" not in body["chart"]:
+                print(f"  ⚠ Yahoo returned unexpected structure for {symbol}")
+                return []
+            result = body["chart"]["result"]
+            if not result:
+                return []
+            res = result[0]
+            ts  = res.get("timestamp", [])
+            q   = res.get("indicators", {}).get("quote", [{}])[0]
+            candles = []
+            for i in range(len(ts)):
+                try:
+                    c = q["close"][i]
+                    if c is None:
+                        continue
+                    o = q["open"][i] or c
+                    h = q["high"][i] or c
+                    l = q["low"][i] or c
+                    v = q["volume"][i] or 0
+                    candles.append({"t": ts[i]*1000, "o": o, "h": h, "l": l, "c": c, "v": v})
+                except (KeyError, IndexError, TypeError):
+                    continue
+            return candles[-limit:]
+        except Exception as e:
+            if attempt < retries:
+                time.sleep(1)
+                continue
+            print(f"  ⚠ Yahoo fetch failed for {symbol}: {e}")
+            return []
 
 # ── ATR — geometric ruler only, NOT a signal ──────────────────────────────────
 def atr(candles, period=14):
@@ -378,7 +418,7 @@ def detect_gwp_sweep(candles, direction, lookback=30, equal_pct=0.003):
 
         for ref_low in swing_lows:
             # Are there at least 2 equal lows near this level?
-            equals = [l for l in swing_lows if abs(l - ref_low) / ref_low < equal_pct]
+            equals = [l for l in swing_lows if abs(l - ref_low) / max(abs(ref_low), 1e-10) < equal_pct]
             if len(equals) < 2:
                 continue
             liquidity_level = sum(equals) / len(equals)  # average of the pool
@@ -414,7 +454,7 @@ def detect_gwp_sweep(candles, direction, lookback=30, equal_pct=0.003):
                 swing_highs.append(hi)
 
         for ref_high in swing_highs:
-            equals = [h for h in swing_highs if abs(h - ref_high) / ref_high < equal_pct]
+            equals = [h for h in swing_highs if abs(h - ref_high) / max(abs(ref_high), 1e-10) < equal_pct]
             if len(equals) < 2:
                 continue
             liquidity_level = sum(equals) / len(equals)
@@ -447,20 +487,26 @@ def in_kill_zone(ts_ms):
 # ── HTF Daily Bias — from STRUCTURE, zero indicators ─────────────────────────
 def get_daily_bias(symbol):
     """
-    Daily directional bias from PRICE STRUCTURE only.
+    Daily directional bias from PRICE STRUCTURE only (cached per symbol).
     HH + HL pattern → bullish bias (+1)
     LH + LL pattern → bearish bias (-1)
     Mixed / not enough swings → neutral (0)
-
-    No EMA. No RSI. Pure swing high/low analysis.
     """
+    if symbol in _daily_bias_cache:
+        return _daily_bias_cache[symbol]
     candles = fetch_binance(symbol, "1d", limit=80)
     if len(candles) < 20:
+        _daily_bias_cache[symbol] = 0
         return 0
     swings = find_swings(candles, pivot=3)
     struct = get_structure(swings)
-    if struct == "bullish": return  1
-    if struct == "bearish": return -1
+    if struct == "bullish":
+        _daily_bias_cache[symbol] = 1
+        return 1
+    if struct == "bearish":
+        _daily_bias_cache[symbol] = -1
+        return -1
+    _daily_bias_cache[symbol] = 0
     return 0
 
 # ── Main Signal Generator v3.6 ────────────────────────────────────────────────
@@ -491,8 +537,8 @@ def generate(candles, pair, bot, tf, daily_bias=0):
     swings    = find_swings(confirmed, pivot=3)
     structure = get_structure(swings)
 
-    # ── Step 2: BOS / CHoCH ──────────────────────────────────────────────────
-    event = detect_bos_choch(candles, swings)
+    # ── Step 2: BOS / CHoCH (use confirmed candles for consistency) ────────
+    event = detect_bos_choch(confirmed, swings)
 
     # Determine direction
     if event["direction"] in ("bullish", "bearish"):
@@ -545,7 +591,7 @@ def generate(candles, pair, bot, tf, daily_bias=0):
     if sweep["detected"]:
         score += 22; reasons.append(f"GWP sweep ({sweep['type']})")
 
-    # HTF structural alignment (soft)
+    # HTF structural alignment — reward aligned, penalize counter-trend
     htf_counter = (daily_bias ==  1 and direction == "SHORT") or \
                   (daily_bias == -1 and direction == "LONG")
     if (daily_bias == 1 and direction == "LONG") or \
@@ -553,6 +599,8 @@ def generate(candles, pair, bot, tf, daily_bias=0):
         score += 10; reasons.append("HTF aligned")
     elif daily_bias == 0:
         score += 3
+    elif htf_counter:
+        score -= 8; reasons.append("HTF counter ⚠")
 
     # Kill Zone — 1H forex only (4H candles span sessions)
     kz = in_kill_zone(last["t"])
@@ -629,7 +677,8 @@ def generate(candles, pair, bot, tf, daily_bias=0):
         "entry"         : fmt(entry),
         "sl"            : fmt(sl),
         "tp1"           : fmt(tp1),
-        "tp"            : fmt(tp2),
+        "tp2"           : fmt(tp2),
+        "tp"            : fmt(tp2),       # legacy alias for frontend compat
         "tp3"           : fmt(tp3),
         "score"         : score,
         "tf"            : tf.upper(),

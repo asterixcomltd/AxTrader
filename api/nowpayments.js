@@ -197,11 +197,11 @@ module.exports = async function handler(req, res) {
     const secret = process.env.NOWPAYMENTS_IPN_SECRET;
 
     if (!secret) {
-      // NOWPAYMENTS_IPN_SECRET is not configured — cannot verify webhook authenticity.
-      // This is a security risk: anyone could forge a payment callback.
-      // ACTION REQUIRED: Set NOWPAYMENTS_IPN_SECRET in your Vercel environment variables.
-      console.error('WARNING: NOWPAYMENTS_IPN_SECRET not set — IPN signature verification skipped. This is insecure. Set the env var in Vercel immediately.');
-    } else if (!sig) {
+      // CRITICAL: Cannot verify webhook without IPN secret — reject all webhooks
+      console.error('NOWPAYMENTS_IPN_SECRET not set — rejecting webhook. Set it in Vercel env vars.');
+      return res.status(500).json({ error: 'IPN_SECRET not configured — webhook rejected' });
+    }
+    if (!sig) {
       console.warn('IPN received without x-nowpayments-sig header — rejecting');
       return res.status(400).json({ error: 'missing signature' });
     } else {

@@ -1903,17 +1903,7 @@ canvas{width:100%;height:100%}
           </div>
         </div>
 
-        <!-- ─── SECTION I: LIVE DATA STATUS ─────────────────── -->
-        <div class="more-section-label">📡 Live Data Status</div>
-        <div class="more-section" style="margin:0 16px 16px" id="status-section">
-          <div class="more-row" style="cursor:default;flex-wrap:wrap;gap:8px" id="status-panel">
-            <div style="width:100%;font-size:.75rem;color:var(--text2)">Tap refresh to check all data sources</div>
-            <div id="status-rows" style="width:100%;display:flex;flex-direction:column;gap:6px;margin-top:4px"></div>
-            <button onclick="runStatusCheck()" style="margin-top:8px;width:100%;padding:9px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--text)">🔄 Check All Sources</button>
-          </div>
-        </div>
-
-        <!-- ─── SECTION I: SIGN OUT (always last) ────────────── -->
+        <!-- ─── SECTION: SIGN OUT (always last) ─────────────── -->
         <div class="more-section-label">🔐 Account Security</div>
         <div class="more-section" style="margin:0 16px 24px;border-color:#fde8e8">
           <div class="more-row" onclick="doLogout()" style="border-bottom:none">
@@ -2523,9 +2513,8 @@ const PAYMENT_CONFIG = {
   bank_account_number : '1441005170611',
   bank_swift_code     : 'ECOCGHAC',
   bank_branch         : '2 Morocco Lane, Off Independence Ave',
-  // Telegram admin notification (wire transfer confirmations)
-  tg_bot_token        : '8686627057:AAHeJJNCHqy9x2A7Mg6i2dY96Iir_o-3_FI',
-  tg_admin_chat       : '6733601499',
+  // Telegram notification — now server-side only (via /api/notify)
+  // Set TELEGRAM_BOT_TOKEN + TELEGRAM_ADMIN_CHAT in Vercel env vars
   // NOWPayments — server-side env vars (set in Vercel dashboard):
   //   NOWPAYMENTS_API_KEY      — from nowpayments.io → Settings → API keys
   //   NOWPAYMENTS_IPN_SECRET   — from nowpayments.io → Settings → IPN → secret key
@@ -2657,7 +2646,18 @@ async function fetchSignalsFromSheet() {
         time      : s.time   || '--:--',
         premium   : isPremiumSlot,
         ts        : base || null,
-        expiresAt : expiresAt
+        expiresAt : expiresAt,
+        tp2       : s.tp2    || s.tp         || '0',
+        // Confluence details (from bot)
+        structure : s.structure || '',
+        event     : s.event    || '',
+        reasons   : s.reasons  || [],
+        hasOB     : s.hasOB    || false,
+        hasFVG    : s.hasFVG   || false,
+        hasSweep  : s.hasSweep || false,
+        htfBias   : s.htfBias  || 0,
+        confirmations: s.confirmations || 0,
+        inKillZone: s.inKillZone || false
       };
     }
 
@@ -2764,10 +2764,12 @@ function archiveSignal(signal) {
     const archived = JSON.parse(localStorage.getItem('axtrader_archive') || '[]');
     const entry = {
       id, pair: signal.pair, dir: signal.dir, entry: signal.entry,
-      sl: signal.sl, tp1: signal.tp1, tp2: signal.tp, tp3: signal.tp3,
+      sl: signal.sl, tp1: signal.tp1, tp2: signal.tp2 || signal.tp, tp3: signal.tp3,
       score: signal.score, tf: signal.tf, bot: signal.bot, grade: signal.grade,
       rr: signal.rr, ts: signal.ts, expiresAt: signal.expiresAt,
-      archivedAt: Date.now(), outcome: 'Active', premium: signal.premium
+      archivedAt: Date.now(), outcome: 'Active', premium: signal.premium,
+      event: signal.event || '', hasOB: signal.hasOB, hasFVG: signal.hasFVG,
+      hasSweep: signal.hasSweep, confirmations: signal.confirmations || 0
     };
     archived.unshift(entry);
     if (archived.length > 50) archived.splice(50);
@@ -2908,7 +2910,7 @@ function dismissNotifBanner() {
 
 function maybeShowNotifBanner() {
   const perm = localStorage.getItem('axtrader_notif_permission');
-  if (perm) return;
+  if (perm === 'granted' || perm === 'denied' || perm === 'dismissed') return;
   if (!('Notification' in window)) return;
   if (Notification.permission === 'granted') return;
   setTimeout(() => {
@@ -2932,7 +2934,7 @@ function showPhaseNotification(signal, phase) {
     const messages = {
       'new'  : { title: '🟢 New Signal: ' + signal.pair, body: `${signal.dir} · Entry ${signal.entry} · ${signal.tf} · GWP Score ${signal.score}%` },
       'tp1'  : { title: '✅ TP1 Hit: '    + signal.pair, body: `First target reached at ${signal.tp1}. Consider moving SL to breakeven.` },
-      'tp2'  : { title: '✅ TP2 Hit: '    + signal.pair, body: `Second target reached at ${signal.tp}. Strong move — lock in profits!` },
+      'tp2'  : { title: '✅ TP2 Hit: '    + signal.pair, body: `Second target reached at ${signal.tp2 || signal.tp}. Strong move — lock in profits!` },
       'tp3'  : { title: '🏆 TP3 Runner: ' + signal.pair, body: `Maximum target hit at ${signal.tp3}. Full GWP setup completed!` },
       'sl'   : { title: '🔴 Stop Loss: '  + signal.pair, body: `Position closed at SL ${signal.sl}. Protect your capital — wait for next setup.` },
     };
@@ -3077,18 +3079,18 @@ function renderSignals() {
 
   // ── FREE section header ──────────────────────────────────────────────────
   html += `<div class="sig-section-head">
-    <span class="sig-section-label" style="color:var(--green)">✅ FREE SIGNALS</span>
+    <span class="sig-section-label" style="color:var(--green)">${T('free_signals_label')}</span>
     <span class="sig-section-line"></span>
-    <span style="font-size:.7rem;color:var(--text3);white-space:nowrap">3 complete · all markets</span>
+    <span style="font-size:.7rem;color:var(--text3);white-space:nowrap">${T('free_signals_sub')}</span>
   </div>`;
 
   signalsData.forEach((s, i) => {
     if (i === 3) {
       // ── PREMIUM section header ─────────────────────────────────────────
       html += `<div class="sig-section-head" style="margin-top:8px">
-        <span class="sig-section-label" style="color:var(--premium)">🔒 PREMIUM SIGNALS</span>
+        <span class="sig-section-label" style="color:var(--premium)">${T('premium_signals_label')}</span>
         <span class="sig-section-line"></span>
-        <button onclick="openUpgrade()" style="font-size:.68rem;color:#fff;background:var(--premium);border:none;border-radius:8px;padding:3px 10px;cursor:pointer;font-weight:700;white-space:nowrap">Unlock $12.99/mo</button>
+        <button onclick="openUpgrade()" style="font-size:.68rem;color:#fff;background:var(--premium);border:none;border-radius:8px;padding:3px 10px;cursor:pointer;font-weight:700;white-space:nowrap">${T('course_unlock')}</button>
       </div>`;
     }
 
@@ -3098,7 +3100,7 @@ function renderSignals() {
 
     if (!s.premium) {
       // ── FULL FREE CARD ────────────────────────────────────────────────
-      html += `<div class="signal-card" data-signal-id="${s.id || s.pair}"
+      html += `<div class="signal-card" data-signal-id="${s.id || s.pair}">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
           <span class="cat-pill ${cat.cls}">${cat.emoji} ${cat.label}</span>
           <span class="sig-badge ${s.dir==='LONG'?'badge-long':'badge-short'}">${s.dir}</span>
@@ -3126,6 +3128,13 @@ function renderSignals() {
           <div class="score-bar-label"><span>GWP Score</span><span style="font-weight:700;color:var(--gold)">${s.score}%</span></div>
           <div class="score-bar"><div class="score-fill" style="width:${s.score}%"></div></div>
         </div>
+        ${(s.hasOB || s.hasFVG || s.hasSweep || s.event) ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">
+          ${s.event && s.event !== 'none' ? `<span style="font-size:.65rem;padding:2px 7px;border-radius:6px;background:var(--gold-bg);color:var(--gold);font-weight:600">${s.event}</span>` : ''}
+          ${s.hasOB ? '<span style="font-size:.65rem;padding:2px 7px;border-radius:6px;background:var(--blue-bg);color:var(--blue);font-weight:600">OB</span>' : ''}
+          ${s.hasFVG ? '<span style="font-size:.65rem;padding:2px 7px;border-radius:6px;background:var(--green-bg);color:var(--green);font-weight:600">FVG</span>' : ''}
+          ${s.hasSweep ? '<span style="font-size:.65rem;padding:2px 7px;border-radius:6px;background:var(--red-bg);color:var(--red);font-weight:600">GWP</span>' : ''}
+          ${s.htfBias === 1 ? '<span style="font-size:.65rem;padding:2px 7px;border-radius:6px;background:var(--green-bg);color:var(--green);font-weight:600">HTF ↑</span>' : s.htfBias === -1 ? '<span style="font-size:.65rem;padding:2px 7px;border-radius:6px;background:var(--red-bg);color:var(--red);font-weight:600">HTF ↓</span>' : ''}
+        </div>` : ''}
         <div class="sig-bots" style="margin-top:10px">
           <a class="bot-link" href="https://t.me/${cat.handle}" target="_blank">${cat.emoji} @${cat.handle}</a>
         </div>
@@ -3415,7 +3424,7 @@ async function runStatusCheck() {
     { name: 'CryptoCompare',  url: 'https://min-api.cryptocompare.com/data/v2/news/?lang=EN&extraParams=AxTrader',       label: 'Crypto News' },
     { name: 'Fear & Greed',   url: 'https://api.alternative.me/fng/',                                                    label: 'Market Mood' },
     { name: 'Forex Rates',    url: 'https://open.er-api.com/v6/latest/USD',                                              label: 'Forex Data' },
-    { name: 'NewsAPI',        url: `https://newsapi.org/v2/everything?q=crypto&pageSize=1&apiKey=baee18780bcf4fe4a1d9ba942aa66605`, label: 'Macro News' },
+    { name: 'NewsAPI',        url: '/api/news',                                                                              label: 'Macro News' },
     { name: 'Adsterra Ads',   url: 'https://www.highperformanceformat.com/689acba615d238d033a802bb1f8547fc/invoke.js',   label: 'Ad Network' },
   ];
 
@@ -3520,7 +3529,13 @@ const i18n={
     no_active_signals:'No active signals yet',
     active_signals_desc:'The bot scans markets every 30 minutes.<br>Active signals will appear here automatically.',
     active_signals_desc_short:'Bot scans every 30 minutes. Check back soon.',
-    waiting_bot:'Waiting for bot signal...'
+    waiting_bot:'Waiting for bot signal...',
+    free_signals_label:'✅ FREE SIGNALS',
+    free_signals_sub:'3 complete · all markets',
+    premium_signals_label:'🔒 PREMIUM SIGNALS',
+    wire_fallback:'Sent! Also DM @asterix_support1 with ref code',
+    profit:'Profit',
+    cash_out_at:'Cashed out at'
   },
   fr:{
     home:'Accueil', signals:'Signaux', games:'Jeux', news:'Actualités', more:'Plus',
@@ -3600,7 +3615,13 @@ const i18n={
     no_active_signals:'Aucun signal actif pour le moment',
     active_signals_desc:'Le bot analyse les marchés toutes les 30 minutes.<br>Les signaux actifs apparaîtront ici automatiquement.',
     active_signals_desc_short:'Le bot analyse toutes les 30 min. Revenez bientôt.',
-    waiting_bot:'En attente du signal du bot...'
+    waiting_bot:'En attente du signal du bot...',
+    free_signals_label:'✅ SIGNAUX GRATUITS',
+    free_signals_sub:'3 complets · tous les marchés',
+    premium_signals_label:'🔒 SIGNAUX PREMIUM',
+    wire_fallback:'Envoyé ! DM @asterix_support1 avec le code de réf.',
+    profit:'Profit',
+    cash_out_at:'Encaissé à'
   },
   es:{
     home:'Inicio', signals:'Señales', games:'Juegos', news:'Noticias', more:'Más',
@@ -3680,7 +3701,13 @@ const i18n={
     no_active_signals:'No hay señales activas aún',
     active_signals_desc:'El bot escanea los mercados cada 30 minutos.<br>Las señales activas aparecerán aquí automáticamente.',
     active_signals_desc_short:'El bot escanea cada 30 min. Vuelve pronto.',
-    waiting_bot:'Esperando señal del bot...'
+    waiting_bot:'Esperando señal del bot...',
+    free_signals_label:'✅ SEÑALES GRATIS',
+    free_signals_sub:'3 completas · todos los mercados',
+    premium_signals_label:'🔒 SEÑALES PREMIUM',
+    wire_fallback:'Enviado! DM @asterix_support1 con el código de ref.',
+    profit:'Ganancia',
+    cash_out_at:'Cobrado a'
   },
   pt:{
     home:'Início', signals:'Sinais', games:'Jogos', news:'Notícias', more:'Mais',
@@ -3760,7 +3787,13 @@ const i18n={
     no_active_signals:'Nenhum sinal ativo ainda',
     active_signals_desc:'O bot analisa os mercados a cada 30 minutos.<br>Sinais ativos aparecerão aqui automaticamente.',
     active_signals_desc_short:'O bot analisa a cada 30 min. Volte em breve.',
-    waiting_bot:'Aguardando sinal do bot...'
+    waiting_bot:'Aguardando sinal do bot...',
+    free_signals_label:'✅ SINAIS GRÁTIS',
+    free_signals_sub:'3 completos · todos os mercados',
+    premium_signals_label:'🔒 SINAIS PREMIUM',
+    wire_fallback:'Enviado! DM @asterix_support1 com o código de ref.',
+    profit:'Lucro',
+    cash_out_at:'Resgatado a'
   },
   ar:{
     home:'الرئيسية', signals:'إشارات', games:'ألعاب', news:'أخبار', more:'المزيد',
@@ -3840,7 +3873,13 @@ const i18n={
     no_active_signals:'لا توجد إشارات نشطة بعد',
     active_signals_desc:'يقوم البوت بمسح الأسواق كل 30 دقيقة.<br>ستظهر الإشارات النشطة هنا تلقائياً.',
     active_signals_desc_short:'يمسح البوت كل 30 دقيقة. عد قريباً.',
-    waiting_bot:'في انتظار إشارة البوت...'
+    waiting_bot:'في انتظار إشارة البوت...',
+    free_signals_label:'✅ إشارات مجانية',
+    free_signals_sub:'3 كاملة · جميع الأسواق',
+    premium_signals_label:'🔒 إشارات مميزة',
+    wire_fallback:'تم الإرسال! راسل @asterix_support1 بكود المرجع',
+    profit:'ربح',
+    cash_out_at:'تم السحب عند'
   }
 };
 // v3.6: Global translation helper — returns translated string or English fallback
@@ -4058,27 +4097,20 @@ async function notifyBankTransfer() {
     'User: ' + name + ' (' + email + ')\n\n' +
     '✅ Confirm only after you see the transfer in your Ecobank account.';
   try {
-    const res = await fetch(
-      'https://api.telegram.org/bot' + PAYMENT_CONFIG.tg_bot_token + '/sendMessage',
-      {
-        method : 'POST',
-        headers: {'Content-Type':'application/json'},
-        body   : JSON.stringify({
-          chat_id    : PAYMENT_CONFIG.tg_admin_chat,
-          text       : msg,
-          parse_mode : 'Markdown'
-        })
-      }
-    );
+    const res = await fetch('/api/notify?action=wire', {
+      method : 'POST',
+      headers: {'Content-Type':'application/json'},
+      body   : JSON.stringify({ name, email, ref, price })
+    });
     const json = await res.json();
     if (json.ok) {
       showToast(T('admin_notified'));
       closeOverlay('wire-overlay');
     } else {
-      throw new Error(json.description || 'Telegram error');
+      throw new Error('Server notification error');
     }
   } catch(e) {
-    showToast('Sent! Also DM @asterix_support1 with ref: ' + ref);
+    showToast(T('wire_fallback') || 'Sent! Also DM @asterix_support1 with ref: ' + ref);
     closeOverlay('wire-overlay');
   } finally {
     btn.disabled = false;
@@ -5407,6 +5439,7 @@ function tagColor(tag) {
 const newsTextCache   = {};     // key: `${lang}:${text_fingerprint}` → translated string
 const newsArticleCache = {};    // key: lang → [{...article, title, body in that lang}]
 let   newsTranslating = false;
+const MAX_TEXT_CACHE = 500;     // prevent unbounded memory growth
 
 const TRANSLATABLE_LANGS = { fr:'fr', es:'es', pt:'pt', ar:'ar' };
 
@@ -5421,6 +5454,11 @@ async function translateText(text, lang) {
     );
     const d = await r.json();
     if (d.responseStatus === 200 && d.responseData?.translatedText) {
+      // Evict old entries if cache too large
+      const keys = Object.keys(newsTextCache);
+      if (keys.length > MAX_TEXT_CACHE) {
+        keys.slice(0, keys.length - MAX_TEXT_CACHE + 50).forEach(k => delete newsTextCache[k]);
+      }
       newsTextCache[fp] = d.responseData.translatedText;
       return newsTextCache[fp];
     }
@@ -5734,7 +5772,7 @@ function crashAction(){
     updateBalanceDisplays();
     btn.className='action-btn go';btn.textContent='🚀 Place Bet';
     msg.style.display='block';msg.className='game-msg msg-win';
-    msg.textContent=`✅ Cashed out at ${crashMult.toFixed(2)}x! +⚡ ${formatATX(winnings)} ATX`;crashRunning=false;
+    const profit=winnings-crashBet;msg.textContent=`✅ ${T('cash_out_at')} ${crashMult.toFixed(2)}x! ${T('profit')}: +⚡ ${formatATX(profit)} ATX`;crashRunning=false;
     if(typeof sparkle==='function') sparkle(24);return;
   }
   crashBet=parseInt(document.getElementById('crash-bet').value)||50;
@@ -5812,7 +5850,7 @@ function cashoutMines(){
   const winnings=Math.floor(minesBet*minesMult);addATX(winnings, 'mines');updateBalanceDisplays();
   document.getElementById('mines-cashout-area').style.display='none';
   const msg=document.getElementById('mines-msg');msg.style.display='block';msg.className='game-msg msg-win';
-  msg.textContent=`✅ Cashed out at ${minesMult.toFixed(2)}x! +⚡ ${formatATX(winnings)} ATX`;
+  const profit=winnings-minesBet;msg.textContent=`✅ ${T('cash_out_at')} ${minesMult.toFixed(2)}x! ${T('profit')}: +⚡ ${formatATX(profit)} ATX`;
   if(typeof sparkle==='function') sparkle(20);
 }
 
