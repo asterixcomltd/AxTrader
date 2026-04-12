@@ -60,8 +60,15 @@ function nowFetch(path, options = {}) {
 const GIST_ID   = process.env.GIST_ID   || 'a4caaf2993eea50322f31478391743b0';
 const GIST_FILE = 'premium_users.json';
 
+if (!process.env.GIST_ID) {
+  console.warn('GIST_ID env var not set — using hardcoded fallback. Set GIST_ID in Vercel env vars.');
+}
+if (!process.env.GH_PAT) {
+  console.error('GH_PAT env var not set — premium gist reads/writes will fail. Set GH_PAT (with gist scope) in Vercel env vars.');
+}
+
 async function readPremiumGist() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const headers = {
       'Authorization': `token ${process.env.GH_PAT}`,
       'User-Agent'   : 'AxTrader-Server',
@@ -100,21 +107,24 @@ async function writePremiumGist(list) {
     };
     const req = https.request(
       { hostname: 'api.github.com', path: `/gists/${GIST_ID}`, method: 'PATCH', headers },
-      (res) => { res.resume(); res.on('end', resolve); }
+      (res) => { res.resume(); res.on('end', () => resolve()); }
     );
-    req.on('error', resolve);
+    req.on('error', () => resolve());
     req.write(body);
     req.end();
   });
 }
 
+// Used for manual premium grants (bank wire, support overrides, etc.) — pass email directly.
+// NOTE: The IPN webhook does NOT call this; it already has the pre-computed SHA-256 hash
+// as order_id and applies the gist update directly to avoid double-hashing.
 async function addPremiumUser(email, paymentId) {
   const hash = crypto.createHash('sha256').update(email.toLowerCase().trim()).digest('hex');
   const list = await readPremiumGist();
-  // Idempotent — skip if already present
-  if (list.some(u => u.hash === hash)) return;
+  if (list.some(u => u.hash === hash)) return false; // already premium — idempotent
   list.push({ hash, paymentId, activatedAt: new Date().toISOString() });
   await writePremiumGist(list);
+  return true;
 }
 
 async function isPremiumUser(email) {
@@ -133,9 +143,9 @@ async function notifyAdmin(message) {
     const headers = { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) };
     const req = https.request(
       { hostname: 'api.telegram.org', path: `/bot${token}/sendMessage`, method: 'POST', headers },
-      (res) => { res.resume(); res.on('end', resolve); }
+      (res) => { res.resume(); res.on('end', () => resolve()); }
     );
-    req.on('error', resolve);
+    req.on('error', () => resolve());
     req.write(body);
     req.end();
   });
@@ -186,7 +196,15 @@ module.exports = async function handler(req, res) {
     const sig    = req.headers['x-nowpayments-sig'];
     const secret = process.env.NOWPAYMENTS_IPN_SECRET;
 
-    if (secret && sig) {
+    if (!secret) {
+      // NOWPAYMENTS_IPN_SECRET is not configured — cannot verify webhook authenticity.
+      // This is a security risk: anyone could forge a payment callback.
+      // ACTION REQUIRED: Set NOWPAYMENTS_IPN_SECRET in your Vercel environment variables.
+      console.error('WARNING: NOWPAYMENTS_IPN_SECRET not set — IPN signature verification skipped. This is insecure. Set the env var in Vercel immediately.');
+    } else if (!sig) {
+      console.warn('IPN received without x-nowpayments-sig header — rejecting');
+      return res.status(400).json({ error: 'missing signature' });
+    } else {
       const sorted  = sortObject(req.body);
       const hmac    = crypto.createHmac('sha512', secret)
                             .update(JSON.stringify(sorted))
@@ -201,8 +219,8 @@ module.exports = async function handler(req, res) {
     const finished = ['finished', 'confirmed', 'complete'].includes(payment_status);
 
     if (finished && emailHash) {
-      // Find the email by matching hashes in the gist (we stored hash as order_id)
-      // We store the hash directly — no email lookup needed
+      // order_id is the SHA-256 hash of the buyer's email (set during payment creation).
+      // We write the hash directly — no email lookup needed for the is-premium check.
       const list = await readPremiumGist();
       if (!list.some(u => u.hash === emailHash)) {
         list.push({ hash: emailHash, paymentId: payment_id, activatedAt: new Date().toISOString() });
