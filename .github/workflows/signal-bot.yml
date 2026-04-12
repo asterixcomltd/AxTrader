@@ -1,4 +1,3 @@
-```yaml
 name: AxTrader Signal Bot
 
 on:
@@ -29,4 +28,3 @@ jobs:
         run: python scripts/signal_bot.py
         env:
           GIST_PAT: ${{ secrets.GIST_PAT }}
-```
