@@ -1,7 +1,7 @@
 // AxTrader — GWP Signal App
 // Service Worker v3.0 — Institutional cleanup
 
-const CACHE_VERSION = '3.2';
+const CACHE_VERSION = '3.3';
 const CACHE_NAME = `axtrader-v${CACHE_VERSION}`;
 
 const SHELL_ASSETS = [
@@ -12,9 +12,9 @@ const SHELL_ASSETS = [
   '/apple-touch-icon.png',
   '/favicon-32.png',
   '/assets/logos/binance.svg',
-  '/assets/logos/bybit.svg',
-  '/assets/logos/kucoin.svg',
-  '/assets/logos/exness.svg',
+  '/assets/logos/bybit.png',
+  '/assets/logos/kucoin.png',
+  '/assets/logos/exness.png',
 ];
 
 // Install: cache static assets only (NOT index.html — keep it network-first)
