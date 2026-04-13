@@ -1,7 +1,7 @@
 // AxTrader — GWP Signal App
-// Service Worker v1.9 — Refer & Earn + affiliate updates
+// Service Worker v2.0 — Exchange partner logos
 
-const CACHE_VERSION = '1.9';
+const CACHE_VERSION = '2.0';
 const CACHE_NAME = `axtrader-v${CACHE_VERSION}`;
 
 const SHELL_ASSETS = [
@@ -11,6 +11,10 @@ const SHELL_ASSETS = [
   '/icon-512.png',
   '/apple-touch-icon.png',
   '/favicon-32.png',
+  '/assets/logos/binance.svg',
+  '/assets/logos/bybit.svg',
+  '/assets/logos/kucoin.svg',
+  '/assets/logos/exness.svg',
 ];
 
 // Install: cache static assets only (NOT index.html — keep it network-first)
