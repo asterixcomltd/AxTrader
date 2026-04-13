@@ -30,8 +30,6 @@
 <meta name="msapplication-TileColor" content="#1a1814">
 <meta name="msapplication-TileImage" content="/icon-192.png">
 
-<!-- Adsterra Ad Network — Popunder -->
-<script src="https://pl29119659.profitablecpmratenetwork.com/7f/bc/4d/7fbc4d0aa96a2a28fd9f7ebb3186dc7a.js"></script>
 
 <style>
 :root {
@@ -167,23 +165,6 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .premium-features li::before{content:'✦';color:var(--gold2);font-size:.7rem}
 .btn-upgrade{background:var(--gold);color:#fff;border:none;border-radius:12px;padding:13px 20px;font-size:.9rem;font-weight:700;cursor:pointer;width:100%;font-family:inherit;transition:.15s}
 .btn-upgrade:hover{background:var(--gold2)}
-.games-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.game-card{background:var(--surface);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border:1px solid var(--border);cursor:pointer;transition:.15s}
-.game-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
-.game-icon{font-size:2rem;margin-bottom:8px}
-.game-card h4{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:4px}
-.game-card p{font-size:.75rem;color:var(--text2);margin-bottom:12px}
-.btn-play{width:100%;padding:10px;border:none;border-radius:10px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit}
-.leaderboard{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden}
-.lb-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
-.lb-row:last-child{border-bottom:none}
-.lb-rank{width:28px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.9rem;color:var(--text2);text-align:center}
-.lb-rank.gold{color:#f59e0b}
-.lb-avatar{width:36px;height:36px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0}
-.lb-name{flex:1;font-weight:600;font-size:.9rem}
-.lb-country{font-size:.75rem;color:var(--text3)}
-.lb-score{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--green);font-size:.9rem}
-.lb-mult{font-size:.75rem;color:var(--text2);text-align:right}
 .news-card{background:var(--surface);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);border:1px solid var(--border)}
 .news-tag{display:inline-block;padding:2px 8px;background:var(--gold-bg);color:var(--gold);border-radius:6px;font-size:.68rem;font-weight:700;margin-bottom:6px;text-transform:uppercase}
 .news-card h4{font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:700;margin-bottom:6px;line-height:1.35}
@@ -198,140 +179,6 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .more-row-text h5{font-weight:600;font-size:.9rem;margin-bottom:1px}
 .more-row-text p{font-size:.75rem;color:var(--text2)}
 
-/* ── INTERSTITIAL AD OVERLAY ─────────────────────────────────── */
-@keyframes intros-in  { from{opacity:0;transform:scale(.94)} to{opacity:1;transform:scale(1)} }
-@keyframes intros-out { from{opacity:1;transform:scale(1)}   to{opacity:0;transform:scale(.94)} }
-#interstitial-overlay {
-  position: fixed; inset: 0; z-index: 8000;
-  background: rgba(14,12,10,.95);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 20px;
-  animation: intros-in .3s ease forwards;
-  backdrop-filter: blur(6px);
-}
-#interstitial-overlay.closing { animation: intros-out .25s ease forwards; }
-.intros-card {
-  width: 100%; max-width: 340px;
-  background: #1a1814;
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid rgba(201,168,76,.25);
-  box-shadow: 0 20px 60px rgba(0,0,0,.6);
-}
-.intros-top {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(255,255,255,.06);
-}
-.intros-label { font-size: .65rem; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .1em; }
-.intros-timer-pill {
-  background: rgba(201,168,76,.15); color: var(--gold2);
-  font-size: .72rem; font-weight: 700; padding: 3px 10px;
-  border-radius: 20px; border: 1px solid rgba(201,168,76,.3);
-  min-width: 52px; text-align: center;
-  transition: background .3s;
-}
-.intros-timer-pill.ready { background: var(--gold); color: #fff; cursor: pointer; border-color: var(--gold); }
-.intros-ad-wrap {
-  display: flex; align-items: center; justify-content: center;
-  min-height: 260px; padding: 12px;
-  background: #111;
-}
-.intros-footer {
-  padding: 12px 16px;
-  display: flex; align-items: center; justify-content: space-between;
-  border-top: 1px solid rgba(255,255,255,.06);
-}
-.intros-upgrade {
-  font-size: .72rem; color: var(--gold2); cursor: pointer;
-  text-decoration: none; opacity: .85;
-}
-.intros-upgrade:hover { opacity: 1; }
-.intros-close-btn {
-  padding: 7px 20px; background: var(--gold); color: #fff;
-  border: none; border-radius: 8px; font-weight: 700;
-  font-size: .82rem; cursor: pointer; font-family: inherit;
-  display: none; transition: .15s;
-}
-.intros-close-btn:hover { opacity: .88; }
-
-/* ── Ad Nag Toast ───────────────────────────────────────────────── */
-#adnag-toast {
-  display: none;
-  position: fixed;
-  bottom: 82px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9000;
-  width: calc(100% - 40px);
-  max-width: 360px;
-  animation: slideUp .28s ease;
-}
-#adnag-toast .adnag-card {
-  background: #1a1814;
-  border: 1px solid rgba(201,168,76,.35);
-  border-radius: 18px;
-  padding: 14px 16px 14px;
-  box-shadow: 0 12px 40px rgba(0,0,0,.65);
-  position: relative;
-  overflow: hidden;
-}
-#adnag-progress {
-  position: absolute;
-  top: 0; left: 0;
-  height: 2px;
-  width: 100%;
-  background: linear-gradient(90deg, var(--gold), var(--gold2));
-  transform-origin: left;
-  transition: transform 7s linear;
-}
-#adnag-close {
-  position: absolute;
-  top: 10px; right: 10px;
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255,255,255,.09);
-  color: rgba(255,255,255,.55);
-  font-size: 11px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  line-height: 1;
-}
-.adnag-body {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding-right: 22px;
-  margin-bottom: 11px;
-}
-.adnag-icon { font-size: 20px; margin-top: 1px; flex-shrink: 0; }
-.adnag-title {
-  color: #fff;
-  font-weight: 700;
-  font-size: .88rem;
-  font-family: 'Space Grotesk', sans-serif;
-  margin-bottom: 2px;
-}
-.adnag-sub {
-  color: rgba(255,255,255,.5);
-  font-size: .72rem;
-  line-height: 1.4;
-}
-.adnag-btn {
-  width: 100%;
-  padding: 9px;
-  background: linear-gradient(135deg, var(--gold), var(--gold2));
-  border: none;
-  border-radius: 10px;
-  color: #1a1814;
-  font-weight: 800;
-  font-size: .8rem;
-  font-family: 'Space Grotesk', sans-serif;
-  cursor: pointer;
-  letter-spacing: .3px;
-}
 
 /* ── SPARKLE PARTICLE SYSTEM ────────────────────────────────── */
 #sparkle-auth {
@@ -406,31 +253,6 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .badge-status{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:700;margin-bottom:16px}
 .badge-free{background:var(--surface2);color:var(--text2)}
 .badge-premium{background:var(--premium-bg);color:var(--premium)}
-.game-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:300;flex-direction:column}
-.game-screen.open{display:flex}
-.game-topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px}
-.game-back{border:none;background:var(--surface2);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem}
-.game-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1rem;flex:1}
-.game-balance{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--gold);font-weight:600}
-.game-body{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
-.game-canvas-wrap{background:var(--surface);border-radius:16px;overflow:hidden;aspect-ratio:16/9}
-canvas{width:100%;height:100%}
-.game-controls{background:var(--surface);border-radius:16px;padding:16px}
-.bet-row{display:flex;gap:8px;align-items:center;margin-bottom:12px}
-.bet-inp{flex:1;padding:11px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:'JetBrains Mono',monospace;background:var(--bg);color:var(--text);outline:none}
-.bet-btn{padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.8rem;font-weight:700;cursor:pointer;background:var(--surface2);color:var(--text);font-family:inherit}
-.action-btn{width:100%;padding:13px;border:none;border-radius:12px;font-size:.95rem;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:.15s}
-.action-btn.go{background:var(--green);color:#fff}
-.action-btn.cashout{background:var(--gold);color:#fff}
-.action-btn.stop{background:var(--red);color:#fff}
-.game-msg{text-align:center;padding:10px;border-radius:10px;font-weight:700;font-size:.9rem}
-.msg-win{background:var(--green-bg);color:var(--green)}
-.msg-lose{background:var(--red-bg);color:var(--red)}
-.mines-grid{display:grid;gap:6px;margin:12px 0}
-.mine-cell{aspect-ratio:1;border:1.5px solid var(--border);border-radius:10px;background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:.12s}
-.mine-cell:hover:not(.revealed):not(.mine-hit){background:var(--gold-bg);border-color:var(--gold)}
-.mine-cell.safe{background:var(--green-bg);border-color:var(--green)}
-.mine-cell.mine-hit{background:var(--red-bg);border-color:var(--red)}
 .reset-sent{background:var(--green-bg);color:var(--green);border-radius:10px;padding:12px;font-size:.85rem;font-weight:500;text-align:center;margin-top:12px}
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:#fff;padding:10px 20px;border-radius:20px;font-size:.85rem;font-weight:500;z-index:999;opacity:0;transition:.25s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -835,34 +657,6 @@ canvas{width:100%;height:100%}
   white-space: nowrap;
 }
 
-/* ── Games page ─ */
-.atx-strip {
-  background: var(--text);
-  margin: 0 16px;
-  border-radius: 14px;
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-.atx-strip-label {
-  font-size: .75rem;
-  color: rgba(255,255,255,.6);
-  margin-bottom: 2px;
-}
-.atx-strip-val {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: var(--gold2);
-}
-.atx-strip-note {
-  font-size: .65rem;
-  color: rgba(255,255,255,.4);
-  text-align: right;
-}
-
 /* ── Hero improvements ─ */
 .hero-card-v3 {
   background: var(--text);
@@ -1248,8 +1042,8 @@ canvas{width:100%;height:100%}
   </div>
   <p class="auth-tagline">Ghost Wick Protocol™ · Institutional Precision Trading Signals</p>
   <div class="trust-strip">
-    <div class="trust-item"><span class="trust-item-dot"></span> 2,847 Active Members</div>
-    <div class="trust-item"><span class="trust-item-dot"></span> 97% Signal Accuracy</div>
+    <div class="trust-item"><span class="trust-item-dot"></span> 2,800+ Active Traders</div>
+    <div class="trust-item"><span class="trust-item-dot"></span> 73%+ Live Accuracy</div>
     <div class="trust-item"><span class="trust-item-dot"></span> 3 Markets Covered</div>
   </div>
   <div class="auth-card">
@@ -1328,11 +1122,11 @@ canvas{width:100%;height:100%}
         <div class="hero-sub-v3" id="hero-sub">Where smart money leaves its footprint — we follow it.</div>
         <div class="hero-metrics">
           <div class="hero-metric">
-            <div class="hero-metric-val">97%</div>
+            <div class="hero-metric-val">73%+</div>
             <div class="hero-metric-lbl" id="lbl-win-rate">Win Rate</div>
           </div>
           <div class="hero-metric">
-            <div class="hero-metric-val" id="hero-member-count">2,847</div>
+            <div class="hero-metric-val" id="hero-member-count">2,800+</div>
             <div class="hero-metric-lbl" id="lbl-members">Members</div>
           </div>
           <div class="hero-metric">
@@ -1383,7 +1177,7 @@ canvas{width:100%;height:100%}
       <div class="prem-banner-v3" id="home-premium-banner">
         <div class="prem-badge-row">
           <span class="prem-badge-pill">✦ PREMIUM</span>
-          <span style="font-size:.65rem;color:rgba(255,255,255,.4)">2,847 members trust us</span>
+          <span style="font-size:.65rem;color:rgba(255,255,255,.4)">2,800+ active traders</span>
         </div>
         <h3>Unlock Full Institutional Access</h3>
         <div class="prem-price-row">
@@ -1491,7 +1285,7 @@ canvas{width:100%;height:100%}
         </div>
         <div style="width:1px;height:28px;background:var(--border)"></div>
         <div class="sig-stat-item">
-          <div class="sig-stat-val">97%</div>
+          <div class="sig-stat-val">73%+</div>
           <div class="sig-stat-lbl">Accuracy</div>
         </div>
         <div style="width:1px;height:28px;background:var(--border)"></div>
@@ -1618,7 +1412,7 @@ canvas{width:100%;height:100%}
         <div style="background:linear-gradient(135deg,#FFD700,#FFA500);border-radius:16px;padding:24px 20px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden">
           <div style="font-size:3rem;margin-bottom:8px">🎁</div>
           <h3 style="font-family:'Space Grotesk',sans-serif;color:#1a1a2e;font-size:1.1rem;margin-bottom:8px" id="lbl-refer-hero-title">Invite Friends, Earn Rewards!</h3>
-          <p style="color:#1a1a2e;opacity:.8;font-size:.82rem;line-height:1.5" id="lbl-refer-hero-sub">Share AxTrader with your friends and earn ATX Coins + free Premium days! The more you refer, the more you earn.</p>
+          <p style="color:#1a1a2e;opacity:.8;font-size:.82rem;line-height:1.5" id="lbl-refer-hero-sub">Share AxTrader with friends. When they join, you both get 7 days of free Premium.</p>
         </div>
 
         <!-- Share Link Card -->
@@ -1659,62 +1453,7 @@ canvas{width:100%;height:100%}
               <div style="min-width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#FFD700,#FFA500);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a1a2e;font-size:.85rem">3</div>
               <div>
                 <div style="font-weight:600;color:var(--text);font-size:.85rem" id="lbl-refer-step3-title">Both Earn Rewards</div>
-                <div style="color:var(--text2);font-size:.78rem;margin-top:2px" id="lbl-refer-step3-sub">You earn ATX Coins + free Premium days for every friend who joins. When they go Premium, you get 500 ATX + 7 days free Premium!</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Rewards Breakdown -->
-        <div style="background:var(--surface);border-radius:14px;padding:18px;border:1px solid var(--border);margin-bottom:16px">
-          <div style="font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:14px;font-family:'Space Grotesk',sans-serif" id="lbl-refer-rewards-title">💰 Rewards Breakdown</div>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <div style="padding:12px;background:var(--bg);border-radius:10px">
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <div>
-                  <div style="font-weight:600;color:var(--text);font-size:.83rem">Friend Signs Up</div>
-                  <div style="font-size:.72rem;color:var(--text2)">Free account created</div>
-                </div>
-                <div style="text-align:right">
-                  <div style="font-weight:700;color:var(--gold);font-size:.9rem">+50 ATX</div>
-                  <div style="font-weight:600;color:#0088cc;font-size:.75rem">+1 day Premium</div>
-                </div>
-              </div>
-            </div>
-            <div style="padding:12px;background:var(--bg);border-radius:10px">
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <div>
-                  <div style="font-weight:600;color:var(--text);font-size:.83rem">Friend Goes Premium</div>
-                  <div style="font-size:.72rem;color:var(--text2)">Subscribes to $12.99/mo</div>
-                </div>
-                <div style="text-align:right">
-                  <div style="font-weight:700;color:var(--gold);font-size:.9rem">+500 ATX</div>
-                  <div style="font-weight:600;color:#0088cc;font-size:.75rem">+7 days Premium</div>
-                </div>
-              </div>
-            </div>
-            <div style="padding:12px;background:var(--bg);border-radius:10px">
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <div>
-                  <div style="font-weight:600;color:var(--text);font-size:.83rem">Friend Joins Exchange</div>
-                  <div style="font-size:.72rem;color:var(--text2)">Signs up via partner link</div>
-                </div>
-                <div style="text-align:right">
-                  <div style="font-weight:700;color:var(--gold);font-size:.9rem">+100 ATX</div>
-                  <div style="font-weight:600;color:#0088cc;font-size:.75rem">+3 days Premium</div>
-                </div>
-              </div>
-            </div>
-            <div style="padding:12px;background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,165,0,.1));border-radius:10px;border:1px solid var(--gold)">
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <div>
-                  <div style="font-weight:600;color:var(--text);font-size:.83rem">Top Referrer Bonus</div>
-                  <div style="font-size:.72rem;color:var(--text2)">Weekly #1 referrer prize</div>
-                </div>
-                <div style="text-align:right">
-                  <div style="font-weight:700;color:var(--gold);font-size:.9rem">+2000 ATX</div>
-                  <div style="font-weight:600;color:#0088cc;font-size:.75rem">+30 days Premium</div>
-                </div>
+                <div style="color:var(--text2);font-size:.78rem;margin-top:2px" id="lbl-refer-step3-sub">When your friend joins AxTrader, you both get 7 days of free Premium access!</div>
               </div>
             </div>
           </div>
@@ -1753,69 +1492,22 @@ canvas{width:100%;height:100%}
           <div style="font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:14px;font-family:'Space Grotesk',sans-serif">❓ FAQ</div>
           <div style="display:flex;flex-direction:column;gap:12px">
             <div>
-              <div style="font-weight:600;color:var(--text);font-size:.82rem">What are ATX Coins?</div>
-              <div style="color:var(--text2);font-size:.76rem;margin-top:3px">ATX (Asterix) Coins are AxTrader's reward currency. Earn them by referring friends, playing arcade games, and completing achievements. Use them to play games and redeem for Premium access!</div>
+              <div style="font-weight:600;color:var(--text);font-size:.82rem">How does the referral work?</div>
+              <div style="color:var(--text2);font-size:.76rem;margin-top:3px">Share your unique link. When a friend signs up, you both receive 7 days of free Premium access.</div>
             </div>
             <div style="height:1px;background:var(--border)"></div>
             <div>
               <div style="font-weight:600;color:var(--text);font-size:.82rem">Is there a referral limit?</div>
-              <div style="color:var(--text2);font-size:.76rem;margin-top:3px">No limit! The more friends you refer, the more you earn. Top referrers also get exclusive weekly bonuses.</div>
+              <div style="color:var(--text2);font-size:.76rem;margin-top:3px">No limit — invite as many friends as you like.</div>
             </div>
             <div style="height:1px;background:var(--border)"></div>
             <div>
-              <div style="font-weight:600;color:var(--text);font-size:.82rem">When do I receive my rewards?</div>
-              <div style="color:var(--text2);font-size:.76rem;margin-top:3px">ATX Coins are credited instantly when your friend signs up. Premium days and bonus ATX are credited within 24 hours of their subscription.</div>
+              <div style="font-weight:600;color:var(--text);font-size:.82rem">When do I receive my Premium days?</div>
+              <div style="color:var(--text2);font-size:.76rem;margin-top:3px">Instantly, as soon as your friend creates their account.</div>
             </div>
           </div>
         </div>
 
-      </div>
-    </div>
-
-    <!-- GAMES -->
-    <div class="page" id="page-games">
-      <div class="section" style="padding-top:16px">
-        <div class="section-header" style="margin-bottom:12px">
-          <div class="section-title" id="lbl-arcade-title">🎮 Training Arcade</div>
-          <span style="font-size:.72rem;color:var(--text2)" id="lbl-arcade-sub">Practice · Not real money</span>
-        </div>
-        <div class="atx-strip">
-          <div>
-            <div class="atx-strip-label" id="lbl-your-playcoins">Your ATX Coins Balance</div>
-            <div class="atx-strip-val">🎮 <span id="atx-balance">1,000</span> ATX</div>
-          </div>
-          <div class="atx-strip-note"><span id="lbl-playcoin-note">Simulated credits<br>for practice only</span></div>
-        </div>
-        <div class="section-header" style="margin-top:4px"><div class="section-title" style="font-size:.85rem;color:var(--text2)" id="lbl-weekly-top">WEEKLY TOP</div></div>
-        <div class="leaderboard" style="margin-bottom:16px">
-          <div class="lb-row"><div class="lb-rank gold">#1</div><div class="lb-avatar">CK</div><div class="lb-name">CryptoKwame<div class="lb-country">GH</div></div><div><div class="lb-score">+6,820 ATX</div><div class="lb-mult">18.44x</div></div></div>
-          <div class="lb-row"><div class="lb-rank">🏆</div><div class="lb-avatar">A</div><div class="lb-name">AxTrader<div class="lb-country">Official</div></div><div><div class="lb-score">+4,200 ATX</div><div class="lb-mult">12.10x</div></div></div>
-          <div class="lb-row"><div class="lb-rank">#3</div><div class="lb-avatar">TN</div><div class="lb-name">TradingNana<div class="lb-country">NG</div></div><div><div class="lb-score">+3,140 ATX</div><div class="lb-mult">9.88x</div></div></div>
-          <div class="lb-row"><div class="lb-rank">#4</div><div class="lb-avatar">DK</div><div class="lb-name">DeFiKofi<div class="lb-country">GH</div></div><div><div class="lb-score">+2,010 ATX</div><div class="lb-mult">7.22x</div></div></div>
-          <div class="lb-row"><div class="lb-rank">#5</div><div class="lb-avatar">CM</div><div class="lb-name">CoinMaestro<div class="lb-country">ZA</div></div><div><div class="lb-score">+980 ATX</div><div class="lb-mult">5.60x</div></div></div>
-        </div>
-
-        <!-- AD #2 — Adsterra Banner 320x50 -->
-        <div style="text-align:center;margin:16px 0;padding:10px;border-radius:10px">
-          <div id="ad-placement-2">
-            <script type="text/javascript">
-              atOptions = { 'key':'3af34ffea372a34686d6ea6a655f0a6a','format':'iframe','height':50,'width':320,'params':{} };
-            </script>
-            <script type="text/javascript" src="https://www.highperformanceformat.com/3af34ffea372a34686d6ea6a655f0a6a/invoke.js"></script>
-          </div>
-        </div>
-        <!-- GAMES SECTION -->
-        <div class="section-header" style="margin-bottom:12px">
-          <div class="section-title" id="lbl-play-compete">🎮 Play & Compete</div>
-          <span style="font-size:.72rem;color:var(--text2)" id="lbl-playcoins-sub">ATX Coins for practice (not real money)</span>
-        </div>
-
-        <div class="games-grid">
-          <div class="game-card" onclick="openGame('crash')"><div class="game-icon">🚀</div><h4>Crash</h4><p id="lbl-game-crash-desc">Cash out before it crashes</p><button class="btn-play" id="lbl-play-crash" style="background:#22c55e;color:#fff">Play</button></div>
-          <div class="game-card" onclick="openGame('mines')"><div class="game-icon">💣</div><h4>Mines</h4><p id="lbl-game-mines-desc">Reveal tiles, avoid mines</p><button class="btn-play" id="lbl-play-mines" style="background:#ef4444;color:#fff">Play</button></div>
-          <div class="game-card" onclick="openGame('plinko')"><div class="game-icon">🎯</div><h4>Plinko</h4><p id="lbl-game-plinko-desc">Drop the ball, hit multiplier</p><button class="btn-play" id="lbl-play-plinko" style="background:var(--gold);color:#fff">Play</button></div>
-          <div class="game-card" onclick="openGame('candle')"><div class="game-icon">🕯️</div><h4>Candle Call</h4><p id="lbl-game-candle-desc">Predict LONG or SHORT</p><button class="btn-play" id="lbl-play-candle" style="background:#8b5cf6;color:#fff">Play</button></div>
-        </div>
       </div>
     </div>
 
@@ -1907,55 +1599,6 @@ canvas{width:100%;height:100%}
           </div>
         </div>
 
-        <!-- ─── SECTION B: COSMETIC SHOP ────────────────────── -->
-        <div class="more-section-label" id="lbl-section-premium">🛍️ Cosmetics Shop</div>
-
-        <div style="padding:0 16px 16px">
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-            <!-- Avatar -->
-            <div onclick="buyCosmetic('avatar')" style="background:var(--surface);padding:12px;border-radius:12px;text-align:center;cursor:pointer;border:1px solid var(--border);transition:.2s">
-              <div style="font-size:1.8rem;margin-bottom:4px">👤</div>
-              <div style="font-size:.75rem;color:var(--text);font-weight:600">Premium Avatar</div>
-              <button style="background:var(--gold);color:#fff;border:none;border-radius:6px;padding:6px;font-weight:600;font-size:.7rem;width:100%;margin-top:6px;cursor:pointer">$0.99</button>
-            </div>
-
-            <!-- Theme -->
-            <div onclick="buyCosmetic('theme')" style="background:var(--surface);padding:12px;border-radius:12px;text-align:center;cursor:pointer;border:1px solid var(--border);transition:.2s">
-              <div style="font-size:1.8rem;margin-bottom:4px">🎨</div>
-              <div style="font-size:.75rem;color:var(--text);font-weight:600">Dark Theme</div>
-              <button style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:6px;font-weight:600;font-size:.7rem;width:100%;margin-top:6px;cursor:pointer">$1.99</button>
-            </div>
-
-            <!-- Nameplate -->
-            <div onclick="buyCosmetic('nameplate')" style="background:var(--surface);padding:12px;border-radius:12px;text-align:center;cursor:pointer;border:1px solid var(--border);transition:.2s">
-              <div style="font-size:1.8rem;margin-bottom:4px">👑</div>
-              <div style="font-size:.75rem;color:var(--text);font-weight:600">Golden Plate</div>
-              <button style="background:var(--gold);color:#fff;border:none;border-radius:6px;padding:6px;font-weight:600;font-size:.7rem;width:100%;margin-top:6px;cursor:pointer">$0.49</button>
-            </div>
-
-            <!-- VIP -->
-            <div onclick="buyCosmetic('vip')" style="background:var(--surface);padding:12px;border-radius:12px;text-align:center;cursor:pointer;border:1px solid var(--border);transition:.2s">
-              <div style="font-size:1.8rem;margin-bottom:4px">💎</div>
-              <div style="font-size:.75rem;color:var(--text);font-weight:600">VIP Badge</div>
-              <button style="background:var(--premium);color:#fff;border:none;border-radius:6px;padding:6px;font-weight:600;font-size:.7rem;width:100%;margin-top:6px;cursor:pointer">$2.99</button>
-            </div>
-
-            <!-- Glow -->
-            <div onclick="buyCosmetic('glow')" style="background:var(--surface);padding:12px;border-radius:12px;text-align:center;cursor:pointer;border:1px solid var(--border);transition:.2s">
-              <div style="font-size:1.8rem;margin-bottom:4px">✨</div>
-              <div style="font-size:.75rem;color:var(--text);font-weight:600">Glow Effect</div>
-              <button style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:6px;font-weight:600;font-size:.7rem;width:100%;margin-top:6px;cursor:pointer">$0.99</button>
-            </div>
-
-            <!-- Legend -->
-            <div onclick="buyCosmetic('legend')" style="background:var(--surface);padding:12px;border-radius:12px;text-align:center;cursor:pointer;border:1px solid var(--border);transition:.2s">
-              <div style="font-size:1.8rem;margin-bottom:4px">🏆</div>
-              <div style="font-size:.75rem;color:var(--text);font-weight:600">Legend Status</div>
-              <button style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:6px;font-weight:600;font-size:.7rem;width:100%;margin-top:6px;cursor:pointer">$4.99</button>
-            </div>
-          </div>
-        </div>
-
         <!-- ─── SECTION C: TRADING ACADEMY ────────────────────── -->
         <div class="more-section-label" id="lbl-section-academy">📚 Trading Academy</div>
         <div style="padding:0 16px 6px">
@@ -2006,7 +1649,7 @@ canvas{width:100%;height:100%}
           </div>
           <div class="more-row" onclick="navTo('referral')">
             <div class="more-row-icon" style="background:var(--green-bg)">🔗</div>
-            <div class="more-row-text"><h5 id="lbl-referral-title">Refer &amp; Earn</h5><p id="lbl-referral-sub">Invite friends · Earn ATX Coins &amp; Premium days</p></div>
+            <div class="more-row-text"><h5 id="lbl-referral-title">Refer &amp; Earn</h5><p id="lbl-referral-sub">Invite friends · Both get 7 days free Premium</p></div>
             <span class="more-row-arrow">›</span>
           </div>
         </div>
@@ -2109,7 +1752,7 @@ canvas{width:100%;height:100%}
     <button class="nav-item" onclick="navTo('news')" id="nav-news"><span class="nav-icon">📰</span><span class="nav-label">News</span></button>
     <button class="nav-item" onclick="navTo('signals')" id="nav-signals"><span class="nav-icon">📡</span><span class="nav-label">Signals</span><span class="nav-badge" id="signals-nav-badge">0</span></button>
     <button class="nav-item active" onclick="navTo('home')" id="nav-home"><span class="nav-icon">⊞</span><span class="nav-label">Home</span></button>
-    <button class="nav-item" onclick="navTo('games')" id="nav-games"><span class="nav-icon">🎮</span><span class="nav-label">Arcade</span></button>
+
     <button class="nav-item" onclick="navTo('more')" id="nav-more"><span class="nav-icon">☰</span><span class="nav-label">More</span></button>
   </div>
 </div>
@@ -2130,7 +1773,7 @@ canvas{width:100%;height:100%}
     </div>
     <div class="profile-stats">
       <div class="profile-stat"><div class="profile-stat-val" id="ps-signals">0</div><div class="profile-stat-lbl">Signals</div></div>
-      <div class="profile-stat"><div class="profile-stat-val" id="ps-atx">1,000</div><div class="profile-stat-lbl">ATX</div></div>
+      <div class="profile-stat"><div class="profile-stat-val" id="ps-winrate">—</div><div class="profile-stat-lbl">Win Rate</div></div>
       <div class="profile-stat"><div class="profile-stat-val" id="ps-days">1</div><div class="profile-stat-lbl">Days</div></div>
     </div>
     <div class="profile-field"><label>Display Name</label><input type="text" id="pf-name" placeholder="Your name"></div>
@@ -2204,7 +1847,7 @@ canvas{width:100%;height:100%}
 
         <div style="display:flex;align-items:flex-start;gap:10px">
           <span style="background:var(--gold-bg);color:var(--gold);border-radius:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">🏅</span>
-          <div><div style="font-weight:700;font-size:.88rem">Premium Leaderboard Access</div><div style="font-size:.76rem;color:var(--text2)">Compete, track your stats, and earn ATX Coin multipliers exclusive to Premium</div></div>
+          <div><div style="font-weight:700;font-size:.88rem">Premium Leaderboard Access</div><div style="font-size:.76rem;color:var(--text2)">Compete and track your stats with exclusive Premium analytics</div></div>
         </div>
 
         <div style="display:flex;align-items:flex-start;gap:10px">
@@ -2217,7 +1860,7 @@ canvas{width:100%;height:100%}
       <!-- Social proof strip -->
       <div style="background:var(--surface2);border-radius:10px;padding:10px 12px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
         <div style="font-size:1.1rem">⭐</div>
-        <div style="font-size:.78rem;color:var(--text2)"><strong style="color:var(--text)">Trusted by 2,400+ traders</strong> across 38 countries. Average signal accuracy: <strong style="color:var(--green)">73%+</strong> live.</div>
+        <div style="font-size:.78rem;color:var(--text2)"><strong style="color:var(--text)">Trusted by 2,800+ active traders</strong> across 38 countries. Average live signal accuracy: <strong style="color:var(--green)">73%+</strong>.</div>
       </div>
 
       <!-- Payment options -->
@@ -2471,79 +2114,10 @@ canvas{width:100%;height:100%}
 5️⃣ Kelly Risk Sizing
    → 1.8:1 R:R minimum
    → Max 2% account risk</div>
-      <p>When all 5 pillars align, a <strong>GWP signal</strong> fires with 97% historical accuracy.</p>
+      <p>When all 5 pillars align, a <strong>GWP signal</strong> fires with 73%+ live accuracy.</p>
     </div>
   </div>
 </div>
-
-<!-- ============ GAME SCREENS ============ -->
-<div class="game-screen" id="game-crash">
-  <div class="game-topbar"><button class="game-back" onclick="closeGame('crash')">←</button><div class="game-title">🚀 Crash</div><div class="game-balance">🎮 <span class="atx-display">1000</span> ATX</div></div>
-  <div class="game-body">
-    <div class="game-canvas-wrap"><canvas id="crash-canvas"></canvas></div>
-    <div class="game-controls">
-      <div class="bet-row">
-        <input class="bet-inp" id="crash-bet" type="number" value="50" min="10">
-        <button class="bet-btn" onclick="document.getElementById('crash-bet').value=Math.min(+document.getElementById('crash-bet').value*2,gameState.balance)">×2</button>
-        <button class="bet-btn" onclick="document.getElementById('crash-bet').value=Math.floor(gameState.balance/2)">½</button>
-      </div>
-      <button class="action-btn go" id="crash-btn" onclick="crashAction()">🚀 Place Bet</button>
-      <div id="crash-msg" class="game-msg" style="margin-top:10px;display:none"></div>
-    </div>
-  </div>
-</div>
-
-<div class="game-screen" id="game-mines">
-  <div class="game-topbar"><button class="game-back" onclick="closeGame('mines')">←</button><div class="game-title">💣 Mines</div><div class="game-balance">🎮 <span class="atx-display">1000</span> ATX</div></div>
-  <div class="game-body">
-    <div class="game-controls">
-      <div class="bet-row">
-        <input class="bet-inp" id="mines-bet" type="number" value="50" min="10">
-        <input class="bet-inp" id="mines-count" type="number" value="3" min="1" max="20" style="max-width:80px">
-        <span style="font-size:.75rem;color:var(--text2);white-space:nowrap">mines</span>
-      </div>
-      <button class="action-btn go" id="mines-start-btn" onclick="startMines()">💣 Start Game</button>
-    </div>
-    <div class="mines-grid" id="mines-grid" style="grid-template-columns:repeat(5,1fr)"></div>
-    <div class="game-controls" id="mines-cashout-area" style="display:none">
-      <div id="mines-mult" style="text-align:center;font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;color:var(--gold);margin-bottom:10px">1.00x</div>
-      <button class="action-btn cashout" onclick="cashoutMines()">💰 Cash Out</button>
-    </div>
-    <div id="mines-msg" class="game-msg" style="display:none"></div>
-  </div>
-</div>
-
-<div class="game-screen" id="game-plinko">
-  <div class="game-topbar"><button class="game-back" onclick="closeGame('plinko')">←</button><div class="game-title">🎯 Plinko</div><div class="game-balance">🎮 <span class="atx-display">1000</span> ATX</div></div>
-  <div class="game-body">
-    <div class="game-canvas-wrap"><canvas id="plinko-canvas"></canvas></div>
-    <div class="game-controls">
-      <div class="bet-row">
-        <input class="bet-inp" id="plinko-bet" type="number" value="50" min="10">
-        <button class="bet-btn" onclick="document.getElementById('plinko-bet').value=Math.min(+document.getElementById('plinko-bet').value*2,gameState.balance)">×2</button>
-        <button class="bet-btn" onclick="document.getElementById('plinko-bet').value=Math.floor(gameState.balance/2)">½</button>
-      </div>
-      <button class="action-btn go" onclick="dropPlinko()">🎯 Drop Ball</button>
-      <div id="plinko-msg" class="game-msg" style="margin-top:10px;display:none"></div>
-    </div>
-  </div>
-</div>
-
-<div class="game-screen" id="game-candle">
-  <div class="game-topbar"><button class="game-back" onclick="closeGame('candle')">←</button><div class="game-title">🕯️ Candle Call</div><div class="game-balance">🎮 <span class="atx-display">1000</span> ATX</div></div>
-  <div class="game-body">
-    <div class="game-canvas-wrap"><canvas id="candle-canvas"></canvas></div>
-    <div class="game-controls">
-      <div class="bet-row"><input class="bet-inp" id="candle-bet" type="number" value="50" min="10"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <button class="action-btn go" onclick="candleCall('LONG')">📈 LONG</button>
-        <button class="action-btn stop" onclick="candleCall('SHORT')">📉 SHORT</button>
-      </div>
-      <div id="candle-msg" class="game-msg" style="margin-top:10px;display:none"></div>
-    </div>
-  </div>
-</div>
-
 
 <!-- DISCLAIMER MODAL -->
 <div class="overlay" id="disclaimer-overlay" onclick="closeOverlay('disclaimer-overlay')">
@@ -2732,16 +2306,6 @@ try { const sl = localStorage.getItem('ax_lang'); if (sl && ['en','fr','es','pt'
   } catch(e) { localStorage.removeItem('ax_user'); }
 })();
 
-const gameState = {
-  get balance() { return getATXBalance(); },
-  set balance(val) {
-    const diff = val - this._balance;
-    if (diff > 0) addATX(diff, 'game');
-    else if (diff < 0) removeATX(-diff, 'game');
-    this._balance = val;
-  },
-  _balance: 1000
-};
 let livePriceMap = {};
 
 // ============ LIVE SIGNALS FROM GITHUB GIST ============
@@ -2792,7 +2356,6 @@ async function fetchSignalsFromSheet() {
       .slice(0, 30);
 
     if (!merged.length) {
-      console.log('Gist is empty — bots have not written yet. GIST_ID:', GIST_ID);
       renderFallbackSignals();
       return;
     }
@@ -2892,7 +2455,6 @@ async function fetchSignalsFromSheet() {
     pruneNotifState();
 
   } catch(e) {
-    console.log('Gist fetch error:', e);
     renderFallbackSignals();
   }
 }
@@ -2959,7 +2521,7 @@ function archiveSignal(signal) {
     archived.unshift(entry);
     if (archived.length > 50) archived.splice(50);
     localStorage.setItem('axtrader_archive', JSON.stringify(archived));
-  } catch(e) { console.warn('archiveSignal error:', e); }
+  } catch(e) { }
 }
 
 function updateArchiveOutcomes(prices) {
@@ -2992,7 +2554,7 @@ function updateArchiveOutcomes(prices) {
       }
     });
     if (changed) localStorage.setItem('axtrader_archive', JSON.stringify(archived));
-  } catch(e) { console.warn('updateArchiveOutcomes error:', e); }
+  } catch(e) { }
 }
 
 function updateArchiveStats() {
@@ -3005,7 +2567,7 @@ function updateArchiveStats() {
     document.getElementById('arch-win-rate').textContent = winRate !== null ? winRate + '%' : '—';
     document.getElementById('arch-avg-rr').textContent   = archived.length ? avgRR.toFixed(1) : '—';
     document.getElementById('arch-total').textContent    = archived.length;
-  } catch(e) { console.warn('updateArchiveStats error:', e); }
+  } catch(e) { }
 }
 
 function renderArchive() {
@@ -3046,7 +2608,7 @@ function renderArchive() {
         <div style="font-size:.7rem;color:var(--text3)">Fired: ${fired}</div>
       </div>`;
     }).join('');
-  } catch(e) { console.warn('renderArchive error:', e); }
+  } catch(e) { }
 }
 
 function toggleArchive() {
@@ -3138,7 +2700,7 @@ function showPhaseNotification(signal, phase) {
     } else {
       new Notification(msg.title, { body: msg.body, icon: '/icon-192.png' });
     }
-  } catch(e) { console.warn('showPhaseNotification error:', e); }
+  } catch(e) { }
 }
 
 function pruneNotifState() {
@@ -3151,7 +2713,7 @@ function pruneNotifState() {
       if (!activeIds.has(id)) { delete state[id]; changed = true; }
     });
     if (changed) localStorage.setItem('axtrader_notif_state', JSON.stringify(state));
-  } catch(e) { console.warn('pruneNotifState error:', e); }
+  } catch(e) { }
 }
 
 // ============ FEATURE 4: PRICE MONITORING ============
@@ -3180,7 +2742,7 @@ async function checkSignalPhases() {
       }
     });
     updateArchiveOutcomes(livePriceMap);
-  } catch(e) { console.warn('checkSignalPhases error:', e); }
+  } catch(e) { }
 }
 
 // Auto-refresh every 60 seconds with phase checking
@@ -3487,7 +3049,6 @@ function _handleGoogleCred(response) {
       googleId : payload.sub,
     });
   } catch(e) {
-    console.error('Google credential error:', e);
     showToast('Google Sign-In failed — try email instead');
   }
 }
@@ -3537,16 +3098,16 @@ function loginUser(user) {
 }
 // ── MANUAL PREMIUM GRANT (admin use) ────────────────────────────────────────
 // Valid codes — change these whenever you want to rotate/expire them.
-const PREMIUM_CODES = ['AXPREM-ASTERIX', 'GWP-VIP-2025', 'AXTRADER-PRO'];
+const PREMIUM_CODES = [];
 
 /**
  * grantPremium(code)
  *  — Call from browser DevTools console OR pass a ?promo=CODE URL param.
  *  — Sets isPremium=true and persists it to localStorage on the current device.
  *  — For admin manual upgrades: open devtools on the user's device and run:
- *      grantPremium('AXPREM-ASTERIX')
+ *      grantPremium('YOUR-CODE')
  *  — Or share the promo URL:
- *      https://axtrader.vercel.app/?promo=AXPREM-ASTERIX
+ *      https://axtrader.vercel.app/?promo=YOUR-CODE
  */
 function grantPremium(code) {
   if (!appState.user) { showToast(T('login_first')); return false; }
@@ -3662,7 +3223,7 @@ const i18n={
     section_settings:'⚙️ App Settings', section_knowledge:'🧠 Knowledge & System',
     section_contact:'✉️ Contact & Support', section_legal:'⚖️ Legal',
     upgrade_title:'Upgrade to Premium', upgrade_sub:'Unlock all signals, zero ads, full academy',
-    referral_title:'Refer & Earn', referral_sub:'Invite friends · Earn ATX Coins & Premium days',
+    referral_title:'Refer & Earn', referral_sub:'Invite friends · Both get 7 days free Premium',
     analytics_title:'Analytics', analytics_sub:'Performance stats · Win rate · P&L tracking',
     signal_alerts_title:'Signal Alerts', signal_alerts_sub:'Push notifications · Alert preferences',
     language_title:'Language', install_title:'Install App',
@@ -3682,7 +3243,7 @@ const i18n={
     or_divider:'or', email_placeholder:'you@email.com', password_placeholder:'Password',
     name_placeholder:'Your name', min_chars:'Min 8 characters',
     forgot_msg:'Enter your email and we\'ll send a reset link.',
-    active_members:'2,847 Active Members', signal_accuracy:'97% Signal Accuracy', markets_covered:'3 Markets Covered',
+    active_members:'2,800+ Active Traders', signal_accuracy:'73%+ Live Accuracy', markets_covered:'3 Markets Covered',
     crypto_bot:'Crypto Signals Bot', forex_bot:'Forex Signals Bot', stocks_bot:'Stocks Signals Bot',
     tg_community:'Telegram Community', premium_desc:'Signal copier, no ads, analytics',
     email_support:'Email Support', direct_msg:'Direct Message',
@@ -3749,7 +3310,7 @@ const i18n={
     section_settings:'⚙️ Paramètres', section_knowledge:'🧠 Connaissance & Système',
     section_contact:'✉️ Contact & Support', section_legal:'⚖️ Légal',
     upgrade_title:'Passer à Premium', upgrade_sub:'Débloquer tous les signaux, sans pub, académie complète',
-    referral_title:'Parrainage & Gains', referral_sub:'Inviter des amis · Gagner des ATX Coins & Premium',
+    referral_title:'Parrainage & Gains', referral_sub:'Les deux obtiennent 7 jours de Premium gratuit',
     analytics_title:'Analytique', analytics_sub:'Stats de performance · Taux de réussite · Suivi P&L',
     signal_alerts_title:'Alertes de Signaux', signal_alerts_sub:'Notifications push · Préférences d\'alertes',
     language_title:'Langue', install_title:'Installer l\'App',
@@ -3768,7 +3329,7 @@ const i18n={
     or_divider:'ou', email_placeholder:'vous@email.com', password_placeholder:'Mot de passe',
     name_placeholder:'Votre nom', min_chars:'8 caractères minimum',
     forgot_msg:'Entrez votre email et nous vous enverrons un lien de réinitialisation.',
-    active_members:'2 847 Membres Actifs', signal_accuracy:'97% Précision des Signaux', markets_covered:'3 Marchés Couverts',
+    active_members:'2 800+ Traders Actifs', signal_accuracy:'73%+ Précision en Direct', markets_covered:'3 Marchés Couverts',
     crypto_bot:'Bot Signaux Crypto', forex_bot:'Bot Signaux Forex', stocks_bot:'Bot Signaux Actions',
     tg_community:'Communauté Telegram', premium_desc:'Copieur de signaux, sans pub, analytique',
     email_support:'Support Email', direct_msg:'Message Direct',
@@ -3835,7 +3396,7 @@ const i18n={
     section_settings:'⚙️ Configuración', section_knowledge:'🧠 Conocimiento & Sistema',
     section_contact:'✉️ Contacto & Soporte', section_legal:'⚖️ Legal',
     upgrade_title:'Mejorar a Premium', upgrade_sub:'Desbloquear todas las señales, sin anuncios, academia completa',
-    referral_title:'Referir & Ganar', referral_sub:'Invitar amigos · Ganar ATX Coins & Premium',
+    referral_title:'Referir & Ganar', referral_sub:'Ambos obtienen 7 días de Premium gratis',
     analytics_title:'Analítica', analytics_sub:'Estadísticas · Tasa de éxito · Seguimiento P&L',
     signal_alerts_title:'Alertas de Señales', signal_alerts_sub:'Notificaciones push · Preferencias de alertas',
     language_title:'Idioma', install_title:'Instalar App',
@@ -3854,7 +3415,7 @@ const i18n={
     or_divider:'o', email_placeholder:'tu@email.com', password_placeholder:'Contraseña',
     name_placeholder:'Tu nombre', min_chars:'Mínimo 8 caracteres',
     forgot_msg:'Ingresa tu email y te enviaremos un enlace para restablecer.',
-    active_members:'2.847 Miembros Activos', signal_accuracy:'97% Precisión de Señales', markets_covered:'3 Mercados Cubiertos',
+    active_members:'2.800+ Traders Activos', signal_accuracy:'73%+ Precisión en Vivo', markets_covered:'3 Mercados Cubiertos',
     crypto_bot:'Bot Señales Cripto', forex_bot:'Bot Señales Forex', stocks_bot:'Bot Señales Acciones',
     tg_community:'Comunidad Telegram', premium_desc:'Copiador de señales, sin anuncios, analítica',
     email_support:'Soporte Email', direct_msg:'Mensaje Directo',
@@ -3921,7 +3482,7 @@ const i18n={
     section_settings:'⚙️ Configurações', section_knowledge:'🧠 Conhecimento & Sistema',
     section_contact:'✉️ Contato & Suporte', section_legal:'⚖️ Legal',
     upgrade_title:'Atualizar para Premium', upgrade_sub:'Desbloquear todos os sinais, sem anúncios, academia completa',
-    referral_title:'Indicar & Ganhar', referral_sub:'Convidar amigos · Ganhar ATX Coins & Premium',
+    referral_title:'Indicar & Ganhar', referral_sub:'Ambos ganham 7 dias de Premium grátis',
     analytics_title:'Análises', analytics_sub:'Estatísticas · Taxa de acerto · Rastreamento P&L',
     signal_alerts_title:'Alertas de Sinais', signal_alerts_sub:'Notificações push · Preferências de alertas',
     language_title:'Idioma', install_title:'Instalar App',
@@ -3940,7 +3501,7 @@ const i18n={
     or_divider:'ou', email_placeholder:'voce@email.com', password_placeholder:'Senha',
     name_placeholder:'Seu nome', min_chars:'Mínimo 8 caracteres',
     forgot_msg:'Digite seu email e enviaremos um link de redefinição.',
-    active_members:'2.847 Membros Ativos', signal_accuracy:'97% Precisão dos Sinais', markets_covered:'3 Mercados Cobertos',
+    active_members:'2.800+ Traders Ativos', signal_accuracy:'73%+ Precisão ao Vivo', markets_covered:'3 Mercados Cobertos',
     crypto_bot:'Bot Sinais Cripto', forex_bot:'Bot Sinais Forex', stocks_bot:'Bot Sinais Ações',
     tg_community:'Comunidade Telegram', premium_desc:'Copiador de sinais, sem anúncios, análises',
     email_support:'Suporte Email', direct_msg:'Mensagem Direta',
@@ -4007,7 +3568,7 @@ const i18n={
     section_settings:'⚙️ الإعدادات', section_knowledge:'🧠 المعرفة والنظام',
     section_contact:'✉️ التواصل والدعم', section_legal:'⚖️ قانوني',
     upgrade_title:'الترقية إلى المميز', upgrade_sub:'إلغاء قفل جميع الإشارات، بدون إعلانات، أكاديمية كاملة',
-    referral_title:'إحالة واربح', referral_sub:'دعوة الأصدقاء · ربح ATX Coins & Premium',
+    referral_title:'إحالة واربح', referral_sub:'كلاكما يحصلان على 7 أيام Premium مجانية',
     analytics_title:'التحليلات', analytics_sub:'إحصاءات الأداء · معدل الفوز · تتبع الأرباح',
     signal_alerts_title:'تنبيهات الإشارات', signal_alerts_sub:'إشعارات الدفع · تفضيلات التنبيهات',
     language_title:'اللغة', install_title:'تثبيت التطبيق',
@@ -4026,7 +3587,7 @@ const i18n={
     or_divider:'أو', email_placeholder:'you@email.com', password_placeholder:'كلمة المرور',
     name_placeholder:'اسمك', min_chars:'8 أحرف كحد أدنى',
     forgot_msg:'أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين.',
-    active_members:'2,847 عضو نشط', signal_accuracy:'97% دقة الإشارات', markets_covered:'3 أسواق مغطاة',
+    active_members:'2,800+ متداول نشط', signal_accuracy:'73%+ دقة مباشرة', markets_covered:'3 أسواق مغطاة',
     crypto_bot:'بوت إشارات الكريبتو', forex_bot:'بوت إشارات الفوركس', stocks_bot:'بوت إشارات الأسهم',
     tg_community:'مجتمع تيليجرام', premium_desc:'ناسخ إشارات، بدون إعلانات، تحليلات',
     email_support:'دعم البريد', direct_msg:'رسالة مباشرة',
@@ -4271,7 +3832,7 @@ function fallbackCopy(input) {
 }
 function shareReferral(platform) {
   const link = document.getElementById('referral-link-input').value;
-  const text = 'Check out AxTrader — Get institutional-grade trading signals powered by Ghost Wick Protocol! Free signals daily + earn ATX Coins. Join here: ' + link;
+  const text = 'Check out AxTrader — Get institutional-grade trading signals powered by Ghost Wick Protocol! Free signals daily + both get 7 days free Premium. Join here: ' + link;
   const encodedText = encodeURIComponent(text);
   const encodedLink = encodeURIComponent(link);
   switch(platform) {
@@ -4427,7 +3988,6 @@ async function createNowPayment(currency) {
     startNpPolling(_npPaymentId);
 
   } catch (err) {
-    console.error('NOWPayments create error:', err);
     closeOverlay('np-payment-overlay');
     showToast(T('payment_failed'));
   }
@@ -4703,9 +4263,7 @@ async function fetchLiveTicker() {
     const btcMini = document.getElementById('btc-price-mini');
     if (btcMini && btcItem) btcMini.textContent = '$' + btcItem.p;
 
-    console.log('[Ticker] Live prices loaded:', items.length, 'pairs');
   } catch(e) {
-    console.log('[Ticker] CoinGecko error, using fallback:', e.message);
     buildTicker(liveTickerData); // show whatever we have
   }
 }
@@ -5204,7 +4762,7 @@ const coursesData={
 
     // ── GWP 103 ──────────────────────────────────────────────
     {title:'GWP 103 — The 5-Pillar Confluence System',icon:'🏛️',badge:'free',
-     body:'A GWP signal only fires when all 5 pillars align on the same timeframe. Each pillar alone has a 60-70% win rate. Combined, the historical accuracy reaches 97%. This is the core engine behind the AxTrader bots.',
+     body:'A GWP signal only fires when all 5 pillars align on the same timeframe. Each pillar alone has a 60-70% win rate. Combined, the live accuracy is 73%+ (97% was backtested — not indicative of live results). This is the core engine behind the AxTrader bots.',
      illus:`The 5 Pillars (ALL must confirm):
   ┌────────────────────────────────────┐
   │ [1] GHOST WICK DETECTION           │
@@ -5284,7 +4842,7 @@ const coursesData={
   │  f = 95.3%  ← way too much!        │
   │  GWP cap: 2% max always            │
   └────────────────────────────────────┘`,
-     detail:'The full Kelly of 95% is mathematically optimal but practically suicidal — a single losing streak would wipe any account. Institutional traders use fractional Kelly (typically ¼ Kelly). GWP\'s 2% cap is essentially 1/47th Kelly, which is extremely conservative. This is intentional: at 97% win rate with 1.8:1 R:R, even a run of 5 consecutive losses (statistically extremely rare) would only draw down a 2% risk account by ~10%. Full recovery takes just a few wins.'},
+     detail:'The full Kelly of 95% is mathematically optimal but practically suicidal — a single losing streak would wipe any account. Institutional traders use fractional Kelly (typically ¼ Kelly). GWP\'s 2% cap is essentially 1/47th Kelly, which is extremely conservative. This is intentional: at 73%+ live win rate with 1.8:1 R:R, even a run of 5 consecutive losses (statistically extremely rare) would only draw down a 2% risk account by ~10%. Full recovery takes just a few wins.'},
 
     // ── GWP 106 ──────────────────────────────────────────────
     {title:'GWP 106 — TP1 / TP2 / TP3 Targets',icon:'🎯',badge:'free',
@@ -5307,7 +4865,7 @@ const coursesData={
   │ SL ●  (below ATR floor)            │
   │       Risk = 2% of account         │
   └────────────────────────────────────┘`,
-     detail:'The math of a 3-target exit: 30% at 1:1 + 40% at 2:1 + 30% at 3.5:1 = (0.3×1 + 0.4×2 + 0.3×3.5) = 2.15:1 average R:R when all targets hit. With a 97% win rate and 2.15:1 R:R, the expected value per trade is massive. TP3 was raised in v8 because review of past signals showed price regularly overshooting the original 2.5:1 TP3. The 3.5:1 target captures more of these extended moves.'},
+     detail:'The math of a 3-target exit: 30% at 1:1 + 40% at 2:1 + 30% at 3.5:1 = (0.3×1 + 0.4×2 + 0.3×3.5) = 2.15:1 average R:R when all targets hit. With a 73%+ live win rate and 2.15:1 R:R, the expected value per trade is massive. TP3 was raised in v8 because review of past signals showed price regularly overshooting the original 2.5:1 TP3. The 3.5:1 target captures more of these extended moves.'},
 
     // ── GWP 107 ──────────────────────────────────────────────
     {title:'GWP 107 — Vol + AVWAP Gate (v8)',icon:'📊',badge:'free',
@@ -5572,7 +5130,7 @@ const coursesTitleBody = {
     'b_SMC 109':'Les marchés ne bougent pas isolément. Comprendre les corrélations entre DXY, or, crypto et actions vous donne un avantage puissant — confirmez votre biais avec plusieurs signaux indépendants avant de risquer du capital.',
     'b_GWP 101':'Le Ghost Wick est le pattern fondamental du système GWP. C\'est une bougie unique dont la mèche représente ≥60% de la plage totale. La mèche représente la manipulation institutionnelle — un balayage délibéré de liquidité — avant le vrai mouvement directionnel.',
     'b_GWP 102':'Le Piège à Liquidité est la version multi-bougies du Ghost Wick. Le prix casse un niveau structurel clé, piégeant les acheteurs de breakout — puis s\'inverse agressivement en 1-2 bougies. C\'est le pattern le plus fiable du GWP.',
-    'b_GWP 103':'Un signal GWP ne se déclenche que lorsque les 5 piliers s\'alignent sur le même timeframe. Chaque pilier seul a un taux de réussite de 60-70%. Combinés, la précision historique atteint 97%. C\'est le moteur principal des bots AxTrader.',
+    'b_GWP 103':'Un signal GWP ne se déclenche que lorsque les 5 piliers s\'alignent sur le même timeframe. Chaque pilier seul a un taux de réussite de 60-70%. Combinés, la précision en direct est de 73%+ (97% en backtest — non indicatif des résultats réels). C\'est le moteur principal des bots AxTrader.',
     'b_GWP 104':'GWP v8 a introduit les stop loss planchers ATR — une mise à jour critique qui empêche les stops d\'être placés trop serrés. Un stop trop serré garantit d\'être sorti sur la volatilité normale avant le vrai mouvement.',
     'b_GWP 105':'GWP utilise un critère de Kelly modifié pour calculer la taille de position. Plutôt que la formule brute (qui produit des tailles dangereusement grandes), GWP plafonne l\'allocation à 2% et la calibre selon le score de conviction.',
     'b_GWP 106':'GWP v8 a introduit des objectifs de prise de profit plus élevés basés sur le backtesting montrant que les signaux premium étaient fermés trop tôt. Le système à trois objectifs verrouille le profit tout en maximisant la course du gagnant.',
@@ -5612,7 +5170,7 @@ const coursesTitleBody = {
     'b_SMC 109':'Los mercados no se mueven aisladamente. Entender las correlaciones entre DXY, oro, crypto y acciones da una ventaja poderosa.',
     'b_GWP 101':'El Ghost Wick es el patrón fundamental del sistema GWP. Es una vela única cuya mecha representa ≥60% del rango total — manipulación institucional antes del movimiento real.',
     'b_GWP 102':'La Trampa de Liquidez es la versión multi-vela del Ghost Wick. El precio rompe un nivel clave, atrapa compradores de breakout — luego se revierte en 1-2 velas.',
-    'b_GWP 103':'Una señal GWP solo se dispara cuando los 5 pilares se alinean. Cada pilar solo tiene 60-70% de acierto. Combinados, la precisión histórica alcanza 97%.',
+    'b_GWP 103':'Una señal GWP solo se dispara cuando los 5 pilares se alinean. Cada pilar solo tiene 60-70% de acierto. Combinados, la precisión en vivo es 73%+ (97% en backtest — no indicativo de resultados reales).',
     'b_GWP 104':'GWP v8 introdujo stop loss con piso ATR — una actualización crítica que previene stops demasiado ajustados que garantizan ser sacado por la volatilidad normal.',
     'b_GWP 105':'GWP usa un criterio Kelly modificado para el tamaño de posición. Limita la asignación al 2% y la escala según el score de convicción.',
     'b_GWP 106':'GWP v8 introdujo objetivos de profit más altos. El sistema de tres objetivos asegura ganancias mientras maximiza la carrera del ganador.',
@@ -5652,7 +5210,7 @@ const coursesTitleBody = {
     'b_SMC 109':'Mercados não se movem isoladamente. Entender correlações entre DXY, ouro, crypto e ações dá uma vantagem poderosa.',
     'b_GWP 101':'O Ghost Wick é o padrão fundamental do sistema GWP. Uma vela cuja mecha representa ≥60% do range total — manipulação institucional antes do movimento real.',
     'b_GWP 102':'A Armadilha de Liquidez é a versão multi-vela do Ghost Wick. O preço rompe um nível chave, prende compradores — depois reverte em 1-2 velas.',
-    'b_GWP 103':'Um sinal GWP só dispara quando os 5 pilares se alinham. Cada pilar tem 60-70% de acerto. Combinados, a precisão atinge 97%.',
+    'b_GWP 103':'Um sinal GWP só dispara quando os 5 pilares se alinham. Cada pilar tem 60-70% de acerto. Combinados, a precisão ao vivo é 73%+ (97% em backtest — não indicativo de resultados reais).',
     'b_GWP 104':'GWP v8 introduziu stop loss com piso ATR — impede stops muito apertados que seriam atingidos pela volatilidade normal.',
     'b_GWP 105':'GWP usa um critério Kelly modificado para tamanho de posição. Limita a alocação em 2% e escala pelo score de convicção.',
     'b_GWP 106':'GWP v8 introduziu alvos de lucro mais altos. O sistema de três alvos trava o lucro enquanto maximiza a corrida do vencedor.',
@@ -5692,7 +5250,7 @@ const coursesTitleBody = {
     'b_SMC 109':'الأسواق لا تتحرك بمعزل. فهم الارتباطات بين DXY والذهب والعملات الرقمية والأسهم يعطي ميزة قوية.',
     'b_GWP 101':'Ghost Wick هو النمط الأساسي لنظام GWP. شمعة واحدة فتيلها ≥60% من المدى — تلاعب مؤسسي قبل الحركة الحقيقية.',
     'b_GWP 102':'فخ السيولة هو النسخة متعددة الشموع من Ghost Wick. السعر يكسر مستوى رئيسي ثم ينعكس بعنف.',
-    'b_GWP 103':'إشارة GWP تنطلق فقط عندما تتوافق الأعمدة الخمسة. كل عمود بمفرده 60-70%. مجتمعة تصل الدقة إلى 97%.',
+    'b_GWP 103':'إشارة GWP تنطلق فقط عندما تتوافق الأعمدة الخمسة. كل عمود بمفرده 60-70%. مجتمعة تصل الدقة المباشرة إلى 73%+ (97% في الاختبار الخلفي — لا يعكس النتائج الحية).',
     'b_GWP 104':'GWP v8 أضاف أرضية ATR لوقف الخسارة — يمنع الستوبات الضيقة جداً.',
     'b_GWP 105':'يستخدم GWP معيار Kelly معدّل لحجم المركز. يحدد التخصيص بـ2% ويعدّله حسب درجة الاقتناع.',
     'b_GWP 106':'GWP v8 رفع أهداف الربح. نظام الثلاثة أهداف يؤمّن الأرباح مع تعظيم مكاسب الفائزين.',
@@ -5989,7 +5547,6 @@ async function fetchLiveNews() {
 
     renderNews();
     renderHomePreviewNews();
-    console.log('[News] Loaded', allNewsData.length, 'articles');
 
     const lang = appState.lang || 'en';
     if (lang !== 'en') {
@@ -6003,7 +5560,6 @@ async function fetchLiveNews() {
     if (tLbl) tLbl.textContent = 'Updated ' + timeStr;
 
   } catch(e) {
-    console.log('[News] API error, using fallback:', e.message);
     renderFallbackNews();
   }
 }
@@ -6168,223 +5724,6 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),2500);
 }
 
-// ============ GAME STATE ============
-function updateBalanceDisplays(){
-  document.querySelectorAll('.atx-display').forEach(el=>el.textContent=getATXBalance().toLocaleString());
-  document.getElementById('atx-balance').textContent=formatATX(getATXBalance());
-  document.getElementById('ps-atx').textContent=getATXBalance().toLocaleString();
-}
-function openGame(name){
-  document.getElementById('game-'+name).classList.add('open');
-  updateBalanceDisplays();
-  if(name==='crash') initCrash();
-  if(name==='plinko') initPlinko();
-  if(name==='candle') initCandle();
-  if(name==='mines') initMinesGrid();
-}
-function closeGame(name){document.getElementById('game-'+name).classList.remove('open');updateBalanceDisplays();}
-
-// ============ CRASH GAME ============
-let crashCtx,crashAnim,crashMult=1.0,crashRunning=false,crashBet=0,crashCashedOut=false;
-function initCrash(){
-  const canvas=document.getElementById('crash-canvas');
-  canvas.width=canvas.offsetWidth*window.devicePixelRatio;
-  canvas.height=canvas.offsetHeight*window.devicePixelRatio;
-  crashCtx=canvas.getContext('2d');drawCrashIdle();
-}
-function drawCrashIdle(){
-  if(!crashCtx) return;
-  const c=crashCtx,w=c.canvas.width,h=c.canvas.height;
-  c.clearRect(0,0,w,h);c.fillStyle='#1a1814';c.fillRect(0,0,w,h);
-  c.fillStyle='#c9a84c';c.font=`bold ${w*0.07}px Space Grotesk,sans-serif`;
-  c.textAlign='center';c.fillText('1.00x',w/2,h/2);
-  c.fillStyle='rgba(255,255,255,.4)';c.font=`${w*0.035}px DM Sans,sans-serif`;
-  c.fillText('Place your bet and launch 🚀',w/2,h*0.65);
-}
-function crashAction(){
-  const btn=document.getElementById('crash-btn'),msg=document.getElementById('crash-msg');
-  if(crashRunning&&!crashCashedOut){
-    crashCashedOut=true;cancelAnimationFrame(crashAnim);
-    const winnings=Math.floor(crashBet*crashMult);
-    addATX(winnings, 'crash');
-    updateBalanceDisplays();
-    btn.className='action-btn go';btn.textContent='🚀 Place Bet';
-    msg.style.display='block';msg.className='game-msg msg-win';
-    const profit=winnings-crashBet;msg.textContent=`✅ ${T('cash_out_at')} ${crashMult.toFixed(2)}x! ${T('profit')}: +⚡ ${formatATX(profit)} ATX`;crashRunning=false;
-    if(typeof sparkle==='function') sparkle(24);return;
-  }
-  crashBet=parseInt(document.getElementById('crash-bet').value)||50;
-  if(crashBet>getATXBalance()) return showToast(T('insuf_balance'));
-  if(!removeATX(crashBet, 'crash')) return;
-  updateBalanceDisplays();
-  msg.style.display='none';crashMult=1.0;crashRunning=true;crashCashedOut=false;
-  btn.className='action-btn cashout';btn.textContent='💰 Cash Out';
-  const crashPoint=1+Math.random()*8+Math.random()*Math.random()*10;
-  let startTime=null;
-  function frame(ts){
-    if(!startTime) startTime=ts;
-    const elapsed=(ts-startTime)/1000;
-    crashMult=Math.pow(1.06,elapsed*10);
-    const c=crashCtx,w=c.canvas.width,h=c.canvas.height;
-    c.clearRect(0,0,w,h);c.fillStyle='#1a1814';c.fillRect(0,0,w,h);
-    const prog=Math.min(crashMult/crashPoint,1);
-    c.beginPath();c.moveTo(w*0.05,h*0.85);
-    c.quadraticCurveTo(w*0.4,h*(0.85-prog*0.7),w*0.95,h*(0.85-prog*0.7));
-    c.strokeStyle='#c9a84c';c.lineWidth=3;c.stroke();
-    c.font=`${w*0.06}px serif`;c.fillText('🚀',w*0.95-20,h*(0.85-prog*0.7));
-    c.fillStyle='#e8c96a';c.font=`bold ${w*0.09}px Space Grotesk,sans-serif`;c.textAlign='center';
-    c.fillText(crashMult.toFixed(2)+'x',w/2,h/2);
-    if(crashMult>=crashPoint){
-      crashRunning=false;c.fillStyle='rgba(192,57,43,.85)';c.fillRect(0,0,w,h);
-      c.fillStyle='#fff';c.font=`bold ${w*0.08}px Space Grotesk,sans-serif`;
-      c.fillText('CRASHED at '+crashMult.toFixed(2)+'x',w/2,h/2);
-      btn.className='action-btn go';btn.textContent='🚀 Place Bet';
-      msg.style.display='block';msg.className='game-msg msg-lose';
-      msg.textContent=`🔴 Crashed at ${crashMult.toFixed(2)}x. Lost ⚡ ${formatATX(crashBet)} ATX`;return;
-    }
-    if(crashRunning) crashAnim=requestAnimationFrame(frame);
-  }
-  crashAnim=requestAnimationFrame(frame);
-}
-
-// ============ MINES GAME ============
-let minesActive=false,minesGrid=[],minesRevealed=0,minesMult=1.0,minesCount=3,minesBet=0;
-function initMinesGrid(){
-  const grid=document.getElementById('mines-grid');grid.innerHTML='';
-  for(let i=0;i<25;i++){const cell=document.createElement('div');cell.className='mine-cell';cell.onclick=()=>revealCell(i);grid.appendChild(cell);}
-}
-function startMines(){
-  minesBet=parseInt(document.getElementById('mines-bet').value)||50;
-  minesCount=Math.min(parseInt(document.getElementById('mines-count').value)||3,20);
-  if(minesBet>getATXBalance()) return showToast(T('insuf_balance'));
-  if(!removeATX(minesBet, 'mines')) return;
-  updateBalanceDisplays();
-  minesRevealed=0;minesMult=1.0;minesActive=true;minesGrid=Array(25).fill(false);
-  let placed=0;while(placed<minesCount){const r=Math.floor(Math.random()*25);if(!minesGrid[r]){minesGrid[r]=true;placed++;}}
-  document.getElementById('mines-start-btn').textContent='New Game';
-  document.getElementById('mines-cashout-area').style.display='block';
-  document.getElementById('mines-msg').style.display='none';
-  initMinesGrid();
-}
-function revealCell(i){
-  if(!minesActive) return;
-  const cells=document.querySelectorAll('.mine-cell');const cell=cells[i];
-  if(cell.classList.contains('revealed')||cell.classList.contains('mine-hit')) return;
-  if(minesGrid[i]){
-    cell.classList.add('mine-hit');cell.textContent='💣';minesActive=false;
-    document.getElementById('mines-cashout-area').style.display='none';
-    const msg=document.getElementById('mines-msg');msg.style.display='block';msg.className='game-msg msg-lose';
-    msg.textContent=`💥 Mine hit! Lost ⚡ ${formatATX(minesBet)} ATX.`;
-    minesGrid.forEach((m,idx)=>{if(m){cells[idx].textContent='💣';cells[idx].classList.add('mine-hit');}});
-  } else {
-    cell.classList.add('safe','revealed');cell.textContent='💎';minesRevealed++;
-    const safeCells=25-minesCount;
-    minesMult=Math.round((1+minesRevealed*(minesCount/safeCells))*100)/100;
-    document.getElementById('mines-mult').textContent=minesMult.toFixed(2)+'x';
-  }
-}
-function cashoutMines(){
-  if(!minesActive) return;minesActive=false;
-  const winnings=Math.floor(minesBet*minesMult);addATX(winnings, 'mines');updateBalanceDisplays();
-  document.getElementById('mines-cashout-area').style.display='none';
-  const msg=document.getElementById('mines-msg');msg.style.display='block';msg.className='game-msg msg-win';
-  const profit=winnings-minesBet;msg.textContent=`✅ ${T('cash_out_at')} ${minesMult.toFixed(2)}x! ${T('profit')}: +⚡ ${formatATX(profit)} ATX`;
-  if(typeof sparkle==='function') sparkle(20);
-}
-
-// ============ PLINKO GAME ============
-let plinkoCtx;
-function initPlinko(){
-  const canvas=document.getElementById('plinko-canvas');
-  canvas.width=canvas.offsetWidth*window.devicePixelRatio;canvas.height=canvas.offsetHeight*window.devicePixelRatio;
-  plinkoCtx=canvas.getContext('2d');drawPlinkoBoard();
-}
-function drawPlinkoBoard(){
-  if(!plinkoCtx) return;
-  const c=plinkoCtx,w=c.canvas.width,h=c.canvas.height;
-  c.clearRect(0,0,w,h);c.fillStyle='#1a1814';c.fillRect(0,0,w,h);
-  for(let r=0;r<8;r++){for(let col=0;col<9;col++){
-    const x=w*(col/(9-1))*0.8+w*0.1-(r%2===0?0:w*0.04);const y=h*0.12+r*(h*0.75/8);
-    c.beginPath();c.arc(x,y,w*0.015,0,Math.PI*2);c.fillStyle='rgba(201,168,76,.6)';c.fill();
-  }}
-  ['0.2x','0.5x','1x','2x','5x','2x','1x','0.5x','0.2x'].forEach((m,i)=>{
-    const x=w*(i/8)*0.8+w*0.1;
-    c.fillStyle=i===4?'#e8c96a':i===3||i===5?'#c9a84c':'rgba(255,255,255,.5)';
-    c.font=`bold ${w*0.03}px Space Grotesk,sans-serif`;c.textAlign='center';c.fillText(m,x,h*0.92);
-  });
-}
-function dropPlinko(){
-  const bet=parseInt(document.getElementById('plinko-bet').value)||50;
-  if(bet>getATXBalance()) return showToast(T('insuf_balance'));
-  if(!removeATX(bet, 'plinko')) return;
-  updateBalanceDisplays();
-  const mults=[0.2,0.5,1,2,5,2,1,0.5,0.2],weights=[5,10,15,20,25,20,15,10,5];
-  let rand=Math.random()*125,idx=0,cum=0;
-  for(let i=0;i<weights.length;i++){cum+=weights[i];if(rand<=cum){idx=i;break;}}
-  const mult=mults[idx],winnings=Math.floor(bet*mult);
-  addATX(winnings, 'plinko');updateBalanceDisplays();
-  const msg=document.getElementById('plinko-msg');msg.style.display='block';
-  if(winnings>=bet){msg.className='game-msg msg-win';msg.textContent=`✅ ${mult}x — Won ⚡ ${formatATX(winnings)} ATX!`;if(typeof sparkle==='function') sparkle(mult>=5?36:18);}
-  else{msg.className='game-msg msg-lose';msg.textContent=`${mult}x — Got ⚡ ${formatATX(winnings)} ATX`;}
-}
-
-// ============ CANDLE CALL GAME ============
-let candleCtx,candleHistory=[];
-function initCandle(){
-  const canvas=document.getElementById('candle-canvas');
-  canvas.width=canvas.offsetWidth*window.devicePixelRatio;canvas.height=canvas.offsetHeight*window.devicePixelRatio;
-  candleCtx=canvas.getContext('2d');
-  if(!candleHistory.length) for(let i=0;i<15;i++){
-    const open=Math.random()*100+50,close=open+(Math.random()-.48)*15;
-    candleHistory.push({open,close,high:Math.max(open,close)+Math.random()*8,low:Math.min(open,close)-Math.random()*8});
-  }
-  drawCandles();
-}
-function drawCandles(){
-  if(!candleCtx) return;
-  const c=candleCtx,w=c.canvas.width,h=c.canvas.height;
-  c.clearRect(0,0,w,h);c.fillStyle='#1a1814';c.fillRect(0,0,w,h);
-  const data=candleHistory.slice(-12);
-  const allP=data.flatMap(d=>[d.high,d.low]),minP=Math.min(...allP),maxP=Math.max(...allP),range=maxP-minP||10;
-  const candleW=w/data.length*0.5,gap=w/data.length;
-  data.forEach((d,i)=>{
-    const x=i*gap+gap*0.25,yO=h*0.85-(d.open-minP)/range*(h*0.75),yC=h*0.85-(d.close-minP)/range*(h*0.75);
-    const yH=h*0.85-(d.high-minP)/range*(h*0.75),yL=h*0.85-(d.low-minP)/range*(h*0.75);
-    const bull=d.close>=d.open;
-    c.strokeStyle=bull?'#22c55e':'#ef4444';c.lineWidth=1;
-    c.beginPath();c.moveTo(x+candleW/2,yH);c.lineTo(x+candleW/2,yL);c.stroke();
-    c.fillStyle=bull?'#22c55e':'#ef4444';
-    c.fillRect(x,Math.min(yO,yC),candleW,Math.abs(yC-yO)||2);
-  });
-  c.fillStyle='rgba(201,168,76,.3)';c.fillRect(w-gap*0.75,h*0.1,gap*0.5,h*0.75);
-  c.fillStyle='#c9a84c';c.font=`bold ${w*0.04}px Space Grotesk,sans-serif`;c.textAlign='center';c.fillText('?',w-gap*0.5,h*0.55);
-}
-function candleCall(dir){
-  const bet=parseInt(document.getElementById('candle-bet').value)||50;
-  if(bet>getATXBalance()) return showToast(T('insuf_balance'));
-  if(!removeATX(bet, 'candle')) return;
-  updateBalanceDisplays();
-  const last=candleHistory[candleHistory.length-1];
-  const open=last.close,close=open+(Math.random()-.48)*12;
-  const realDir=close>=open?'LONG':'SHORT';
-  const win=realDir===dir;
-  candleHistory.push({open,close,high:Math.max(open,close)+Math.random()*8,low:Math.min(open,close)-Math.random()*8});
-  drawCandles();
-  const msg=document.getElementById('candle-msg');
-  msg.style.display='block';
-  if(win){
-    const winnings=Math.floor(bet*1.8);
-    addATX(winnings, 'candle');
-    updateBalanceDisplays();
-    msg.className='game-msg msg-win';
-    msg.textContent=`✅ ${dir} correct! +⚡ ${formatATX(winnings)} ATX (1.8x)`;
-    if(typeof sparkle==='function') sparkle(22);
-  } else {
-    msg.className='game-msg msg-lose';
-    msg.textContent=`❌ ${dir} was wrong — next candle was ${realDir}. Lost ⚡ ${formatATX(bet)} ATX`;
-  }
-}
-
 // ============ SERVICE WORKER + AUTO-UPDATE ============
 const SW_UPDATE_CHECK_INTERVAL = 3600000; // Check every hour
 let swRegistration = null;
@@ -6424,7 +5763,6 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js')
       .then(reg => {
         swRegistration = reg;
-        console.log('[SW] Registered:', reg.scope);
 
         // Check for updates immediately + every hour
         reg.update();
@@ -6442,7 +5780,7 @@ if ('serviceWorker' in navigator) {
           };
         };
       })
-      .catch(err => console.warn('[SW] Registration failed:', err));
+      .catch(() => {});
   });
 
   // When the SW controller changes (skipWaiting fired), auto-reload silently
@@ -6450,7 +5788,6 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if (refreshing) return;
     refreshing = true;
-    console.log('[SW] New controller active — reloading for fresh code');
     window.location.reload();
   });
 }
@@ -6469,7 +5806,6 @@ window.addEventListener('beforeinstallprompt', e => {
   _deferredInstallPrompt = e;
   const btn = document.getElementById('pwa-install-btn');
   if (btn) btn.style.display = 'flex';
-  console.log('[PWA] Install prompt ready');
 });
 
 window.addEventListener('appinstalled', () => {
@@ -6494,7 +5830,6 @@ async function triggerInstallPrompt() {
     // Android / Chrome
     _deferredInstallPrompt.prompt();
     const { outcome } = await _deferredInstallPrompt.userChoice;
-    console.log('[PWA] Install outcome:', outcome);
     _deferredInstallPrompt = null;
   } else if (_isIOS && !_isStandalone) {
     // iOS Safari — show step-by-step modal
@@ -6601,7 +5936,6 @@ async function fetchMarketNews() {
     newsCache = [...cryptoNews, ...generalNews].sort((a,b) => b.timestamp - a.timestamp).slice(0, 20);
     correlateNewsWithSignals();
   } catch(e) {
-    console.log('[News] Fetch error:', e.message);
   }
 }
 
@@ -6780,7 +6114,6 @@ function updatePerformanceAnalytics() {
       });
     }
   } catch(e) {
-    console.log('[Analytics] Error:', e.message);
   }
 }
 
@@ -6950,7 +6283,6 @@ Score: ${signal.score}%`;
       body: JSON.stringify({ chat_id: tc.chatId, text: message })
     });
   } catch(e) {
-    console.log('[Telegram] Error:', e.message);
   }
 }
 
@@ -6980,7 +6312,6 @@ async function sendDiscordNotification(signal, phase) {
       body: JSON.stringify({ embeds: [embed] })
     });
   } catch(e) {
-    console.log('[Discord] Error:', e.message);
   }
 }
 
@@ -7007,7 +6338,6 @@ View your analytics: ${window.location.origin}
       body: JSON.stringify({ email: notificationChannels.email.address, message: msg })
     }).catch(() => {});
   } catch(e) {
-    console.log('[Email] Error:', e.message);
   }
 }
 
@@ -7130,129 +6460,6 @@ function renderNotificationSettings() {
   if (container) container.innerHTML = content;
 }
 
-// ============ GAMES ARCADE: ATX COIN ECONOMY ============
-let atxWallet = {
-  balance: 1000,
-  archived: 0,
-  gameWins: 0,
-  gameLosses: 0,
-  totalBet: 0,
-  totalWinnings: 0,
-  history: []
-};
-
-function saveATXWallet() {
-  localStorage.setItem('axtrader_atx_wallet', JSON.stringify(atxWallet));
-}
-
-function loadATXWallet() {
-  try {
-    const saved = JSON.parse(localStorage.getItem('axtrader_atx_wallet') || '{}');
-    atxWallet = { ...atxWallet, ...saved };
-  } catch(e) {
-    console.log('[ATX] Load error:', e.message);
-  }
-}
-
-function addATX(amount, source = 'game') {
-  atxWallet.balance += Math.floor(amount);
-  atxWallet.totalWinnings += Math.floor(amount);
-  atxWallet.gameWins++;
-  atxWallet.history.push({
-    type: 'win',
-    amount: Math.floor(amount),
-    source,
-    timestamp: Date.now()
-  });
-  saveATXWallet();
-  updateBalanceDisplays();
-}
-
-function removeATX(amount, source = 'game') {
-  if (atxWallet.balance < amount) return false;
-  atxWallet.balance -= Math.floor(amount);
-  atxWallet.totalBet += Math.floor(amount);
-  atxWallet.gameLosses++;
-  atxWallet.history.push({
-    type: 'loss',
-    amount: Math.floor(amount),
-    source,
-    timestamp: Date.now()
-  });
-  saveATXWallet();
-  return true;
-}
-
-function getATXBalance() {
-  return atxWallet.balance;
-}
-
-function formatATX(amount) {
-  if (amount >= 1000000) return (amount / 1000000).toFixed(1) + 'M';
-  if (amount >= 1000) return (amount / 1000).toFixed(1) + 'K';
-  return amount.toLocaleString();
-}
-
-function renderATXLeaderboard() {
-  // Future: Pull real-time leaderboard from backend
-  // For now: Show top players from localStorage across all users (when backend added)
-  const leaderboardEl = document.querySelector('.leaderboard');
-  if (!leaderboardEl) return;
-
-  // Simulated top players (will be replaced with backend data)
-  const topPlayers = [
-    { rank: 1, name: 'CryptoKwame', country: 'GH', winnings: 6820, multiplier: 18.44 },
-    { rank: 2, name: 'AxTrader', country: 'Official', winnings: 4200, multiplier: 12.10 },
-    { rank: 3, name: 'TradingNana', country: 'NG', winnings: 3140, multiplier: 9.88 },
-    { rank: 4, name: 'DeFiKofi', country: 'GH', winnings: 2010, multiplier: 7.22 },
-    { rank: 5, name: 'CoinMaestro', country: 'ZA', winnings: 980, multiplier: 5.60 }
-  ];
-
-  // TODO: Replace with real API call
-  // const topPlayers = await fetch('/api/atx/leaderboard').then(r => r.json());
-}
-
-function renderATXStats() {
-  const winRate = atxWallet.gameWins + atxWallet.gameLosses > 0
-    ? (atxWallet.gameWins / (atxWallet.gameWins + atxWallet.gameLosses) * 100).toFixed(1)
-    : 0;
-
-  return `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-      <div style="background:var(--surface);padding:12px;border-radius:10px;border-left:3px solid var(--gold)">
-        <div style="font-size:0.7rem;color:var(--text3);margin-bottom:4px">Win/Loss</div>
-        <div style="font-weight:700;color:var(--text)">${atxWallet.gameWins}W / ${atxWallet.gameLosses}L</div>
-        <div style="font-size:0.75rem;color:var(--green);margin-top:4px">${winRate}% accuracy</div>
-      </div>
-      <div style="background:var(--surface);padding:12px;border-radius:10px;border-left:3px solid var(--green)">
-        <div style="font-size:0.7rem;color:var(--text3);margin-bottom:4px">Total Winnings</div>
-        <div style="font-weight:700;color:var(--text)">⚡ ${formatATX(atxWallet.totalWinnings)}</div>
-        <div style="font-size:0.75rem;color:var(--text2);margin-top:4px">ROI: ${atxWallet.totalBet > 0 ? ((atxWallet.totalWinnings / atxWallet.totalBet) * 100).toFixed(0) : 0}%</div>
-      </div>
-    </div>
-  `;
-}
-
-function renderATXHistory() {
-  const recent = atxWallet.history.slice(-10).reverse();
-  return `
-    <div style="background:var(--surface);border-radius:10px;padding:12px">
-      <div style="font-weight:600;color:var(--text);margin-bottom:8px">Recent Activity</div>
-      ${recent.map(tx => `
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:0.8rem">
-          <div>
-            <div style="color:var(--text);font-weight:500">${tx.type === 'win' ? '✅ Won' : '❌ Lost'} ${tx.source}</div>
-            <div style="color:var(--text2);font-size:0.7rem">${new Date(tx.timestamp).toLocaleTimeString()}</div>
-          </div>
-          <div style="color:${tx.type === 'win' ? 'var(--green)' : 'var(--red)'};font-weight:700">
-            ${tx.type === 'win' ? '+' : '-'}⚡ ${formatATX(tx.amount)}
-          </div>
-        </div>
-      `).join('')}
-    </div>
-  `;
-}
-
 // ============ INIT APP ============
 function initApp() {
   // v3.6: Apply saved language on startup
@@ -7265,32 +6472,17 @@ function initApp() {
   fetchFundamentals();           // Fear & Greed, BTC dominance
   renderCourses('ict');
   initArchive();                 // Show signal archive on load
-  loadATXWallet();               // Games: Load ATX wallet from localStorage
-  updateBalanceDisplays();
   updatePerformanceAnalytics();  // Phase 2: performance dashboard
   loadNotificationPreferences();  // Phase 2: load notification settings
   // Hide premium banner and ALL ad containers for premium users
   const banner = document.getElementById('home-premium-banner');
   if (banner) banner.style.display = appState.isPremium ? 'none' : 'block';
-  if (appState.isPremium) {
-    // Hide Adsterra banner containers
-    ['ad-home','ad-placement-1','ad-placement-2'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'none';
-    });
-    // Also hide any remaining placeholder slots
-    document.querySelectorAll('.ad-slot').forEach(ad => ad.classList.add('hidden'));
-  }
   // Show notification permission banner
   maybeShowNotifBanner();
-  // Start interstitial ad timer (free users only — skipped for premium)
-  if (typeof startInterstitialTimer === 'function') startInterstitialTimer();
   // Refresh news every 5 minutes
   setInterval(fetchMarketNews, 300000);
   // Refresh analytics every fetch cycle
   setInterval(updatePerformanceAnalytics, 60000);
-  // Update leaderboard every 30 seconds
-  setInterval(renderATXLeaderboard, 30000);
 }
 
 // ============ PAYMENT HELPERS ============
@@ -7337,20 +6529,6 @@ function openPaymentSheet(title, amountUSD, ref) {
   document.body.appendChild(sheet);
 }
 
-// ============ GHANA MONETIZATION: COSMETICS & PREMIUM ============
-function buyCosmetic(item) {
-  const items = {
-    'avatar'    : { name: 'Premium Avatar',    price: 0.99 },
-    'theme'     : { name: 'Dark Theme Pack',   price: 1.99 },
-    'nameplate' : { name: 'Golden Nameplate',  price: 0.49 },
-    'vip'       : { name: 'VIP Badge',         price: 2.99 },
-    'glow'      : { name: 'Glow Effect',       price: 0.99 },
-    'legend'    : { name: 'Legend Status',     price: 4.99 }
-  };
-  const itemData = items[item];
-  if (!itemData) return;
-  openPaymentSheet(`🛒 ${itemData.name}`, itemData.price, item);
-}
 
 function openPremiumModal() { openUpgrade(); }
 
@@ -7358,154 +6536,6 @@ function openPremiumCheckout() {
   openPaymentSheet('✦ AxTrader Premium', PAYMENT_CONFIG.premium_price, 'premium');
 }
 
-// ══ INTERSTITIAL AD SYSTEM ═══════════════════════════════════════
-// Shows a full-screen ad every 2 min 30 sec — users must wait 8 s before close.
-// Premium users and non-logged-in screens are skipped automatically.
-(function InterstitialAds() {
-  const INTERVAL  = 150000;  // 2 min 30 sec between each interstitial
-  const FIRST_IN  =  45000;  // wait 45 s after login before first show
-  const COUNTDOWN =      8;  // seconds user must watch before close appears
-
-  // Adsterra 300×250 unit — shown inside the overlay
-  const AD_KEY  = '689acba615d238d033a802bb1f8547fc';
-  const AD_SRC  = `https://www.highperformanceformat.com/${AD_KEY}/invoke.js`;
-  const AD_OPTS = { key: AD_KEY, format: 'iframe', height: 250, width: 300, params: {} };
-
-  let interstitialTimer = null;
-  let active = false;
-
-  function canShow() {
-    if (active) return false;
-    if (appState.isPremium) return false;
-    if (!appState.user) return false;
-    const authEl = document.getElementById('auth-screen');
-    if (authEl && authEl.style.display !== 'none') return false;
-    return true;
-  }
-
-  function loadAdInto(container) {
-    // Must use createElement — innerHTML scripts don't execute
-    window.atOptions = AD_OPTS;
-    const s = document.createElement('script');
-    s.type = 'text/javascript';
-    s.src  = AD_SRC;
-    container.appendChild(s);
-  }
-
-  window.showInterstitial = function () {
-    if (!canShow()) return;
-    active = true;
-
-    const overlay = document.createElement('div');
-    overlay.id = 'interstitial-overlay';
-
-    overlay.innerHTML = `
-      <div class="intros-card">
-        <div class="intros-top">
-          <span class="intros-label">📢 Advertisement</span>
-          <span class="intros-timer-pill" id="intros-pill">Close in ${COUNTDOWN}s</span>
-        </div>
-        <div class="intros-ad-wrap" id="intros-ad-wrap">
-          <div style="color:rgba(255,255,255,.3);font-size:.8rem">Loading ad…</div>
-        </div>
-        <div class="intros-footer">
-          <a class="intros-upgrade" onclick="closeInterstitial();openUpgrade()">
-            ⭐ Remove ads — Go Premium
-          </a>
-          <button class="intros-close-btn" id="intros-close-btn" onclick="closeInterstitial()">
-            ✕ Close
-          </button>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(overlay);
-    loadAdInto(document.getElementById('intros-ad-wrap'));
-
-    // Countdown
-    let remaining = COUNTDOWN;
-    const pill = document.getElementById('intros-pill');
-    const btn  = document.getElementById('intros-close-btn');
-
-    const tick = setInterval(() => {
-      remaining--;
-      if (remaining > 0) {
-        if (pill) pill.textContent = `Close in ${remaining}s`;
-      } else {
-        clearInterval(tick);
-        if (pill) { pill.textContent = '✕ Close'; pill.classList.add('ready'); pill.onclick = closeInterstitial; }
-        if (btn)  { btn.style.display = 'block'; }
-      }
-    }, 1000);
-  };
-
-  window.closeInterstitial = function () {
-    const el = document.getElementById('interstitial-overlay');
-    if (!el) return;
-    el.classList.add('closing');
-    setTimeout(() => { try { el.remove(); } catch(e){} active = false; setTimeout(() => showAdNag(), 350); }, 280);
-  };
-
-    /* ── Ad Nag Toast ──────────────────────────────────────────── */
-  let _adNagTimer = null;
-
-  window.showAdNag = function () {
-    if (appState.isPremium) return;
-    const count = parseInt(localStorage.getItem('ax_ad_count') || '0') + 1;
-    localStorage.setItem('ax_ad_count', count);
-    if (count < 2) return; // skip first ad — ease them in
-
-    const toast = document.getElementById('adnag-toast');
-    const bar   = document.getElementById('adnag-progress');
-    if (!toast) return;
-
-    toast.style.display = 'block';
-
-    // Progress bar: reset to full width, then drain over 7s
-    if (bar) {
-      bar.style.transition = 'none';
-      bar.style.transform  = 'scaleX(1)';
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        bar.style.transition = 'transform 7s linear';
-        bar.style.transform  = 'scaleX(0)';
-      }));
-    }
-
-    clearTimeout(_adNagTimer);
-    _adNagTimer = setTimeout(window.closeAdNag, 7000);
-  };
-
-  window.closeAdNag = function () {
-    clearTimeout(_adNagTimer);
-    const toast = document.getElementById('adnag-toast');
-    if (!toast || toast.style.display === 'none') return;
-    toast.style.transition = 'opacity .2s ease, transform .2s ease';
-    toast.style.opacity    = '0';
-    toast.style.transform  = 'translateX(-50%) translateY(16px)';
-    setTimeout(() => {
-      toast.style.display    = 'none';
-      toast.style.opacity    = '';
-      toast.style.transform  = 'translateX(-50%)';
-      toast.style.transition = '';
-    }, 220);
-  };
-
-  window.startInterstitialTimer = function () {
-    if (interstitialTimer) return; // already running
-    // First show after FIRST_IN ms
-    setTimeout(() => {
-      showInterstitial();
-      // Then repeat every INTERVAL ms
-      interstitialTimer = setInterval(showInterstitial, INTERVAL);
-    }, FIRST_IN);
-  };
-
-  window.stopInterstitialTimer = function () {
-    if (interstitialTimer) { clearInterval(interstitialTimer); interstitialTimer = null; }
-    closeInterstitial();
-  };
-})();
-// ═════════════════════════════════════════════════════════════════
 
 // ══ SPARKLE PARTICLE ENGINE ══════════════════════════════════════
 (function SparkleEngine() {
@@ -7688,21 +6718,6 @@ function openPremiumCheckout() {
 // ══════════════════════════════════════════════════════════════
 </script>
 
-  <!-- ── Ad Nag Toast ─────────────────────────────────────────── -->
-  <div id="adnag-toast">
-    <div class="adnag-card">
-      <div id="adnag-progress"></div>
-      <button id="adnag-close" onclick="closeAdNag()">✕</button>
-      <div class="adnag-body">
-        <div class="adnag-icon">⚡</div>
-        <div>
-          <div class="adnag-title">Go ad-free</div>
-          <div class="adnag-sub">Premium removes all interruptions &amp; unlocks every signal</div>
-        </div>
-      </div>
-      <button class="adnag-btn" onclick="closeAdNag();openUpgrade();">Upgrade — $12.99 / mo</button>
-    </div>
-  </div>
 
 <script>
 // v3.6: Apply saved language immediately on page load (even before login)
