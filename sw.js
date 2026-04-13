@@ -1,5 +1,5 @@
 // AxTrader — GWP Signal App
-// Service Worker v1.8 — Refer & Earn + affiliate updates
+// Service Worker v1.9 — Refer & Earn + affiliate updates
 
 const CACHE_VERSION = '1.9';
 const CACHE_NAME = `axtrader-v${CACHE_VERSION}`;
