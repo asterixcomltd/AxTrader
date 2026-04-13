@@ -8,46 +8,39 @@
   </defs>
   <rect width="512" height="512" rx="92" fill="#1a1814"/>
   <g fill="url(#gold)">
-    <!-- A — sharp apex, open crossbar, elegant serifs -->
+    <!-- A — bold, thick strokes, sharp apex -->
     <path d="
-      M 88 390
-      L 160 120
-      Q 167 98 180 98
-      L 192 98
-      Q 205 98 212 120
-      L 284 390
-      L 244 390
-      L 222 318
-      L 150 318
-      L 128 390
+      M 68 395
+      L 155 110
+      Q 163 85 178 85
+      L 194 85
+      Q 209 85 217 110
+      L 304 395
+      L 248 395
+      L 226 318
+      L 146 318
+      L 124 395
       Z
-      M 160 282
-      L 212 282
-      L 186 186
+      M 158 274
+      L 214 274
+      L 186 168
       Z
     "/>
-    <!-- Decorative crossbar notch on A -->
-    <rect x="152" y="270" width="68" height="4" rx="2" opacity="0.5"/>
-
-    <!-- x — dynamic angular cross with tapered strokes -->
+    <!-- x — bold thick dynamic cross -->
     <path d="
-      M 300 172
-      L 330 172
-      L 370 240
-      Q 374 248 378 240
-      L 418 172
-      L 448 172
-      L 396 272
-      L 450 390
-      L 420 390
-      L 378 308
-      Q 374 300 370 308
-      L 328 390
-      L 298 390
-      L 352 272
+      M 302 160
+      L 348 160
+      L 386 234
+      L 424 160
+      L 470 160
+      L 412 272
+      L 472 395
+      L 426 395
+      L 386 314
+      L 346 395
+      L 300 395
+      L 360 272
       Z
     "/>
   </g>
-  <!-- Subtle gold accent line -->
-  <rect x="100" y="404" width="312" height="3" rx="1.5" fill="url(#gold)" opacity="0.35"/>
 </svg>
