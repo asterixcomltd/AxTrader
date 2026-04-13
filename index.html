@@ -3217,7 +3217,7 @@ const i18n={
     game_crash_desc:'Cash out before it crashes', game_mines_desc:'Reveal tiles, avoid mines',
     game_plinko_desc:'Drop the ball, hit multiplier', game_candle_desc:'Predict LONG or SHORT',
     play_btn:'Play',
-    section_account:'👤 My Account', section_premium:'🛍️ Premium + Cosmetics',
+    section_account:'👤 My Account', section_premium:'⭐ Premium',
     section_academy:'📚 Trading Academy', section_bots:'🤖 Our Signal Bots',
     section_community:'✈️ Community & Social', section_tools:'🛠️ Tools',
     section_settings:'⚙️ App Settings', section_knowledge:'🧠 Knowledge & System',
@@ -3304,7 +3304,7 @@ const i18n={
     game_crash_desc:'Encaisser avant le crash', game_mines_desc:'Révéler les cases, éviter les mines',
     game_plinko_desc:'Lâchez la balle, visez le multiplicateur', game_candle_desc:'Prédire LONG ou SHORT',
     play_btn:'Jouer',
-    section_account:'👤 Mon Compte', section_premium:'🛍️ Premium + Cosmétiques',
+    section_account:'👤 Mon Compte', section_premium:'⭐ Premium',
     section_academy:'📚 Académie de Trading', section_bots:'🤖 Nos Bots de Signaux',
     section_community:'✈️ Communauté & Social', section_tools:'🛠️ Outils',
     section_settings:'⚙️ Paramètres', section_knowledge:'🧠 Connaissance & Système',
@@ -3390,7 +3390,7 @@ const i18n={
     game_crash_desc:'Retira antes del crash', game_mines_desc:'Revela casillas, evita minas',
     game_plinko_desc:'Lanza la bola, toca el multiplicador', game_candle_desc:'Predice LARGO o CORTO',
     play_btn:'Jugar',
-    section_account:'👤 Mi Cuenta', section_premium:'🛍️ Premium + Cosméticos',
+    section_account:'👤 Mi Cuenta', section_premium:'⭐ Premium',
     section_academy:'📚 Academia de Trading', section_bots:'🤖 Nuestros Bots de Señales',
     section_community:'✈️ Comunidad & Social', section_tools:'🛠️ Herramientas',
     section_settings:'⚙️ Configuración', section_knowledge:'🧠 Conocimiento & Sistema',
@@ -3476,7 +3476,7 @@ const i18n={
     game_crash_desc:'Retire antes do crash', game_mines_desc:'Revelar caselas, evitar minas',
     game_plinko_desc:'Solta a bola, acerta o multiplicador', game_candle_desc:'Prever COMPRA ou VENDA',
     play_btn:'Jogar',
-    section_account:'👤 Minha Conta', section_premium:'🛍️ Premium + Cosméticos',
+    section_account:'👤 Minha Conta', section_premium:'⭐ Premium',
     section_academy:'📚 Academia de Trading', section_bots:'🤖 Nossos Bots de Sinais',
     section_community:'✈️ Comunidade & Social', section_tools:'🛠️ Ferramentas',
     section_settings:'⚙️ Configurações', section_knowledge:'🧠 Conhecimento & Sistema',
@@ -3701,20 +3701,8 @@ function setLang(lang) {
   if(lang==='ar') document.body.setAttribute('dir','rtl');
   else document.body.removeAttribute('dir');
 
-  // Games page
+  // Helper
   function setEl(id, val) { const el=document.getElementById(id); if(el) el.textContent=val; }
-  if(t.arcade_title) setEl('lbl-arcade-title', t.arcade_title);
-  if(t.arcade_sub) setEl('lbl-arcade-sub', t.arcade_sub);
-  if(t.your_playcoins) setEl('lbl-your-playcoins', t.your_playcoins);
-  if(t.playcoin_note) { const pn=document.getElementById('lbl-playcoin-note'); if(pn) pn.innerHTML=t.playcoin_note.replace('\n','<br>'); }
-  if(t.weekly_top) setEl('lbl-weekly-top', t.weekly_top);
-  if(t.play_compete) setEl('lbl-play-compete', t.play_compete);
-  if(t.playcoins_sub) setEl('lbl-playcoins-sub', t.playcoins_sub);
-  if(t.game_crash_desc) setEl('lbl-game-crash-desc', t.game_crash_desc);
-  if(t.game_mines_desc) setEl('lbl-game-mines-desc', t.game_mines_desc);
-  if(t.game_plinko_desc) setEl('lbl-game-plinko-desc', t.game_plinko_desc);
-  if(t.game_candle_desc) setEl('lbl-game-candle-desc', t.game_candle_desc);
-  if(t.play_btn) { ['lbl-play-crash','lbl-play-mines','lbl-play-plinko','lbl-play-candle'].forEach(id=>setEl(id,t.play_btn)); }
 
   // More page section labels
   if(t.section_account) setEl('lbl-section-account', t.section_account);
@@ -6483,6 +6471,13 @@ function initApp() {
   setInterval(fetchMarketNews, 300000);
   // Refresh analytics every fetch cycle
   setInterval(updatePerformanceAnalytics, 60000);
+  // Show upgrade reminder every 3 minutes for free users
+  if (!appState.isPremium) {
+    setTimeout(() => {
+      openUpgrade();
+      setInterval(() => { if (!appState.isPremium) openUpgrade(); }, 180000);
+    }, 180000);
+  }
 }
 
 // ============ PAYMENT HELPERS ============
