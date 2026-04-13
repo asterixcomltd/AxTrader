@@ -5148,7 +5148,716 @@ const coursesTitleBody = {
     'd_GWP 106':'La mathématique d\'une sortie à 3 objectifs : 30% à 1:1 + 40% à 2:1 + 30% à 3.5:1 = (0.3×1 + 0.4×2 + 0.3×3.5) = 2.15:1 R:R moyen quand tous les objectifs sont touchés. Avec 73%+ de réussite en live et 2.15:1 R:R, la valeur attendue par trade est massive. Le TP3 a été relevé dans v8 car l\'analyse des signaux passés montrait que le prix dépassait régulièrement l\'ancien TP3 à 2.5:1.',
     'd_GWP 107':'Le filtre Volume + AVWAP est le gardien final. Si le volume de la bougie ghost wick ne dépasse pas la moyenne 20 périodes, cela suggère que le mouvement manque de conviction institutionnelle. L\'AVWAP (Volume Weighted Average Price ancré) ajoute un filtre de biais : pour les longs, le prix doit être au-dessus de l\'AVWAP ; pour les shorts, en dessous. Ce double filtre élimine environ 30% des faux signaux.',
     'd_GWP 108':'Le bot Crypto (ASTERIX_5PILLAR_BOT) surveille 17 paires : BTC, ETH, SOL, LINK, BNB, DEXE, UNI, COMP, NEAR, AVAX, AAVE, ARB, INJ, DOT, FIL, SUI, ATOM — tous en graphique 4H avec confirmation 1H et 15M. Le bot Forex (ASTERIX_PRECISION_BOT) surveille : EUR/USD, GBP/USD, XAU/USD avec le même 4H primaire et un filtrage Kill Zone basé sur les sessions. Les deux bots tournent sur GitHub Actions (workflow planifié) et envoient les signaux vers le flux AxTrader et les chaînes Telegram.',
-    'd_GWP 109':'Chaque champ de la carte signal a une signification : le symbole de la paire, la direction (LONG/SHORT), le prix d\'entrée, le stop loss (SL), les objectifs de profit (TP1/TP2/TP3), le timeframe primaire, le score de conviction, le R:R, et l\'horodatage "Fired". Le score de conviction détermine votre taille de position. Le R:R vous dit si le trade vaut le risque. Le timestamp vous dit si le signal est encore valide. N\'entrez jamais un signal que vous ne comprenez pas entièrement.'
+    'd_GWP 109':'Chaque champ de la carte signal a une signification : le symbole de la paire, la direction (LONG/SHORT), le prix d\'entrée, le stop loss (SL), les objectifs de profit (TP1/TP2/TP3), le timeframe primaire, le score de conviction, le R:R, et l\'horodatage "Fired". Le score de conviction détermine votre taille de position. Le R:R vous dit si le trade vaut le risque. Le timestamp vous dit si le signal est encore valide. N\'entrez jamais un signal que vous ne comprenez pas entièrement.',
+    'i_ICT 101':`Modèle du Market Maker (3 Phases):
+  ┌─────────────────────────────────┐
+  │  PHASE 1 : ACCUMULATION         │
+  │  Les institutions construisent  │
+  │  silencieusement des positions  │
+  │  aux creux clés                 │
+  │                                 │
+  │  PHASE 2 : MANIPULATION         │
+  │  Faux breakout sous le support  │
+  │  Les particuliers sont stoppés  │
+  │                                 │
+  │  PHASE 3 : DISTRIBUTION         │
+  │  Le vrai mouvement commence     │
+  │  — haussier                     │
+  │  Les institutions profitent     │
+  └─────────────────────────────────┘
+
+  Ce que les particuliers voient : "Le support a cassé !"
+  Ce que fait le smart money : Remplit les ordres d'achat
+  au prix le plus bas possible.`,
+    'i_ICT 102':`Structure FVG Baissier à 3 Bougies :
+  ┌───────────────────────────────────┐
+  │  Candle 1  [██████]  High: 1.2050 │
+  │                                   │
+  │  Candle 2  [░░░░░░]  GAP ZONE     │
+  │            (pas de chevauchement   │
+  │             de mèches)             │
+  │                                   │
+  │  Candle 3  [██████]  Low: 1.1980  │
+  └───────────────────────────────────┘
+
+  FVG = entre le low de C1 et le high de C3
+
+  FVG Haussier → le prix a baissé trop vite
+  → Le prix revient presque toujours combler
+  → Zone d'entrée long à haute probabilité
+
+  FVG Baissier → le prix a monté trop vite
+  → Le prix revient presque toujours combler
+  → Zone d'entrée short à haute probabilité`,
+    'i_ICT 103':`Formation d'un Order Block Haussier :
+  ┌────────────────────────────────────┐
+  │ Étape 1 : Dernière bougie          │
+  │ baissière                          │
+  │         [░░░░░░░░░░░░]  ← OB      │
+  │                                    │
+  │ Étape 2 : Mouvement haussier       │
+  │ explosif                           │
+  │              ↑↑↑↑↑↑↑↑↑↑↑↑↑↑       │
+  │                                    │
+  │ Étape 3 : La zone OB devient       │
+  │ support                            │
+  │         [░░░░░░░░░░░░]  ← re-test │
+  │                  ↑ Entrée ici      │
+  └────────────────────────────────────┘
+
+  Corps OB = Zone d'entrée
+  SL sous le bas du corps OB
+  Objectif = Prochain pool de liquidité au-dessus`,
+    'i_ICT 104':`Types de Liquidité :
+  ┌────────────────────────────────────┐
+  │ Buy-Side Liquidity (BSL)           │
+  │ ════════════════════ ← Sommets     │
+  │                        Égaux       │
+  │ ████  ████  ████                   │
+  │  Stops des particuliers :          │
+  │  au-dessus des sommets             │
+  │                                    │
+  │ Sell-Side Liquidity (SSL)          │
+  │ ████  ████  ████                   │
+  │ ════════════════════ ← Creux Égaux │
+  │  Stops des particuliers :          │
+  │  sous les creux                    │
+  │                                    │
+  │ PATTERN DE BALAYAGE :              │
+  │ Le prix pique au-dessus du BSL →   │
+  │ récupère tous les buy stops →      │
+  │ les institutions vendent dans      │
+  │ cette liquidité → le prix inverse  │
+  │ FORTEMENT à la baisse              │
+  └────────────────────────────────────┘`,
+    'i_ICT 105':`Carte des Sessions (Heure NY) :
+  ┌────────────────────────────────────┐
+  │ ASIA SESSION                       │
+  │ 20:00 — 00:00 NY                   │
+  │ → Construit le range nocturne      │
+  │ → Souvent consolidation            │
+  │                                    │
+  │ LONDON OPEN KZ  ⚡ HAUTE PROB      │
+  │ 02:00 — 05:00 NY                   │
+  │ → Inverse le range asiatique       │
+  │ → Mouvements directionnels forts   │
+  │                                    │
+  │ NY AM KZ  ⚡ PLUS HAUTE PROB       │
+  │ 08:30 — 11:00 NY                   │
+  │ → Continuation ou retournement     │
+  │ → Driven par les news + setups     │
+  │   ICT purs                         │
+  │                                    │
+  │ DÉJEUNER (ÉVITER)                  │
+  │ 12:00 — 13:00 NY  ← zone agitée   │
+  │                                    │
+  │ NY PM KZ  (secondaire)             │
+  │ 13:30 — 16:00 NY                   │
+  └────────────────────────────────────┘`,
+    'i_ICT 106':`Cycle AMD Quotidien (Jour Haussier) :
+  ┌────────────────────────────────────┐
+  │ A — ACCUMULATION                   │
+  │ Session asiatique : le prix range  │
+  │ Les institutions absorbent les     │
+  │ ordres de vente                    │
+  │ [─────────────] range plat         │
+  │                                    │
+  │ M — MANIPULATION                   │
+  │ Ouverture Londres : pic SOUS       │
+  │ le range                           │
+  │      ↓ (chasse aux stops sous      │
+  │        le low asiatique)           │
+  │ Shorts des particuliers déclenchés │
+  │                                    │
+  │ D — DISTRIBUTION                   │
+  │ Session NY : mouvement explosif    │
+  │ HAUT                               │
+  │       ↑↑↑↑↑↑↑↑↑↑↑                 │
+  │ Le prix cherche l'objectif BSL     │
+  │ au-dessus                          │
+  │ Shorts des particuliers liquidés   │
+  └────────────────────────────────────┘`,
+    'i_ICT 107':`Cadre Premium/Discount :
+  ┌────────────────────────────────────┐
+  │ Range HAUT ████████████ 100%       │
+  │                                    │
+  │           ZONE PREMIUM             │
+  │           (au-dessus de 50%)       │
+  │           → les institutions       │
+  │             VENDENT ici            │
+  │                                    │
+  │ EQUILIBRIUM ─────────────── 50%   │
+  │                                    │
+  │           ZONE DISCOUNT            │
+  │           (sous 50%)               │
+  │           → les institutions       │
+  │             ACHÈTENT ici           │
+  │                                    │
+  │ Range BAS  ████████████ 0%         │
+  └────────────────────────────────────┘
+
+  Règle : N'acheter que sous EQ (50%)
+          Ne vendre que au-dessus de EQ (50%)`,
+    'i_ICT 108':`Entrée OTE sur un Setup Haussier :
+  ┌────────────────────────────────────┐
+  │ 1. Marquez le swing de déplacement │
+  │    Low A ────────────── High B     │
+  │                                    │
+  │ 2. Tracez Fibonacci A→B            │
+  │    0.0   = High B (objectif)       │
+  │    0.5   = Équilibre               │
+  │    0.618 ← ─ DÉBUT ZONE OTE       │
+  │    0.705 ←   POINT OPTIMAL        │
+  │              ZONE OTE              │
+  │    0.79  ← ─ FIN ZONE OTE         │
+  │    1.0   = Low A                   │
+  │                                    │
+  │ 3. Attendez que le prix retrace    │
+  │    dans 0.618 — 0.79               │
+  │                                    │
+  │ 4. Entrez sur OB ou FVG dans       │
+  │    la zone                         │
+  │ 5. SL sous le swing Low A          │
+  └────────────────────────────────────┘`,
+    'i_ICT 109':`Cadre d'Analyse Top-Down :
+  ┌────────────────────────────────────┐
+  │ MONTHLY / WEEKLY                   │
+  │ → Le prix est-il en premium ou     │
+  │   discount ?                       │
+  │ → Où est le prochain objectif      │
+  │   (draw) ?                         │
+  │                                    │
+  │ DAILY (4H)                         │
+  │ → Quelle est la structure du       │
+  │   marché ?                         │
+  │ → BOS up → biais haussier          │
+  │ → BOS down → biais baissier        │
+  │                                    │
+  │ 1H (15M)                           │
+  │ → Trouvez l'entrée en Kill Zone    │
+  │ → OB + FVG + Balayage de liquidité │
+  │ → Confirmez CHoCH sur LTF          │
+  │                                    │
+  │ Timeframe d'Entrée (5M / 1M)      │
+  │ → Affinement précis de l'entrée    │
+  │ → Réduire le SL, améliorer le R:R  │
+  └────────────────────────────────────┘`,
+    'i_SMC 101':`La Trinité SMC :
+  ┌────────────────────────────────────┐
+  │         STRUCTURE DU MARCHÉ        │
+  │         (le biais directionnel)    │
+  │               ↓                    │
+  │         POOL DE LIQUIDITÉ          │
+  │         (où va le prix)            │
+  │               ↓                    │
+  │         ZONE D'OFFRE / DEMANDE     │
+  │         (où vous entrez)           │
+  │                                    │
+  │ Les 3 doivent s'aligner sur le     │
+  │ même TF                            │
+  │ → Setup de trade à haute           │
+  │   probabilité                      │
+  │                                    │
+  │ Si seulement 2 s'alignent → passer │
+  │ Si seulement 1 → ne jamais trader  │
+  └────────────────────────────────────┘`,
+    'i_SMC 102':`STRUCTURE DE MARCHÉ HAUSSIÈRE :
+  ┌─────────────────────────────────────┐
+  │                         HH  ←──── │
+  │              LH                    │
+  │                    HL ──→ BOS up  │
+  │       LL→CHoCH                     │
+  │  HL                                │
+  │                                    │
+  │ BOS (Break of Structure) :         │
+  │ Le prix dépasse un précédent High  │
+  │ → La tendance continue HAUT        │
+  │                                    │
+  │ CHoCH (Change of Character) :      │
+  │ Le prix dépasse un précédent Low   │
+  │ dans une tendance haussière        │
+  │ → Retournement potentiel en        │
+  │   formation                        │
+  └─────────────────────────────────────┘`,
+    'i_SMC 103':`Formation d'une Zone de Demande :
+  ┌────────────────────────────────────┐
+  │ Étape 1 : Fort mouvement explosif  │
+  │ HAUT                               │
+  │              ↑↑↑↑↑↑↑↑↑            │
+  │                                    │
+  │ Étape 2 : Marquez la BASE du       │
+  │ mouvement                          │
+  │ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░ Zone │
+  │  ^bougie d'origine (dernière       │
+  │   baissière/haussière)             │
+  │                                    │
+  │ Étape 3 : Étendez la zone en avant │
+  │ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░─────→│
+  │                                    │
+  │ Étape 4 : Invalider si le prix     │
+  │ clôture profondément à travers     │
+  │                                    │
+  │ VALIDE   → le prix a passé         │
+  │            < 3 bougies             │
+  │ INVALIDE → le prix consolide       │
+  │            à l'intérieur           │
+  └────────────────────────────────────┘`,
+    'i_SMC 104':`Inducement Avant Zone de Demande :
+  ┌────────────────────────────────────┐
+  │                                    │
+  │ DEMAND ZONE: ░░░░░░░░░░░░░░░░░    │
+  │                                    │
+  │  ↓ pic d'inducement sous la zone  │
+  │         ╲                          │
+  │ ░░░░░░░╲░░░░░░ ← zone testée      │
+  │          ╲   ↑ vraie entrée ici    │
+  │           ╲↑↑↑↑ rejet puissant    │
+  │                                    │
+  │ PIÈGE : Entrer quand le prix       │
+  │ touche la zone en premier          │
+  │                                    │
+  │ INTELLIGENT : Attendre le balayage │
+  │ d'inducement, puis entrer sur      │
+  │ confirmation                       │
+  └────────────────────────────────────┘`,
+    'i_SMC 105':`Cycle MMXM Complet (Haussier) :
+  ┌────────────────────────────────────┐
+  │ BSL ═══════════════ (objectif      │
+  │                      au-dessus)    │
+  │                        ↑↑↑         │
+  │     5. EXPANSION       ↑           │
+  │             OB ░░░░░░░↑            │
+  │             ↑ 4.RETRACEMENT        │
+  │  3. MITIGATION (OB testé)          │
+  │         ──────────────             │
+  │  2. DISTRIBUTION (première         │
+  │     poussée)                       │
+  │         ────────────               │
+  │  1. PHASE D'ACCUMULATION           │
+  │                                    │
+  │ SSL ═══════════════ (balayage      │
+  │                      d'abord)      │
+  │  ↓ le prix balaye les creux        │
+  │  → les institutions achètent dans  │
+  │    cette liquidité                 │
+  └────────────────────────────────────┘`,
+    'i_SMC 106':`Checklist d'Entrée SMC :
+  ┌────────────────────────────────────┐
+  │ ÉTAPE 1 : BIAIS TF SUPÉRIEUR      │
+  │ □ Structure Daily : haussière/     │
+  │   baissière                        │
+  │ □ Prix en premium ou discount ?    │
+  │ □ Où est le draw de liquidité HTF ?│
+  │                                    │
+  │ ÉTAPE 2 : IDENTIFICATION DE ZONE   │
+  │ □ Offre ou Demande fraîche sur     │
+  │   LTF ?                            │
+  │ □ Contient un OB ou FVG ?          │
+  │ □ La zone s'aligne avec le biais   │
+  │   HTF ?                            │
+  │                                    │
+  │ ÉTAPE 3 : DÉCLENCHEUR D'ENTRÉE     │
+  │ □ Inducement pris ?                │
+  │ □ CHoCH sur 15M ou 5M ?            │
+  │ □ Ghost wick ou retest FVG ?       │
+  │                                    │
+  │ ÉTAPE 4 : RISQUE                   │
+  │ □ SL au-delà du swing              │
+  │   d'inducement ?                   │
+  │ □ R:R min 2:1 confirmé ?           │
+  │ □ Taille de position ≤ 2% du       │
+  │   compte ?                         │
+  │                                    │
+  │ TOUTES LES CASES COCHÉES → EXÉCUTER│
+  └────────────────────────────────────┘`,
+    'i_SMC 107':`Hiérarchie des Timeframes :
+  ┌────────────────────────────────────┐
+  │ WEEKLY → Monthly                   │
+  │ But : Draw majeur de liquidité     │
+  │ Outils : Offre/Demande HTF, Range  │
+  │                                    │
+  │ DAILY → 4H                         │
+  │ But : Biais directionnel           │
+  │ Tools: BOS/CHoCH, OB, FVG          │
+  │                                    │
+  │ 1H → 15M                           │
+  │ But : Affinement de zone d'entrée  │
+  │ Outils : Demande/Offre, Inducement │
+  │                                    │
+  │ 5M → 1M                            │
+  │ But : Précision d'entrée           │
+  │ Tools: CHoCH, mini-FVG, OTE        │
+  │                                    │
+  │ RÈGLE : Tradez AVEC le flux de     │
+  │ chaque timeframe supérieur         │
+  └────────────────────────────────────┘`,
+    'i_SMC 108':`Protocole de Gestion des Trades SMC :
+  ┌────────────────────────────────────┐
+  │ Entrée : Re-test de zone + CHoCH   │
+  │ SL : Au-delà du low/high           │
+  │ d'inducement                       │
+  │                                    │
+  │ TARGET 1 (TP1) — at 1:1 R:R       │
+  │ → Fermer 33% de la position        │
+  │ → Déplacer SL au breakeven         │
+  │                                    │
+  │ TARGET 2 (TP2) — at 2:1 R:R       │
+  │ → Fermer encore 33%                │
+  │ → Trailer SL au niveau TP1         │
+  │                                    │
+  │ TARGET 3 (TP3) — at 3:1+ R:R      │
+  │ → Laisser courir les 34% restants  │
+  │ → Trailer via la structure (BOS)   │
+  │                                    │
+  │ RÉSULTAT : Runner sans risque à    │
+  │ partir de TP1                      │
+  └────────────────────────────────────┘`,
+    'i_SMC 109':`Corrélations de Marché Clés :
+  ┌────────────────────────────────────┐
+  │ DXY (USD Index) ↑                  │
+  │  → EUR/USD ↓  (inverse)            │
+  │  → GBP/USD ↓  (inverse)            │
+  │  → XAU/USD ↓  (généralement        │
+  │    inverse)                        │
+  │  → BTC/USD ↓  (souvent inverse)    │
+  │                                    │
+  │ Environnement RISK-ON :            │
+  │  → Stocks ↑ · BTC ↑ · ETH ↑       │
+  │  → Or mitigé · DXY plat/baissier   │
+  │                                    │
+  │ Environnement RISK-OFF :           │
+  │  → Actions ↓ · BTC souvent ↓      │
+  │  → Or ↑ · DXY ↑                    │
+  │  → Obligations ↑ (rendement ↓)    │
+  │                                    │
+  │ RÈGLE DE CONFIRMATION :            │
+  │ DXY BOS down → chercher EUR long   │
+  │ DXY OB en rejet → chercher XAU ↑  │
+  └────────────────────────────────────┘`,
+    'i_GWP 101':`Anatomie du Ghost Wick :
+  ┌────────────────────────────────────┐
+  │ GHOST WICK HAUSSIER :              │
+  │                                    │
+  │        ┃ ← petite mèche           │
+  │       ███  supérieure              │
+  │       ███ ← corps (< 40% du       │
+  │       ███   range)                 │
+  │        ┃                           │
+  │        ┃                           │
+  │        ┃ ← GHOST WICK (≥60%)      │
+  │        ┃    a balayé la liquidité  │
+  │        ┃    en dessous             │
+  │        ┃    et inversé             │
+  │                                    │
+  │ MESURE :                           │
+  │ Wick length ÷ Total range ≥ 0.60   │
+  │                                    │
+  │ Plus la mèche est longue → plus    │
+  │ de liquidité balayée → signal      │
+  │ plus fort                          │
+  └────────────────────────────────────┘`,
+    'i_GWP 102':`Piège à Liquidité Baissier :
+  ┌────────────────────────────────────┐
+  │ RÉSISTANCE CLÉ / SOMMETS ÉGAUX    │
+  │ ─────────────────────── ← niveau  │
+  │                                    │
+  │          BOUGIE 1 : Breakout       │
+  │          ↑↑↑ le prix clôture      │
+  │          au-dessus                 │
+  │          [bougie de breakout]      │
+  │          Particuliers :            │
+  │          "BREAKOUT !"              │
+  │          Institutions : vendent    │
+  │                                    │
+  │          BOUGIE 2 : Retournement   │
+  │          Le prix clôture de        │
+  │          nouveau en dessous        │
+  │          ─────────────────────── │
+  │          ↓↓↓↓↓↓↓↓↓↓↓↓            │
+  │                                    │
+  │ Traders de breakout PIÉGÉS         │
+  │ au-dessus                          │
+  │ Leurs stops = carburant pour       │
+  │ la baisse                          │
+  └────────────────────────────────────┘`,
+    'i_GWP 103':`Les 5 Piliers (TOUS doivent confirmer) :
+  ┌────────────────────────────────────┐
+  │ [1] DÉTECTION GHOST WICK           │
+  │     Mèche ≥ 60% du range de la    │
+  │     bougie                         │
+  │     Confirme un balayage           │
+  │     institutionnel                 │
+  │                                    │
+  │ [2] PIÈGE À LIQUIDITÉ              │
+  │     Le prix feinte un niveau clé   │
+  │     Inverse en moins de 2 bougies  │
+  │                                    │
+  │ [3] CASSURE DE STRUCTURE           │
+  │     BOS dans la direction du signal│
+  │     Le biais TF supérieur confirme │
+  │                                    │
+  │ [4] CONFLUENCE ORDER BLOCK         │
+  │     OB ou FVG dans la même zone    │
+  │     Pic de volume sur l'OB         │
+  │     confirme                       │
+  │                                    │
+  │ [5] PORTE DE SIZING KELLY          │
+  │     Min R:R ≥ 1.8:1                │
+  │     Conviction score ≥ 75/100      │
+  │                                    │
+  │ LES 5 ✓ → SIGNAL DÉCLENCHÉ 🔥      │
+  │ UN MANQUANT → PAS DE TRADE         │
+  └────────────────────────────────────┘`,
+    'i_GWP 104':`Règles de Placement SL GWP :
+  ┌────────────────────────────────────┐
+  │ FAUX (comportement retail) :       │
+  │  ─── SL à la pointe de la         │
+  │      mèche ❌                      │
+  │  → Se déclenche sur le bruit       │
+  │    normal                          │
+  │                                    │
+  │ CORRECT (règle GWP) :              │
+  │  1. SL = Au-delà du swing qui a    │
+  │     créé le ghost wick             │
+  │                                    │
+  │  2. Plancher ATR : SL doit être    │
+  │     ≥ 0.5× ATR(14) de l'entrée    │
+  │     → Jamais en dessous de ce      │
+  │       plancher                     │
+  │                                    │
+  │  3. SL final = MAX de :            │
+  │     (SL basé sur le swing,         │
+  │      plancher ATR)                 │
+  │                                    │
+  │ Exemple (4H) :                     │
+  │  ATR(14) = 120 pips                │
+  │  Plancher ATR = 60 pips            │
+  │  Si SL swing = 45 pips → invalide │
+  │  Minimum 60 pips obligatoire       │
+  └────────────────────────────────────┘`,
+    'i_GWP 105':`Score de Conviction → Taille de Position :
+  ┌────────────────────────────────────┐
+  │ SYSTÈME DE NOTATION (100 pts max): │
+  │                                    │
+  │ Qualité Ghost Wick    → 0-20 pts   │
+  │ Piège à Liquidité     → 0-20 pts   │
+  │   propre                           │
+  │ Alignement MSB        → 0-20 pts   │
+  │ Confluence OB/FVG     → 0-20 pts   │
+  │ Qualité R:R           → 0-20 pts   │
+  │                                    │
+  │ ALLOCATION DU RISQUE :             │
+  │  Score 90-100 → Risque 2.0% du    │
+  │                 compte             │
+  │  Score 80-89  → Risque 1.5% du    │
+  │                 compte             │
+  │  Score 75-79  → Risque 1.0% du    │
+  │                 compte             │
+  │  Score < 75   → PAS DE TRADE      │
+  │                                    │
+  │ Formule Kelly (théorique) :        │
+  │  f = (0.97 × 1.8 − 0.03) / 1.8    │
+  │  f = 95.3%  ← bien trop !         │
+  │  Plafond GWP : 2% max toujours    │
+  └────────────────────────────────────┘`,
+    'i_GWP 106':`Structure de Prise de Profit GWP :
+  ┌────────────────────────────────────┐
+  │ Entrée ●                           │
+  │       │                            │
+  │ TP1 ──┤ 1:1 R:R → Fermer 30%      │
+  │       │ SL moves to breakeven       │
+  │       │                            │
+  │ TP2 ──┤ 2:1 R:R → Fermer 40%      │
+  │       │ Trailer SL au niveau TP1    │
+  │       │                            │
+  │ TP3 ──┤ 3.5:1 R:R → Fermer 30%    │
+  │       │ (v8 relevé de 2.5:1)       │
+  │       │                            │
+  │ R:R moyen global si tous           │
+  │ touchés : 2.3:1                    │
+  │                                    │
+  │ SL ●  (sous le plancher ATR)       │
+  │       Risque = 2% du compte        │
+  └────────────────────────────────────┘`,
+    'i_GWP 107':`Vol + AVWAP Gate:
+  ┌────────────────────────────────────┐
+  │ VÉRIFICATION VOLUME :              │
+  │  Volume bougie GW > moy. 20        │
+  │  barres ?                          │
+  │  OUI → porte franchie ✓            │
+  │  NON → signal bloqué ✗             │
+  │                                    │
+  │ AVWAP CHECK (Bullish):             │
+  │  ╲ Ligne AVWAP (ancrée au dernier  │
+  │   ╲ HIGH significatif)             │
+  │    ╲                               │
+  │     ╲→ Le prix d'entrée doit être  │
+  │        SOUS l'AVWAP                │
+  │                                    │
+  │ AVWAP CHECK (Bearish):             │
+  │    ╱→ Le prix d'entrée doit être   │
+  │   ╱   AU-DESSUS de l'AVWAP         │
+  │  ╱ AVWAP line                      │
+  │                                    │
+  │ LOGIQUE : AVWAP = vraie fair value │
+  │ Acheter sous la fair value         │
+  │ Vendre au-dessus de la fair value  │
+  └────────────────────────────────────┘`,
+    'i_GWP 108':`Cycle de Scan du Bot (Toutes les 30 min) :
+  ┌────────────────────────────────────┐
+  │ 1. Récupérer données OHLCV         │
+  │    (bougies 4H) depuis l'API       │
+  │    d'échange                       │
+  │                                    │
+  │ 2. Appliquer Pilier 1 : Ghost Wick │
+  │    mèche ≥ 60% du range ?          │
+  │                                    │
+  │ 3. Appliquer Pilier 2 : Piège Liq. │
+  │    retournement en 2 bougies ?     │
+  │                                    │
+  │ 4. Appliquer Pilier 3 : MSB        │
+  │    cassure de structure confirmée ? │
+  │                                    │
+  │ 5. Appliquer Pilier 4 : OB/FVG     │
+  │    vérification qualité de zone    │
+  │                                    │
+  │ 6. Vol + AVWAP gate                │
+  │                                    │
+  │ 7. Calculer ATR → niveaux SL/TP    │
+  │                                    │
+  │ 8. Score de conviction (0-100)     │
+  │                                    │
+  │ 9. Score ≥ 75 → DÉCLENCHER SIGNAL  │
+  │    → Telegram push                 │
+  │    → Mise à jour du flux AxTrader  │
+  └────────────────────────────────────┘`,
+    'i_GWP 109':`Détail de la Carte Signal GWP :
+  ┌────────────────────────────────────┐
+  │ Pair: BTC/USDT      [LONG]         │
+  │ Grade: A+ SUPREME                  │
+  │ Conviction: 94/100                 │
+  │                                    │
+  │ Entry:  $67,200 – $67,400          │
+  │ TP1:    $68,500  (1:1)             │
+  │ TP2:    $69,800  (2:1)             │
+  │ TP3:    $72,100  (3.5:1)           │
+  │ SL:     $66,100  (ATR-based)       │
+  │                                    │
+  │ Vol Gate : ✅ (1.8× volume moy.)   │
+  │ AVWAP :    ✅ (sous l'AVWAP)       │
+  │ MSB :      ✅ (BOS 4H confirmé)    │
+  │ Session :  NY Morning KZ           │
+  │                                    │
+  │ Guide des Grades :                 │
+  │  90-100 = A+ SUPREME               │
+  │  80-89  = A+ STRONG                │
+  │  75-79  = A STANDARD               │
+  └────────────────────────────────────┘`,
+    'i_BOOK 1':`APERÇU DES CHAPITRES :
+  Ch.1  — Les Vrais Acteurs du Marché
+  Ch.2  — FX Interbancaire & Création du Prix
+  Ch.3  — Signaux d'Intervention des Banques Centrales
+  Ch.4  — Données COT — Lire le Smart Money
+  Ch.5  — Dark Pools & Ordres Iceberg
+  Ch.6  — Algorithmes de Chasse aux Stops Décryptés
+  Ch.7  — Trading de News — Manipulation ou Réalité ?
+  Ch.8  — Comportement des Baleines Crypto vs. FX IB
+  Ch.9  — Confirmation On-Chain pour GWP
+  Ch.10 — Indicateurs de Flux Propriétaires
+  Ch.11 — Études de Cas : BOE Mercredi Noir
+  Ch.12 — Construire Votre Playbook Institutionnel`,
+    'i_BOOK 2':`APERÇU DES CHAPITRES :
+  Ch.1  — Pourquoi le SMC Standard Échoue Seul
+  Ch.2  — MMXM Sur Tous les Timeframes
+  Ch.3  — Cartographie Dynamique Discount/Premium
+  Ch.4  — Classement de Zones : Niveaux A/B/C
+  Ch.5  — Cahier de Corrélations Multi-Paires
+  Ch.6  — Entrées Offre & Demande Échouées
+  Ch.7  — Blocs de Mitigation — Avancé
+  Ch.8  — Changements Trimestriels (Concept ICT)
+  Ch.9  — Confluence HTF — Niveaux Mensuels
+  Ch.10 — Construire un Modèle d'Analyse Hebdomadaire
+  Ch.11 — 20 Exemples de Trades Annotés
+  Ch.12 — Protocole d'Intégration SMC + GWP`,
+    'i_BOOK 3':`Les 7 Variantes Rares du GWP :
+  Pattern 1 : Ghost Wicks Jumeaux
+  → Deux GW consécutifs au même niveau
+  → 99.2% de précision (backtesté sur 3 ans)
+
+  Pattern 2 : Ghost Wick HTF (Hebdomadaire)
+  → GW bougie Weekly + OB Daily alignés
+  → Trades de plusieurs jours ou semaines
+
+  Pattern 3 : GW + Breaker Block
+  → Zone de demande agissant maintenant comme offre
+  → Variante short uniquement
+
+  Pattern 4 : GW à EQ (50% Fib)
+  → Entrée GW parfaitement en discount
+
+  Pattern 5 : Double Piège à Liquidité
+  → Deux niveaux clés balayés en un mouvement
+
+  Pattern 6 : GW + Catalyseur News
+  → L'événement économique crée la mèche
+
+  Pattern 7 : GW Inter-Sessions
+  → GW Londres, distribution NY`,
+    'i_BOOK 4':`APERÇU DES CHAPITRES :
+  Ch.1  — Dimensionnement du Compte pour le Trading GWP
+  Ch.2  — Chaleur du Portefeuille : Risque Ouvert Max
+  Ch.3  — Hedging de Corrélation (Crypto + FX)
+  Ch.4  — Cadre de Récupération de Drawdown
+  Ch.5  — Taux de Réussite vs. Espérance R:R
+  Ch.6  — Monte Carlo : Projection du Risque DD
+  Ch.7  — La Règle des 6% (perte max quotidienne)
+  Ch.8  — Modèle Propriétaire de Notation du Risque
+  Ch.9  — Challenges Prop Firms avec GWP
+  Ch.10 — Modèles de Revue de Performance
+  Ch.11 — Scaling de 500$ à 50 000$
+  Ch.12 — Construire un Plan d'Affaires de Trading`,
+    'i_BOOK 5':`APERÇU DES CHAPITRES :
+  Ch.1  — Pourquoi la Plupart des Backtests Sont Faux
+  Ch.2  — Protocole de Backtest GWP (Étape par Étape)
+  Ch.3  — Marquer les Ghost Wicks Historiques
+  Ch.4  — Enregistrement : Quoi Noter (& Pourquoi)
+  Ch.5  — Avantage Statistique : Taille d'Échantillon
+  Ch.6  — Séparer l'Avantage Système de la Chance
+  Ch.7  — Processus de Revue Hebdomadaire du Journal
+  Ch.8  — Identifier Vos Biais Personnels
+  Ch.9  — Notation de Psychologie de Trading
+  Ch.10 — Revue par les Pairs & Responsabilité
+  Ch.11 — Le Modèle de Journal GWP
+  Ch.12 — Du Backtest au Trading Live`,
+    'i_BOOK 6':`CE QUE CHAQUE REVUE INCLUT :
+  ✦ Carte signal complète avec tous les piliers GWP
+  ✦ Graphique 4H annoté : GW, OB, MSB
+  ✦ Zone d'entrée : comment elle s'est formée en temps réel
+  ✦ Résultats TP1/TP2/TP3 + timing
+  ✦ Ce que la porte Vol+AVWAP montrait
+  ✦ Tout cas particulier ou déviation des règles
+  ✦ Analyse post-trade : ce que nous avons appris
+
+  REVUES RÉCENTES DISPONIBLES :
+  ✦ Mars 2025 — 14 signaux A+ revus
+  ✦ Février 2025 — 11 signaux revus
+  ✦ Janvier 2025 — 9 signaux revus
+
+  BONUS : Rapport Trimestriel de Score GWP
+  → Ventilation du taux de réussite par paire & session`,
+    'i_BOOK 7':`APERÇU DES CHAPITRES :
+  Ch.1  — Crypto vs. Forex : Différences Clés
+  Ch.2  — Taux de Financement comme Filtre GWP
+  Ch.3  — Cascades de Liquidation = Ghost Wicks
+  Ch.4  — Intégration Heatmap CoinGlass
+  Ch.5  — On-Chain : Flux Entrants/Sortants des Exchanges
+  Ch.6  — Whale Alert comme Signal de Liquidité
+  Ch.7  — Dominance BTC dans le Contexte GWP
+  Ch.8  — Protocole de Rotation Alt Season
+  Ch.9  — Kill Zones Crypto (vs. Forex)
+  Ch.10 — AVWAP sur les Futures Perpétuels
+  Ch.11 — Sélection de Paires : La Watch-list GWP
+  Ch.12 — DEXE, UNI, SUSHI — Études de Cas`
   },
   es: {
     'ICT 101':'ICT 101 — ¿Qué es ICT?','ICT 102':'ICT 102 — Fair Value Gaps (FVG)','ICT 103':'ICT 103 — Order Blocks (OB)','ICT 104':'ICT 104 — Liquidez y Caza de Stops','ICT 105':'ICT 105 — Kill Zones y Sesiones','ICT 106':'ICT 106 — Power of 3 (AMD)','ICT 107':'ICT 107 — Zonas Premium y Discount','ICT 108':'ICT 108 — Entrada Óptima (OTE)','ICT 109':'ICT 109 — Análisis Diario de Sesgo',
@@ -5215,7 +5924,721 @@ const coursesTitleBody = {
     'd_GWP 106':'Las matemáticas de salida a 3 objetivos: 30% a 1:1 + 40% a 2:1 + 30% a 3.5:1 = R:R promedio de 2.15:1 cuando todos los objetivos se alcanzan. Con 73%+ de acierto y 2.15:1 R:R, el valor esperado por trade es enorme. El TP3 fue elevado en v8 porque el análisis mostraba que el precio superaba regularmente el antiguo TP3 de 2.5:1.',
     'd_GWP 107':'El filtro Volume + AVWAP es el guardián final. Si el volumen de la vela ghost wick no supera la media de 20 periodos, sugiere falta de convicción institucional. El AVWAP agrega un filtro de sesgo: para longs, el precio debe estar sobre el AVWAP; para shorts, debajo. Este doble filtro elimina aproximadamente 30% de señales falsas.',
     'd_GWP 108':'El bot Crypto (ASTERIX_5PILLAR_BOT) monitorea 17 pares: BTC, ETH, SOL, LINK, BNB, DEXE, UNI, COMP, NEAR, AVAX, AAVE, ARB, INJ, DOT, FIL, SUI, ATOM — todos en gráfico 4H con confirmación 1H y 15M. El bot Forex (ASTERIX_PRECISION_BOT) monitorea: EUR/USD, GBP/USD, XAU/USD con el mismo 4H primario y filtrado Kill Zone basado en sesiones.',
-    'd_GWP 109':'Cada campo de la tarjeta de señal tiene significado: el símbolo del par, la dirección (LONG/SHORT), el precio de entrada, el stop loss (SL), los objetivos de ganancia (TP1/TP2/TP3), el timeframe primario, el score de convicción, el R:R y el timestamp "Fired". Nunca entres en una señal que no comprendas completamente.'
+    'd_GWP 109':'Cada campo de la tarjeta de señal tiene significado: el símbolo del par, la dirección (LONG/SHORT), el precio de entrada, el stop loss (SL), los objetivos de ganancia (TP1/TP2/TP3), el timeframe primario, el score de convicción, el R:R y el timestamp "Fired". Nunca entres en una señal que no comprendas completamente.',
+    'i_ICT 101':`Modelo Market Maker (3 Fases):
+  ┌─────────────────────────────────┐
+  │  PHASE 1: ACUMULACIÓN           │
+  │  Las instituciones construyen   │
+  │  posiciones silenciosamente     │
+  │  en mínimos clave               │
+  │                                 │
+  │  PHASE 2: MANIPULACIÓN          │
+  │  Falso breakout bajo el soporte │
+  │  Traders minoristas sacados     │
+  │  por stops                      │
+  │                                 │
+  │  PHASE 3: DISTRIBUCIÓN          │
+  │  El movimiento real comienza    │
+  │  — alcista                      │
+  │  Las instituciones ganan        │
+  └─────────────────────────────────┘
+
+  Lo que ven los minoristas: "¡El soporte rompió!"
+  Lo que hace el smart money: Llena órdenes de compra
+  al precio más bajo posible.`,
+    'i_ICT 102':`Estructura FVG Bajista de 3 Velas:
+  ┌───────────────────────────────────┐
+  │  Candle 1  [██████]  High: 1.2050 │
+  │                                   │
+  │  Candle 2  [░░░░░░]  GAP ZONE     │
+  │            (sin superposición      │
+  │             de mechas)             │
+  │                                   │
+  │  Candle 3  [██████]  Low: 1.1980  │
+  └───────────────────────────────────┘
+
+  FVG = entre el low de C1 y el high de C3
+
+  FVG Alcista → el precio bajó demasiado rápido
+  → Se espera que el precio regrese y llene
+  → Zona de entrada long de alta probabilidad
+
+  FVG Bajista → el precio subió demasiado rápido
+  → Se espera que el precio regrese y llene
+  → Zona de entrada short de alta probabilidad`,
+    'i_ICT 103':`Formación de Order Block Alcista:
+  ┌────────────────────────────────────┐
+  │ Paso 1: Última vela bajista        │
+  │         [░░░░░░░░░░░░]  ← OB      │
+  │                                    │
+  │ Paso 2: Movimiento alcista         │
+  │ explosivo                          │
+  │              ↑↑↑↑↑↑↑↑↑↑↑↑↑↑       │
+  │                                    │
+  │ Paso 3: La zona OB se convierte    │
+  │ en soporte                         │
+  │         [░░░░░░░░░░░░]  ← re-test │
+  │                  ↑ Entrada aquí    │
+  └────────────────────────────────────┘
+
+  Cuerpo OB = Zona de entrada
+  SL bajo el mínimo del cuerpo OB
+  Objetivo = Próximo pool de liquidez arriba`,
+    'i_ICT 104':`Tipos de Liquidez:
+  ┌────────────────────────────────────┐
+  │ Buy-Side Liquidity (BSL)           │
+  │ ════════════════════ ← Máximos     │
+  │                        Iguales     │
+  │ ████  ████  ████                   │
+  │  Stops de minoristas:              │
+  │  sobre máximos                     │
+  │                                    │
+  │ Sell-Side Liquidity (SSL)          │
+  │ ████  ████  ████                   │
+  │ ════════════════════ ← Mínimos     │
+  │                        Iguales     │
+  │  Stops de minoristas:              │
+  │  bajo mínimos                      │
+  │                                    │
+  │ PATRÓN DE BARRIDO:                 │
+  │ El precio salta sobre BSL →        │
+  │ recoge todos los buy stops →       │
+  │ instituciones venden en esa        │
+  │ liquidez → el precio invierte      │
+  │ BRUSCAMENTE a la baja              │
+  └────────────────────────────────────┘`,
+    'i_ICT 105':`Mapa de Sesiones Diarias (Hora NY):
+  ┌────────────────────────────────────┐
+  │ ASIA SESSION                       │
+  │ 20:00 — 00:00 NY                   │
+  │ → Construye el rango nocturno      │
+  │ → Frecuente consolidación          │
+  │                                    │
+  │ LONDON OPEN KZ  ⚡ ALTA PROB       │
+  │ 02:00 — 05:00 NY                   │
+  │ → Invierte el rango asiático       │
+  │ → Movimientos direccionales fuertes│
+  │                                    │
+  │ NY AM KZ  ⚡ MÁS ALTA PROB        │
+  │ 08:30 — 11:00 NY                   │
+  │ → Continuación o reversión         │
+  │ → Impulsado por noticias + setups  │
+  │   ICT puros                        │
+  │                                    │
+  │ ALMUERZO (EVITAR)                  │
+  │ 12:00 — 13:00 NY  ← zona agitada  │
+  │                                    │
+  │ NY PM KZ  (secundaria)             │
+  │ 13:30 — 16:00 NY                   │
+  └────────────────────────────────────┘`,
+    'i_ICT 106':`Ciclo AMD Diario (Día Alcista):
+  ┌────────────────────────────────────┐
+  │ A — ACUMULACIÓN                    │
+  │ Sesión asiática: el precio rangea  │
+  │ Las instituciones absorben órdenes │
+  │ de venta                           │
+  │ [─────────────] rango plano        │
+  │                                    │
+  │ M — MANIPULACIÓN                   │
+  │ Apertura Londres: pico BAJO        │
+  │ el rango                           │
+  │      ↓ (caza de stops bajo         │
+  │        el low asiático)            │
+  │ Shorts minoristas activados        │
+  │                                    │
+  │ D — DISTRIBUCIÓN                   │
+  │ Sesión NY: movimiento explosivo    │
+  │ ARRIBA                             │
+  │       ↑↑↑↑↑↑↑↑↑↑↑                 │
+  │ El precio busca objetivo BSL       │
+  │ arriba                             │
+  │ Shorts minoristas liquidados       │
+  └────────────────────────────────────┘`,
+    'i_ICT 107':`Marco Premium/Discount:
+  ┌────────────────────────────────────┐
+  │ Rango ALTO ████████████ 100%       │
+  │                                    │
+  │           ZONA PREMIUM             │
+  │           (sobre 50%)              │
+  │           → las instituciones      │
+  │             VENDEN aquí            │
+  │                                    │
+  │ EQUILIBRIUM ─────────────── 50%   │
+  │                                    │
+  │           ZONA DISCOUNT            │
+  │           (bajo 50%)               │
+  │           → las instituciones      │
+  │             COMPRAN aquí           │
+  │                                    │
+  │ Rango BAJO ████████████ 0%         │
+  └────────────────────────────────────┘
+
+  Regla: Solo comprar bajo EQ (50%)
+         Solo vender sobre EQ (50%)`,
+    'i_ICT 108':`Entrada OTE en Setup Alcista:
+  ┌────────────────────────────────────┐
+  │ 1. Marcar el swing de              │
+  │    desplazamiento                  │
+  │    Low A ────────────── High B     │
+  │                                    │
+  │ 2. Trazar Fibonacci A→B            │
+  │    0.0   = High B (objetivo)       │
+  │    0.5   = Equilibrio              │
+  │    0.618 ← ─ INICIO ZONA OTE      │
+  │    0.705 ←   PUNTO ÓPTIMO         │
+  │              ZONA OTE              │
+  │    0.79  ← ─ FIN ZONA OTE         │
+  │    1.0   = Low A                   │
+  │                                    │
+  │ 3. Esperar que el precio retrace   │
+  │    en 0.618 — 0.79                 │
+  │                                    │
+  │ 4. Entrar en OB o FVG dentro de    │
+  │    la zona                         │
+  │ 5. SL bajo el swing Low A          │
+  └────────────────────────────────────┘`,
+    'i_ICT 109':`Marco de Análisis Top-Down:
+  ┌────────────────────────────────────┐
+  │ MONTHLY / WEEKLY                   │
+  │ → ¿El precio está en premium o     │
+  │   discount?                        │
+  │ → ¿Dónde está el próximo objetivo  │
+  │   (draw)?                          │
+  │                                    │
+  │ DAILY (4H)                         │
+  │ → ¿Cuál es la estructura del       │
+  │   mercado?                         │
+  │ → BOS up → sesgo alcista           │
+  │ → BOS down → sesgo bajista         │
+  │                                    │
+  │ 1H (15M)                           │
+  │ → Encontrar la entrada en Kill Zone│
+  │ → OB + FVG + Barrido de liquidez   │
+  │ → Confirmar CHoCH en LTF           │
+  │                                    │
+  │ Timeframe de Entrada (5M / 1M)     │
+  │ → Refinamiento preciso de entrada  │
+  │ → Reducir SL, mejorar R:R          │
+  └────────────────────────────────────┘`,
+    'i_SMC 101':`La Trinidad SMC:
+  ┌────────────────────────────────────┐
+  │         ESTRUCTURA DEL MERCADO     │
+  │         (el sesgo direccional)     │
+  │               ↓                    │
+  │         POOL DE LIQUIDEZ           │
+  │         (hacia dónde va el precio) │
+  │               ↓                    │
+  │         ZONA DE OFERTA / DEMANDA   │
+  │         (donde entras)             │
+  │                                    │
+  │ Los 3 deben alinearse en el        │
+  │ mismo TF                           │
+  │ → Setup de alta probabilidad       │
+  │                                    │
+  │ Si solo 2 se alinean → pasar       │
+  │ Si solo 1 → nunca operar           │
+  └────────────────────────────────────┘`,
+    'i_SMC 102':`ESTRUCTURA DE MERCADO ALCISTA:
+  ┌─────────────────────────────────────┐
+  │                         HH  ←──── │
+  │              LH                    │
+  │                    HL ──→ BOS up  │
+  │       LL→CHoCH                     │
+  │  HL                                │
+  │                                    │
+  │ BOS (Break of Structure):          │
+  │ El precio supera un High previo    │
+  │ → La tendencia continúa ARRIBA     │
+  │                                    │
+  │ CHoCH (Change of Character):       │
+  │ El precio supera un Low previo     │
+  │ en tendencia alcista               │
+  │ → Posible reversión formándose     │
+  └─────────────────────────────────────┘`,
+    'i_SMC 103':`Formación de Zona de Demanda:
+  ┌────────────────────────────────────┐
+  │ Paso 1: Movimiento explosivo       │
+  │ fuerte ARRIBA                      │
+  │              ↑↑↑↑↑↑↑↑↑            │
+  │                                    │
+  │ Paso 2: Marcar la BASE del         │
+  │ movimiento                         │
+  │ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░ Zone │
+  │  ^vela de origen (última           │
+  │   bajista/alcista)                 │
+  │                                    │
+  │ Paso 3: Extender la zona hacia     │
+  │ adelante                           │
+  │ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░─────→│
+  │                                    │
+  │ Paso 4: Marcar como inválida si    │
+  │ el precio cierra profundamente     │
+  │ a través                           │
+  │                                    │
+  │ VÁLIDO   → el precio pasó          │
+  │            < 3 velas               │
+  │ INVÁLIDO → el precio consolida     │
+  │            dentro                  │
+  └────────────────────────────────────┘`,
+    'i_SMC 104':`Inducement Antes de Zona de Demanda:
+  ┌────────────────────────────────────┐
+  │                                    │
+  │ DEMAND ZONE: ░░░░░░░░░░░░░░░░░    │
+  │                                    │
+  │  ↓ pico de inducement bajo la zona│
+  │         ╲                          │
+  │ ░░░░░░░╲░░░░░░ ← zona testeada    │
+  │          ╲   ↑ entrada real aquí   │
+  │           ╲↑↑↑↑ rechazo fuerte    │
+  │                                    │
+  │ TRAMPA: Entrar cuando el precio    │
+  │ toca la zona primero               │
+  │                                    │
+  │ INTELIGENTE: Esperar el barrido de │
+  │ inducement, luego entrar con       │
+  │ confirmación                       │
+  └────────────────────────────────────┘`,
+    'i_SMC 105':`Ciclo MMXM Completo (Alcista):
+  ┌────────────────────────────────────┐
+  │ BSL ═══════════════ (objetivo      │
+  │                      arriba)       │
+  │                        ↑↑↑         │
+  │     5. EXPANSION       ↑           │
+  │             OB ░░░░░░░↑            │
+  │             ↑ 4.RETROCESO          │
+  │  3. MITIGACIÓN (OB testeado)       │
+  │         ──────────────             │
+  │  2. DISTRIBUCIÓN (primer           │
+  │     impulso)                       │
+  │         ────────────               │
+  │  1. FASE DE ACUMULACIÓN            │
+  │                                    │
+  │ SSL ═══════════════ (barrido       │
+  │                      primero)      │
+  │  ↓ el precio barre mínimos        │
+  │  → las instituciones compran en    │
+  │    esta liquidez                   │
+  └────────────────────────────────────┘`,
+    'i_SMC 106':`Checklist de Entrada SMC:
+  ┌────────────────────────────────────┐
+  │ PASO 1: SESGO TF SUPERIOR         │
+  │ □ Estructura Daily: alcista/       │
+  │   bajista                          │
+  │ □ ¿Precio en premium o discount?   │
+  │ □ ¿Dónde está el draw de liquidez  │
+  │   HTF?                             │
+  │                                    │
+  │ PASO 2: IDENTIFICACIÓN DE ZONA     │
+  │ □ ¿Oferta o Demanda fresca en LTF? │
+  │ □ ¿Contiene OB o FVG?             │
+  │ □ ¿La zona se alinea con el sesgo  │
+  │   HTF?                             │
+  │                                    │
+  │ PASO 3: DETONANTE DE ENTRADA       │
+  │ □ ¿Inducement tomado?             │
+  │ □ ¿CHoCH en 15M o 5M?             │
+  │ □ ¿Ghost wick o retest FVG?       │
+  │                                    │
+  │ PASO 4: RIESGO                     │
+  │ □ ¿SL más allá del swing de        │
+  │   inducement?                      │
+  │ □ ¿R:R mín 2:1 confirmado?        │
+  │ □ ¿Tamaño de posición ≤ 2% cuenta?│
+  │                                    │
+  │ TODAS LAS CASILLAS MARCADAS        │
+  │ → EJECUTAR                         │
+  └────────────────────────────────────┘`,
+    'i_SMC 107':`Jerarquía de Timeframes:
+  ┌────────────────────────────────────┐
+  │ WEEKLY → Monthly                   │
+  │ Propósito: Draw mayor de liquidez  │
+  │ Herramientas: Oferta/Demanda HTF,  │
+  │ Rango                              │
+  │                                    │
+  │ DAILY → 4H                         │
+  │ Propósito: Sesgo direccional       │
+  │ Tools: BOS/CHoCH, OB, FVG          │
+  │                                    │
+  │ 1H → 15M                           │
+  │ Propósito: Refinamiento de zona    │
+  │ de entrada                         │
+  │ Herramientas: Demanda/Oferta,      │
+  │ Inducement                         │
+  │                                    │
+  │ 5M → 1M                            │
+  │ Propósito: Precisión de entrada    │
+  │ Tools: CHoCH, mini-FVG, OTE        │
+  │                                    │
+  │ REGLA: Opera CON el flujo de       │
+  │ cada timeframe superior            │
+  └────────────────────────────────────┘`,
+    'i_SMC 108':`Protocolo de Gestión de Trades SMC:
+  ┌────────────────────────────────────┐
+  │ Entrada: Re-test de zona + CHoCH   │
+  │ SL: Más allá del low/high de       │
+  │ inducement                         │
+  │                                    │
+  │ TARGET 1 (TP1) — at 1:1 R:R       │
+  │ → Cerrar 33% de la posición        │
+  │ → Mover SL a breakeven             │
+  │                                    │
+  │ TARGET 2 (TP2) — at 2:1 R:R       │
+  │ → Cerrar otro 33%                  │
+  │ → Trailing SL al nivel TP1         │
+  │                                    │
+  │ TARGET 3 (TP3) — at 3:1+ R:R      │
+  │ → Dejar correr el 34% restante     │
+  │ → Trail vía estructura (BOS)       │
+  │                                    │
+  │ RESULTADO: Runner sin riesgo       │
+  │ desde TP1                          │
+  └────────────────────────────────────┘`,
+    'i_SMC 109':`Correlaciones de Mercado Clave:
+  ┌────────────────────────────────────┐
+  │ DXY (USD Index) ↑                  │
+  │  → EUR/USD ↓  (inverse)            │
+  │  → GBP/USD ↓  (inverse)            │
+  │  → XAU/USD ↓  (generalmente        │
+  │    inverso)                        │
+  │  → BTC/USD ↓  (frecuentemente      │
+  │    inverso)                        │
+  │                                    │
+  │ Entorno RISK-ON:                   │
+  │  → Stocks ↑ · BTC ↑ · ETH ↑       │
+  │  → Oro mixto · DXY plano/bajista   │
+  │                                    │
+  │ Entorno RISK-OFF:                  │
+  │  → Acciones ↓ · BTC frecuentemente │
+  │    ↓                               │
+  │  → Oro ↑ · DXY ↑                   │
+  │  → Bonos ↑ (rendimiento ↓)        │
+  │                                    │
+  │ REGLA DE CONFIRMACIÓN:             │
+  │ DXY BOS down → buscar EUR long     │
+  │ DXY OB rechazando → buscar XAU ↑  │
+  └────────────────────────────────────┘`,
+    'i_GWP 101':`Anatomía del Ghost Wick:
+  ┌────────────────────────────────────┐
+  │ GHOST WICK ALCISTA:                │
+  │                                    │
+  │        ┃ ← mecha superior pequeña  │
+  │       ███                          │
+  │       ███ ← cuerpo (< 40% del     │
+  │       ███   rango)                 │
+  │        ┃                           │
+  │        ┃                           │
+  │        ┃ ← GHOST WICK (≥60%)      │
+  │        ┃    barrió liquidez abajo  │
+  │        ┃                           │
+  │        ┃    e invirtió             │
+  │                                    │
+  │ MEDICIÓN:                          │
+  │ Longitud mecha ÷ Rango total      │
+  │ ≥ 0.60                             │
+  │                                    │
+  │ Cuanto más larga la mecha → más    │
+  │ liquidez barrida → señal más       │
+  │ fuerte                             │
+  └────────────────────────────────────┘`,
+    'i_GWP 102':`Trampa de Liquidez Bajista:
+  ┌────────────────────────────────────┐
+  │ RESISTENCIA CLAVE / MÁXIMOS IGUALES│
+  │ ─────────────────────── ← nivel   │
+  │                                    │
+  │          VELA 1: Breakout          │
+  │          ↑↑↑ precio cierra arriba  │
+  │          [vela de breakout]        │
+  │          Minoristas:               │
+  │          "¡BREAKOUT!"              │
+  │          Instituciones: vendiendo  │
+  │                                    │
+  │          VELA 2: Reversión         │
+  │          Precio cierra de vuelta   │
+  │          abajo                     │
+  │          ─────────────────────── │
+  │          ↓↓↓↓↓↓↓↓↓↓↓↓            │
+  │                                    │
+  │ Traders de breakout ATRAPADOS      │
+  │ arriba                             │
+  │ Sus stops = combustible para       │
+  │ la caída                           │
+  └────────────────────────────────────┘`,
+    'i_GWP 103':`Los 5 Pilares (TODOS deben confirmar):
+  ┌────────────────────────────────────┐
+  │ [1] DETECCIÓN GHOST WICK           │
+  │     Mecha ≥ 60% del rango de la   │
+  │     vela                           │
+  │     Confirma barrido institucional │
+  │                                    │
+  │ [2] TRAMPA DE LIQUIDEZ             │
+  │     El precio finta un nivel clave │
+  │     Invierte en menos de 2 velas   │
+  │                                    │
+  │ [3] RUPTURA DE ESTRUCTURA          │
+  │     BOS en dirección de la señal   │
+  │     El sesgo TF superior confirma  │
+  │                                    │
+  │ [4] CONFLUENCIA ORDER BLOCK        │
+  │     OB o FVG en misma zona         │
+  │     Pico de volumen en OB confirma │
+  │                                    │
+  │ [5] PUERTA DE SIZING KELLY         │
+  │     Min R:R ≥ 1.8:1                │
+  │     Conviction score ≥ 75/100      │
+  │                                    │
+  │ LOS 5 ✓ → SEÑAL DISPARADA 🔥       │
+  │ ALGUNO FALTANTE → SIN TRADE        │
+  └────────────────────────────────────┘`,
+    'i_GWP 104':`Reglas de Colocación SL GWP:
+  ┌────────────────────────────────────┐
+  │ INCORRECTO (comportamiento retail):│
+  │  ─── SL en punta de mecha ❌       │
+  │  → Se activa con ruido normal      │
+  │                                    │
+  │ CORRECTO (regla GWP):              │
+  │  1. SL = Más allá del swing que    │
+  │     creó el ghost wick             │
+  │                                    │
+  │  2. Piso ATR: SL debe ser          │
+  │     ≥ 0.5× ATR(14) de la entrada  │
+  │     → Nunca bajo este piso         │
+  │                                    │
+  │  3. SL final = MÁX de:            │
+  │     (SL basado en swing,           │
+  │      piso ATR)                     │
+  │                                    │
+  │ Ejemplo (4H):                      │
+  │  ATR(14) = 120 pips                │
+  │  Piso ATR = 60 pips                │
+  │  Si SL swing = 45 pips → inválido │
+  │  Mínimo 60 pips obligatorio        │
+  └────────────────────────────────────┘`,
+    'i_GWP 105':`Score de Convicción → Tamaño de Posición:
+  ┌────────────────────────────────────┐
+  │ SISTEMA DE PUNTUACIÓN (100 pts     │
+  │ máx):                              │
+  │                                    │
+  │ Calidad Ghost Wick    → 0-20 pts   │
+  │ Trampa de Liquidez    → 0-20 pts   │
+  │   limpia                           │
+  │ Alineamiento MSB      → 0-20 pts   │
+  │ Confluencia OB/FVG    → 0-20 pts   │
+  │ Calidad R:R           → 0-20 pts   │
+  │                                    │
+  │ ASIGNACIÓN DE RIESGO:              │
+  │  Score 90-100 → Riesgo 2.0%       │
+  │                 cuenta             │
+  │  Score 80-89  → Riesgo 1.5%       │
+  │                 cuenta             │
+  │  Score 75-79  → Riesgo 1.0%       │
+  │                 cuenta             │
+  │  Score < 75   → SIN TRADE         │
+  │                                    │
+  │ Fórmula Kelly (teórica):           │
+  │  f = (0.97 × 1.8 − 0.03) / 1.8    │
+  │  f = 95.3%  ← ¡demasiado!         │
+  │  Tope GWP: 2% máx siempre         │
+  └────────────────────────────────────┘`,
+    'i_GWP 106':`Estructura de Toma de Beneficios GWP:
+  ┌────────────────────────────────────┐
+  │ Entrada ●                          │
+  │       │                            │
+  │ TP1 ──┤ 1:1 R:R → Cerrar 30%      │
+  │       │ SL se mueve a breakeven    │
+  │       │                            │
+  │ TP2 ──┤ 2:1 R:R → Cerrar 40%      │
+  │       │ Trailing SL al nivel TP1   │
+  │       │                            │
+  │ TP3 ──┤ 3.5:1 R:R → Cerrar 30%    │
+  │       │ (v8 elevado de 2.5:1)      │
+  │       │                            │
+  │ R:R promedio global si todos       │
+  │ tocan: 2.3:1                       │
+  │                                    │
+  │ SL ●  (bajo piso ATR)             │
+  │       Riesgo = 2% de la cuenta     │
+  └────────────────────────────────────┘`,
+    'i_GWP 107':`Vol + AVWAP Gate:
+  ┌────────────────────────────────────┐
+  │ VERIFICACIÓN VOLUMEN:              │
+  │  ¿Volumen vela GW > promedio 20    │
+  │  barras?                           │
+  │  SÍ → puerta pasa ✓               │
+  │  NO → señal bloqueada ✗            │
+  │                                    │
+  │ AVWAP CHECK (Bullish):             │
+  │  ╲ Línea AVWAP (anclada desde      │
+  │   ╲ último HIGH significativo)     │
+  │    ╲                               │
+  │     ╲→ El precio de entrada debe   │
+  │        estar BAJO el AVWAP         │
+  │                                    │
+  │ AVWAP CHECK (Bearish):             │
+  │    ╱→ El precio de entrada debe    │
+  │   ╱   estar SOBRE el AVWAP         │
+  │  ╱ AVWAP line                      │
+  │                                    │
+  │ LÓGICA: AVWAP = verdadero fair     │
+  │ value                              │
+  │ Comprar bajo fair value            │
+  │ Vender sobre fair value            │
+  └────────────────────────────────────┘`,
+    'i_GWP 108':`Ciclo de Escaneo del Bot (Cada 30 min):
+  ┌────────────────────────────────────┐
+  │ 1. Obtener datos OHLCV (velas 4H)  │
+  │    desde API del exchange          │
+  │                                    │
+  │ 2. Aplicar Pilar 1: Ghost Wick     │
+  │    ¿mecha ≥ 60% rango?            │
+  │                                    │
+  │ 3. Aplicar Pilar 2: Trampa Liq.    │
+  │    ¿reversión en 2 velas?          │
+  │                                    │
+  │ 4. Aplicar Pilar 3: MSB            │
+  │    ¿ruptura de estructura           │
+  │    confirmada?                     │
+  │                                    │
+  │ 5. Aplicar Pilar 4: OB/FVG         │
+  │    verificación calidad de zona    │
+  │                                    │
+  │ 6. Vol + AVWAP gate                │
+  │                                    │
+  │ 7. Calcular ATR → niveles SL/TP    │
+  │                                    │
+  │ 8. Score de convicción (0-100)     │
+  │                                    │
+  │ 9. Score ≥ 75 → DISPARAR SEÑAL     │
+  │    → Telegram push                 │
+  │    → Actualización del feed         │
+  │      AxTrader                      │
+  └────────────────────────────────────┘`,
+    'i_GWP 109':`Desglose de Tarjeta de Señal GWP:
+  ┌────────────────────────────────────┐
+  │ Pair: BTC/USDT      [LONG]         │
+  │ Grade: A+ SUPREME                  │
+  │ Conviction: 94/100                 │
+  │                                    │
+  │ Entry:  $67,200 – $67,400          │
+  │ TP1:    $68,500  (1:1)             │
+  │ TP2:    $69,800  (2:1)             │
+  │ TP3:    $72,100  (3.5:1)           │
+  │ SL:     $66,100  (ATR-based)       │
+  │                                    │
+  │ Vol Gate: ✅ (1.8× vol. promedio)  │
+  │ AVWAP:    ✅ (bajo AVWAP)          │
+  │ MSB:      ✅ (BOS 4H confirmado)   │
+  │ Sesión:   NY Morning KZ            │
+  │                                    │
+  │ Guía de Grados:                    │
+  │  90-100 = A+ SUPREME               │
+  │  80-89  = A+ STRONG                │
+  │  75-79  = A STANDARD               │
+  └────────────────────────────────────┘`,
+    'i_BOOK 1':`RESUMEN DE CAPÍTULOS:
+  Ch.1  — Los Verdaderos Participantes del Mercado
+  Ch.2  — FX Interbancario & Creación de Precio
+  Ch.3  — Señales de Intervención de Bancos Centrales
+  Ch.4  — Datos COT — Leyendo el Smart Money
+  Ch.5  — Dark Pools & Órdenes Iceberg
+  Ch.6  — Algoritmos de Caza de Stops Decodificados
+  Ch.7  — Trading de Noticias — ¿Manipulación o Real?
+  Ch.8  — Comportamiento de Ballenas Crypto vs. FX IB
+  Ch.9  — Confirmación On-Chain para GWP
+  Ch.10 — Indicadores de Flujo Propietarios
+  Ch.11 — Casos de Estudio: BOE Miércoles Negro
+  Ch.12 — Construyendo Tu Playbook Institucional`,
+    'i_BOOK 2':`RESUMEN DE CAPÍTULOS:
+  Ch.1  — Por Qué el SMC Estándar Falla Solo
+  Ch.2  — MMXM en Todos los Timeframes
+  Ch.3  — Mapeo Dinámico Discount/Premium
+  Ch.4  — Ranking de Zonas: Niveles A/B/C
+  Ch.5  — Cuaderno de Correlaciones Multi-Par
+  Ch.6  — Entradas Fallidas de Oferta & Demanda
+  Ch.7  — Bloques de Mitigación — Avanzado
+  Ch.8  — Cambios Trimestrales (Concepto ICT)
+  Ch.9  — Confluencia HTF — Niveles Mensuales
+  Ch.10 — Construyendo una Plantilla de Análisis Semanal
+  Ch.11 — 20 Ejemplos de Trades Anotados
+  Ch.12 — Protocolo de Integración SMC + GWP`,
+    'i_BOOK 3':`Las 7 Variantes Raras del GWP:
+  Pattern 1: Ghost Wicks Gemelos
+  → Dos GW consecutivos al mismo nivel
+  → 99.2% precisión (backtested 3 años)
+
+  Pattern 2: Ghost Wick HTF (Semanal)
+  → GW vela Weekly + OB Daily alineados
+  → Trades de varios días o semanas
+
+  Pattern 3: GW + Breaker Block
+  → Zona de demanda actuando como oferta
+  → Variante solo short
+
+  Pattern 4: GW en EQ (50% Fib)
+  → Entrada GW perfectamente en discount
+
+  Pattern 5: Doble Trampa de Liquidez
+  → Dos niveles clave barridos en un movimiento
+
+  Pattern 6: GW + Catalizador de Noticias
+  → El evento económico crea la mecha
+
+  Pattern 7: GW Inter-Sesiones
+  → GW Londres, distribución NY`,
+    'i_BOOK 4':`RESUMEN DE CAPÍTULOS:
+  Ch.1  — Dimensionamiento de Cuenta para Trading GWP
+  Ch.2  — Calor del Portafolio: Riesgo Abierto Máx
+  Ch.3  — Hedging de Correlación (Crypto + FX)
+  Ch.4  — Marco de Recuperación de Drawdown
+  Ch.5  — Tasa de Acierto vs. Esperanza R:R
+  Ch.6  — Monte Carlo: Proyección de Riesgo DD
+  Ch.7  — La Regla del 6% (pérdida máx diaria)
+  Ch.8  — Modelo Propietario de Scoring de Riesgo
+  Ch.9  — Desafíos Prop Firm Usando GWP
+  Ch.10 — Plantillas de Revisión de Rendimiento
+  Ch.11 — Escalando de $500 a $50,000
+  Ch.12 — Construyendo un Plan de Negocio de Trading`,
+    'i_BOOK 5':`RESUMEN DE CAPÍTULOS:
+  Ch.1  — Por Qué la Mayoría de Backtests Son Incorrectos
+  Ch.2  — Protocolo de Backtest GWP (Paso a Paso)
+  Ch.3  — Marcando Ghost Wicks Históricos
+  Ch.4  — Registro: Qué Anotar (y Por Qué)
+  Ch.5  — Ventaja Estadística: Requisitos de Muestra
+  Ch.6  — Separando Ventaja del Sistema de la Suerte
+  Ch.7  — Proceso de Revisión Semanal del Diario
+  Ch.8  — Identificando Tus Sesgos Personales
+  Ch.9  — Scoring de Psicología de Trading
+  Ch.10 — Revisión de Pares y Responsabilidad
+  Ch.11 — La Plantilla de Diario GWP
+  Ch.12 — Del Backtesting al Trading en Vivo`,
+    'i_BOOK 6':`LO QUE INCLUYE CADA REVISIÓN:
+  ✦ Tarjeta de señal completa con todos los pilares GWP
+  ✦ Gráfico 4H anotado: GW, OB, MSB
+  ✦ Zona de entrada: cómo se formó en tiempo real
+  ✦ Resultados TP1/TP2/TP3 + timing
+  ✦ Lo que mostró la puerta Vol+AVWAP
+  ✦ Cualquier caso especial o desviación de reglas
+  ✦ Análisis post-trade: lo que aprendimos
+
+  REVISIONES RECIENTES DISPONIBLES:
+  ✦ Marzo 2025 — 14 señales A+ revisadas
+  ✦ Febrero 2025 — 11 señales revisadas
+  ✦ Enero 2025 — 9 señales revisadas
+
+  BONUS: Informe Trimestral de Score GWP
+  → Desglose de tasa de acierto por par y sesión`,
+    'i_BOOK 7':`RESUMEN DE CAPÍTULOS:
+  Ch.1  — Crypto vs. Forex: Diferencias Clave
+  Ch.2  — Tasa de Financiamiento como Filtro GWP
+  Ch.3  — Cascadas de Liquidación = Ghost Wicks
+  Ch.4  — Integración Heatmap CoinGlass
+  Ch.5  — On-Chain: Flujos de Entrada/Salida de Exchanges
+  Ch.6  — Whale Alert como Señal de Liquidez
+  Ch.7  — Dominancia BTC en Contexto GWP
+  Ch.8  — Protocolo de Rotación Alt Season
+  Ch.9  — Kill Zones Crypto (vs. Forex)
+  Ch.10 — AVWAP en Futuros Perpetuos
+  Ch.11 — Selección de Pares: La Watch-list GWP
+  Ch.12 — DEXE, UNI, SUSHI — Casos de Estudio`
   },
   pt: {
     'ICT 101':'ICT 101 — O que é ICT?','ICT 102':'ICT 102 — Fair Value Gaps (FVG)','ICT 103':'ICT 103 — Order Blocks (OB)','ICT 104':'ICT 104 — Liquidez & Caça aos Stops','ICT 105':'ICT 105 — Kill Zones & Sessões','ICT 106':'ICT 106 — Power of 3 (AMD)','ICT 107':'ICT 107 — Zonas Premium & Discount','ICT 108':'ICT 108 — Entrada Ideal (OTE)','ICT 109':'ICT 109 — Análise Diária de Viés',
@@ -5282,7 +6705,708 @@ const coursesTitleBody = {
     'd_GWP 106':'A matemática da saída com 3 alvos: 30% a 1:1 + 40% a 2:1 + 30% a 3.5:1 = R:R médio de 2.15:1 quando todos os alvos são atingidos. O TP3 foi elevado no v8 porque a análise mostrava que o preço regularmente ultrapassava o antigo TP3 de 2.5:1.',
     'd_GWP 107':'O filtro Volume + AVWAP é o guardião final. Se o volume da vela ghost wick não supera a média de 20 períodos, sugere falta de convicção institucional. O AVWAP adiciona filtro de viés: para longs, preço acima do AVWAP; para shorts, abaixo. Este filtro duplo elimina ~30% de sinais falsos.',
     'd_GWP 108':'O bot Crypto monitora 17 pares: BTC, ETH, SOL, LINK, BNB, DEXE, UNI, COMP, NEAR, AVAX, AAVE, ARB, INJ, DOT, FIL, SUI, ATOM — todos em gráfico 4H com confirmação 1H e 15M. O bot Forex monitora: EUR/USD, GBP/USD, XAU/USD com o mesmo 4H primário e filtro Kill Zone. Ambos rodam no GitHub Actions e enviam sinais para o feed AxTrader e canais Telegram.',
-    'd_GWP 109':'Cada campo do cartão de sinal tem significado: o símbolo do par, a direção (LONG/SHORT), o preço de entrada, o stop loss (SL), os alvos de lucro (TP1/TP2/TP3), o timeframe primário, o score de convicção, o R:R e o timestamp "Fired". Nunca entre em um sinal que não compreenda completamente.'
+    'd_GWP 109':'Cada campo do cartão de sinal tem significado: o símbolo do par, a direção (LONG/SHORT), o preço de entrada, o stop loss (SL), os alvos de lucro (TP1/TP2/TP3), o timeframe primário, o score de convicção, o R:R e o timestamp "Fired". Nunca entre em um sinal que não compreenda completamente.',
+    'i_ICT 101':`Modelo Market Maker (3 Fases):
+  ┌─────────────────────────────────┐
+  │  FASE 1: ACUMULAÇÃO             │
+  │  Instituições constroem         │
+  │  posições silenciosamente       │
+  │  em mínimos-chave               │
+  │                                 │
+  │  FASE 2: MANIPULAÇÃO            │
+  │  Falso breakout abaixo do       │
+  │  suporte                        │
+  │  Traders varejistas são stopados │
+  │                                 │
+  │  FASE 3: DISTRIBUIÇÃO           │
+  │  O movimento real começa        │
+  │  — para cima                    │
+  │  Instituições lucram            │
+  └─────────────────────────────────┘
+
+  O que o varejo vê: "O suporte rompeu!"
+  O que o smart money faz: Preenche ordens de compra
+  ao menor preço possível.`,
+    'i_ICT 102':`Estrutura FVG Bearish de 3 Velas:
+  ┌───────────────────────────────────┐
+  │  Candle 1  [██████]  High: 1.2050 │
+  │                                   │
+  │  Candle 2  [░░░░░░]  GAP ZONE     │
+  │            (sem sobreposição       │
+  │             de pavios)             │
+  │                                   │
+  │  Candle 3  [██████]  Low: 1.1980  │
+  └───────────────────────────────────┘
+
+  FVG = entre o low de C1 e o high de C3
+
+  FVG Bullish → o preço caiu rápido demais
+  → Espera-se que o preço retorne e preencha
+  → Zona de entrada long de alta probabilidade
+
+  FVG Bearish → o preço subiu rápido demais
+  → Zona de entrada short de alta probabilidade`,
+    'i_ICT 103':`Formação de Order Block Bullish:
+  ┌────────────────────────────────────┐
+  │ Passo 1: Última vela bearish       │
+  │         [░░░░░░░░░░░░]  ← OB      │
+  │                                    │
+  │ Passo 2: Movimento bullish         │
+  │ explosivo                          │
+  │              ↑↑↑↑↑↑↑↑↑↑↑↑↑↑       │
+  │                                    │
+  │ Passo 3: Zona OB vira suporte      │
+  │         [░░░░░░░░░░░░]  ← re-teste │
+  │                  ↑ Entrada aqui    │
+  └────────────────────────────────────┘
+
+  Corpo OB = Zona de entrada
+  SL abaixo do mínimo do corpo OB
+  Alvo = Próximo pool de liquidez acima`,
+    'i_ICT 104':`Tipos de Liquidez:
+  ┌────────────────────────────────────┐
+  │ Buy-Side Liquidity (BSL)           │
+  │ ════════════════════ ← Máximas     │
+  │                        Iguais      │
+  │ ████  ████  ████                   │
+  │  Stops de varejistas:              │
+  │  acima das máximas                 │
+  │                                    │
+  │ Sell-Side Liquidity (SSL)          │
+  │ ████  ████  ████                   │
+  │ ════════════════════ ← Mínimas     │
+  │                        Iguais      │
+  │  Stops de varejistas:              │
+  │  abaixo das mínimas                │
+  │                                    │
+  │ PADRÃO DE VARREDURA:               │
+  │ O preço pica acima do BSL →        │
+  │ coleta todos os buy stops →        │
+  │ instituições vendem nessa          │
+  │ liquidez → preço reverte           │
+  │ BRUSCAMENTE para baixo             │
+  └────────────────────────────────────┘`,
+    'i_ICT 105':`Mapa de Sessões Diárias (Hora NY):
+  ┌────────────────────────────────────┐
+  │ ASIA SESSION                       │
+  │ 20:00 — 00:00 NY                   │
+  │ → Constrói o range noturno         │
+  │ → Frequente consolidação           │
+  │                                    │
+  │ LONDON OPEN KZ  ⚡ ALTA PROB       │
+  │ 02:00 — 05:00 NY                   │
+  │ → Reverte o range asiático         │
+  │ → Movimentos direcionais fortes    │
+  │                                    │
+  │ NY AM KZ  ⚡ MAIS ALTA PROB        │
+  │ 08:30 — 11:00 NY                   │
+  │ → Continuação ou reversão          │
+  │ → Impulsionado por notícias +      │
+  │   setups ICT puros                 │
+  │                                    │
+  │ ALMOÇO (EVITAR)                    │
+  │ 12:00 — 13:00 NY  ← zona agitada  │
+  │                                    │
+  │ NY PM KZ  (secundária)             │
+  │ 13:30 — 16:00 NY                   │
+  └────────────────────────────────────┘`,
+    'i_ICT 106':`Ciclo AMD Diário (Dia Bullish):
+  ┌────────────────────────────────────┐
+  │ A — ACUMULAÇÃO                     │
+  │ Sessão asiática: o preço rangeia   │
+  │ Instituições absorvem ordens       │
+  │ de venda                           │
+  │ [─────────────] range plano        │
+  │                                    │
+  │ M — MANIPULAÇÃO                    │
+  │ Abertura Londres: pico ABAIXO      │
+  │ do range                           │
+  │      ↓ (caça de stops abaixo       │
+  │        do low asiático)            │
+  │ Shorts de varejistas ativados      │
+  │                                    │
+  │ D — DISTRIBUIÇÃO                   │
+  │ Sessão NY: movimento explosivo     │
+  │ PARA CIMA                          │
+  │       ↑↑↑↑↑↑↑↑↑↑↑                 │
+  │ O preço busca alvo BSL acima       │
+  │ Shorts de varejistas liquidados    │
+  └────────────────────────────────────┘`,
+    'i_ICT 107':`Estrutura Premium/Discount:
+  ┌────────────────────────────────────┐
+  │ Range ALTO ████████████ 100%       │
+  │                                    │
+  │           ZONA PREMIUM             │
+  │           (acima de 50%)           │
+  │           → instituições           │
+  │             VENDEM aqui            │
+  │                                    │
+  │ EQUILIBRIUM ─────────────── 50%   │
+  │                                    │
+  │           ZONA DISCOUNT            │
+  │           (abaixo de 50%)          │
+  │           → instituições           │
+  │             COMPRAM aqui           │
+  │                                    │
+  │ Range BAIXO ████████████ 0%        │
+  └────────────────────────────────────┘
+
+  Regra: Só comprar abaixo de EQ (50%)
+         Só vender acima de EQ (50%)`,
+    'i_ICT 108':`Entrada OTE em Setup Bullish:
+  ┌────────────────────────────────────┐
+  │ 1. Marcar o swing de deslocamento  │
+  │    Low A ────────────── High B     │
+  │                                    │
+  │ 2. Traçar Fibonacci A→B            │
+  │    0.0   = High B (alvo)           │
+  │    0.5   = Equilíbrio              │
+  │    0.618 ← ─ INÍCIO ZONA OTE      │
+  │    0.705 ←   PONTO IDEAL          │
+  │              ZONA OTE              │
+  │    0.79  ← ─ FIM ZONA OTE         │
+  │    1.0   = Low A                   │
+  │                                    │
+  │ 3. Esperar que o preço retrace     │
+  │    em 0.618 — 0.79                 │
+  │                                    │
+  │ 4. Entrar no OB ou FVG dentro      │
+  │    da zona                         │
+  │ 5. SL abaixo do swing Low A        │
+  └────────────────────────────────────┘`,
+    'i_ICT 109':`Estrutura de Análise Top-Down:
+  ┌────────────────────────────────────┐
+  │ MONTHLY / WEEKLY                   │
+  │ → O preço está em premium ou       │
+  │   discount?                        │
+  │ → Onde está o próximo alvo         │
+  │   (draw)?                          │
+  │                                    │
+  │ DAILY (4H)                         │
+  │ → Qual é a estrutura do            │
+  │   mercado?                         │
+  │ → BOS up → viés bullish            │
+  │ → BOS down → viés bearish          │
+  │                                    │
+  │ 1H (15M)                           │
+  │ → Encontrar entrada na Kill Zone   │
+  │ → OB + FVG + Varredura de liquidez │
+  │ → Confirmar CHoCH no LTF           │
+  │                                    │
+  │ Timeframe de Entrada (5M / 1M)     │
+  │ → Refinamento preciso de entrada   │
+  │ → Reduzir SL, melhorar R:R        │
+  └────────────────────────────────────┘`,
+    'i_SMC 101':`A Trindade SMC:
+  ┌────────────────────────────────────┐
+  │         ESTRUTURA DO MERCADO       │
+  │         (o viés direcional)        │
+  │               ↓                    │
+  │         POOL DE LIQUIDEZ           │
+  │         (para onde o preço vai)    │
+  │               ↓                    │
+  │         ZONA DE OFERTA / DEMANDA   │
+  │         (onde você entra)          │
+  │                                    │
+  │ Os 3 devem se alinhar no mesmo TF  │
+  │ → Setup de alta probabilidade      │
+  │                                    │
+  │ Se apenas 2 se alinham → pular     │
+  │ Se apenas 1 → nunca operar         │
+  └────────────────────────────────────┘`,
+    'i_SMC 102':`ESTRUTURA DE MERCADO BULLISH:
+  ┌─────────────────────────────────────┐
+  │                         HH  ←──── │
+  │              LH                    │
+  │                    HL ──→ BOS up  │
+  │       LL→CHoCH                     │
+  │  HL                                │
+  │                                    │
+  │ BOS (Break of Structure):          │
+  │ O preço supera um High anterior    │
+  │ → A tendência continua PARA CIMA   │
+  │                                    │
+  │ CHoCH (Change of Character):       │
+  │ O preço supera um Low anterior     │
+  │ em tendência bullish               │
+  │ → Possível reversão se formando    │
+  └─────────────────────────────────────┘`,
+    'i_SMC 103':`Formação de Zona de Demanda:
+  ┌────────────────────────────────────┐
+  │ Passo 1: Forte movimento explosivo │
+  │ PARA CIMA                          │
+  │              ↑↑↑↑↑↑↑↑↑            │
+  │                                    │
+  │ Passo 2: Marcar a BASE do          │
+  │ movimento                          │
+  │ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░ Zone │
+  │  ^vela de origem (última           │
+  │   bear/bull)                       │
+  │                                    │
+  │ Passo 3: Estender a zona para      │
+  │ frente                             │
+  │ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░─────→│
+  │                                    │
+  │ Passo 4: Marcar como inválida se   │
+  │ o preço fecha profundamente        │
+  │                                    │
+  │ VÁLIDO   → preço passou            │
+  │            < 3 velas               │
+  │ INVÁLIDO → preço consolida         │
+  │            dentro                  │
+  └────────────────────────────────────┘`,
+    'i_SMC 104':`Inducement Antes da Zona de Demanda:
+  ┌────────────────────────────────────┐
+  │                                    │
+  │ DEMAND ZONE: ░░░░░░░░░░░░░░░░░    │
+  │                                    │
+  │  ↓ pico de inducement abaixo      │
+  │    da zona                         │
+  │         ╲                          │
+  │ ░░░░░░░╲░░░░░░ ← zona testada     │
+  │          ╲   ↑ entrada real aqui   │
+  │           ╲↑↑↑↑ rejeição forte    │
+  │                                    │
+  │ ARMADILHA: Entrar quando o preço   │
+  │ toca a zona primeiro               │
+  │                                    │
+  │ INTELIGENTE: Esperar a varredura   │
+  │ de inducement, depois entrar com   │
+  │ confirmação                        │
+  └────────────────────────────────────┘`,
+    'i_SMC 105':`Ciclo MMXM Completo (Bullish):
+  ┌────────────────────────────────────┐
+  │ BSL ═══════════════ (alvo          │
+  │                      acima)        │
+  │                        ↑↑↑         │
+  │     5. EXPANSION       ↑           │
+  │             OB ░░░░░░░↑            │
+  │             ↑ 4.RETRAÇÃO           │
+  │  3. MITIGAÇÃO (OB testado)         │
+  │         ──────────────             │
+  │  2. DISTRIBUIÇÃO (primeiro         │
+  │     impulso)                       │
+  │         ────────────               │
+  │  1. FASE DE ACUMULAÇÃO             │
+  │                                    │
+  │ SSL ═══════════════ (varredura     │
+  │                      primeiro)     │
+  │  ↓ preço varre mínimas             │
+  │  → instituições compram nessa      │
+  │    liquidez                        │
+  └────────────────────────────────────┘`,
+    'i_SMC 106':`Checklist de Entrada SMC:
+  ┌────────────────────────────────────┐
+  │ PASSO 1: VIÉS TF SUPERIOR         │
+  │ □ Estrutura Daily: bullish/        │
+  │   bearish                          │
+  │ □ Preço em premium ou discount?    │
+  │ □ Onde está o draw de liquidez     │
+  │   HTF?                             │
+  │                                    │
+  │ PASSO 2: IDENTIFICAÇÃO DE ZONA     │
+  │ □ Oferta ou Demanda fresca no      │
+  │   LTF?                             │
+  │ □ Contém OB ou FVG?                │
+  │ □ A zona se alinha com o viés      │
+  │   HTF?                             │
+  │                                    │
+  │ PASSO 3: GATILHO DE ENTRADA        │
+  │ □ Inducement tomado?               │
+  │ □ CHoCH no 15M ou 5M?             │
+  │ □ Ghost wick ou reteste FVG?       │
+  │                                    │
+  │ PASSO 4: RISCO                     │
+  │ □ SL além do swing de              │
+  │   inducement?                      │
+  │ □ R:R mín 2:1 confirmado?          │
+  │ □ Tamanho de posição ≤ 2% conta?   │
+  │                                    │
+  │ TODAS AS CAIXAS MARCADAS → EXECUTAR│
+  └────────────────────────────────────┘`,
+    'i_SMC 107':`Hierarquia de Timeframes:
+  ┌────────────────────────────────────┐
+  │ WEEKLY → Monthly                   │
+  │ Propósito: Draw maior de liquidez  │
+  │ Ferramentas: Oferta/Demanda HTF,   │
+  │ Range                              │
+  │                                    │
+  │ DAILY → 4H                         │
+  │ Propósito: Viés direcional         │
+  │ Tools: BOS/CHoCH, OB, FVG          │
+  │                                    │
+  │ 1H → 15M                           │
+  │ Propósito: Refinamento de zona     │
+  │ de entrada                         │
+  │ Ferramentas: Demanda/Oferta,       │
+  │ Inducement                         │
+  │                                    │
+  │ 5M → 1M                            │
+  │ Propósito: Precisão de entrada     │
+  │ Tools: CHoCH, mini-FVG, OTE        │
+  │                                    │
+  │ REGRA: Opere COM o fluxo de        │
+  │ cada timeframe superior            │
+  └────────────────────────────────────┘`,
+    'i_SMC 108':`Protocolo de Gestão de Trades SMC:
+  ┌────────────────────────────────────┐
+  │ Entrada: Reteste de zona + CHoCH   │
+  │ SL: Além do low/high de            │
+  │ inducement                         │
+  │                                    │
+  │ TARGET 1 (TP1) — at 1:1 R:R       │
+  │ → Fechar 33% da posição            │
+  │ → Mover SL para breakeven          │
+  │                                    │
+  │ TARGET 2 (TP2) — at 2:1 R:R       │
+  │ → Fechar mais 33%                  │
+  │ → Trailing SL ao nível TP1         │
+  │                                    │
+  │ TARGET 3 (TP3) — at 3:1+ R:R      │
+  │ → Deixar os 34% restantes correr   │
+  │ → Trail via estrutura (BOS)        │
+  │                                    │
+  │ RESULTADO: Runner sem risco a      │
+  │ partir de TP1                      │
+  └────────────────────────────────────┘`,
+    'i_SMC 109':`Correlações de Mercado Chave:
+  ┌────────────────────────────────────┐
+  │ DXY (USD Index) ↑                  │
+  │  → EUR/USD ↓  (inverse)            │
+  │  → GBP/USD ↓  (inverse)            │
+  │  → XAU/USD ↓  (geralmente          │
+  │    inverso)                        │
+  │  → BTC/USD ↓  (frequentemente      │
+  │    inverso)                        │
+  │                                    │
+  │ Ambiente RISK-ON:                  │
+  │  → Stocks ↑ · BTC ↑ · ETH ↑       │
+  │  → Ouro misto · DXY plano/baixo    │
+  │                                    │
+  │ Ambiente RISK-OFF:                 │
+  │  → Ações ↓ · BTC frequentemente ↓ │
+  │  → Ouro ↑ · DXY ↑                  │
+  │  → Títulos ↑ (rendimento ↓)       │
+  │                                    │
+  │ REGRA DE CONFIRMAÇÃO:              │
+  │ DXY BOS down → procurar EUR long   │
+  │ DXY OB rejeitando → procurar XAU ↑│
+  └────────────────────────────────────┘`,
+    'i_GWP 101':`Anatomia do Ghost Wick:
+  ┌────────────────────────────────────┐
+  │ GHOST WICK BULLISH:                │
+  │                                    │
+  │        ┃ ← pavio superior pequeno  │
+  │       ███                          │
+  │       ███ ← corpo (< 40% do       │
+  │       ███   range)                 │
+  │        ┃                           │
+  │        ┃                           │
+  │        ┃ ← GHOST WICK (≥60%)      │
+  │        ┃    varreu liquidez abaixo │
+  │        ┃    e reverteu             │
+  │        ┃                           │
+  │                                    │
+  │ MEDIÇÃO:                           │
+  │ Wick length ÷ Total range ≥ 0.60   │
+  │                                    │
+  │ Quanto mais longo o pavio → mais   │
+  │ liquidez varrida → sinal           │
+  │ mais forte                         │
+  └────────────────────────────────────┘`,
+    'i_GWP 102':`Armadilha de Liquidez Bearish:
+  ┌────────────────────────────────────┐
+  │ RESISTÊNCIA CHAVE / MÁXIMAS IGUAIS │
+  │ ─────────────────────── ← nível   │
+  │                                    │
+  │          VELA 1: Breakout          │
+  │          ↑↑↑ preço fecha acima     │
+  │          [vela de breakout]        │
+  │          Varejistas:               │
+  │          "BREAKOUT!"               │
+  │          Instituições: vendendo    │
+  │                                    │
+  │          VELA 2: Reversão          │
+  │          Preço fecha de volta      │
+  │          abaixo                    │
+  │          ───────────────────────  │
+  │          ↓↓↓↓↓↓↓↓↓↓↓↓            │
+  │                                    │
+  │ Traders de breakout PRESOS         │
+  │ acima                              │
+  │ Seus stops = combustível para      │
+  │ a queda                            │
+  └────────────────────────────────────┘`,
+    'i_GWP 103':`Os 5 Pilares (TODOS devem confirmar):
+  ┌────────────────────────────────────┐
+  │ [1] DETECÇÃO GHOST WICK            │
+  │     Pavio ≥ 60% do range da vela   │
+  │     Confirma varredura             │
+  │     institucional                  │
+  │                                    │
+  │ [2] ARMADILHA DE LIQUIDEZ          │
+  │     O preço finta um nível chave   │
+  │     Reverte em menos de 2 velas    │
+  │                                    │
+  │ [3] RUPTURA DE ESTRUTURA           │
+  │     BOS na direção do sinal        │
+  │     O viés TF superior confirma    │
+  │                                    │
+  │ [4] CONFLUÊNCIA ORDER BLOCK        │
+  │     OB ou FVG na mesma zona        │
+  │     Pico de volume no OB confirma  │
+  │                                    │
+  │ [5] PORTA DE SIZING KELLY          │
+  │     Min R:R ≥ 1.8:1                │
+  │     Conviction score ≥ 75/100      │
+  │                                    │
+  │ OS 5 ✓ → SINAL DISPARADO 🔥        │
+  │ ALGUM FALTANDO → SEM TRADE         │
+  └────────────────────────────────────┘`,
+    'i_GWP 104':`Regras de Colocação SL GWP:
+  ┌────────────────────────────────────┐
+  │ ERRADO (comportamento varejo):     │
+  │  ─── SL na ponta do pavio ❌       │
+  │  → Ativado por ruído normal        │
+  │                                    │
+  │ CORRETO (regra GWP):               │
+  │  1. SL = Além do swing que criou   │
+  │     o ghost wick                   │
+  │                                    │
+  │  2. Piso ATR: SL deve ser          │
+  │     ≥ 0.5× ATR(14) da entrada     │
+  │     → Nunca abaixo deste piso      │
+  │                                    │
+  │  3. SL final = MÁX de:            │
+  │     (SL baseado em swing,          │
+  │      piso ATR)                     │
+  │                                    │
+  │ Exemplo (4H):                      │
+  │  ATR(14) = 120 pips                │
+  │  Piso ATR = 60 pips                │
+  │  Se SL swing = 45 pips → inválido │
+  │  Mínimo 60 pips obrigatório        │
+  └────────────────────────────────────┘`,
+    'i_GWP 105':`Score de Convicção → Tamanho de Posição:
+  ┌────────────────────────────────────┐
+  │ SISTEMA DE PONTUAÇÃO (100 pts máx):│
+  │                                    │
+  │ Qualidade Ghost Wick    → 0-20 pts │
+  │ Armadilha de Liquidez   → 0-20 pts │
+  │   limpa                            │
+  │ Alinhamento MSB         → 0-20 pts │
+  │ Confluência OB/FVG      → 0-20 pts │
+  │ Qualidade R:R           → 0-20 pts │
+  │                                    │
+  │ ALOCAÇÃO DE RISCO:                 │
+  │  Score 90-100 → Risco 2.0% conta   │
+  │  Score 80-89  → Risco 1.5% conta   │
+  │  Score 75-79  → Risco 1.0% conta   │
+  │  Score < 75   → SEM TRADE          │
+  │                                    │
+  │ Fórmula Kelly (teórica):           │
+  │  f = (0.97 × 1.8 − 0.03) / 1.8    │
+  │  f = 95.3%  ← demais!             │
+  │  Teto GWP: 2% máx sempre           │
+  └────────────────────────────────────┘`,
+    'i_GWP 106':`Estrutura de Take-Profit GWP:
+  ┌────────────────────────────────────┐
+  │ Entrada ●                          │
+  │       │                            │
+  │ TP1 ──┤ 1:1 R:R → Fechar 30%      │
+  │       │ SL move para breakeven     │
+  │       │                            │
+  │ TP2 ──┤ 2:1 R:R → Fechar 40%      │
+  │       │ Trailing SL ao nível TP1   │
+  │       │                            │
+  │ TP3 ──┤ 3.5:1 R:R → Fechar 30%    │
+  │       │ (v8 elevado de 2.5:1)      │
+  │       │                            │
+  │ R:R médio global se todos          │
+  │ atingidos: 2.3:1                   │
+  │                                    │
+  │ SL ●  (abaixo do piso ATR)         │
+  │       Risco = 2% da conta          │
+  └────────────────────────────────────┘`,
+    'i_GWP 107':`Vol + AVWAP Gate:
+  ┌────────────────────────────────────┐
+  │ VERIFICAÇÃO VOLUME:                │
+  │  Volume vela GW > média 20         │
+  │  barras?                           │
+  │  SIM → porta passa ✓               │
+  │  NÃO → sinal bloqueado ✗           │
+  │                                    │
+  │ AVWAP CHECK (Bullish):             │
+  │  ╲ Linha AVWAP (ancorada do último │
+  │   ╲ HIGH significativo)            │
+  │    ╲                               │
+  │     ╲→ O preço de entrada deve     │
+  │        estar ABAIXO do AVWAP       │
+  │                                    │
+  │ AVWAP CHECK (Bearish):             │
+  │    ╱→ O preço de entrada deve      │
+  │   ╱   estar ACIMA do AVWAP         │
+  │  ╱ AVWAP line                      │
+  │                                    │
+  │ LÓGICA: AVWAP = verdadeiro         │
+  │ fair value                         │
+  │ Comprar abaixo do fair value       │
+  │ Vender acima do fair value         │
+  └────────────────────────────────────┘`,
+    'i_GWP 108':`Ciclo de Scan do Bot (A cada 30 min):
+  ┌────────────────────────────────────┐
+  │ 1. Buscar dados OHLCV (velas 4H)  │
+  │    da API do exchange              │
+  │                                    │
+  │ 2. Aplicar Pilar 1: Ghost Wick     │
+  │    pavio ≥ 60% range?              │
+  │                                    │
+  │ 3. Aplicar Pilar 2: Armadilha Liq. │
+  │    reversão em 2 velas?            │
+  │                                    │
+  │ 4. Aplicar Pilar 3: MSB            │
+  │    ruptura de estrutura confirmada?│
+  │                                    │
+  │ 5. Aplicar Pilar 4: OB/FVG         │
+  │    verificação de qualidade de zona│
+  │                                    │
+  │ 6. Vol + AVWAP gate                │
+  │                                    │
+  │ 7. Calcular ATR → níveis SL/TP     │
+  │                                    │
+  │ 8. Score de convicção (0-100)      │
+  │                                    │
+  │ 9. Score ≥ 75 → DISPARAR SINAL     │
+  │    → Telegram push                 │
+  │    → Atualização do feed AxTrader  │
+  └────────────────────────────────────┘`,
+    'i_GWP 109':`Detalhamento do Cartão de Sinal GWP:
+  ┌────────────────────────────────────┐
+  │ Pair: BTC/USDT      [LONG]         │
+  │ Grade: A+ SUPREME                  │
+  │ Conviction: 94/100                 │
+  │                                    │
+  │ Entry:  $67,200 – $67,400          │
+  │ TP1:    $68,500  (1:1)             │
+  │ TP2:    $69,800  (2:1)             │
+  │ TP3:    $72,100  (3.5:1)           │
+  │ SL:     $66,100  (ATR-based)       │
+  │                                    │
+  │ Vol Gate: ✅ (1.8× vol. médio)     │
+  │ AVWAP:    ✅ (abaixo AVWAP)        │
+  │ MSB:      ✅ (BOS 4H confirmado)   │
+  │ Sessão:   NY Morning KZ           │
+  │                                    │
+  │ Guia de Graus:                     │
+  │  90-100 = A+ SUPREME               │
+  │  80-89  = A+ STRONG                │
+  │  75-79  = A STANDARD               │
+  └────────────────────────────────────┘`,
+    'i_BOOK 1':`VISÃO GERAL DOS CAPÍTULOS:
+  Ch.1  — Os Verdadeiros Participantes do Mercado
+  Ch.2  — FX Interbancário & Criação de Preço
+  Ch.3  — Sinais de Intervenção de Bancos Centrais
+  Ch.4  — Dados COT — Lendo o Smart Money
+  Ch.5  — Dark Pools & Ordens Iceberg
+  Ch.6  — Algoritmos de Caça de Stops Decodificados
+  Ch.7  — Trading de Notícias — Manipulação ou Real?
+  Ch.8  — Comportamento de Baleias Crypto vs. FX IB
+  Ch.9  — Confirmação On-Chain para GWP
+  Ch.10 — Indicadores de Fluxo Proprietários
+  Ch.11 — Estudos de Caso: BOE Quarta-Feira Negra
+  Ch.12 — Construindo Seu Playbook Institucional`,
+    'i_BOOK 2':`VISÃO GERAL DOS CAPÍTULOS:
+  Ch.1  — Por Que o SMC Padrão Falha Sozinho
+  Ch.2  — MMXM em Todos os Timeframes
+  Ch.3  — Mapeamento Dinâmico Discount/Premium
+  Ch.4  — Ranking de Zonas: Níveis A/B/C
+  Ch.5  — Caderno de Correlações Multi-Par
+  Ch.6  — Entradas Falhadas de Oferta & Demanda
+  Ch.7  — Blocos de Mitigação — Avançado
+  Ch.8  — Mudanças Trimestrais (Conceito ICT)
+  Ch.9  — Confluência HTF — Níveis Mensais
+  Ch.10 — Construindo um Modelo de Análise Semanal
+  Ch.11 — 20 Exemplos de Trades Anotados
+  Ch.12 — Protocolo de Integração SMC + GWP`,
+    'i_BOOK 3':`As 7 Variantes Raras do GWP:
+  Pattern 1: Ghost Wicks Gêmeos
+  → Dois GW consecutivos no mesmo nível
+  → 99.2% precisão (backtestado 3 anos)
+
+  Pattern 2: Ghost Wick HTF (Semanal)
+  → GW vela Weekly + OB Daily alinhados
+  → Trades de vários dias ou semanas
+
+  Pattern 3: GW + Breaker Block
+  → Zona de demanda agindo como oferta
+  → Variante apenas short
+
+  Pattern 4: GW no EQ (50% Fib)
+  → Entrada GW perfeitamente em discount
+
+  Pattern 5: Dupla Armadilha de Liquidez
+  → Dois níveis-chave varridos em um movimento
+
+  Pattern 6: GW + Catalisador de Notícias
+  → Evento econômico cria o pavio
+
+  Pattern 7: GW Inter-Sessões
+  → GW Londres, distribuição NY`,
+    'i_BOOK 4':`VISÃO GERAL DOS CAPÍTULOS:
+  Ch.1  — Dimensionamento de Conta para Trading GWP
+  Ch.2  — Calor do Portfólio: Risco Aberto Máx
+  Ch.3  — Hedging de Correlação (Crypto + FX)
+  Ch.4  — Estrutura de Recuperação de Drawdown
+  Ch.5  — Taxa de Acerto vs. Expectativa R:R
+  Ch.6  — Monte Carlo: Projeção de Risco DD
+  Ch.7  — A Regra dos 6% (perda máx diária)
+  Ch.8  — Modelo Proprietário de Scoring de Risco
+  Ch.9  — Desafios Prop Firm Usando GWP
+  Ch.10 — Modelos de Revisão de Desempenho
+  Ch.11 — Escalando de $500 a $50,000
+  Ch.12 — Construindo um Plano de Negócios de Trading`,
+    'i_BOOK 5':`VISÃO GERAL DOS CAPÍTULOS:
+  Ch.1  — Por Que a Maioria dos Backtests São Errados
+  Ch.2  — Protocolo de Backtest GWP (Passo a Passo)
+  Ch.3  — Marcando Ghost Wicks Históricos
+  Ch.4  — Registro: O Que Anotar (e Por Quê)
+  Ch.5  — Vantagem Estatística: Requisitos de Amostra
+  Ch.6  — Separando Vantagem do Sistema da Sorte
+  Ch.7  — Processo de Revisão Semanal do Diário
+  Ch.8  — Identificando Seus Vieses Pessoais
+  Ch.9  — Scoring de Psicologia de Trading
+  Ch.10 — Revisão de Pares e Responsabilidade
+  Ch.11 — O Modelo de Diário GWP
+  Ch.12 — Do Backtesting ao Trading ao Vivo`,
+    'i_BOOK 6':`O QUE CADA REVISÃO INCLUI:
+  ✦ Cartão de sinal completo com todos os pilares GWP
+  ✦ Gráfico 4H anotado: GW, OB, MSB
+  ✦ Zona de entrada: como se formou em tempo real
+  ✦ Resultados TP1/TP2/TP3 + timing
+  ✦ O que a porta Vol+AVWAP mostrou
+  ✦ Qualquer caso especial ou desvio das regras
+  ✦ Análise pós-trade: o que aprendemos
+
+  REVISÕES RECENTES DISPONÍVEIS:
+  ✦ Março 2025 — 14 sinais A+ revisados
+  ✦ Fevereiro 2025 — 11 sinais revisados
+  ✦ Janeiro 2025 — 9 sinais revisados
+
+  BÔNUS: Relatório Trimestral de Score GWP
+  → Breakdown da taxa de acerto por par e sessão`,
+    'i_BOOK 7':`VISÃO GERAL DOS CAPÍTULOS:
+  Ch.1  — Crypto vs. Forex: Diferenças Chave
+  Ch.2  — Taxa de Financiamento como Filtro GWP
+  Ch.3  — Cascatas de Liquidação = Ghost Wicks
+  Ch.4  — Integração Heatmap CoinGlass
+  Ch.5  — On-Chain: Fluxos de Entrada/Saída de Exchanges
+  Ch.6  — Whale Alert como Sinal de Liquidez
+  Ch.7  — Dominância BTC no Contexto GWP
+  Ch.8  — Protocolo de Rotação Alt Season
+  Ch.9  — Kill Zones Crypto (vs. Forex)
+  Ch.10 — AVWAP em Futuros Perpétuos
+  Ch.11 — Seleção de Pares: A Watch-list GWP
+  Ch.12 — DEXE, UNI, SUSHI — Estudos de Caso`
   },
   ar: {
     'ICT 101':'ICT 101 — ما هو ICT؟','ICT 102':'ICT 102 — فجوات القيمة العادلة (FVG)','ICT 103':'ICT 103 — كتل الأوامر (OB)','ICT 104':'ICT 104 — السيولة وصيد الستوبات','ICT 105':'ICT 105 — مناطق القتل والجلسات','ICT 106':'ICT 106 — قوة الثلاثة (AMD)','ICT 107':'ICT 107 — مناطق البريميوم والديسكاونت','ICT 108':'ICT 108 — الدخول الأمثل (OTE)','ICT 109':'ICT 109 — التحيز اليومي والتحليل',
@@ -5349,7 +7473,676 @@ const coursesTitleBody = {
     'd_GWP 106':'رياضيات الخروج بـ3 أهداف: 30% عند 1:1 + 40% عند 2:1 + 30% عند 3.5:1 = R:R متوسط 2.15:1. تم رفع TP3 في v8 لأن التحليل أظهر أن السعر كان يتجاوز بانتظام TP3 القديم عند 2.5:1.',
     'd_GWP 107':'فلتر الحجم + AVWAP هو الحارس الأخير. إذا لم يتجاوز حجم شمعة ghost wick متوسط 20 فترة، فهذا يُشير لضعف الاقتناع المؤسسي. AVWAP يضيف فلتر تحيز: للشراء، السعر فوق AVWAP؛ للبيع، تحته. هذا الفلتر المزدوج يحذف ~30% من الإشارات الكاذبة.',
     'd_GWP 108':'بوت العملات الرقمية يراقب 17 زوجاً: BTC، ETH، SOL، LINK، BNB، DEXE، UNI، COMP، NEAR، AVAX، AAVE، ARB، INJ، DOT، FIL، SUI، ATOM — على الرسم 4H مع تأكيد 1H و15M. بوت الفوركس يراقب: EUR/USD، GBP/USD، XAU/USD. كلاهما يعمل على GitHub Actions ويرسل الإشارات لبث AxTrader وقنوات Telegram.',
-    'd_GWP 109':'كل حقل في بطاقة الإشارة له معنى: رمز الزوج، الاتجاه (LONG/SHORT)، سعر الدخول، وقف الخسارة (SL)، أهداف الربح (TP1/TP2/TP3)، الإطار الزمني الأساسي، درجة الاقتناع، R:R، والطابع الزمني "Fired". لا تدخل أبداً إشارة لا تفهمها بالكامل.'
+    'd_GWP 109':'كل حقل في بطاقة الإشارة له معنى: رمز الزوج، الاتجاه (LONG/SHORT)، سعر الدخول، وقف الخسارة (SL)، أهداف الربح (TP1/TP2/TP3)، الإطار الزمني الأساسي، درجة الاقتناع، R:R، والطابع الزمني "Fired". لا تدخل أبداً إشارة لا تفهمها بالكامل.',
+    'i_ICT 101':`نموذج صانع السوق (3 مراحل):
+  ┌─────────────────────────────────┐
+  │  المرحلة 1: التجميع            │
+  │  المؤسسات تبني مراكز بهدوء    │
+  │  عند القيعان الرئيسية          │
+  │                                 │
+  │  المرحلة 2: التلاعب            │
+  │  اختراق وهمي تحت الدعم        │
+  │  المتداولون الأفراد يُوقفون    │
+  │                                 │
+  │  المرحلة 3: التوزيع            │
+  │  الحركة الحقيقية تبدأ — صعوداً │
+  │  المؤسسات تربح                 │
+  └─────────────────────────────────┘
+
+  ما يراه الأفراد: "الدعم كُسر!"
+  ما يفعله Smart Money: يملأ أوامر الشراء
+  بأقل سعر ممكن.`,
+    'i_ICT 102':`هيكل FVG هبوطي من 3 شموع:
+  ┌───────────────────────────────────┐
+  │  Candle 1  [██████]  High: 1.2050 │
+  │                                   │
+  │  Candle 2  [░░░░░░]  GAP ZONE     │
+  │            (لا تداخل في           │
+  │             الفتائل)              │
+  │                                   │
+  │  Candle 3  [██████]  Low: 1.1980  │
+  └───────────────────────────────────┘
+
+  FVG = بين low الشمعة 1 و high الشمعة 3
+
+  FVG صعودي → السعر انخفض بسرعة كبيرة
+  → يُتوقع عودة السعر لملء الفجوة
+  → منطقة دخول long عالية الاحتمال
+
+  FVG هبوطي → السعر ارتفع بسرعة كبيرة
+  → يُتوقع عودة السعر لملء الفجوة
+  → منطقة دخول short عالية الاحتمال`,
+    'i_ICT 103':`تشكيل Order Block صعودي:
+  ┌────────────────────────────────────┐
+  │ الخطوة 1: آخر شمعة هبوطية        │
+  │         [░░░░░░░░░░░░]  ← OB      │
+  │                                    │
+  │ الخطوة 2: حركة صعودية انفجارية    │
+  │              ↑↑↑↑↑↑↑↑↑↑↑↑↑↑       │
+  │                                    │
+  │ الخطوة 3: منطقة OB تصبح دعماً    │
+  │         [░░░░░░░░░░░░]  ← إعادة   │
+  │                    اختبار         │
+  │                  ↑ الدخول هنا      │
+  └────────────────────────────────────┘
+
+  جسم OB = منطقة دخول
+  SL تحت أدنى جسم OB
+  الهدف = مجمع السيولة التالي أعلاه`,
+    'i_ICT 104':`أنواع السيولة:
+  ┌────────────────────────────────────┐
+  │ Buy-Side Liquidity (BSL)           │
+  │ ════════════════════ ← قمم         │
+  │                        متساوية    │
+  │ ████  ████  ████                   │
+  │  ستوبات الأفراد:                   │
+  │  فوق القمم                        │
+  │                                    │
+  │ Sell-Side Liquidity (SSL)          │
+  │ ████  ████  ████                   │
+  │ ════════════════════ ← قيعان       │
+  │                        متساوية    │
+  │  ستوبات الأفراد:                   │
+  │  تحت القيعان                      │
+  │                                    │
+  │ نمط البَلَع:                       │
+  │ السعر يقفز فوق BSL →              │
+  │ يجمع كل buy stops →               │
+  │ المؤسسات تبيع في هذه السيولة →    │
+  │ السعر ينعكس بحدة للأسفل           │
+  └────────────────────────────────────┘`,
+    'i_ICT 105':`خريطة الجلسات اليومية (توقيت NY):
+  ┌────────────────────────────────────┐
+  │ ASIA SESSION                       │
+  │ 20:00 — 00:00 NY                   │
+  │ → يبني النطاق الليلي              │
+  │ → غالباً تجميع                    │
+  │                                    │
+  │ LONDON OPEN KZ  ⚡ احتمال عالي     │
+  │ 02:00 — 05:00 NY                   │
+  │ → يعكس النطاق الآسيوي             │
+  │ → حركات اتجاهية قوية              │
+  │                                    │
+  │ NY AM KZ  ⚡ أعلى احتمال           │
+  │ 08:30 — 11:00 NY                   │
+  │ → استمرار أو انعكاس               │
+  │ → مدفوع بالأخبار + إعدادات ICT    │
+  │   نقية                            │
+  │                                    │
+  │ الغداء (تجنب)                      │
+  │ 12:00 — 13:00 NY  ← منطقة متقلبة  │
+  │                                    │
+  │ NY PM KZ  (ثانوية)                 │
+  │ 13:30 — 16:00 NY                   │
+  └────────────────────────────────────┘`,
+    'i_ICT 106':`الدورة AMD اليومية (يوم صعودي):
+  ┌────────────────────────────────────┐
+  │ A — التجميع                       │
+  │ الجلسة الآسيوية: السعر يتذبذب     │
+  │ المؤسسات تمتص أوامر البيع         │
+  │ [─────────────] نطاق مسطح         │
+  │                                    │
+  │ M — التلاعب                       │
+  │ افتتاح لندن: قفزة تحت النطاق      │
+  │      ↓ (صيد ستوبات تحت            │
+  │        القاع الآسيوي)             │
+  │ شورتات الأفراد تنشط               │
+  │                                    │
+  │ D — التوزيع                       │
+  │ جلسة NY: حركة انفجارية للأعلى     │
+  │       ↑↑↑↑↑↑↑↑↑↑↑                 │
+  │ السعر يبحث عن هدف BSL أعلاه       │
+  │ شورتات الأفراد تُصفى              │
+  └────────────────────────────────────┘`,
+    'i_ICT 107':`إطار Premium/Discount:
+  ┌────────────────────────────────────┐
+  │ النطاق العالي ████████████ 100%   │
+  │                                    │
+  │           منطقة PREMIUM            │
+  │           (فوق 50%)               │
+  │           → المؤسسات              │
+  │             تبيع هنا              │
+  │                                    │
+  │ EQUILIBRIUM ─────────────── 50%   │
+  │                                    │
+  │           منطقة DISCOUNT           │
+  │           (تحت 50%)               │
+  │           → المؤسسات              │
+  │             تشتري هنا             │
+  │                                    │
+  │ النطاق المنخفض ████████████ 0%    │
+  └────────────────────────────────────┘
+
+  القاعدة: اشترِ فقط تحت EQ (50%)
+          بِع فقط فوق EQ (50%)`,
+    'i_ICT 108':`دخول OTE في إعداد صعودي:
+  ┌────────────────────────────────────┐
+  │ 1. حدد سوينغ الإزاحة              │
+  │    Low A ────────────── High B     │
+  │                                    │
+  │ 2. ارسم فيبوناتشي A→B             │
+  │    0.0   = High B (الهدف)         │
+  │    0.5   = التوازن                │
+  │    0.618 ← ─ بداية منطقة OTE      │
+  │    0.705 ←   النقطة المثلى        │
+  │              لمنطقة OTE            │
+  │    0.79  ← ─ نهاية منطقة OTE      │
+  │    1.0   = Low A                   │
+  │                                    │
+  │ 3. انتظر ارتداد السعر في          │
+  │    0.618 — 0.79                    │
+  │                                    │
+  │ 4. ادخل عند OB أو FVG داخل        │
+  │    المنطقة                        │
+  │ 5. SL تحت سوينغ Low A             │
+  └────────────────────────────────────┘`,
+    'i_ICT 109':`إطار التحليل من الأعلى للأسفل:
+  ┌────────────────────────────────────┐
+  │ MONTHLY / WEEKLY                   │
+  │ → هل السعر في premium أم          │
+  │   discount؟                       │
+  │ → أين الهدف التالي (draw)؟        │
+  │                                    │
+  │ DAILY (4H)                         │
+  │ → ما هيكل السوق؟                  │
+  │ → BOS up → تحيز صعودي             │
+  │ → BOS down → تحيز هبوطي           │
+  │                                    │
+  │ 1H (15M)                           │
+  │ → إيجاد دخول في Kill Zone         │
+  │ → OB + FVG + مسح سيولة            │
+  │ → تأكيد CHoCH على LTF             │
+  │                                    │
+  │ إطار زمني للدخول (5M / 1M)        │
+  │ → تنقيح دقيق للدخول              │
+  │ → تقليل SL، تحسين R:R             │
+  └────────────────────────────────────┘`,
+    'i_SMC 101':`ثالوث SMC:
+  ┌────────────────────────────────────┐
+  │         هيكل السوق                │
+  │         (التحيز الاتجاهي)         │
+  │               ↓                    │
+  │         مجمع السيولة              │
+  │         (إلى أين يتجه السعر)      │
+  │               ↓                    │
+  │         منطقة العرض / الطلب       │
+  │         (أين تدخل)               │
+  │                                    │
+  │ الثلاثة يجب أن تتوافق على نفس TF │
+  │ → إعداد عالي الاحتمال             │
+  │                                    │
+  │ إذا توافق 2 فقط → تجاوز          │
+  │ إذا توافق 1 فقط → لا تتداول أبداً │
+  └────────────────────────────────────┘`,
+    'i_SMC 102':`هيكل سوق صعودي:
+  ┌─────────────────────────────────────┐
+  │                         HH  ←──── │
+  │              LH                    │
+  │                    HL ──→ BOS up  │
+  │       LL→CHoCH                     │
+  │  HL                                │
+  │                                    │
+  │ BOS (Break of Structure):          │
+  │ السعر يتجاوز High سابق           │
+  │ → الاتجاه يستمر صعوداً            │
+  │                                    │
+  │ CHoCH (Change of Character):       │
+  │ السعر يتجاوز Low سابق في اتجاه   │
+  │ صعودي                             │
+  │ → انعكاس محتمل يتشكل             │
+  └─────────────────────────────────────┘`,
+    'i_SMC 103':`تشكيل منطقة طلب:
+  ┌────────────────────────────────────┐
+  │ الخطوة 1: حركة انفجارية قوية      │
+  │ للأعلى                            │
+  │              ↑↑↑↑↑↑↑↑↑            │
+  │                                    │
+  │ الخطوة 2: حدد قاعدة الحركة        │
+  │ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░ Zone │
+  │  ^شمعة الأصل (آخر                 │
+  │   هبوطية/صعودية)                  │
+  │                                    │
+  │ الخطوة 3: مد المنطقة للأمام        │
+  │ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░─────→│
+  │                                    │
+  │ الخطوة 4: اعتبرها باطلة إذا       │
+  │ أغلق السعر عميقاً                 │
+  │                                    │
+  │ صالحة → السعر مكث < 3 شموع       │
+  │ باطلة → السعر يتجمع داخلها        │
+  └────────────────────────────────────┘`,
+    'i_SMC 104':`الإغراء قبل منطقة الطلب:
+  ┌────────────────────────────────────┐
+  │                                    │
+  │ DEMAND ZONE: ░░░░░░░░░░░░░░░░░    │
+  │                                    │
+  │  ↓ قفزة إغراء تحت المنطقة        │
+  │         ╲                          │
+  │ ░░░░░░░╲░░░░░░ ← منطقة مُختبرة    │
+  │          ╲   ↑ الدخول الحقيقي هنا │
+  │           ╲↑↑↑↑ رفض قوي           │
+  │                                    │
+  │ فَخ: الدخول عند أول لمسة للمنطقة   │
+  │                                    │
+  │ ذكي: انتظر مسح الإغراء ثم ادخل   │
+  │ مع التأكيد                        │
+  └────────────────────────────────────┘`,
+    'i_SMC 105':`دورة MMXM كاملة (صعودية):
+  ┌────────────────────────────────────┐
+  │ BSL ═══════════════ (الهدف        │
+  │                      أعلاه)       │
+  │                        ↑↑↑         │
+  │     5. EXPANSION       ↑           │
+  │             OB ░░░░░░░↑            │
+  │             ↑ 4.ارتداد             │
+  │  3. تخفيف (OB مُختبر)             │
+  │         ──────────────             │
+  │  2. توزيع (الدفعة الأولى)         │
+  │         ────────────               │
+  │  1. مرحلة التجميع                 │
+  │                                    │
+  │ SSL ═══════════════ (المسح        │
+  │                      أولاً)       │
+  │  ↓ السعر يمسح القيعان             │
+  │  → المؤسسات تشتري في هذه السيولة  │
+  └────────────────────────────────────┘`,
+    'i_SMC 106':`قائمة فحص دخول SMC:
+  ┌────────────────────────────────────┐
+  │ الخطوة 1: تحيز TF الأعلى         │
+  │ □ هيكل Daily: صعودي/هبوطي        │
+  │ □ السعر في premium أو discount؟   │
+  │ □ أين draw السيولة HTF؟           │
+  │                                    │
+  │ الخطوة 2: تحديد المنطقة           │
+  │ □ عرض أو طلب طازج على LTF؟       │
+  │ □ يحتوي OB أو FVG؟               │
+  │ □ المنطقة تتوافق مع تحيز HTF؟    │
+  │                                    │
+  │ الخطوة 3: محفز الدخول             │
+  │ □ الإغراء أُخذ؟                   │
+  │ □ CHoCH على 15M أو 5M؟            │
+  │ □ Ghost wick أو إعادة اختبار FVG؟ │
+  │                                    │
+  │ الخطوة 4: المخاطرة                │
+  │ □ SL ما وراء سوينغ الإغراء؟      │
+  │ □ R:R أدنى 2:1 مؤكد؟             │
+  │ □ حجم المركز ≤ 2% من الحساب؟     │
+  │                                    │
+  │ كل الخانات مُحددة → نفّذ          │
+  └────────────────────────────────────┘`,
+    'i_SMC 107':`تسلسل الأطر الزمنية:
+  ┌────────────────────────────────────┐
+  │ WEEKLY → Monthly                   │
+  │ الغرض: Draw سيولة رئيسي           │
+  │ الأدوات: عرض/طلب HTF، النطاق      │
+  │                                    │
+  │ DAILY → 4H                         │
+  │ الغرض: التحيز الاتجاهي            │
+  │ Tools: BOS/CHoCH, OB, FVG          │
+  │                                    │
+  │ 1H → 15M                           │
+  │ الغرض: تنقيح منطقة الدخول         │
+  │ الأدوات: طلب/عرض، إغراء           │
+  │                                    │
+  │ 5M → 1M                            │
+  │ الغرض: دقة الدخول                 │
+  │ Tools: CHoCH, mini-FVG, OTE        │
+  │                                    │
+  │ القاعدة: تداول مع تدفق كل إطار    │
+  │ زمني أعلى                         │
+  └────────────────────────────────────┘`,
+    'i_SMC 108':`بروتوكول إدارة تداولات SMC:
+  ┌────────────────────────────────────┐
+  │ الدخول: إعادة اختبار منطقة + CHoCH │
+  │ SL: ما وراء low/high الإغراء      │
+  │                                    │
+  │ TARGET 1 (TP1) — at 1:1 R:R       │
+  │ → إغلاق 33% من المركز            │
+  │ → نقل SL إلى نقطة التعادل         │
+  │                                    │
+  │ TARGET 2 (TP2) — at 2:1 R:R       │
+  │ → إغلاق 33% إضافية               │
+  │ → تتبع SL لمستوى TP1              │
+  │                                    │
+  │ TARGET 3 (TP3) — at 3:1+ R:R      │
+  │ → ترك 34% المتبقية تجري           │
+  │ → تتبع عبر الهيكل (BOS)           │
+  │                                    │
+  │ النتيجة: تشغيل بدون مخاطرة من TP1 │
+  └────────────────────────────────────┘`,
+    'i_SMC 109':`ارتباطات السوق الرئيسية:
+  ┌────────────────────────────────────┐
+  │ DXY (USD Index) ↑                  │
+  │  → EUR/USD ↓  (عكسي)              │
+  │  → GBP/USD ↓  (عكسي)              │
+  │  → XAU/USD ↓  (عادة عكسي)         │
+  │  → BTC/USD ↓  (غالباً عكسي)       │
+  │                                    │
+  │ بيئة RISK-ON:                      │
+  │  → Stocks ↑ · BTC ↑ · ETH ↑       │
+  │  → ذهب مختلط · DXY مستقر/منخفض    │
+  │                                    │
+  │ بيئة RISK-OFF:                     │
+  │  → أسهم ↓ · BTC غالباً ↓          │
+  │  → ذهب ↑ · DXY ↑                   │
+  │  → سندات ↑ (عائد ↓)               │
+  │                                    │
+  │ قاعدة التأكيد:                     │
+  │ DXY BOS down → ابحث عن EUR long   │
+  │ DXY OB يرفض → ابحث عن XAU ↑      │
+  └────────────────────────────────────┘`,
+    'i_GWP 101':`تشريح Ghost Wick:
+  ┌────────────────────────────────────┐
+  │ GHOST WICK صعودي:                  │
+  │                                    │
+  │        ┃ ← فتيل علوي صغير         │
+  │       ███                          │
+  │       ███ ← جسم (< 40% من         │
+  │       ███   النطاق)               │
+  │        ┃                           │
+  │        ┃                           │
+  │        ┃ ← GHOST WICK (≥60%)      │
+  │        ┃    مسح السيولة أسفل       │
+  │        ┃    وانعكس                 │
+  │        ┃                           │
+  │                                    │
+  │ القياس:                            │
+  │ Wick length ÷ Total range ≥ 0.60   │
+  │                                    │
+  │ كلما طال الفتيل → زادت السيولة    │
+  │ المُمسوحة → إشارة أقوى            │
+  └────────────────────────────────────┘`,
+    'i_GWP 102':`فخ سيولة هبوطي:
+  ┌────────────────────────────────────┐
+  │ مقاومة رئيسية / قمم متساوية       │
+  │ ─────────────────────── ← مستوى   │
+  │                                    │
+  │          الشمعة 1: اختراق          │
+  │          ↑↑↑ السعر يغلق فوق       │
+  │          [شمعة اختراق]             │
+  │          الأفراد: "اختراق!"        │
+  │          المؤسسات: تبيع            │
+  │                                    │
+  │          الشمعة 2: انعكاس          │
+  │          السعر يغلق مجدداً تحت     │
+  │          ───────────────────────  │
+  │          ↓↓↓↓↓↓↓↓↓↓↓↓            │
+  │                                    │
+  │ متداولو الاختراق محاصرون فوق      │
+  │ ستوباتهم = وقود للهبوط            │
+  └────────────────────────────────────┘`,
+    'i_GWP 103':`الأعمدة الخمسة (الكل يجب أن يؤكد):
+  ┌────────────────────────────────────┐
+  │ [1] كشف GHOST WICK                │
+  │     فتيل ≥ 60% من نطاق الشمعة    │
+  │     يؤكد مسح مؤسسي               │
+  │                                    │
+  │ [2] فخ السيولة                     │
+  │     السعر يتحايل على مستوى رئيسي  │
+  │     ينعكس في أقل من شمعتين        │
+  │                                    │
+  │ [3] كسر الهيكل                     │
+  │     BOS في اتجاه الإشارة          │
+  │     تحيز TF الأعلى يؤكد           │
+  │                                    │
+  │ [4] التقاء ORDER BLOCK             │
+  │     OB أو FVG في نفس المنطقة      │
+  │     ارتفاع حاد في الحجم عند OB    │
+  │     يؤكد                          │
+  │                                    │
+  │ [5] بوابة SIZING كيلي             │
+  │     Min R:R ≥ 1.8:1                │
+  │     Conviction score ≥ 75/100      │
+  │                                    │
+  │ الخمسة ✓ → الإشارة تنطلق 🔥       │
+  │ أي ناقص → بدون تداول              │
+  └────────────────────────────────────┘`,
+    'i_GWP 104':`قواعد وضع SL في GWP:
+  ┌────────────────────────────────────┐
+  │ خطأ (سلوك الأفراد):               │
+  │  ─── SL عند طرف الفتيل ❌         │
+  │  → يُفعّل بالضوضاء العادية        │
+  │                                    │
+  │ صحيح (قاعدة GWP):                 │
+  │  1. SL = ما وراء السوينغ الذي     │
+  │     أنشأ ghost wick                │
+  │                                    │
+  │  2. أرضية ATR: SL يجب أن يكون     │
+  │     ≥ 0.5× ATR(14) من الدخول      │
+  │     → أبداً تحت هذه الأرضية       │
+  │                                    │
+  │  3. SL النهائي = الأعلى من:        │
+  │     (SL قائم على السوينغ،          │
+  │      أرضية ATR)                    │
+  │                                    │
+  │ مثال (4H):                         │
+  │  ATR(14) = 120 pips                │
+  │  أرضية ATR = 60 نقطة              │
+  │  إذا SL سوينغ = 45 نقطة → غير    │
+  │  صالح                             │
+  │  الحد الأدنى 60 نقطة إلزامي       │
+  └────────────────────────────────────┘`,
+    'i_GWP 105':`درجة الاقتناع → حجم المركز:
+  ┌────────────────────────────────────┐
+  │ نظام التقييم (100 نقطة كحد أقصى): │
+  │                                    │
+  │ جودة Ghost Wick    → 0-20 نقطة    │
+  │ فخ سيولة نظيف     → 0-20 نقطة    │
+  │ محاذاة MSB        → 0-20 نقطة    │
+  │ التقاء OB/FVG     → 0-20 نقطة    │
+  │ جودة R:R           → 0-20 نقطة    │
+  │                                    │
+  │ تخصيص المخاطرة:                   │
+  │  Score 90-100 → مخاطرة 2.0%       │
+  │                 حساب              │
+  │  Score 80-89  → مخاطرة 1.5%       │
+  │                 حساب              │
+  │  Score 75-79  → مخاطرة 1.0%       │
+  │                 حساب              │
+  │  Score < 75   → بدون تداول        │
+  │                                    │
+  │ صيغة كيلي (نظرية):                │
+  │  f = (0.97 × 1.8 − 0.03) / 1.8    │
+  │  f = 95.3%  ← كثير جداً!          │
+  │  سقف GWP: 2% كحد أقصى دائماً     │
+  └────────────────────────────────────┘`,
+    'i_GWP 106':`هيكل جني الأرباح GWP:
+  ┌────────────────────────────────────┐
+  │ الدخول ●                           │
+  │       │                            │
+  │ TP1 ──┤ 1:1 R:R → إغلاق 30%      │
+  │       │ SL ينتقل إلى نقطة التعادل  │
+  │       │                            │
+  │ TP2 ──┤ 2:1 R:R → إغلاق 40%      │
+  │       │ تتبع SL لمستوى TP1         │
+  │       │                            │
+  │ TP3 ──┤ 3.5:1 R:R → إغلاق 30%    │
+  │       │ (v8 رُفع من 2.5:1)        │
+  │       │                            │
+  │ R:R متوسط إجمالي عند إصابة        │
+  │ الكل: 2.3:1                        │
+  │                                    │
+  │ SL ●  (تحت أرضية ATR)             │
+  │       المخاطرة = 2% من الحساب      │
+  └────────────────────────────────────┘`,
+    'i_GWP 107':`Vol + AVWAP Gate:
+  ┌────────────────────────────────────┐
+  │ فحص الحجم:                         │
+  │  حجم شمعة GW > متوسط 20 بار؟      │
+  │  نعم → البوابة تمر ✓               │
+  │  لا → الإشارة محظورة ✗             │
+  │                                    │
+  │ AVWAP CHECK (Bullish):             │
+  │  ╲ خط AVWAP (مُرسّى من آخر        │
+  │   ╲ HIGH مهم)                      │
+  │    ╲                               │
+  │     ╲→ سعر الدخول يجب أن يكون     │
+  │        تحت AVWAP                   │
+  │                                    │
+  │ AVWAP CHECK (Bearish):             │
+  │    ╱→ سعر الدخول يجب أن يكون      │
+  │   ╱   فوق AVWAP                    │
+  │  ╱ AVWAP line                      │
+  │                                    │
+  │ المنطق: AVWAP = القيمة العادلة     │
+  │ الحقيقية                          │
+  │ اشترِ تحت القيمة العادلة           │
+  │ بِع فوق القيمة العادلة             │
+  └────────────────────────────────────┘`,
+    'i_GWP 108':`دورة مسح البوت (كل 30 دقيقة):
+  ┌────────────────────────────────────┐
+  │ 1. جلب بيانات OHLCV               │
+  │    (شموع 4H) من API               │
+  │                                    │
+  │ 2. تطبيق العمود 1: Ghost Wick      │
+  │    فتيل ≥ 60% من النطاق؟          │
+  │                                    │
+  │ 3. تطبيق العمود 2: فخ السيولة     │
+  │    انعكاس في شمعتين؟              │
+  │                                    │
+  │ 4. تطبيق العمود 3: MSB             │
+  │    كسر هيكل مؤكد؟                 │
+  │                                    │
+  │ 5. تطبيق العمود 4: OB/FVG          │
+  │    فحص جودة المنطقة               │
+  │                                    │
+  │ 6. Vol + AVWAP gate                │
+  │                                    │
+  │ 7. حساب ATR → مستويات SL/TP       │
+  │                                    │
+  │ 8. درجة الاقتناع (0-100)          │
+  │                                    │
+  │ 9. Score ≥ 75 → إطلاق الإشارة     │
+  │    → Telegram push                 │
+  │    → تحديث بث AxTrader             │
+  └────────────────────────────────────┘`,
+    'i_GWP 109':`تفصيل بطاقة إشارة GWP:
+  ┌────────────────────────────────────┐
+  │ Pair: BTC/USDT      [LONG]         │
+  │ Grade: A+ SUPREME                  │
+  │ Conviction: 94/100                 │
+  │                                    │
+  │ Entry:  $67,200 – $67,400          │
+  │ TP1:    $68,500  (1:1)             │
+  │ TP2:    $69,800  (2:1)             │
+  │ TP3:    $72,100  (3.5:1)           │
+  │ SL:     $66,100  (ATR-based)       │
+  │                                    │
+  │ Vol Gate: ✅ (1.8× حجم متوسط)     │
+  │ AVWAP:    ✅ (تحت AVWAP)           │
+  │ MSB:      ✅ (BOS 4H مؤكد)        │
+  │ الجلسة:  NY Morning KZ            │
+  │                                    │
+  │ دليل الدرجات:                     │
+  │  90-100 = A+ SUPREME               │
+  │  80-89  = A+ STRONG                │
+  │  75-79  = A STANDARD               │
+  └────────────────────────────────────┘`,
+    'i_BOOK 1':`نظرة عامة على الفصول:
+  Ch.1  — المشاركون الحقيقيون في السوق
+  Ch.2  — FX بين البنوك وصناعة السعر
+  Ch.3  — إشارات تدخل البنوك المركزية
+  Ch.4  — بيانات COT — قراءة Smart Money
+  Ch.5  — Dark Pools وأوامر Iceberg
+  Ch.6  — خوارزميات صيد الستوبات
+  Ch.7  — تداول الأخبار — تلاعب أم حقيقي؟
+  Ch.8  — سلوك حيتان العملات الرقمية مقابل FX IB
+  Ch.9  — تأكيد On-Chain لـ GWP
+  Ch.10 — مؤشرات تدفق خاصة
+  Ch.11 — دراسات حالة: BOE الأربعاء الأسود
+  Ch.12 — بناء دليل اللعب المؤسسي`,
+    'i_BOOK 2':`نظرة عامة على الفصول:
+  Ch.1  — لماذا يفشل SMC القياسي بمفرده
+  Ch.2  — MMXM عبر جميع الأطر الزمنية
+  Ch.3  — رسم خرائط Discount/Premium الديناميكية
+  Ch.4  — تصنيف المناطق: مستويات A/B/C
+  Ch.5  — دفتر ارتباطات متعدد الأزواج
+  Ch.6  — دخولات عرض وطلب فاشلة
+  Ch.7  — كتل التخفيف — متقدم
+  Ch.8  — تحولات ربع سنوية (مفهوم ICT)
+  Ch.9  — التقاء HTF — مستويات شهرية
+  Ch.10 — بناء قالب تحليل أسبوعي
+  Ch.11 — 20 مثال تداول مشروح
+  Ch.12 — بروتوكول دمج SMC + GWP`,
+    'i_BOOK 3':`المتغيرات السبعة النادرة لـ GWP:
+  Pattern 1: Ghost Wicks توأم
+  → اثنان GW متتاليان عند نفس المستوى
+  → دقة 99.2% (اختبار خلفي 3 سنوات)
+
+  Pattern 2: Ghost Wick HTF (أسبوعي)
+  → GW شمعة أسبوعية + OB يومي متوافقان
+  → تداولات متعددة الأيام أو الأسابيع
+
+  Pattern 3: GW + Breaker Block
+  → منطقة طلب تتصرف كعرض
+  → متغير short فقط
+
+  Pattern 4: GW عند EQ (50% فيب)
+  → دخول GW في discount مثالي
+
+  Pattern 5: فخ سيولة مزدوج
+  → مستويان رئيسيان مُمسوحان في حركة واحدة
+
+  Pattern 6: GW + محفز أخبار
+  → الحدث الاقتصادي يخلق الفتيل
+
+  Pattern 7: GW عبر الجلسات
+  → GW لندن، توزيع NY`,
+    'i_BOOK 4':`نظرة عامة على الفصول:
+  Ch.1  — تحجيم الحساب لتداول GWP
+  Ch.2  — حرارة المحفظة: الحد الأقصى للمخاطر المفتوحة
+  Ch.3  — تحوط الارتباط (Crypto + FX)
+  Ch.4  — إطار التعافي من الـ Drawdown
+  Ch.5  — معدل الفوز مقابل توقع R:R
+  Ch.6  — Monte Carlo: توقع مخاطر DD
+  Ch.7  — قاعدة 6% (الحد الأقصى للخسارة اليومية)
+  Ch.8  — نموذج تقييم المخاطر الخاص
+  Ch.9  — تحديات Prop Firm باستخدام GWP
+  Ch.10 — قوالب مراجعة الأداء
+  Ch.11 — التوسع من 500$ إلى 50,000$
+  Ch.12 — بناء خطة عمل للتداول`,
+    'i_BOOK 5':`نظرة عامة على الفصول:
+  Ch.1  — لماذا معظم الاختبارات الخلفية خاطئة
+  Ch.2  — بروتوكول اختبار GWP (خطوة بخطوة)
+  Ch.3  — تحديد Ghost Wicks التاريخية
+  Ch.4  — التسجيل: ماذا تسجل (ولماذا)
+  Ch.5  — الميزة الإحصائية: متطلبات حجم العينة
+  Ch.6  — فصل ميزة النظام عن الحظ
+  Ch.7  — عملية المراجعة الأسبوعية للدفتر
+  Ch.8  — تحديد تحيزاتك الشخصية
+  Ch.9  — تقييم علم نفس التداول
+  Ch.10 — مراجعة الأقران والمساءلة
+  Ch.11 — قالب دفتر GWP
+  Ch.12 — من الاختبار الخلفي إلى التداول الحي`,
+    'i_BOOK 6':`ما تتضمنه كل مراجعة:
+  ✦ بطاقة إشارة كاملة مع جميع أعمدة GWP
+  ✦ رسم 4H مشروح: GW, OB, MSB
+  ✦ منطقة الدخول: كيف تشكلت في الوقت الحقيقي
+  ✦ نتائج TP1/TP2/TP3 + التوقيت
+  ✦ ما أظهرته بوابة Vol+AVWAP
+  ✦ أي حالة خاصة أو انحراف عن القواعد
+  ✦ تحليل ما بعد التداول: ما تعلمناه
+
+  المراجعات الأخيرة المتاحة:
+  ✦ مارس 2025 — 14 إشارة A+ تمت مراجعتها
+  ✦ فبراير 2025 — 11 إشارة تمت مراجعتها
+  ✦ يناير 2025 — 9 إشارات تمت مراجعتها
+
+  بونص: تقرير ربع سنوي لدرجات GWP
+  → تفصيل معدل الفوز حسب الزوج والجلسة`,
+    'i_BOOK 7':`نظرة عامة على الفصول:
+  Ch.1  — Crypto مقابل Forex: الاختلافات الرئيسية
+  Ch.2  — معدل التمويل كفلتر GWP
+  Ch.3  — شلالات التصفية = Ghost Wicks
+  Ch.4  — دمج خريطة حرارة CoinGlass
+  Ch.5  — On-Chain: تدفقات الدخول/الخروج من البورصات
+  Ch.6  — Whale Alert كإشارة سيولة
+  Ch.7  — هيمنة BTC في سياق GWP
+  Ch.8  — بروتوكول تدوير Alt Season
+  Ch.9  — Kill Zones الكريبتو (مقابل Forex)
+  Ch.10 — AVWAP على العقود الآجلة الدائمة
+  Ch.11 — اختيار الأزواج: قائمة مراقبة GWP
+  Ch.12 — DEXE, UNI, SUSHI — دراسات حالة`
   }
 };
 
@@ -5382,7 +8175,7 @@ async function translateCourses(lang) {
       if (key && pre[key]) translated.title = pre[key];
       if (key && pre['b_' + key]) translated.body = pre['b_' + key];
       if (key && pre['d_' + key]) translated.detail = pre['d_' + key];
-      // Illustrations stay in English (ASCII diagrams break when translated)
+      if (key && pre['i_' + key]) translated.illus = pre['i_' + key];
       // Fallback: Details from localStorage cache if no pre-translation
       else if (c.detail && detailCache[key]) {
         translated.detail = detailCache[key];
