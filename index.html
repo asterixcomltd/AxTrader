@@ -155,6 +155,31 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .course-expand-btn:hover{border-color:var(--gold);color:var(--gold)}
 .course-content{display:none;margin-top:10px}
 .course-content.open{display:block}
+
+/* ── ACADEMY PAGE ─────────────────────────────────────────── */
+.academy-hero{background:linear-gradient(135deg,#1a1814 0%,#2d2418 60%,#3a2f1c 100%);border-radius:20px;padding:24px 20px 20px;margin:0 16px 18px;position:relative;overflow:hidden}
+.academy-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(201,168,76,.3) 0%,transparent 70%)}
+.academy-hero::after{content:'';position:absolute;bottom:-20px;left:-20px;width:100px;height:100px;background:radial-gradient(circle,rgba(201,168,76,.15) 0%,transparent 70%)}
+.academy-hero h2{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:800;color:#fff;margin-bottom:4px;position:relative;z-index:1}
+.academy-hero .academy-subtitle{font-size:.82rem;color:rgba(255,255,255,.65);line-height:1.5;margin-bottom:16px;position:relative;z-index:1}
+.academy-hero .academy-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold2);margin-bottom:8px;position:relative;z-index:1}
+.academy-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;position:relative;z-index:1}
+.academy-stat{text-align:center;background:rgba(255,255,255,.07);border-radius:12px;padding:10px 6px}
+.academy-stat .stat-val{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:800;color:var(--gold2);line-height:1.1}
+.academy-stat .stat-label{font-size:.62rem;color:rgba(255,255,255,.55);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+.academy-progress-wrap{margin:0 16px 16px;background:var(--surface);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.academy-progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.academy-progress-header span:first-child{font-size:.82rem;font-weight:700;color:var(--text)}
+.academy-progress-header span:last-child{font-size:.75rem;font-weight:600;color:var(--gold)}
+.academy-progress-bar{height:6px;background:var(--border);border-radius:6px;overflow:hidden}
+.academy-progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:6px;transition:width .4s ease}
+.academy-tabs-wrap{padding:0 16px 6px}
+.academy-upsell{background:linear-gradient(135deg,#1a1814,#2d2418);border-radius:16px;padding:18px 20px;margin:20px 16px 24px;position:relative;overflow:hidden}
+.academy-upsell::before{content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:radial-gradient(circle,rgba(201,168,76,.25) 0%,transparent 70%)}
+.academy-upsell h4{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700;color:#fff;margin-bottom:4px;position:relative;z-index:1}
+.academy-upsell p{font-size:.78rem;color:rgba(255,255,255,.6);margin-bottom:12px;line-height:1.5;position:relative;z-index:1}
+.academy-upsell .btn-upgrade{position:relative;z-index:1}
+
 .premium-banner{background:linear-gradient(135deg,#1a1814 0%,#2d2418 100%);border-radius:20px;padding:20px;margin:20px 16px 0;position:relative;overflow:hidden}
 .premium-banner::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(201,168,76,.35) 0%,transparent 70%)}
 .premium-banner h3{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:4px}
@@ -1571,6 +1596,54 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
       </div>
     </div>
 
+    <!-- ACADEMY -->
+    <div class="page" id="page-academy">
+      <div style="padding-top:16px">
+
+        <!-- ─── ACADEMY HERO ──────────────────────────────────── -->
+        <div class="academy-hero">
+          <div class="academy-label">◆ Ghost Wick Protocol™ · AxTrader</div>
+          <h2>Trading Academy</h2>
+          <p class="academy-subtitle">Master ICT, SMC & GWP — from zero to institutional edge. Free lessons, premium deep dives.</p>
+          <div class="academy-stats">
+            <div class="academy-stat"><div class="stat-val">36</div><div class="stat-label">Lessons</div></div>
+            <div class="academy-stat"><div class="stat-val">4</div><div class="stat-label">Tracks</div></div>
+            <div class="academy-stat"><div class="stat-val">FREE</div><div class="stat-label">Access</div></div>
+          </div>
+        </div>
+
+        <!-- ─── PROGRESS TRACKER ──────────────────────────────── -->
+        <div class="academy-progress-wrap">
+          <div class="academy-progress-header">
+            <span>📖 Your Progress</span>
+            <span id="academy-progress-text">0 / 36 completed</span>
+          </div>
+          <div class="academy-progress-bar">
+            <div class="academy-progress-fill" id="academy-progress-fill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- ─── COURSE TABS ───────────────────────────────────── -->
+        <div class="academy-tabs-wrap">
+          <div class="courses-tabs" id="academy-courses-tabs">
+            <button class="course-tab active" onclick="switchAcademyTab('ict',this)">ICT</button>
+            <button class="course-tab" onclick="switchAcademyTab('smc',this)">SMC</button>
+            <button class="course-tab" onclick="switchAcademyTab('gwp',this)">GWP</button>
+            <button class="course-tab" onclick="switchAcademyTab('advanced',this)">⭐ Advanced</button>
+          </div>
+          <div id="academy-courses-content"></div>
+        </div>
+
+        <!-- ─── PREMIUM UPSELL ────────────────────────────────── -->
+        <div class="academy-upsell" id="academy-upsell">
+          <h4>⭐ Unlock Premium Books</h4>
+          <p>Get full access to 7 advanced books — Institutional Flow, Advanced SMC, Ghost Wick Mastery, Risk Management & more.</p>
+          <button class="btn-upgrade" onclick="openUpgrade()" style="padding:12px 20px;font-size:.85rem;border-radius:10px">Upgrade Now — $12.99 / month</button>
+        </div>
+
+      </div>
+    </div>
+
     <!-- MORE -->
     <div class="page" id="page-more">
       <div style="padding-top:16px">
@@ -1598,16 +1671,14 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
           </div>
         </div>
 
-        <!-- ─── SECTION C: TRADING ACADEMY ────────────────────── -->
+        <!-- ─── SECTION C: ACADEMY LINK ─────────────────────── -->
         <div class="more-section-label" id="lbl-section-academy">📚 Trading Academy</div>
-        <div style="padding:0 16px 6px">
-          <div class="courses-tabs" id="courses-tabs">
-            <button class="course-tab active" onclick="switchCourseTab('ict',this)">ICT</button>
-            <button class="course-tab" onclick="switchCourseTab('smc',this)">SMC</button>
-            <button class="course-tab" onclick="switchCourseTab('gwp',this)">GWP</button>
-            <button class="course-tab" onclick="switchCourseTab('advanced',this)">⭐ Advanced</button>
+        <div class="more-section" style="margin:0 16px 16px">
+          <div class="more-row" onclick="navTo('academy')" style="border-bottom:none">
+            <div class="more-row-icon" style="background:var(--gold-bg)">🎓</div>
+            <div class="more-row-text"><h5>Open Academy</h5><p>36 lessons · ICT · SMC · GWP · Advanced</p></div>
+            <span class="more-row-arrow">›</span>
           </div>
-          <div id="courses-content"></div>
         </div>
 
         <!-- ─── SECTION C: SIGNAL BOTS ────────────────────────── -->
@@ -1751,7 +1822,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
     <button class="nav-item" onclick="navTo('news')" id="nav-news"><span class="nav-icon">📰</span><span class="nav-label">News</span></button>
     <button class="nav-item" onclick="navTo('signals')" id="nav-signals"><span class="nav-icon">📡</span><span class="nav-label">Signals</span><span class="nav-badge" id="signals-nav-badge">0</span></button>
     <button class="nav-item active" onclick="navTo('home')" id="nav-home"><span class="nav-icon">⊞</span><span class="nav-label">Home</span></button>
-
+    <button class="nav-item" onclick="navTo('academy')" id="nav-academy"><span class="nav-icon">🎓</span><span class="nav-label">Academy</span></button>
     <button class="nav-item" onclick="navTo('more')" id="nav-more"><span class="nav-icon">☰</span><span class="nav-label">More</span></button>
   </div>
 </div>
@@ -3769,7 +3840,7 @@ function setLang(lang) {
   }
 
   // Re-render courses in new language (use cache or kick off translation)
-  renderCourses(currentCourseTab);
+  renderAcademyCourses(currentAcademyTab);
   if (lang !== 'en' && !coursesTranslatedCache[lang] && !coursesTranslating) {
     translateCourses(lang);
   }
@@ -3790,7 +3861,7 @@ function navTo(page) {
   const navEl  = document.getElementById(navId);
   if (pageEl) pageEl.classList.add('active');
   if (navEl)  navEl.classList.add('active');
-  if(page==='more')          { renderCourses(currentCourseTab); if(appState.lang!=='en'&&!coursesTranslatedCache[appState.lang]&&!coursesTranslating) translateCourses(appState.lang); }
+  if(page==='academy')       { renderAcademyCourses(currentAcademyTab); updateAcademyProgress(); if(appState.lang!=='en'&&!coursesTranslatedCache[appState.lang]&&!coursesTranslating) translateCourses(appState.lang); }
   if(page==='news')          { fetchLiveNews(); fetchFundamentals(); }
   if(page==='signals')       { fetchSignalsFromSheet(); }
   if(page==='analytics')     { renderAnalyticsDashboard(); }
@@ -5087,8 +5158,91 @@ const coursesData={
 };
 
 let currentCourseTab = 'ict';
+let currentAcademyTab = 'ict';
 const coursesTranslatedCache = {};  // key: lang → { ict:[...], smc:[...], gwp:[...], advanced:[...] }
 let coursesTranslating = false;
+
+// ── ACADEMY PAGE FUNCTIONS ───────────────────────────────────────────────────
+function getAcademyProgress(){
+  try{ return JSON.parse(localStorage.getItem('ax_academy_progress')||'{}'); }catch(e){return {};}
+}
+function saveAcademyProgress(p){ localStorage.setItem('ax_academy_progress',JSON.stringify(p)); }
+function markCourseRead(tab,idx){
+  const p=getAcademyProgress();
+  const key=tab+'_'+idx;
+  if(!p[key]){p[key]=Date.now();saveAcademyProgress(p);updateAcademyProgress();}
+}
+function updateAcademyProgress(){
+  const p=getAcademyProgress();
+  const total=36;
+  const done=Object.keys(p).length;
+  const pct=Math.round((done/total)*100);
+  const textEl=document.getElementById('academy-progress-text');
+  const fillEl=document.getElementById('academy-progress-fill');
+  if(textEl)textEl.textContent=done+' / '+total+' completed';
+  if(fillEl)fillEl.style.width=pct+'%';
+  // hide upsell if premium
+  const upsell=document.getElementById('academy-upsell');
+  if(upsell&&appState.isPremium)upsell.style.display='none';
+}
+function switchAcademyTab(tab,btn){
+  currentAcademyTab=tab;
+  document.querySelectorAll('#academy-courses-tabs .course-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderAcademyCourses(tab);
+}
+function renderAcademyCourses(tab){
+  const container=document.getElementById('academy-courses-content');
+  if(!container) return;
+  const lang=appState&&appState.lang||'en';
+  const translated=(lang!=='en'&&coursesTranslatedCache[lang])?coursesTranslatedCache[lang][tab]:null;
+  const data=translated||coursesData[tab]||[];
+  const _t=i18n[appState&&appState.lang||'en']||i18n.en;
+  const progress=getAcademyProgress();
+  let html='';
+  data.forEach((c,i)=>{
+    const isPrem=c.badge==='premium';
+    const locked=isPrem&&!appState.isPremium;
+    const readKey=tab+'_'+i;
+    const isRead=!!progress[readKey];
+    if(locked){
+      html+=`<div class="course-card premium" style="opacity:.92">
+        <div class="course-header">
+          <div class="course-icon prem">${c.icon}</div>
+          <div class="course-meta"><h4 style="font-size:.88rem">${c.title}</h4><p style="font-size:.73rem;color:var(--text3)">${c.body.substring(0,80)}…</p></div>
+        </div>
+        <div style="background:linear-gradient(135deg,#1a1814,#2d2418);border-radius:12px;padding:14px 16px;margin-top:8px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:rgba(255,255,255,.4);line-height:1.7;max-height:60px;overflow:hidden;mask-image:linear-gradient(black 20%,transparent)">${c.illus||''}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
+            <span style="color:var(--gold2);font-size:.78rem;font-weight:700">${_t.course_locked||'🔒 Premium Book — Full Access'}</span>
+            <button class="btn-upgrade" style="width:auto;padding:8px 14px;font-size:.78rem;border-radius:8px" onclick="openUpgrade()">${_t.course_unlock||'Unlock $12.99'}</button>
+          </div>
+        </div>
+      </div>`;
+    } else {
+      html+=`<div class="course-card ${isPrem?'premium':''}" style="position:relative">
+        ${isRead?'<div style="position:absolute;top:12px;right:12px;background:var(--green-bg);color:var(--green);border-radius:8px;padding:2px 8px;font-size:.62rem;font-weight:700">✓ READ</div>':''}
+        <div class="course-header">
+          <div class="course-icon ${tab==='advanced'?'prem':tab}">${c.icon}</div>
+          <div class="course-meta"><h4>${c.title}</h4></div>
+        </div>
+        <span class="course-badge ${c.badge}">${isPrem?(_t.badge_premium||'⭐ PREMIUM BOOK'):(_t.badge_free||'FREE')}</span>
+        <div class="course-body" style="margin:10px 0 6px">${c.body}</div>
+        ${c.illus?`<div class="course-illus" style="font-size:.74rem;line-height:1.75">${c.illus}</div>`:''}
+        ${c.detail?`<button class="course-expand-btn dive-btn" onclick="toggleAcademyCourse(this,'${tab}',${i})" style="margin-top:10px">${_t.deep_dive||'Deep dive ↓'}</button>
+          <div class="course-content"><div style="background:var(--gold-bg);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 14px;margin-top:10px;font-size:.82rem;color:var(--text2);line-height:1.75">${c.detail}</div></div>`:``}
+      </div>`;
+    }
+  });
+  container.innerHTML=html;
+}
+function toggleAcademyCourse(btn,tab,idx){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  const _t=i18n[appState&&appState.lang||'en']||i18n.en;
+  btn.textContent=c.classList.contains('open')?(_t.show_less||'Show less ↑'):(_t.deep_dive||'Deep dive ↓');
+  if(c.classList.contains('open')) markCourseRead(tab,idx);
+}
 
 function switchCourseTab(tab,btn){
   currentCourseTab = tab;
@@ -8174,7 +8328,7 @@ function _courseKey(engTitle) {
 /** Translate all courses — uses pre-translated data (instant) + detail cache */
 async function translateCourses(lang) {
   if (!lang || lang === 'en') return;
-  if (coursesTranslatedCache[lang]) { renderCourses(currentCourseTab); return; }
+  if (coursesTranslatedCache[lang]) { renderAcademyCourses(currentAcademyTab); return; }
 
   const pre = coursesTitleBody[lang] || {};
   const tabs = Object.keys(coursesData);
@@ -8203,7 +8357,7 @@ async function translateCourses(lang) {
   }
 
   coursesTranslatedCache[lang] = result;
-  renderCourses(currentCourseTab);
+  renderAcademyCourses(currentAcademyTab);
 
   // Background: translate details that aren't cached yet
   if (!coursesTranslating) {
@@ -8227,7 +8381,7 @@ async function translateCourses(lang) {
     // Persist detail cache
     try { localStorage.setItem('ax_course_details_' + lang, JSON.stringify(detailCache)); } catch(e) {}
     coursesTranslating = false;
-    if (appState.lang === lang) renderCourses(currentCourseTab);
+    if (appState.lang === lang) renderAcademyCourses(currentAcademyTab);
   }
 }
 
@@ -9353,7 +9507,7 @@ function initApp() {
   fetchLiveNews();               // live news from CryptoCompare
   fetchMarketNews();             // Phase 2: institutional news context
   fetchFundamentals();           // Fear & Greed, BTC dominance
-  renderCourses('ict');
+  renderAcademyCourses('ict');
   initArchive();                 // Show signal archive on load
   updatePerformanceAnalytics();  // Phase 2: performance dashboard
   loadNotificationPreferences();  // Phase 2: load notification settings
