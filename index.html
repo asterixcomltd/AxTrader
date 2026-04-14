@@ -56,7 +56,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .modal-close{position:absolute;top:16px;right:20px;width:32px;height:32px;border:none;background:var(--surface2);border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;color:var(--text2)}
 #auth-screen{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
 .auth-logo{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:8px}
-.auth-logo-icon{width:80px;height:80px;background:#1a1814;border-radius:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1px rgba(201,168,76,.25),0 8px 32px rgba(201,168,76,.15)}
+.auth-logo-icon{width:80px;height:80px;background:#1a1814;border-radius:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2.5px #c9a84c,0 8px 32px rgba(201,168,76,.25);border:none}
 .auth-logo-icon span{font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:2rem;letter-spacing:-1px;background:linear-gradient(135deg,#e8c96d 0%,#c9a84c 50%,#a07830 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .auth-logo h1{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700}
 .auth-tagline{color:var(--text2);font-size:.875rem;margin-bottom:32px;text-align:center}
@@ -1119,9 +1119,49 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
       <div class="forgot-link" style="margin-top:10px"><a href="#" onclick="showForgot(false)">← Back to Sign In</a></div>
     </div>
   </div>
+  <!-- Help link on auth screen -->
+  <div style="margin-top:18px;text-align:center">
+    <button onclick="openOverlay('docs-overlay',true)" style="background:none;border:none;color:var(--text2);font-size:.8rem;cursor:pointer;font-family:inherit;text-decoration:underline;padding:4px 8px">❓ How does AxTrader work?</button>
+  </div>
 </div>
 
-<!-- ============ MAIN APP ============ -->
+<!-- ============ DOCS / HELP OVERLAY ============ -->
+<div class="overlay" id="docs-overlay">
+  <div class="modal center" style="border-radius:20px;max-width:440px;max-height:85vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;margin:0">📖 Quick Start Guide</h3>
+      <button onclick="closeOverlay('docs-overlay')" style="background:var(--surface2);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.9rem;color:var(--text2)">✕</button>
+    </div>
+    <div style="font-size:.85rem;color:var(--text2);line-height:1.6">
+      <div style="background:var(--surface2);border-radius:12px;padding:12px 14px;margin-bottom:10px">
+        <div style="font-weight:700;color:var(--text);margin-bottom:4px">👻 What is AxTrader?</div>
+        A 24/7 institutional signal platform powered by the <strong>Ghost Wick Protocol™</strong> — scanning Crypto, Forex &amp; Stocks for high-conviction trade setups every 4 hours.
+      </div>
+      <div style="background:var(--surface2);border-radius:12px;padding:12px 14px;margin-bottom:10px">
+        <div style="font-weight:700;color:var(--text);margin-bottom:4px">📡 How do Signals work?</div>
+        Each signal shows: <strong>Entry · SL · TP1 · TP2 · TP3</strong> with a conviction score. Higher score = stronger setup. Live updates fire as price hits each target.
+      </div>
+      <div style="background:var(--surface2);border-radius:12px;padding:12px 14px;margin-bottom:10px">
+        <div style="font-weight:700;color:var(--text);margin-bottom:4px">🔔 Signal Alerts</div>
+        Enable push notifications in <strong>More → Signal Alerts</strong> so you never miss a signal. Telegram bot alerts also available.
+      </div>
+      <div style="background:var(--surface2);border-radius:12px;padding:12px 14px;margin-bottom:10px">
+        <div style="font-weight:700;color:var(--text);margin-bottom:4px">🎓 Academy</div>
+        Learn the Ghost Wick Protocol strategy from scratch. Free courses available — Premium unlocks advanced modules.
+      </div>
+      <div style="background:var(--surface2);border-radius:12px;padding:12px 14px;margin-bottom:10px">
+        <div style="font-weight:700;color:var(--text);margin-bottom:4px">💎 Free vs Premium</div>
+        <strong>Free:</strong> 3 signals/day, Academy basics, News feed.<br>
+        <strong>Premium ($12.99/mo):</strong> All signals, all bots, Analytics, Priority alerts.
+      </div>
+      <div style="background:var(--surface2);border-radius:12px;padding:12px 14px;margin-bottom:10px">
+        <div style="font-weight:700;color:var(--text);margin-bottom:4px">🆘 Need Help?</div>
+        DM <a href="https://t.me/asterix_support1" target="_blank" style="color:var(--gold)">@asterix_support1</a> on Telegram · Available 24/7.
+      </div>
+    </div>
+    <button onclick="closeOverlay('docs-overlay')" style="width:100%;padding:12px;background:var(--gold);color:#fff;border:none;border-radius:12px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px">Got it — Let's Trade 🚀</button>
+  </div>
+</div>
 <div id="app">
   <div class="topbar">
     <div class="topbar-logo">
@@ -1194,6 +1234,21 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
       <div style="padding:0 16px 4px">
         <div id="home-signals-preview"></div>
         <button id="btn-view-all-signals" onclick="navTo('signals')" style="width:100%;padding:11px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;font-size:.85rem;font-weight:700;color:var(--gold);cursor:pointer;font-family:inherit;margin-top:2px">View All Signals & Premium →</button>
+      </div>
+
+      <!-- ④ QUICK HELP CARD ──────────────────────────────── -->
+      <div style="margin:4px 16px 0;background:var(--surface);border-radius:14px;border:1.5px solid var(--border);overflow:hidden">
+        <button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.help-chevron').style.transform=this.nextElementSibling.style.display==='block'?'rotate(180deg)':'rotate(0deg)'" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:none;border:none;cursor:pointer;font-family:inherit">
+          <span style="font-size:.85rem;font-weight:700;color:var(--text)">❓ New here? Quick Start Guide</span>
+          <span class="help-chevron" style="font-size:.75rem;color:var(--text2);transition:.2s">▼</span>
+        </button>
+        <div style="display:none;padding:0 14px 14px;font-size:.8rem;color:var(--text2);line-height:1.6;border-top:1px solid var(--border)">
+          <div style="padding-top:10px"><strong style="color:var(--text)">👻 Signals</strong> — Each card shows Entry · SL · TP1/2/3. Green = BULL, Red = BEAR. Track open trades live.</div>
+          <div style="margin-top:8px"><strong style="color:var(--text)">🔔 Alerts</strong> — Go to <em>More → Signal Alerts</em> to enable push notifications on your phone.</div>
+          <div style="margin-top:8px"><strong style="color:var(--text)">🎓 Academy</strong> — Learn the Ghost Wick Protocol strategy, free courses included.</div>
+          <div style="margin-top:8px"><strong style="color:var(--text)">📊 Analytics</strong> — See your personal P&L, win rate, and bot comparison in <em>More → Analytics</em>.</div>
+          <button onclick="openOverlay('docs-overlay',true)" style="margin-top:10px;padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text)">Full Guide →</button>
+        </div>
       </div>
 
       <!-- ④ PREMIUM UPGRADE ───────────────────────────────── -->
@@ -1759,6 +1814,11 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
         <!-- ─── SECTION F: KNOWLEDGE & SYSTEM ────────────────── -->
         <div class="more-section-label" id="lbl-section-knowledge">🧠 Knowledge & System</div>
         <div class="more-section" style="margin:0 16px 16px">
+          <div class="more-row" onclick="openOverlay('docs-overlay',true)">
+            <div class="more-row-icon" style="background:var(--blue-bg)">📖</div>
+            <div class="more-row-text"><h5>Help &amp; Docs</h5><p>Quick start guide · How signals work · FAQ</p></div>
+            <span class="more-row-arrow">›</span>
+          </div>
           <div class="more-row" onclick="openAboutGWP()">
             <div class="more-row-icon" style="background:var(--gold-bg)">🧠</div>
             <div class="more-row-text"><h5 id="lbl-gwp-title">What is GWP?</h5><p id="lbl-gwp-sub">The 5-Pillar Ghost Wick Protocol explained</p></div>
@@ -1936,11 +1996,11 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
       <!-- Payment options -->
       <p style="font-size:.78rem;color:var(--text2);text-align:center;margin-bottom:10px;font-weight:600">Choose your payment method:</p>
       <div class="payment-options" style="margin-bottom:14px">
-        <div class="payment-opt" id="pay-opt-momo" style="flex-direction:column;align-items:flex-start;gap:8px;cursor:default">
-          <div style="display:flex;align-items:center;gap:10px;width:100%"><span class="payment-opt-icon">📱</span><div class="payment-opt-text"><h5>Mobile Money (Ghana)</h5><p>Tap a number · then DM proof to @asterix_support1</p></div></div>
-          <a href="tel:+233541760074" style="display:block;padding:9px 14px;background:var(--surface2);border-radius:9px;text-decoration:none;color:var(--text);font-size:.86rem;font-weight:700;width:100%;box-sizing:border-box">🟡 MTN MoMo &nbsp;&nbsp; +233 541 760 074</a>
-          <a href="tel:+233508588238" style="display:block;padding:9px 14px;background:var(--surface2);border-radius:9px;text-decoration:none;color:var(--text);font-size:.86rem;font-weight:700;width:100%;box-sizing:border-box">🔴 Telecel Cash &nbsp; +233 508 588 238</a>
-        </div>
+        <a class="payment-opt" id="pay-opt-momo" href="https://t.me/asterix_support1" target="_blank" style="cursor:pointer">
+          <span class="payment-opt-icon">📱</span>
+          <div class="payment-opt-text"><h5>Mobile Money (Ghana)</h5><p>DM @asterix_support1 for MoMo number · then send proof</p></div>
+          <span>›</span>
+        </a>
         <div class="payment-opt" id="pay-opt-crypto" onclick="openNowPayments()" style="cursor:pointer;position:relative"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>Crypto (USDT · BTC · ETH)</h5><p>Auto-activated instantly on payment ⚡</p></div><span style="background:var(--green-bg);color:var(--green);font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap">AUTO</span></div>
         <a class="payment-opt" href="https://t.me/asterix_support1" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Pay via Telegram</h5><p>DM @asterix_support1 to arrange</p></div><span>›</span></a>
         <div class="payment-opt" onclick="openBankTransfer()" style="cursor:pointer"><span class="payment-opt-icon">🏦</span><div class="payment-opt-text"><h5>Bank Wire Transfer</h5><p>Ecobank Ghana · SWIFT ECOCGHAC · See full details</p></div><span>›</span></div>
@@ -2223,7 +2283,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
     <div style="margin-top:14px;font-size:.75rem;color:var(--text3);text-align:center;line-height:1.6">
       By using AxTrader, you acknowledge that you have read and understood this disclaimer and agree to our Terms & Conditions.<br>
-      © 2024–2025 Asterix.COM Ltd. All rights reserved.
+      © 2024–2025 Asterix Holdings Ltd. All rights reserved.
     </div>
     <button class="btn-primary" style="margin-top:16px;background:var(--text)" onclick="closeOverlay('disclaimer-overlay')">I Understand</button>
   </div>
@@ -2235,13 +2295,13 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
     <div class="modal-handle"></div>
     <button class="modal-close" onclick="closeOverlay('tnc-overlay')" style="position:absolute;top:16px;right:16px">✕</button>
     <h2>📄 Terms & Conditions</h2>
-    <p class="sub" style="margin-bottom:16px">Asterix.COM Ltd — AxTrader Platform</p>
+    <p class="sub" style="margin-bottom:16px">Asterix Holdings Ltd — AxTrader Platform</p>
     <div style="font-size:.82rem;color:var(--text2);line-height:1.75;display:grid;gap:10px">
       <div><strong style="color:var(--text)">1. Acceptance of Terms</strong><br>By accessing or using AxTrader, you agree to be bound by these Terms. If you do not agree, do not use the platform.</div>
-      <div><strong style="color:var(--text)">2. Intellectual Property</strong><br>The Ghost Wick Protocol (GWP), all signal methodologies, content, branding, and software are proprietary to Asterix.COM Ltd. Reproduction, redistribution, or commercial use without written consent is strictly prohibited.</div>
+      <div><strong style="color:var(--text)">2. Intellectual Property</strong><br>The Ghost Wick Protocol (GWP), all signal methodologies, content, branding, and software are proprietary to Asterix Holdings Ltd. Reproduction, redistribution, or commercial use without written consent is strictly prohibited.</div>
       <div><strong style="color:var(--text)">3. Premium Subscription</strong><br>Premium subscriptions are billed monthly. Access is granted manually upon payment confirmation. Refunds are evaluated on a case-by-case basis within 48 hours of purchase.</div>
       <div><strong style="color:var(--text)">4. Account Use</strong><br>Accounts are for personal, non-commercial use only. Sharing access credentials or signals outside the platform is a violation and may result in account termination.</div>
-      <div><strong style="color:var(--text)">5. Limitation of Liability</strong><br>Asterix.COM Ltd is not liable for any trading losses, missed signals, technical outages, or indirect damages arising from use of the platform.</div>
+      <div><strong style="color:var(--text)">5. Limitation of Liability</strong><br>Asterix Holdings Ltd is not liable for any trading losses, missed signals, technical outages, or indirect damages arising from use of the platform.</div>
       <div><strong style="color:var(--text)">6. Governing Law</strong><br>These Terms are governed by applicable international law. Disputes shall be resolved through good-faith negotiation before any formal proceedings.</div>
     </div>
     <div style="margin-top:14px;font-size:.75rem;color:var(--text3);text-align:center">Last updated: January 2025 · asterixcomltd@gmail.com</div>
@@ -2331,8 +2391,8 @@ const GOOGLE_CLIENT_ID = '688135725461-su1l15k9biemu8ki48apbth1gd6vhh9m.apps.goo
 // ── PAYMENT CONFIG ──────────────────────────────────────────────────────────
 const PAYMENT_CONFIG = {
   telegram_contact    : 'https://t.me/asterix_support1',    // fallback for all methods
-  momo_mtn            : '+233541760074',                     // MTN MoMo (Ghana)
-  momo_telecel        : '+233508588238',                     // Telecel Cash (Ghana)
+  momo_mtn            : '',                                 // DM @asterix_support1 for number
+  momo_telecel        : '',                                 // DM @asterix_support1 for number
   crypto_address      : 'TMHx2jrrKpoHiGtZmMogM9N1sqK2XJg7Wa',  // USDT TRC-20
   premium_price       : 12.99,
   premium_currency    : 'USD',
@@ -3228,6 +3288,8 @@ function doLogout() {
   document.getElementById('app').style.display='none';
   document.getElementById('auth-screen').style.display='flex';
   navTo('home');
+  // Seed a base history entry so Android back button never exits on first press
+  history.replaceState({ axPage: 'home' }, '', '#home');
 }
 
 // ── LIVE DATA STATUS CHECK ────────────────────────────────────────────────
@@ -3848,15 +3910,18 @@ function setLang(lang) {
 function openLangModal(){openOverlay('lang-overlay');}
 
 // ============ NAVIGATION ============
-function navTo(page) {
+const SUB_PAGES = ['analytics','notifications','referral'];
+const MAIN_PAGES = ['home','signals','news','academy','more'];
+
+function navTo(page, skipHistory=false) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   let pageId = 'page-'+page;
   let navId = 'nav-'+page;
   // These sub-pages live under the MORE tab
-  if (page === 'analytics') { pageId = 'analytics-page'; navId = 'nav-more'; }
+  if (page === 'analytics')     { pageId = 'analytics-page';     navId = 'nav-more'; }
   if (page === 'notifications') { pageId = 'notifications-page'; navId = 'nav-more'; }
-  if (page === 'referral') { pageId = 'referral-page'; navId = 'nav-more'; }
+  if (page === 'referral')      { pageId = 'referral-page';      navId = 'nav-more'; }
   const pageEl = document.getElementById(pageId);
   const navEl  = document.getElementById(navId);
   if (pageEl) pageEl.classList.add('active');
@@ -3866,7 +3931,19 @@ function navTo(page) {
   if(page==='signals')       { fetchSignalsFromSheet(); }
   if(page==='analytics')     { renderAnalyticsDashboard(); }
   if(page==='notifications') { renderNotificationSettings(); }
+  // Push history state so Android back button works inside the app
+  if (!skipHistory) {
+    history.pushState({ axPage: page }, '', '#' + page);
+  }
 }
+
+// Handle Android/browser back button — navigate within app instead of exiting
+window.addEventListener('popstate', function(e) {
+  const dest = (e.state && e.state.axPage) ? e.state.axPage : 'home';
+  // If going back from a sub-page, land on 'more'; otherwise use dest
+  const target = SUB_PAGES.includes(dest) ? 'more' : dest;
+  navTo(target, true);
+});
 
 // ============ OVERLAYS ============
 function openOverlay(id,center=false){const el=document.getElementById(id);el.classList.add('active');if(center)el.classList.add('center');}
@@ -9159,7 +9236,10 @@ function renderAnalyticsDashboard() {
 
   const content = `
     <div style="padding:0 16px 20px;color:var(--text2)">
-      <h2 style="font-family:'Space Grotesk',sans-serif;color:var(--text);margin:20px 0 16px;font-size:1.25rem">📊 Performance Analytics</h2>
+      <div style="display:flex;align-items:center;gap:10px;padding:16px 0 4px;margin-bottom:4px">
+        <button onclick="navTo('more')" style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:8px 12px;font-size:1rem;cursor:pointer;color:var(--text);flex-shrink:0">← Back</button>
+        <h2 style="font-family:'Space Grotesk',sans-serif;color:var(--text);margin:0;font-size:1.2rem">📊 Performance Analytics</h2>
+      </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
         <div style="background:var(--surface);padding:14px;border-radius:12px;border-left:3px solid var(--green)">
@@ -9414,7 +9494,10 @@ function renderNotificationSettings() {
 
   const content = `
     <div style="padding:0 16px 20px;color:var(--text2)">
-      <h2 style="font-family:'Space Grotesk',sans-serif;color:var(--text);margin:20px 0 16px;font-size:1.25rem">🔔 Notification Settings</h2>
+      <div style="display:flex;align-items:center;gap:10px;padding:16px 0 4px;margin-bottom:4px">
+        <button onclick="navTo('more')" style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:8px 12px;font-size:1rem;cursor:pointer;color:var(--text);flex-shrink:0">← Back</button>
+        <h2 style="font-family:'Space Grotesk',sans-serif;color:var(--text);margin:0;font-size:1.2rem">🔔 Notification Settings</h2>
+      </div>
 
       <h3 style="font-size:0.95rem;font-weight:600;margin:20px 0 12px;color:var(--text)">📱 Channels</h3>
 
