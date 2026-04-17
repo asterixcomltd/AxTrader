@@ -1,9 +1,9 @@
 // Vercel Serverless API — Proxy for CoinGecko prices
 // Fetches crypto prices via CoinGecko with CORS and caching.
 
-import { COINGECKO_IDS } from '../js/config.js';
-
 export const config = { runtime: 'edge' };
+
+const COINGECKO_IDS = 'bitcoin,ethereum,solana,avalanche-2,uniswap,decentralized-social,chainlink,near,aave,arbitrum,injective-protocol,polkadot,filecoin,sui,cosmos';
 
 export default async function handler(req) {
   if (req.method !== 'GET') {
