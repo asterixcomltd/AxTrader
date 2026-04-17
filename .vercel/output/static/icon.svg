@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8c34a"/>
+      <stop offset="50%" stop-color="#c9a84c"/>
+      <stop offset="100%" stop-color="#a8872e"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="92" fill="#1a1814"/>
+  <g fill="url(#gold)">
+    <!-- A — bold, thick strokes, sharp apex -->
+    <path d="
+      M 68 395
+      L 155 110
+      Q 163 85 178 85
+      L 194 85
+      Q 209 85 217 110
+      L 304 395
+      L 248 395
+      L 226 318
+      L 146 318
+      L 124 395
+      Z
+      M 158 274
+      L 214 274
+      L 186 168
+      Z
+    "/>
+    <!-- x — bold thick dynamic cross -->
+    <path d="
+      M 302 160
+      L 348 160
+      L 386 234
+      L 424 160
+      L 470 160
+      L 412 272
+      L 472 395
+      L 426 395
+      L 386 314
+      L 346 395
+      L 300 395
+      L 360 272
+      Z
+    "/>
+  </g>
+</svg>

@@ -1,0 +1,45 @@
+{
+  "packageId": "com.asterixcom.axtrader",
+  "host": "axtrader.vercel.app",
+  "name": "AxTrader",
+  "launcherName": "AxTrader",
+  "display": "standalone",
+  "themeColor": "#1a1814",
+  "navigationColor": "#1a1814",
+  "navigationColorDark": "#1a1814",
+  "navigationDividerColor": "#1a1814",
+  "navigationDividerColorDark": "#1a1814",
+  "backgroundColor": "#1a1814",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://axtrader.vercel.app/icon-512.png",
+  "maskableIconUrl": "https://axtrader.vercel.app/icon-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "axtrader-key.keystore",
+    "alias": "axtrader"
+  },
+  "appVersionCode": 1,
+  "appVersionName": "1.0.0",
+  "shortcuts": [
+    {
+      "name": "Signals",
+      "shortName": "Signals",
+      "url": "/?page=signals",
+      "chosenIconUrl": "https://axtrader.vercel.app/icon-192.png"
+    }
+  ],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://axtrader.vercel.app/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://axtrader.vercel.app/",
+  "minSdkVersion": 19,
+  "orientation": "portrait"
+}

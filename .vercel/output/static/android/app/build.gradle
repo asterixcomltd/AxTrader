@@ -1,0 +1,59 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.asterixcom.axtrader'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.asterixcom.axtrader"
+        minSdk 19
+        targetSdk 34
+        versionCode project.hasProperty('VERSION_CODE') ? project.property('VERSION_CODE').toInteger() : 1
+        versionName project.hasProperty('VERSION_NAME') ? project.property('VERSION_NAME') : "1.0.0"
+
+        // TWA metadata
+        manifestPlaceholders = [
+            hostName: "axtrader.vercel.app",
+            defaultUrl: "https://axtrader.vercel.app",
+            launcherName: "AxTrader",
+            assetStatements: '[{"relation": ["delegate_permission/common.handle_all_urls"],' +
+                             '"target": {"namespace": "web", "site": "https://axtrader.vercel.app"}}]'
+        ]
+    }
+
+    signingConfigs {
+        release {
+            if (project.hasProperty('KEYSTORE_FILE')) {
+                storeFile file(project.property('KEYSTORE_FILE'))
+                storePassword project.property('KEYSTORE_PASSWORD')
+                keyAlias project.property('KEY_ALIAS')
+                keyPassword project.property('KEY_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (project.hasProperty('KEYSTORE_FILE')) {
+                signingConfig signingConfigs.release
+            }
+        }
+        debug {
+            // Debug builds are unsigned — fine for testing
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation 'androidx.browser:browser:1.8.0'
+}
