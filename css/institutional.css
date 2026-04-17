@@ -1,0 +1,596 @@
+/* ═══════════════════════════════════════════════════════════════
+   AxTrader — Institutional Enhancements
+   Skeleton loaders, live pulse, TradingView widgets, 
+   Performance/About/Privacy pages, trust badges
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Skeleton Loaders ────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface2) 25%,
+    var(--border) 50%,
+    var(--surface2) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+}
+
+.skeleton-line.w-full { width: 100%; }
+.skeleton-line.w-75 { width: 75%; }
+.skeleton-line.w-60 { width: 60%; }
+.skeleton-line.w-50 { width: 50%; }
+.skeleton-line.w-40 { width: 40%; }
+.skeleton-line.w-30 { width: 30%; }
+.skeleton-line.thick { height: 20px; border-radius: 8px; }
+.skeleton-line.rounded-full { border-radius: 20px; height: 24px; width: 70px; }
+
+.skeleton-circle {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+}
+
+.skeleton-avatar {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+}
+
+.skeleton-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.skeleton-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+/* ── Live Pulse Indicator ────────────────────────────────── */
+.live-pulse {
+  width: 8px; height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  margin-right: 6px;
+}
+
+.live-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: rgba(45,122,79,.3);
+  animation: livePulse 1.4s ease-out infinite;
+}
+
+@keyframes livePulse {
+  0% { transform: scale(1); opacity: .8; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+.last-signal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .72rem;
+  color: var(--text2);
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+}
+
+/* ── Ghost Wick Protocol — Static Gold ──────────────────── */
+.gwp-protocol-label {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: .7rem;
+}
+
+/* ── Trust Badges on Pricing ────────────────────────────── */
+.trust-badges {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .68rem;
+  color: var(--text2);
+  font-weight: 500;
+}
+
+.trust-badge .icon { color: var(--green); }
+
+.refund-policy-text {
+  font-size: .72rem;
+  color: var(--text3);
+  text-align: center;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+/* ── TradingView Widget Containers ──────────────────────── */
+.tradingview-widget-container {
+  width: 100%;
+  margin-bottom: 8px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.tradingview-widget--mini {
+  height: 110px;
+}
+
+.tradingview-widget--market {
+  height: 260px;
+}
+
+/* ── Performance Page ───────────────────────────────────── */
+.performance-stripe {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 16px;
+}
+
+.stat-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 12px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.stat-tile-val {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin-bottom: 3px;
+}
+
+.stat-tile-lbl {
+  font-size: .65rem;
+  color: var(--text3);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.performance-chart-wrap {
+  padding: 0 16px 8px;
+}
+
+.performance-chart {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+.performance-chart canvas {
+  width: 100%;
+  height: 200px;
+}
+
+.chart-placeholder {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text3);
+  font-size: .85rem;
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+}
+
+.monthly-results-table {
+  padding: 0 16px 16px;
+}
+
+.results-table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .82rem;
+}
+
+.results-table th {
+  background: var(--surface2);
+  padding: 10px 12px;
+  text-align: left;
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text3);
+  white-space: nowrap;
+}
+
+.results-table td {
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+}
+
+.results-table tr:last-child td { border-bottom: none; }
+
+.results-table td.positive { color: var(--green); font-weight: 600; }
+.results-table td.negative { color: var(--red); font-weight: 600; }
+
+/* ── About Page ─────────────────────────────────────────── */
+.about-hero {
+  background: linear-gradient(135deg, var(--text), #2d2418);
+  border-radius: 20px;
+  padding: 24px 20px;
+  margin: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.about-hero::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 160px; height: 160px;
+  background: radial-gradient(circle, rgba(201,168,76,.3) 0%, transparent 70%);
+}
+
+.about-hero h2 {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--bg);
+  margin-bottom: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.about-hero p {
+  font-size: .85rem;
+  color: rgba(255,255,255,.7);
+  line-height: 1.6;
+  position: relative;
+  z-index: 1;
+}
+
+.about-mission {
+  padding: 16px;
+}
+
+.about-mission-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+
+.about-mission-card h3 {
+  font-family: var(--font-heading);
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.about-mission-card p {
+  font-size: .85rem;
+  color: var(--text2);
+  line-height: 1.6;
+}
+
+.about-founder-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.about-founder-avatar {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text3);
+}
+
+.about-founder-info h4 {
+  font-family: var(--font-heading);
+  font-size: .95rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.about-founder-info .title {
+  font-size: .78rem;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+.about-founder-info p {
+  font-size: .8rem;
+  color: var(--text2);
+  line-height: 1.5;
+}
+
+/* ── Privacy Page ─────────────────────────────────────────── */
+.privacy-content {
+  padding: 16px;
+}
+
+.privacy-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  margin-bottom: 12px;
+}
+
+.privacy-section h3 {
+  font-family: var(--font-heading);
+  font-size: .95rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.privacy-section p {
+  font-size: .85rem;
+  color: var(--text2);
+  line-height: 1.65;
+  margin-bottom: 8px;
+}
+
+.privacy-section ul {
+  padding-left: 20px;
+  margin-bottom: 8px;
+}
+
+.privacy-section li {
+  font-size: .82rem;
+  color: var(--text2);
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+privacy-last-updated {
+  display: block;
+  font-size: .75rem;
+  color: var(--text3);
+  text-align: center;
+  margin-top: 8px;
+  padding-bottom: 16px;
+}
+
+/* ── News Card V2 ────────────────────────────────────────── */
+.news-card-v2 {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.news-card-v2 .news-tag-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 7px;
+}
+
+.news-card-v2 h4 {
+  font-family: var(--font-heading);
+  font-size: .93rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  line-height: 1.35;
+  color: var(--text);
+}
+
+.news-card-v2 p {
+  font-size: .8rem;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.news-card-v2 .news-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.news-source-pill {
+  font-size: .65rem;
+  font-weight: 600;
+  color: var(--text3);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+.news-read-link {
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  transition: .15s;
+}
+
+.news-read-link:hover { opacity: .75; }
+
+.news-context {
+  background: linear-gradient(135deg, #f0f4f8, #e8f1f9);
+  border-left: 4px solid var(--blue);
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.news-context-title { font-weight: 600; color: var(--text); }
+.news-context-meta { color: var(--text2); font-size: 0.7rem; }
+
+.signal-why {
+  background: var(--premium-bg);
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 8px;
+  border-left: 3px solid var(--premium);
+  font-size: 0.75rem;
+}
+
+.why-header { font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.why-item { display: flex; gap: 6px; margin-bottom: 4px; color: var(--text2); }
+.why-icon { font-size: 0.9rem; min-width: 16px; display: inline-flex; }
+
+/* ── Notification Banner ────────────────────────────────── */
+.notif-banner-action { transition: .15s; }
+.notif-banner-action:hover { opacity: .88; }
+
+/* ── GWP Pillar ─────────────────────────────────────────── */
+.gwp-pillar {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.gwp-pillar:last-child { border-bottom: none; }
+
+.gwp-pillar-num {
+  width: 28px; height: 28px;
+  background: var(--gold-bg);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: .85rem;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.gwp-pillar-text h5 { font-size: .85rem; font-weight: 700; margin-bottom: 2px; }
+.gwp-pillar-text p { font-size: .75rem; color: var(--text2); line-height: 1.4; }
+
+/* ── Footer / Legal ─────────────────────────────────────────── */
+.compliance-footer {
+  padding: 20px 16px 32px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+}
+
+.compliance-risk {
+  font-size: .7rem;
+  color: var(--text3);
+  line-height: 1.6;
+  margin-bottom: 12px;
+  padding: 12px;
+  background: var(--surface2);
+  border-radius: 10px;
+  border-left: 3px solid var(--gold);
+}
+
+.compliance-links {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  font-size: .72rem;
+  color: var(--text2);
+}
+
+.compliance-links a:hover { color: var(--gold); }
+
+/* ── Archive Pill ──────────────────────────────────────── */
+.arch-pill { display: inline-block; background: var(--gold-bg); color: var(--gold); border-radius: 6px; padding: 1px 7px; font-size: .7rem; font-weight: 700; white-space: nowrap; }
+
+/* ── Sys Dot ───────────────────────────────────────────── */
+.sys-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+/* ── Account Section ──────────────────────────────────── */
+.account-card { cursor: pointer; }
+
+/* ── Responsive Adjustments ───────────────────────────── */
+@media (max-width: 375px) {
+  .performance-stripe { grid-template-columns: 1fr 1fr; }
+  .premium-content { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 768px) {
+  .content { max-width: 480px; margin: 0 auto; }
+  .bottom-nav { max-width: 480px; margin: 0 auto; left: 50%; transform: translateX(-50%); }
+  .topbar { max-width: 480px; margin: 0 auto; left: 50%; transform: translateX(-50%); }
+}
