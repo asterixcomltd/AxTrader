@@ -152,8 +152,22 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 24px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.auth-scroll-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 20px 0;
+  min-height: calc(100vh - 48px);
 }
 
 #sparkle-auth {
@@ -193,6 +207,60 @@ a {
   font-weight: 800;
   font-size: 2rem;
   letter-spacing: -1px;
+}
+
+/* Auth back/close button — fixed top-left on auth screen */
+.auth-close-btn {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  z-index: 510;
+  transition: .15s;
+}
+.auth-close-btn:active { transform: scale(.93); }
+
+/* Google OAuth button styling */
+.btn-google {
+  width: 100%;
+  padding: 13px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  font-size: .9rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-family: inherit;
+  color: var(--text);
+  transition: .15s;
+  position: relative;
+}
+.btn-google:hover { background: var(--surface2); }
+.btn-google .google-loading {
+  position: absolute;
+  right: 14px;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  display: none;
 }
 
 .auth-tagline { color: var(--text2); font-size: .875rem; margin-bottom: 32px; text-align: center; }

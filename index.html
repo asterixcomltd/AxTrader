@@ -54,7 +54,14 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .modal h2{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;margin-bottom:4px}
 .modal p.sub{color:var(--text2);font-size:.875rem;margin-bottom:20px}
 .modal-close{position:absolute;top:16px;right:20px;width:32px;height:32px;border:none;background:var(--surface2);border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;color:var(--text2)}
-#auth-screen{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+#auth-screen{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}.auth-scroll-wrapper{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:20px 0;min-height:calc(100vh - 48px)}.auth-close-btn{display:flex;position:fixed;top:16px;left:16px;width:40px;height:40px;border-radius:50%;border:none;background:var(--surface);box-shadow:var(--shadow);cursor:pointer;align-items:center;justify-content:center;z-index:510;transition:.15s;color:var(--text)}.auth-close-btn:active{transform:scale(.93)}
+#auth-screen .auth-logo,
+#auth-screen .auth-tagline,
+#auth-screen .trust-strip,
+#auth-screen .auth-card {
+  position: relative;
+  z-index: 1;
+}
 .auth-logo{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:8px}
 .auth-logo-icon{width:80px;height:80px;background:#1a1814;border-radius:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2.5px #c9a84c,0 8px 32px rgba(201,168,76,.25);border:none}
 .auth-logo-icon span{font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:2rem;letter-spacing:-1px;background:linear-gradient(135deg,#e8c96d 0%,#c9a84c 50%,#a07830 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -1059,6 +1066,10 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 <!-- ============ AUTH SCREEN ============ -->
 <div id="auth-screen">
   <canvas id="sparkle-auth"></canvas>
+  <button class="auth-close-btn" id="auth-close-back" onclick="handleAuthBack()" style="display:none" aria-label="Go back">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <div class="auth-scroll-wrapper">
   <div class="auth-logo">
     <div class="auth-logo-icon"><span>Ax</span></div>
     <h1>AxTrader</h1>
@@ -1123,7 +1134,8 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
   <div style="margin-top:18px;text-align:center">
     <button onclick="openOverlay('docs-overlay',true)" style="background:none;border:none;color:var(--text2);font-size:.8rem;cursor:pointer;font-family:inherit;text-decoration:underline;padding:4px 8px">❓ How does AxTrader work?</button>
   </div>
-</div>
+  </div><!-- /auth-scroll-wrapper -->
+</div><!-- /auth-screen -->
 
 <!-- ============ DOCS / HELP OVERLAY ============ -->
 <div class="overlay" id="docs-overlay">
@@ -3143,26 +3155,65 @@ function _initGSI() {
 }
 
 function loginWithGoogle() {
+  // Show loading indicator
+  const btn = document.getElementById('btn-google-auth');
+  if (btn) {
+    btn.style.opacity = '.6';
+    btn.style.pointerEvents = 'none';
+  }
+
   if (typeof google === 'undefined' || !google.accounts) {
-    // GSI not loaded yet — retry once
-    showToast('Loading Google Sign-In…');
-    setTimeout(loginWithGoogle, 1200);
+    // GSI not loaded yet — retry
+    setTimeout(() => {
+      if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = ''; }
+      loginWithGoogle();
+    }, 1000);
     return;
   }
+
+  // Detect if we're on a mobile browser or in-app webview
+  const isMobileOrWebview = /Android|iPhone|iPad|iPod|webview|wv/i.test(navigator.userAgent)
+    && !/Chrome\/\d+/i.test(navigator.userAgent);
+
+  // On mobile/webview: always use the popup flow (more reliable than One-Tap)
+  if (isMobileOrWebview) {
+    // Use the fallback rendered button which triggers a proper OAuth popup
+    const fallback = document.getElementById('google-rendered-btn');
+    if (fallback) {
+      fallback.style.display = 'flex';
+      if (btn) btn.style.display = 'none';
+    }
+    // Force popup mode instead of One-Tap
+    google.accounts.id.prompt(notification => {
+      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+        // Already showing fallback button
+        if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = ''; }
+      }
+    });
+    return;
+  }
+
+  // Desktop: try One-Tap first, fallback to rendered button
   google.accounts.id.prompt(notification => {
-    // One-Tap was suppressed (browser policy, user dismissed before, etc.)
-    // Fall back to showing the Google-rendered button
     if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
       const fallback = document.getElementById('google-rendered-btn');
       if (fallback) {
         fallback.style.display = 'flex';
-        // Hide our custom button to avoid duplicates
-        const custom = document.getElementById('btn-google-auth');
-        if (custom) custom.style.display = 'none';
+        if (btn) btn.style.display = 'none';
       }
     }
+    if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = ''; }
   });
 }
+
+// Also try to auto-initialize the GSI prompt after a short delay on page load
+setTimeout(function() {
+  if (typeof google !== 'undefined' && google.accounts && !document.getElementById('auth-screen')?.style.display === 'none') {
+    try {
+      google.accounts.id.prompt();
+    } catch(e) {}
+  }
+}, 3000);
 
 function _handleGoogleCred(response) {
   try {
@@ -3183,6 +3234,61 @@ function _handleGoogleCred(response) {
   }
 }
 // ─────────────────────────────────────────────────────────────────────────────
+// ── Auth screen back/close + phone history handling ──────────────────────────
+// Push a fake history entry when auth screen shows, so phone back button closes it
+let _authHistoryPushed = false;
+
+function pushAuthHistory() {
+  if (!_authHistoryPushed) {
+    history.pushState({ auth: true }, '', location.href);
+    _authHistoryPushed = true;
+  }
+}
+
+function handleAuthBack() {
+  // If a page overlay is open, close that instead
+  const activeOverlay = document.querySelector('.overlay.active');
+  if (activeOverlay) {
+    closeOverlay(activeOverlay.id);
+    return;
+  }
+  // If inside the app, go back to the homepage
+  if (document.getElementById('app').style.display === 'flex') {
+    navigate('home');
+    return;
+  }
+  // We're on auth screen — can't go further back safely, so do nothing
+}
+
+// Handle phone back button: intercept popstate to prevent app exit
+window.addEventListener('popstate', function(e) {
+  if (e.state && e.state.auth) {
+    // User pressed back while on auth screen — re-push to prevent exit
+    pushAuthHistory();
+  }
+
+  // If an overlay is active, close it instead of going back
+  const activeOverlay = document.querySelector('.overlay.active');
+  if (activeOverlay) {
+    closeOverlay(activeOverlay.id);
+    history.pushState({ overlay: true }, '', location.href);
+    return;
+  }
+});
+
+// Override showOverlay to push history
+const _origShowOverlay = typeof showOverlay === 'function' ? showOverlay : null;
+// We'll handle overlay back via the popstate listener above
+
+// Show back button when inside the app (not on auth screen)
+function updateAuthBackButton() {
+  const btn = document.getElementById('auth-close-back');
+  if (!btn) return;
+  const isAuth = document.getElementById('auth-screen')?.style.display !== 'none';
+  btn.style.display = isAuth ? 'none' : 'flex';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 function loginUser(user) {
   appState.user=user;
   // Restore premium flag if stored in the user object
@@ -3192,6 +3298,9 @@ function loginUser(user) {
   try { localStorage.setItem('ax_user', JSON.stringify(user)); } catch(e) {}
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').style.display='flex';
+  updateAuthBackButton();
+  // Reset history so back button won't exit app
+  history.replaceState({ axPage: 'home' }, '', location.pathname);
   const letter=(user.name||'U')[0].toUpperCase();
   document.getElementById('avatar-btn').textContent='Ax'; // always brand mark
   document.getElementById('profile-avatar-letter').textContent=letter;
