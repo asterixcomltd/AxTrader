@@ -8,11 +8,11 @@ export const config = { runtime: 'edge' };
 
 export default async function handler(req) {
   // Allow any HTTP method
-  const BANK_NAME           = process.env.BANK_NAME           || 'Ecobank Ghana';
-  const BANK_ACCOUNT_NAME   = process.env.BANK_ACCOUNT_NAME   || 'Ben Adoma Kwaku';
-  const BANK_ACCOUNT_NUMBER = process.env.BANK_ACCOUNT_NUMBER || '1441005170611';
-  const BANK_SWIFT_CODE     = process.env.BANK_SWIFT_CODE     || 'ECOCGHAC';
-  const BANK_BRANCH         = process.env.BANK_BRANCH         || 'Accra';
+  const BANK_NAME           = process.env.BANK_NAME           || '';
+  const BANK_ACCOUNT_NAME   = process.env.BANK_ACCOUNT_NAME   || '';
+  const BANK_ACCOUNT_NUMBER = process.env.BANK_ACCOUNT_NUMBER || '';
+  const BANK_SWIFT_CODE     = process.env.BANK_SWIFT_CODE     || '';
+  const BANK_BRANCH         = process.env.BANK_BRANCH         || '';
 
   return new Response(JSON.stringify({
     bank_name:           BANK_NAME,
