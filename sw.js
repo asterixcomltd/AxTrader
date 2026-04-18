@@ -1,7 +1,7 @@
 // AxTrader — GWP Signal App
 // Service Worker v3.0 — Institutional cleanup
 
-const CACHE_VERSION = '3.4';
+const CACHE_VERSION = '3.5';
 const CACHE_NAME = `axtrader-v${CACHE_VERSION}`;
 
 const SHELL_ASSETS = [

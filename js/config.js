@@ -27,13 +27,7 @@ export const PAYMENT = {
   crypto_address: 'TMHx2jrrKpoHiGtZmMogM9N1sqK2XJg7Wa',
   premium_price: 12.99,
   premium_currency: 'USD',
-  bank: {
-    name: 'Ecobank Ghana',
-    account_name: 'BEN ADAMA',
-    account_number: '1441005170611',
-    swift: 'ECOCGHAC',
-    branch: '2 Morocco Lane, Off Independence Ave',
-  },
+  bank: null,  // Fetched live from /api/bank-details
 };
 
 // ── Auth ────────────────────────────────────────────────────────────

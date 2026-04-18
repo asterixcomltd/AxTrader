@@ -2015,7 +2015,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
         </a>
         <div class="payment-opt" id="pay-opt-crypto" onclick="openNowPayments()" style="cursor:pointer;position:relative"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>Crypto (USDT · BTC · ETH)</h5><p>Auto-activated instantly on payment ⚡</p></div><span style="background:var(--green-bg);color:var(--green);font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap">AUTO</span></div>
         <a class="payment-opt" href="https://t.me/asterix_support1" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Pay via Telegram</h5><p>DM @asterix_support1 to arrange</p></div><span>›</span></a>
-        <div class="payment-opt" onclick="openBankTransfer()" style="cursor:pointer"><span class="payment-opt-icon">🏦</span><div class="payment-opt-text"><h5>Bank Wire Transfer</h5><p>Ecobank Ghana · SWIFT ECOCGHAC · See full details</p></div><span>›</span></div>
+        <div class="payment-opt" onclick="openBankTransfer()" style="cursor:pointer"><span class="payment-opt-icon">🏦</span><div class="payment-opt-text"><h5>Bank Wire Transfer</h5><p>Bank Wire Transfer · See full details</p></div><span>›</span></div>
       </div>
       <div style="font-size:.7rem;color:var(--text3);text-align:center;margin-bottom:20px">Trading involves risk. Premium provides tools — results depend on your execution. <span style="text-decoration:underline;cursor:pointer" onclick="closeOverlay('upgrade-overlay');openOverlay('disclaimer-overlay')">Read disclaimer</span></div>
     </div>
@@ -2128,32 +2128,32 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
     <div style="background:var(--surface2);border-radius:14px;padding:16px;margin-bottom:14px;display:grid;gap:10px;font-size:.875rem">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <span style="color:var(--text2)">Bank Name</span>
-        <strong>Ecobank Ghana</strong>
+        <strong id="wire-bank-name">—</strong>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center">
         <span style="color:var(--text2)">Account Name</span>
         <div style="display:flex;align-items:center;gap:6px">
-          <strong>BEN ADAMA</strong>
-          <button onclick="copyWireField('BEN ADAMA','Account name')" style="border:none;background:none;cursor:pointer;font-size:.85rem;color:var(--text2);padding:2px 4px">📋</button>
+          <strong id="wire-acct-name">—</strong>
+          <button onclick="copyWireField(document.getElementById('wire-acct-name').textContent,'Account name')" style="border:none;background:none;cursor:pointer;font-size:.85rem;color:var(--text2);padding:2px 4px">📋</button>
         </div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center">
         <span style="color:var(--text2)">Account Number</span>
         <div style="display:flex;align-items:center;gap:6px">
-          <strong id="wire-acc-num">1441005170611</strong>
-          <button onclick="copyWireField('1441005170611','Account number')" style="border:none;background:none;cursor:pointer;font-size:.85rem;color:var(--text2);padding:2px 4px">📋</button>
+          <strong id="wire-acc-num">—</strong>
+          <button onclick="copyWireField(document.getElementById('wire-acc-num').textContent,'Account number')" style="border:none;background:none;cursor:pointer;font-size:.85rem;color:var(--text2);padding:2px 4px">📋</button>
         </div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center">
         <span style="color:var(--text2)">SWIFT / BIC</span>
         <div style="display:flex;align-items:center;gap:6px">
-          <strong>ECOCGHAC</strong>
-          <button onclick="copyWireField('ECOCGHAC','SWIFT code')" style="border:none;background:none;cursor:pointer;font-size:.85rem;color:var(--text2);padding:2px 4px">📋</button>
+          <strong id="wire-swift">—</strong>
+          <button onclick="copyWireField(document.getElementById('wire-swift').textContent,'SWIFT code')" style="border:none;background:none;cursor:pointer;font-size:.85rem;color:var(--text2);padding:2px 4px">📋</button>
         </div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center">
         <span style="color:var(--text2)">Branch</span>
-        <strong style="text-align:right;max-width:55%">2 Morocco Lane, Off Independence Ave</strong>
+        <strong id="wire-branch" style="text-align:right;max-width:55%">—</strong>
       </div>
     </div>
 
@@ -2408,12 +2408,12 @@ const PAYMENT_CONFIG = {
   crypto_address      : 'TMHx2jrrKpoHiGtZmMogM9N1sqK2XJg7Wa',  // USDT TRC-20
   premium_price       : 12.99,
   premium_currency    : 'USD',
-  // Bank Wire Transfer — Ecobank Ghana
-  bank_name           : 'Ecobank Ghana',
-  bank_account_name   : 'BEN ADAMA',
-  bank_account_number : '1441005170611',
-  bank_swift_code     : 'ECOCGHAC',
-  bank_branch         : '2 Morocco Lane, Off Independence Ave',
+  // Bank Wire Transfer — details injected dynamically / managed server-side
+  bank_name           : '',
+  bank_account_name   : '',
+  bank_account_number : '',
+  bank_swift_code     : '',
+  bank_branch         : '',
   // Telegram notification — now server-side only (via /api/notify)
   // Set TELEGRAM_BOT_TOKEN + TELEGRAM_ADMIN_CHAT in Vercel env vars
   // NOWPayments — server-side env vars (set in Vercel dashboard):
@@ -4113,12 +4113,27 @@ function shareReferral(platform) {
 
 // ── BANK WIRE TRANSFER ────────────────────────────────────────────────────
 let _currentWireRef = '';
-function openBankTransfer() {
+async function openBankTransfer() {
   const ref = 'AXT-BT-' + Math.random().toString(36).substr(2,6).toUpperCase();
   _currentWireRef = ref;
   document.getElementById('wire-ref').textContent = ref;
   document.getElementById('wire-amount-label').textContent =
     '$' + PAYMENT_CONFIG.premium_price.toFixed(2) + ' ' + PAYMENT_CONFIG.premium_currency;
+  
+  // Fetch bank details live from server — always fresh, no cached values
+  try {
+    const res = await fetch('/api/bank-details?_=' + Date.now(), { cache: 'no-store' });
+    const bank = await res.json();
+    const el = (id) => document.getElementById(id);
+    if (el('wire-bank-name'))    el('wire-bank-name').textContent    = bank.bank_name           || '—';
+    if (el('wire-acct-name'))    el('wire-acct-name').textContent    = bank.account_name        || '—';
+    if (el('wire-acc-num'))      el('wire-acc-num').textContent      = bank.account_number      || '—';
+    if (el('wire-swift'))        el('wire-swift').textContent        = bank.swift_code          || '—';
+    if (el('wire-branch'))       el('wire-branch').textContent       = bank.branch              || '—';
+  } catch(e) {
+    console.warn('Could not load bank details:', e);
+  }
+  
   closeOverlay('upgrade-overlay');
   openOverlay('wire-overlay', true);
 }
