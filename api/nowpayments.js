@@ -130,7 +130,12 @@ async function addPremiumUser(email, paymentId) {
 async function isPremiumUser(email) {
   const hash = crypto.createHash('sha256').update(email.toLowerCase().trim()).digest('hex');
   const list = await readPremiumGist();
-  return list.some(u => u.hash === hash);
+  const now = new Date();
+  return list.some(u => {
+    if (u.hash !== hash) return false;
+    if (u.expiresAt && new Date(u.expiresAt) < now) return false;
+    return true;
+  });
 }
 
 // ── Telegram admin notification ───────────────────────────────────────────────

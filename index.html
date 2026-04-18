@@ -2016,8 +2016,26 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
         <div class="payment-opt" id="pay-opt-crypto" onclick="openNowPayments()" style="cursor:pointer;position:relative"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>Crypto (USDT · BTC · ETH)</h5><p>Auto-activated instantly on payment ⚡</p></div><span style="background:var(--green-bg);color:var(--green);font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap">AUTO</span></div>
         <a class="payment-opt" href="https://t.me/asterix_support1" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Pay via Telegram</h5><p>DM @asterix_support1 to arrange</p></div><span>›</span></a>
         <div class="payment-opt" onclick="openBankTransfer()" style="cursor:pointer"><span class="payment-opt-icon">🏦</span><div class="payment-opt-text"><h5>Bank Wire Transfer</h5><p>Bank Wire Transfer · See full details</p></div><span>›</span></div>
+        <div class="payment-opt" onclick="openDemoTest()" style="cursor:pointer"><span class="payment-opt-icon">🎮</span><div class="payment-opt-text"><h5>🎮 Free Demo (24h Trial)</h5><p>Test all premium features free for 24 hours</p></div><span style="background:var(--gold-bg);color:var(--gold);font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap">FREE</span></div>
       </div>
       <div style="font-size:.7rem;color:var(--text3);text-align:center;margin-bottom:20px">Trading involves risk. Premium provides tools — results depend on your execution. <span style="text-decoration:underline;cursor:pointer" onclick="closeOverlay('upgrade-overlay');openOverlay('disclaimer-overlay')">Read disclaimer</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DEMO TEST MODAL ════════════════════════════════════════════════════ -->
+<div class="overlay" id="demo-overlay">
+  <div class="overlay-inner" style="max-width:500px">
+    <button class="modal-close" onclick="closeOverlay('demo-overlay')">✕</button>
+    <h3 style="color:var(--gold);font-size:1.5rem;margin-bottom:6px;font-family:'Space Grotesk',sans-serif">🎮 Free 24h Trial</h3>
+    <p style="color:var(--text2);font-size:.88rem;margin-bottom:18px">Activate instant demo premium — no payment needed. Expires after 24 hours.</p>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <input type="email" id="demo-email" placeholder="Enter your email address" style="padding:14px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.95rem;font-family:inherit">
+      <button onclick="activateDemo()" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#d4af37,#c9972e);color:#fff;font-family:inherit;font-size:1.05rem;font-weight:700;cursor:pointer;transition:.15s" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">Activate Free Trial</button>
+    </div>
+    <div id="demo-status" style="display:none;margin-top:18px;padding:16px;border-radius:12px;background:var(--success-bg);color:var(--success);text-align:center">
+      <div style="font-weight:800;font-size:1rem">Demo Activated!</div>
+      <div style="font-size:.8rem;margin-top:4px" id="demo-expires"></div>
     </div>
   </div>
 </div>
@@ -4174,15 +4192,66 @@ async function notifyBankTransfer() {
     }
   } catch(e) {
     showToast(T('wire_fallback') || 'Sent! Also DM @asterix_support1 with ref: ' + ref);
-    closeOverlay('wire-overlay');
+    closeOverlay('demo-overlay');
   } finally {
     btn.disabled = false;
-    btn.textContent = '✅ I\'ve Made the Transfer — Notify Admin';
+    btn.textContent = 'Activate Free Trial';
   }
 }
-// ─────────────────────────────────────────────────────────────────────────────
 
-// ══ NOWPAYMENTS AUTO-UPGRADE ══════════════════════════════════════════════════
+// ─── DEMO / FREE TRIAL ─────────────────────────────────────────────────────
+function openDemoTest() {
+  closeOverlay('upgrade-overlay');
+  openOverlay('demo-overlay', true);
+}
+
+async function activateDemo() {
+  const emailInput = document.getElementById('demo-email');
+  const statusDiv = document.getElementById('demo-status');
+  const expiresEl = document.getElementById('demo-expires');
+  const btn = statusDiv.querySelector('button') || emailInput;
+
+  if (!emailInput || !emailInput.value) {
+    showToast('Enter your email first');
+    return;
+  }
+
+  const email = emailInput.value.trim();
+  try {
+    const res = await fetch('/api/demo-test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const json = await res.json();
+
+    if (json.success) {
+      statusDiv.style.display = 'block';
+      statusDiv.style.background = 'var(--success-bg)';
+      statusDiv.style.color = 'var(--success)';
+      expiresEl.textContent = `Expires ${new Date(json.expiresAt).toLocaleString()} — ${json.message}`;
+      // Check premium and refresh UI
+      if (window.checkPremiumStatus) checkPremiumStatus(true);
+    } else {
+      statusDiv.style.display = 'block';
+      statusDiv.style.background = 'var(--danger-bg)';
+      statusDiv.style.color = 'var(--danger)';
+      expiresEl.textContent = json.error || 'Activation failed';
+    }
+    emailInput.value = '';
+  } catch (e) {
+    statusDiv.style.display = 'block';
+    statusDiv.style.background = 'var(--danger-bg)';
+    statusDiv.style.color = 'var(--danger)';
+    expiresEl.textContent = 'Network error — try again later';
+  }
+}
+
+// Make demo functions globally accessible
+window.openDemoTest = openDemoTest;
+window.activateDemo = activateDemo;
+
+// ═════════════════════════════════════════════════════════════════════════
 let _npPollTimer   = null;  // setInterval handle
 let _npCountdown   = null;  // setInterval for expiry timer
 let _npPaymentId   = null;  // active payment id

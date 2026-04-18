@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AxTrader — Admin Portal</title>
+  <style>
+    :root {
+      --bg: #0f1115; --card: #0f1115; --text: #e1e4e8; --text2: #768390;
+      --gold: #ffd700; --border: rgba(255,255,255,.08); --input-bg: #161b22;
+      --btn: #d4af37; --btn-text: #0f1115; --success: #2ea043; --danger: #c93c37;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; min-height: 100vh; }
+    .container { max-width: 960px; margin: 0 auto; padding: 20px; }
+    h1 { color: var(--gold); margin-bottom: 20px; font-size: 1.5rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+    .card h2 { font-size: 1.1rem; margin-bottom: 12px; color: #fff; }
+    input, button, select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); margin-bottom: 12px; font-size: 0.9rem; }
+    button { cursor: pointer; background: var(--btn); color: var(--btn-text); font-weight: 600; border: none; transition: 0.2s; }
+    button:hover { opacity: 0.85; }
+    button.danger { background: var(--danger); color: #fff; }
+    button.success { background: var(--success); color: #fff; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+    th { color: var(--text2); font-weight: 500; }
+    .status-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+    .status-finished { background: rgba(46,160,67,.2); color: var(--success); }
+    .status-pending { background: rgba(255,215,0,.2); color: var(--gold); }
+    .hidden { display: none; }
+    #toast { position: fixed; bottom: 20px; right: 20px; background: var(--success); color: #fff; padding: 10px 20px; border-radius: 8px; opacity: 0; transition: 0.3s; pointer-events: none; }
+    #toast.show { opacity: 1; }
+    .row { display: flex; gap: 10px; }
+    .row > * { flex: 1; }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="container" style="max-width: 400px; margin-top: 15vh;">
+  <h1 style="text-align:center;">AxTrader Admin</h1>
+  <div class="card">
+    <input type="password" id="admin-password" placeholder="Enter admin PIN...">
+    <button onclick="login()">Access Portal</button>
+  </div>
+</div>
+
+<!-- MAIN DASHBOARD -->
+<div id="dashboard" class="container hidden">
+  <h1>🛡️ Admin Portal</h1>
+
+  <!-- GRANT PREMIUM -->
+  <div class="card">
+    <h2>Manual Premium Grant</h2>
+    <div class="row">
+      <input type="email" id="grant-email" placeholder="User email">
+      <input type="text" id="grant-ref" placeholder="Reference (manual/txid)">
+    </div>
+    <button onclick="grantPremium()" class="success">Grant Premium & Notify on Telegram</button>
+  </div>
+
+  <!-- PREMIUM USERS -->
+  <div class="card">
+    <h2>Premium Users</h2>
+    <div style="max-height: 300px; overflow-y: auto;">
+      <table id="premium-table">
+        <thead><tr><th>Email Hash</th><th>Payment ID</th><th>Activated</th><th>Action</th></tr></thead>
+        <tbody id="premium-body"></tbody>
+      </table>
+    </div>
+    <button onclick="loadPremium()" style="margin-top:10px; background: var(--border);">Refresh Users</button>
+  </div>
+
+  <!-- RECENT PAYMENTS -->
+  <div class="card">
+    <h2>Recent NOWPayments</h2>
+    <div style="max-height: 300px; overflow-y: auto;">
+      <table id="payments-table">
+        <thead><tr><th>Payment ID</th><th>Status</th><th>Amount</th><th>Currency</th><th>Created</th></tr></thead>
+        <tbody id="payments-body"></tbody>
+      </table>
+    </div>
+    <button onclick="loadPayments()" style="margin-top:10px; background: var(--border);">Refresh Payments</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  const API = '/api/admin';
+  let token = null;
+
+  function toast(msg, isError = false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = isError ? 'show' : 'show';
+    t.style.background = isError ? '#c93c37' : '#2ea043';
+    setTimeout(() => t.className = '', 3000);
+  }
+
+  async function login() {
+    const pw = document.getElementById('admin-password').value;
+    try {
+      const res = await fetch(`${API}?action=auth`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({password: pw})
+      });
+      const data = await res.json();
+      if (data.token) {
+        token = data.token;
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        localStorage.setItem('at_admin_token', token);
+        loadPremium();
+        loadPayments();
+        toast('Authenticated successfully');
+      } else {
+        toast(data.error || 'Access denied', true);
+      }
+    } catch(e) { toast('Connection error', true); }
+  }
+
+  async function grantPremium() {
+    const email = document.getElementById('grant-email').value.trim();
+    const ref = document.getElementById('grant-ref').value.trim() || 'manual';
+    if (!email) return toast('Enter email first', true);
+    try {
+      const res = await fetch(`${API}?action=grant`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+        body: JSON.stringify({email, paymentId: ref})
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast('Premium granted & Telegram notified!');
+        document.getElementById('grant-email').value = '';
+        loadPremium();
+      } else {
+        toast(data.error, true);
+      }
+    } catch(e) { toast('Grant failed', true); }
+  }
+
+  async function revokePremium(hash) {
+    if (!confirm('Revoke premium for this user?')) return;
+    try {
+      const res = await fetch(`${API}?action=revoke`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+        body: JSON.stringify({hash})
+      });
+      const data = await res.json();
+      if (data.success) { toast('User revoked successfully'); loadPremium(); }
+      else toast(data.error, true);
+    } catch(e) { toast('Revoke failed', true); }
+  }
+
+  async function loadPremium() {
+    try {
+      const res = await fetch(`${API}?action=list&token=${token}`, {headers: {'Authorization': `Bearer ${token}`}});
+      const data = await res.json();
+      const body = document.getElementById('premium-body');
+      body.innerHTML = '';
+      if (data.users) {
+        data.users.reverse().forEach(u => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td style="font-family:monospace; font-size:.75rem">${u.hash.slice(0,12)}…</td>
+            <td>${u.paymentId}</td>
+            <td>${new Date(u.activatedAt).toLocaleDateString()}</td>
+            <td><button class="danger" style="margin:0; padding:4px 8px; font-size:.7rem; width:auto;" onclick="revokePremium('${u.hash}')">Revoke</button></td>
+          `;
+          body.appendChild(row);
+        });
+      }
+    } catch(e) { console.error(e); }
+  }
+
+  async function loadPayments() {
+    try {
+      const res = await fetch(`${API}?action=payments`, {headers: {'Authorization': `Bearer ${token}`}});
+      const data = await res.json();
+      const body = document.getElementById('payments-body');
+      body.innerHTML = '';
+      if (data.payments) {
+        data.payments.forEach(p => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${p.payment_id}</td>
+            <td><span class="status-badge status-${p.payment_status === 'finished' ? 'finished' : 'pending'}">${p.payment_status}</span></td>
+            <td>${p.pay_amount} ${p.pay_currency}</td>
+            <td>${new Date(p.created_at).toLocaleDateString()}</td>
+          `;
+          body.appendChild(row);
+        });
+      }
+    } catch(e) { console.error(e); }
+  }
+
+  // Auto-login if token exists
+  const saved = localStorage.getItem('at_admin_token');
+  if (saved) { token = saved; document.getElementById('login-screen').classList.add('hidden'); document.getElementById('dashboard').classList.remove('hidden'); loadPremium(); loadPayments(); }
+</script>
+</body>
+</html>
