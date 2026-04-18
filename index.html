@@ -4158,7 +4158,7 @@ async function notifyBankTransfer() {
     'Amount: *' + price + '*\n' +
     'Ref: ' + ref + '\n' +
     'User: ' + name + ' (' + email + ')\n\n' +
-    '✅ Confirm only after you see the transfer in your Ecobank account.';
+    '✅ The admin will confirm once the transfer is received.';
   try {
     const res = await fetch('/api/notify?action=wire', {
       method : 'POST',

@@ -60,7 +60,7 @@ module.exports = async function handler(req, res) {
       'Amount: *' + (price || '$12.99 USD') + '*\n' +
       'Ref: `' + ref + '`\n' +
       'User: ' + (name || 'Unknown') + ' (' + (email || 'No email') + ')\n\n' +
-      'Confirm only after you see the transfer in your Ecobank account.';
+      'Confirm only after you see the transfer in your account.';
 
     const result = await sendTelegram(token, chatId, msg);
     if (result.ok && result.body?.ok) {
