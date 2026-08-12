@@ -54,7 +54,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .modal h2{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;margin-bottom:4px}
 .modal p.sub{color:var(--text2);font-size:.875rem;margin-bottom:20px}
 .modal-close{position:absolute;top:16px;right:20px;width:32px;height:32px;border:none;background:var(--surface2);border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;color:var(--text2)}
-#auth-screen{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}.auth-scroll-wrapper{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:20px 0;min-height:calc(100vh - 48px)}.auth-close-btn{display:flex;position:fixed;top:16px;left:16px;width:40px;height:40px;border-radius:50%;border:none;background:var(--surface);box-shadow:var(--shadow);cursor:pointer;align-items:center;justify-content:center;z-index:510;transition:.15s;color:var(--text)}.auth-close-btn:active{transform:scale(.93)}
+#auth-screen{position:fixed;inset:0;background:var(--bg);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}.auth-scroll-wrapper{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:20px 0;min-height:calc(100vh - 48px)}.auth-close-btn{display:flex;position:fixed;top:16px;left:16px;width:40px;height:40px;border-radius:50%;border:none;background:var(--surface);box-shadow:var(--shadow);cursor:pointer;align-items:center;justify-content:center;z-index:510;transition:.15s;color:var(--text)}.auth-close-btn:active{transform:scale(.93)}
 #auth-screen .auth-logo,
 #auth-screen .auth-tagline,
 #auth-screen .trust-strip,
@@ -87,7 +87,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .lang-row{display:flex;align-items:center;gap:8px;margin-bottom:20px}
 .lang-row label{font-size:.8rem;color:var(--text2);font-weight:500}
 .lang-row select{padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--surface);color:var(--text);outline:none}
-#app{position:fixed;inset:0;display:flex;flex-direction:column;display:none}
+#app{position:fixed;inset:0;display:flex;flex-direction:column}
 .topbar{height:60px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;position:relative}
 .topbar-logo{display:flex;align-items:center;gap:8px;flex:1}
 .topbar-logo-icon{width:34px;height:34px;background:#1a1814;border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1px rgba(201,168,76,.3)}
@@ -2015,7 +2015,6 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
         </a>
         <div class="payment-opt" id="pay-opt-crypto" onclick="openNowPayments()" style="cursor:pointer;position:relative"><span class="payment-opt-icon">₿</span><div class="payment-opt-text"><h5>Crypto (USDT · BTC · ETH)</h5><p>Auto-activated instantly on payment ⚡</p></div><span style="background:var(--green-bg);color:var(--green);font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap">AUTO</span></div>
         <a class="payment-opt" href="https://t.me/asterix_support1" target="_blank"><span class="payment-opt-icon">✈️</span><div class="payment-opt-text"><h5>Pay via Telegram</h5><p>DM @asterix_support1 to arrange</p></div><span>›</span></a>
-        <div class="payment-opt" onclick="openBankTransfer()" style="cursor:pointer"><span class="payment-opt-icon">🏦</span><div class="payment-opt-text"><h5>Bank Wire Transfer</h5><p>Bank Wire Transfer · See full details</p></div><span>›</span></div>
         <div class="payment-opt" onclick="openDemoTest()" style="cursor:pointer"><span class="payment-opt-icon">🎮</span><div class="payment-opt-text"><h5>🎮 Free Demo (24h Trial)</h5><p>Test all premium features free for 24 hours</p></div><span style="background:var(--gold-bg);color:var(--gold);font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap">FREE</span></div>
       </div>
       <div style="font-size:.7rem;color:var(--text3);text-align:center;margin-bottom:20px">Trading involves risk. Premium provides tools — results depend on your execution. <span style="text-decoration:underline;cursor:pointer" onclick="closeOverlay('upgrade-overlay');openOverlay('disclaimer-overlay')">Read disclaimer</span></div>
@@ -2134,67 +2133,6 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
     </div>
   </div>
 </div>
-
-<!-- BANK WIRE TRANSFER MODAL -->
-<div class="overlay center" id="wire-overlay" onclick="closeOverlay('wire-overlay')">
-  <div class="modal centered" onclick="event.stopPropagation()" style="position:relative">
-    <button class="modal-close" onclick="closeOverlay('wire-overlay')" style="position:absolute;top:14px;right:14px">✕</button>
-    <h2>🏦 Wire Transfer Details</h2>
-    <p class="sub">Send <strong id="wire-amount-label">$12.99 USD</strong> to this account</p>
-
-    <!-- Bank details card -->
-    <div style="background:var(--surface2);border-radius:14px;padding:16px;margin-bottom:14px;display:grid;gap:10px;font-size:.875rem">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="color:var(--text2)">Bank Name</span>
-        <strong id="wire-bank-name">—</strong>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="color:var(--text2)">Account Name</span>
-        <div style="display:flex;align-items:center;gap:6px">
-          <strong id="wire-acct-name">—</strong>
-          <button onclick="copyWireField(document.getElementById('wire-acct-name').textContent,'Account name')" style="border:none;background:none;cursor:pointer;font-size:.85rem;color:var(--text2);padding:2px 4px">📋</button>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="color:var(--text2)">Account Number</span>
-        <div style="display:flex;align-items:center;gap:6px">
-          <strong id="wire-acc-num">—</strong>
-          <button onclick="copyWireField(document.getElementById('wire-acc-num').textContent,'Account number')" style="border:none;background:none;cursor:pointer;font-size:.85rem;color:var(--text2);padding:2px 4px">📋</button>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="color:var(--text2)">SWIFT / BIC</span>
-        <div style="display:flex;align-items:center;gap:6px">
-          <strong id="wire-swift">—</strong>
-          <button onclick="copyWireField(document.getElementById('wire-swift').textContent,'SWIFT code')" style="border:none;background:none;cursor:pointer;font-size:.85rem;color:var(--text2);padding:2px 4px">📋</button>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="color:var(--text2)">Branch</span>
-        <strong id="wire-branch" style="text-align:right;max-width:55%">—</strong>
-      </div>
-    </div>
-
-    <!-- Reference code -->
-    <div style="background:#fffbea;border:1.5px solid #fcd34d;border-radius:12px;padding:13px 14px;margin-bottom:14px">
-      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#92400e;margin-bottom:4px">⚠️ Include in payment memo / reference</div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:#78350f" id="wire-ref">AXT-BT-??????</span>
-        <button onclick="copyWireField(document.getElementById('wire-ref').textContent,'Reference')" style="border:none;background:#fde68a;border-radius:8px;cursor:pointer;font-size:.8rem;padding:5px 10px;font-weight:600;color:#92400e">📋 Copy</button>
-      </div>
-    </div>
-
-    <!-- Notify button -->
-    <button class="btn-primary btn-gold" id="wire-notify-btn" onclick="notifyBankTransfer()" style="margin-bottom:10px">
-      ✅ I've Made the Transfer — Notify Admin
-    </button>
-    <div style="font-size:.7rem;color:var(--text3);text-align:center;line-height:1.5">
-      Tap above after sending. Our admin will verify and activate your Premium within <strong>24 hours</strong>.<br>
-      Questions? <a href="https://t.me/asterix_support1" target="_blank" style="color:var(--gold)">@asterix_support1</a>
-    </div>
-  </div>
-</div>
-
 <div class="overlay center" id="lang-overlay" onclick="closeOverlay('lang-overlay')">
   <div class="modal centered" onclick="event.stopPropagation()" style="position:relative">
     <button class="modal-close" onclick="closeOverlay('lang-overlay')">✕</button>
@@ -2426,12 +2364,6 @@ const PAYMENT_CONFIG = {
   crypto_address      : 'TMHx2jrrKpoHiGtZmMogM9N1sqK2XJg7Wa',  // USDT TRC-20
   premium_price       : 12.99,
   premium_currency    : 'USD',
-  // Bank Wire Transfer — details injected dynamically / managed server-side
-  bank_name           : '',
-  bank_account_name   : '',
-  bank_account_number : '',
-  bank_swift_code     : '',
-  bank_branch         : '',
   // Telegram notification — now server-side only (via /api/notify)
   // Set TELEGRAM_BOT_TOKEN + TELEGRAM_ADMIN_CHAT in Vercel env vars
   // NOWPayments — server-side env vars (set in Vercel dashboard):
@@ -2453,18 +2385,44 @@ let appState = { user:null, isPremium:false, lang:'en', avatarDataURL:null };
 try { const sl = localStorage.getItem('ax_lang'); if (sl && ['en','fr','es','pt','ar'].includes(sl)) appState.lang = sl; } catch(e) {}
 
 // ── Restore session on page load (survives SW updates & reloads) ──────────
+// v3.8: Guests can now browse (Home/Signals/News/Academy) without signing in
+// first — the account is only required at actual account-bound actions
+// (checkout, profile, referral). If no saved session exists, we boot the
+// app straight into guest mode instead of forcing the auth wall.
 (function restoreSession() {
-  try {
-    const saved = localStorage.getItem('ax_user');
-    if (!saved) return;
-    const user = JSON.parse(saved);
-    if (!user || !user.name) return;
-    // Defer until DOM is ready
-    document.addEventListener('DOMContentLoaded', () => {
-      loginUser(user);
-    });
-  } catch(e) { localStorage.removeItem('ax_user'); }
+  document.addEventListener('DOMContentLoaded', () => {
+    try {
+      const saved = localStorage.getItem('ax_user');
+      if (saved) {
+        const user = JSON.parse(saved);
+        if (user && user.name) { loginUser(user); return; }
+      }
+    } catch(e) { localStorage.removeItem('ax_user'); }
+    enterGuestMode();
+  });
 })();
+
+// ── Guest mode — browse without an account ─────────────────────────────
+function enterGuestMode() {
+  const authScreen = document.getElementById('auth-screen');
+  const app = document.getElementById('app');
+  if (authScreen) authScreen.style.display = 'none';
+  if (app) app.style.display = 'flex';
+  updateAuthBackButton();
+  initApp();
+}
+
+// ── Open the sign-in / sign-up screen from within guest mode ───────────
+// Used by the avatar button and any account-gated action so guests get a
+// clear path to create an account instead of the app silently failing.
+function openAuthScreen() {
+  const authScreen = document.getElementById('auth-screen');
+  const app = document.getElementById('app');
+  if (app) app.style.display = 'none';
+  if (authScreen) authScreen.style.display = 'flex';
+  updateAuthBackButton();
+  pushAuthHistory();
+}
 
 let livePriceMap = {};
 
@@ -4075,7 +4033,7 @@ window.addEventListener('popstate', function(e) {
 // ============ OVERLAYS ============
 function openOverlay(id,center=false){const el=document.getElementById(id);el.classList.add('active');if(center)el.classList.add('center');}
 function closeOverlay(id){document.getElementById(id).classList.remove('active');}
-function openProfile(){openOverlay('profile-overlay');}
+function openProfile(){ if (!appState.user) { openAuthScreen(); return; } openOverlay('profile-overlay'); }
 function openUpgrade(){openOverlay('upgrade-overlay',true);}
 function openAboutGWP(){openOverlay('gwp-overlay');}
 
@@ -4129,75 +4087,7 @@ function shareReferral(platform) {
   }
 }
 
-// ── BANK WIRE TRANSFER ────────────────────────────────────────────────────
-let _currentWireRef = '';
-async function openBankTransfer() {
-  const ref = 'AXT-BT-' + Math.random().toString(36).substr(2,6).toUpperCase();
-  _currentWireRef = ref;
-  document.getElementById('wire-ref').textContent = ref;
-  document.getElementById('wire-amount-label').textContent =
-    '$' + PAYMENT_CONFIG.premium_price.toFixed(2) + ' ' + PAYMENT_CONFIG.premium_currency;
-  
-  // Fetch bank details live from server — always fresh, no cached values
-  try {
-    const res = await fetch('/api/bank-details?_=' + Date.now(), { cache: 'no-store' });
-    const bank = await res.json();
-    const el = (id) => document.getElementById(id);
-    if (el('wire-bank-name'))    el('wire-bank-name').textContent    = bank.bank_name           || '—';
-    if (el('wire-acct-name'))    el('wire-acct-name').textContent    = bank.account_name        || '—';
-    if (el('wire-acc-num'))      el('wire-acc-num').textContent      = bank.account_number      || '—';
-    if (el('wire-swift'))        el('wire-swift').textContent        = bank.swift_code          || '—';
-    if (el('wire-branch'))       el('wire-branch').textContent       = bank.branch              || '—';
-  } catch(e) {
-    console.warn('Could not load bank details:', e);
-  }
-  
-  closeOverlay('upgrade-overlay');
-  openOverlay('wire-overlay', true);
-}
-function copyWireField(value, label) {
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(value).then(() => showToast(label + ' copied ✓'));
-  } else {
-    showToast(label + ': ' + value);
-  }
-}
-async function notifyBankTransfer() {
-  const btn = document.getElementById('wire-notify-btn');
-  btn.disabled = true;
-  btn.textContent = 'Sending…';
-  const user = appState.user;
-  const name  = user?.name  || 'Unknown';
-  const email = user?.email || 'No email';
-  const ref   = _currentWireRef;
-  const price = '$' + PAYMENT_CONFIG.premium_price.toFixed(2) + ' USD';
-  const msg =
-    '🏦 *New Bank Transfer Request*\n' +
-    'Amount: *' + price + '*\n' +
-    'Ref: ' + ref + '\n' +
-    'User: ' + name + ' (' + email + ')\n\n' +
-    '✅ The admin will confirm once the transfer is received.';
-  try {
-    const res = await fetch('/api/notify?action=wire', {
-      method : 'POST',
-      headers: {'Content-Type':'application/json'},
-      body   : JSON.stringify({ name, email, ref, price })
-    });
-    const json = await res.json();
-    if (json.ok) {
-      showToast(T('admin_notified'));
-      closeOverlay('wire-overlay');
-    } else {
-      throw new Error('Server notification error');
-    }
-  } catch(e) {
-    showToast(T('wire_fallback') || 'Sent! Also DM @asterix_support1 with ref: ' + ref);
-    closeOverlay('demo-overlay');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Activate Free Trial';
-  }
-}
+// ── Bank Wire Transfer removed (v3.8) — no bank details are stored or shown ──
 
 // ─── DEMO / FREE TRIAL ─────────────────────────────────────────────────────
 function openDemoTest() {
