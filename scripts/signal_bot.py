@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-AxTrader Signal Bot v3.6 — Pure Price Action / Smart Money Concepts
+AxTrader Signal Bot v3.7 — Pure Price Action / Smart Money Concepts
 Runs every 30 min via GitHub Actions.
 
 ZERO LAGGING INDICATORS. No EMA. No RSI. No MACD. No Bollinger.
@@ -612,11 +612,16 @@ def generate(candles, pair, bot, tf, daily_bias=0):
     score = min(int(score), 98)
 
     # ── Minimum thresholds ────────────────────────────────────────────────────
-    # CHoCH alone (no OB/FVG/sweep) = not enough — reversals need confluence
-    if event["type"] == "CHoCH" and confirmations < 2:
+    # v3.7: was requiring 2+ confluences for CHoCH and score>=50/65 — this
+    # combination was firing ~0 signals across every 30-min run for weeks
+    # (confirmed via Gist history: crypto/forex/stocks all stayed `[]`).
+    # Loosened to 1 confluence for CHoCH and lower score floors; still
+    # requires at least one real confluence (OB/FVG/sweep) via the
+    # `confirmations == 0` guard above, so this isn't scoreless noise.
+    if event["type"] == "CHoCH" and confirmations < 1:
         return None
 
-    min_score = 65 if htf_counter else 50
+    min_score = 55 if htf_counter else 40
     if score < min_score:
         return None
 
@@ -703,18 +708,58 @@ def generate(candles, pair, bot, tf, daily_bias=0):
         # Context
         "htfBias"       : daily_bias,
         "inKillZone"    : kz,
+        "source"        : "ict-smc",
     }
 
 # ── Gist Publisher ────────────────────────────────────────────────────────────
+# v3.7: read-merge-write instead of blind overwrite. gwp-bots (the real
+# GWP Volume-Profile/Fibonacci engine) now also publishes to these same
+# three files (tagged source:"gwp-bots") — a blind overwrite here would
+# clobber those every 30 min. We only ever replace OUR OWN prior batch
+# (source:"ict-smc") and drop anything expired; everything else is left
+# untouched.
 def push_gist(files_dict):
     if not GIST_PAT:
         print("❌ No GIST_PAT secret found — cannot write to Gist")
         return False
+
+    now_ms = int(time.time() * 1000)
+    merged_files = {}
+
+    try:
+        r = requests.get(
+            f"https://api.github.com/gists/{GIST_ID}",
+            headers={"Authorization": f"token {GIST_PAT}",
+                     "Accept": "application/vnd.github.v3+json"},
+            timeout=15,
+        )
+        existing_files = r.json().get("files", {}) if r.status_code == 200 else {}
+    except Exception as e:
+        print(f"  ⚠ Gist read failed, proceeding fresh-only: {e}")
+        existing_files = {}
+
+    for fname, fresh_list in files_dict.items():
+        existing = []
+        raw = existing_files.get(fname, {}).get("content")
+        if raw:
+            try:
+                existing = json.loads(raw)
+            except Exception:
+                existing = []
+        if not isinstance(existing, list):
+            existing = []
+
+        kept = [
+            s for s in existing
+            if s.get("source") != "ict-smc" and not (s.get("expiresAt") and s["expiresAt"] < now_ms)
+        ]
+        merged_files[fname] = (kept + fresh_list)[:40]
+
     r = requests.patch(
         f"https://api.github.com/gists/{GIST_ID}",
         headers={"Authorization": f"token {GIST_PAT}",
                  "Accept": "application/vnd.github.v3+json"},
-        json={"files": {k: {"content": json.dumps(v, indent=2)} for k, v in files_dict.items()}},
+        json={"files": {k: {"content": json.dumps(v, indent=2)} for k, v in merged_files.items()}},
         timeout=15
     )
     ok = r.status_code == 200
@@ -727,7 +772,7 @@ def main():
     utc_h     = now_utc.hour
     kz_active = (2 <= utc_h < 6) or (13 <= utc_h < 17)
 
-    print(f"🤖 AxTrader Signal Bot v3.6 — {now_utc.strftime('%Y-%m-%d %H:%M')} UTC")
+    print(f"🤖 AxTrader Signal Bot v3.7 — {now_utc.strftime('%Y-%m-%d %H:%M')} UTC")
     print(f"   Mode: Pure Price Action | Zero Lagging Indicators")
     print(f"   Engine: Market Structure → BOS/CHoCH → Order Block → FVG → GWP Sweep")
     print(f"   Kill Zone: {'✅ London/NY active' if kz_active else '⏳ Off-hours'}\n")
