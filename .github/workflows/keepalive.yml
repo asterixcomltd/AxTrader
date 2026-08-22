@@ -1,0 +1,33 @@
+name: AxTrader — Keepalive
+# Prevents GitHub from auto-disabling signal-bot.yml's scheduled cron
+# after 60 days of repo inactivity (a GitHub Actions platform limit,
+# not something GIST_PAT/secrets can work around). One commit a week
+# is enough to keep the schedule active — mirrors gwp-bots' own
+# keepalive.yml so both repos survive on the free tier indefinitely.
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - name: Touch keepalive file
+        run: |
+          mkdir -p .github
+          date -u +"Last keepalive commit: %Y-%m-%dT%H:%M:%SZ" > .github/KEEPALIVE.md
+          git config user.name "axtrader-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add .github/KEEPALIVE.md
+          git diff --cached --quiet || git commit -m "chore: weekly keepalive [skip ci]"
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push && break
+            echo "Push attempt $i failed — retrying..."
+            sleep $(( (RANDOM % 5) + 1 ))
+          done
