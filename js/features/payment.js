@@ -2,11 +2,23 @@
 // NOWPayments integration, MoMo, bank wire, premium codes
 
 import { store } from '../store.js';
-import { PAYMENT, TELEGRAM_SUPPORT } from '../config.js';
+import { TELEGRAM_SUPPORT } from '../config.js';
 import { showToast, openOverlay, closeOverlay, copyToClipboard } from '../utils/dom.js';
 
 let _npCountdown = null;
+let _npPollInterval = null;
 let _currentWireRef = '';
+
+// Chrome sets this referrer specifically when a page is opened inside a
+// Trusted Web Activity (i.e. our Android app shell) — reliable, no native
+// code changes needed. Used to keep all purchase flows web-only, since
+// Google Play requires Google Play Billing for in-app digital purchases;
+// routing them through crypto/bank-wire inside the Android app would
+// violate that policy. The TWA still reads live signals fine — only the
+// purchase entry points are redirected to the browser.
+export function isAndroidApp() {
+  return document.referrer.startsWith('android-app://');
+}
 
 export function initPayments() {
   // Generate wire reference on init
@@ -22,6 +34,7 @@ export function attachPaymentListeners() {
 // ── NOWPayments ─────────────────────────────────────────────
 
 export function openNowPayments() {
+  if (isAndroidApp()) return openWebOnlyNotice();
   openOverlay('np-currency-overlay', true);
 }
 
@@ -36,21 +49,18 @@ export async function createNowPayment(currency) {
 
   try {
     const user = store.get('user');
-    const userId = user?.email || user?.name || 'guest';
+    if (!user?.email) throw new Error('Sign in with an email to purchase premium');
 
-    const res = await fetch('/api/payments/create', {
+    const res = await fetch('/api/nowpayments?action=create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        order_id: `${userId}_${Date.now()}`,
-        price_amount: PAYMENT.premium_price,
-        price_currency: PAYMENT.premium_currency,
-        pay_currency: currency,
-        payer_email: user?.email || undefined,
-      }),
+      body: JSON.stringify({ email: user.email, currency }),
     });
 
-    if (!res.ok) throw new Error('Payment creation failed');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Payment creation failed');
+    }
     const payment = await res.json();
 
     if (loading) loading.style.display = 'none';
@@ -62,29 +72,30 @@ export async function createNowPayment(currency) {
 
     // Start countdown
     if (_npCountdown) clearInterval(_npCountdown);
-    startNpCountdown(payment.expiration_estimate);
+    startNpCountdown(new Date(payment.expiration_estimate_date || Date.now() + 20 * 60000).getTime());
     // Start status polling
     startNpPolling(payment.payment_id);
 
-  } catch {
-    showToast('Could not create payment - try another method or contact support.');
+  } catch (e) {
+    showToast(e.message || 'Could not create payment - try another method or contact support.');
     closeOverlay('np-payment-overlay');
   }
 }
 
 function startNpPolling(paymentId) {
-  const interval = setInterval(async () => {
+  if (_npPollInterval) clearInterval(_npPollInterval);
+  _npPollInterval = setInterval(async () => {
     try {
-      const res = await fetch(`/api/payments/status?payment_id=${paymentId}`);
+      const res = await fetch(`/api/nowpayments?action=check&id=${paymentId}`);
       if (!res.ok) return;
       const status = await res.json();
 
       if (status.payment_status === 'finished' || status.payment_status === 'confirming') {
-        clearInterval(interval);
+        clearInterval(_npPollInterval);
         grantPremiumAutomatically();
         showNpConfirmed();
       } else if (status.payment_status === 'expired' || status.payment_status === 'refunded' || status.payment_status === 'failed') {
-        clearInterval(interval);
+        clearInterval(_npPollInterval);
         showToast('Payment expired or failed.');
         cancelNowPayment();
       }
@@ -139,8 +150,14 @@ export function cancelNowPayment() {
 // ── Bank Wire ────────────────────────────────────────────────
 
 export function openBankTransfer() {
+  if (isAndroidApp()) return openWebOnlyNotice();
   closeOverlay('upgrade-overlay');
   openOverlay('wire-overlay', true);
+}
+
+function openWebOnlyNotice() {
+  showToast('To upgrade, open axtrader.vercel.app in your browser — purchases aren\'t handled inside the app.');
+  window.open('https://axtrader.vercel.app/?upgrade=1', '_blank');
 }
 
 export function notifyBankTransfer() {
@@ -152,16 +169,16 @@ export function notifyBankTransfer() {
 }
 
 // ── Premium Codes ───────────────────────────────────────────
-
+// NOTE: there is no server endpoint yet to validate a manually-issued
+// premium code — it was previously "validated" client-side only by
+// checking the prefix 'AXT', which meant literally any string starting
+// with those 3 letters granted free premium to anyone. Disabled until
+// a real server-side redemption endpoint exists. Manual grants should
+// go through addPremiumUser() in api/nowpayments.js (e.g. via the admin
+// panel or a support-driven bank-wire confirmation) instead.
 export function grantPremium(code) {
-  // Validate code against allowed prefix 'AXT'
-  if (!code || !code.startsWith('AXT')) {
-    showToast('Invalid code');
-    return false;
-  }
-  store.setPremium(code);
-  showToast('Premium activated! Welcome to the inner circle');
-  return true;
+  showToast('Code redemption isn\'t available yet — contact support to activate premium manually.');
+  return false;
 }
 
 // ── Copy helpers ────────────────────────────────────────────
@@ -184,3 +201,4 @@ window.notifyBankTransfer = notifyBankTransfer;
 window.grantPremium = grantPremium;
 window.copyNpField = copyNpField;
 window.copyWireField = copyWireField;
+window.isAndroidApp = isAndroidApp;
