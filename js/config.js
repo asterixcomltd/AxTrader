@@ -69,7 +69,7 @@ export const PARTNERS = [
     name: 'Binance',
     desc: 'World\'s largest crypto exchange',
     cta: 'Trade on Binance →',
-    url: 'https://www.binance.com/en/register?ref=H4GJ4NKG',
+    url: 'https://account.binance.com/register?ref=1254361765&registerChannel=user_center',
     logo: 'assets/logos/binance.svg',
   },
 ];
