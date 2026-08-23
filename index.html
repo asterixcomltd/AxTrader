@@ -1789,6 +1789,21 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
           </div>
         </div>
 
+        <!-- ─── SECTION E: LEGAL ──────────────────────────────── -->
+        <div class="more-section-label">📄 Legal</div>
+        <div class="more-section" style="margin:0 16px 16px">
+          <div class="more-row" onclick="window.open('https://axtrader.vercel.app/privacy.html','_blank')">
+            <div class="more-row-icon" style="background:#f0f0f0">🔒</div>
+            <div class="more-row-text"><h5>Privacy Policy</h5><p>What we collect and why</p></div>
+            <span class="more-row-arrow">›</span>
+          </div>
+          <div class="more-row" onclick="window.open('https://axtrader.vercel.app/terms.html','_blank')" style="border-bottom:none">
+            <div class="more-row-icon" style="background:#f0f0f0">📋</div>
+            <div class="more-row-text"><h5>Terms of Service</h5><p>Not financial advice — read before trading on signals</p></div>
+            <span class="more-row-arrow">›</span>
+          </div>
+        </div>
+
         <!-- ─── SECTION E: TOOLS ──────────────────────────────── -->
         <div class="more-section-label" id="lbl-section-tools">🛠️ Tools</div>
         <div class="more-section" style="margin:0 16px 16px">
@@ -4032,7 +4047,14 @@ window.addEventListener('popstate', function(e) {
 function openOverlay(id,center=false){const el=document.getElementById(id);el.classList.add('active');if(center)el.classList.add('center');}
 function closeOverlay(id){document.getElementById(id).classList.remove('active');}
 function openProfile(){ if (!appState.user) { openAuthScreen(); return; } openOverlay('profile-overlay'); }
-function openUpgrade(){openOverlay('upgrade-overlay',true);}
+function openUpgrade(){
+  if (window.isAndroidApp && window.isAndroidApp()) {
+    showToast('To upgrade, open axtrader.vercel.app in your browser — purchases aren\'t handled inside the app.');
+    window.open('https://axtrader.vercel.app/?upgrade=1', '_blank');
+    return;
+  }
+  openOverlay('upgrade-overlay',true);
+}
 function openAboutGWP(){openOverlay('gwp-overlay');}
 
 // ── REFER & EARN ─────────────────────────────────────────────────────────
@@ -9686,8 +9708,11 @@ function initApp() {
   setInterval(fetchMarketNews, 300000);
   // Refresh analytics every fetch cycle
   setInterval(updatePerformanceAnalytics, 60000);
-  // Show upgrade reminder every 3 minutes for free users
-  if (!appState.isPremium) {
+  // Show upgrade reminder every 3 minutes for free users — skipped inside
+  // the Android app, where it can only redirect out to the browser;
+  // repeating that every 3 minutes would be spammy and could read as an
+  // attempt to route around Play Billing rather than a genuine reminder.
+  if (!appState.isPremium && !(window.isAndroidApp && window.isAndroidApp())) {
     setTimeout(() => {
       openUpgrade();
       setInterval(() => { if (!appState.isPremium) openUpgrade(); }, 180000);
