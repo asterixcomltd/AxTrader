@@ -162,6 +162,26 @@ class Store {
     this._notify('archive');
   }
 
+  // Marks any 'Active' archived signal 'Expired' once past its expiresAt.
+  // NOTE: this only resolves expiry, not win/loss — there's no stocks/forex
+  // price feed in this app yet (livePrices only covers crypto via CoinGecko),
+  // so TP/SL outcomes can't be determined for NVDA/MSTR/etc. signals.
+  // Win Rate stays '—' until a real price feed exists for all 3 asset classes.
+  resolveExpiredArchive() {
+    const now = Date.now();
+    let changed = false;
+    this._state.archive.forEach(entry => {
+      if (entry.outcome === 'Active' && entry.expiresAt && now > entry.expiresAt) {
+        entry.outcome = 'Expired';
+        changed = true;
+      }
+    });
+    if (changed) {
+      try { localStorage.setItem(STORAGE_KEYS.archive, JSON.stringify(this._state.archive)); } catch {}
+      this._notify('archive');
+    }
+  }
+
   // ── Course Progress ─────────────────────────────────────────────────
   markCourseCompleted(courseKey) {
     if (!this._state.courseProgress[courseKey]) {
