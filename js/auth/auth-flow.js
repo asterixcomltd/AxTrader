@@ -23,7 +23,25 @@ export function initAuth() {
 
 export function loginUser(user) {
   store.setUser(user);
+  syncPremiumFromServer(user?.email);
   showApp();
+}
+
+// Server (the premium_users gist, updated only by the NOWPayments webhook or
+// admin) is the real source of truth for premium status — this reconciles it
+// into the local session on every login so premium survives across devices
+// and reinstalls, instead of only ever living in this device's localStorage.
+async function syncPremiumFromServer(email) {
+  if (!email) return;
+  try {
+    const res = await fetch(`/api/nowpayments?action=is-premium&email=${encodeURIComponent(email)}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.premium) store.setPremium('server_verified');
+  } catch {
+    // Network hiccup — leave existing local state as-is rather than
+    // demoting a legitimately premium user due to a transient failure.
+  }
 }
 
 export function doLogout() {
