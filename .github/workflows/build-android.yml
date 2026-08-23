@@ -36,15 +36,46 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Generate signing keystore
+      - name: Require keystore secrets
         run: |
+          if [ -z "${{ secrets.KEYSTORE_PASSWORD }}" ]; then
+            echo "::error::KEYSTORE_PASSWORD secret is not set. Refusing to build with a public default password."
+            echo "See the setup instructions in this workflow file's comments."
+            exit 1
+          fi
+
+      - name: Restore persisted signing keystore
+        id: restore_keystore
+        run: |
+          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
+            echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > ${{ github.workspace }}/axtrader-release.keystore
+            echo "restored=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "restored=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ── ONE-TIME BOOTSTRAP ONLY ──────────────────────────────────────
+      # This step only runs if KEYSTORE_BASE64 hasn't been set yet — i.e.
+      # your very first-ever build. After this run:
+      #   1. Download the "signing-keystore" artifact below.
+      #   2. Save axtrader-release.keystore somewhere permanent and safe
+      #      (it can NEVER be regenerated or recovered if lost — losing it
+      #      means you can never update this app on Play Store again).
+      #   3. Run: base64 -w0 axtrader-release.keystore
+      #   4. Add the output as a new repo secret named KEYSTORE_BASE64.
+      #   5. Every build after that reuses the same key automatically,
+      #      and this generation step will be skipped.
+      - name: Generate signing keystore (first run only)
+        if: steps.restore_keystore.outputs.restored != 'true'
+        run: |
+          echo "::warning::No KEYSTORE_BASE64 secret found — generating a NEW keystore. Save it as instructed in this file's comments, or every future build will silently use a different signing key and Play Store will reject your next update."
           keytool -genkeypair \
             -alias axtrader \
             -keyalg RSA -keysize 2048 \
             -validity 10000 \
             -keystore ${{ github.workspace }}/axtrader-release.keystore \
-            -storepass ${{ secrets.KEYSTORE_PASSWORD || 'axtrader2025' }} \
-            -keypass ${{ secrets.KEYSTORE_PASSWORD || 'axtrader2025' }} \
+            -storepass ${{ secrets.KEYSTORE_PASSWORD }} \
+            -keypass ${{ secrets.KEYSTORE_PASSWORD }} \
             -dname "CN=AxTrader, OU=Mobile, O=Asterix.COM Ltd, L=Accra, ST=Greater Accra, C=GH"
 
       - name: Make gradlew executable
@@ -66,9 +97,9 @@ jobs:
             -PVERSION_NAME="${{ github.event.inputs.version_name || '1.0.0' }}" \
             -PVERSION_CODE="${{ github.event.inputs.version_code || '1' }}" \
             -PKEYSTORE_FILE="${{ github.workspace }}/axtrader-release.keystore" \
-            -PKEYSTORE_PASSWORD="${{ secrets.KEYSTORE_PASSWORD || 'axtrader2025' }}" \
+            -PKEYSTORE_PASSWORD="${{ secrets.KEYSTORE_PASSWORD }}" \
             -PKEY_ALIAS="axtrader" \
-            -PKEY_PASSWORD="${{ secrets.KEYSTORE_PASSWORD || 'axtrader2025' }}"
+            -PKEY_PASSWORD="${{ secrets.KEYSTORE_PASSWORD }}"
 
       - name: Build Release AAB
         run: |
@@ -76,9 +107,9 @@ jobs:
             -PVERSION_NAME="${{ github.event.inputs.version_name || '1.0.0' }}" \
             -PVERSION_CODE="${{ github.event.inputs.version_code || '1' }}" \
             -PKEYSTORE_FILE="${{ github.workspace }}/axtrader-release.keystore" \
-            -PKEYSTORE_PASSWORD="${{ secrets.KEYSTORE_PASSWORD || 'axtrader2025' }}" \
+            -PKEYSTORE_PASSWORD="${{ secrets.KEYSTORE_PASSWORD }}" \
             -PKEY_ALIAS="axtrader" \
-            -PKEY_PASSWORD="${{ secrets.KEYSTORE_PASSWORD || 'axtrader2025' }}"
+            -PKEY_PASSWORD="${{ secrets.KEYSTORE_PASSWORD }}"
 
       - name: Print signing fingerprint
         run: |
@@ -86,7 +117,7 @@ jobs:
           keytool -list -v \
             -keystore ${{ github.workspace }}/axtrader-release.keystore \
             -alias axtrader \
-            -storepass ${{ secrets.KEYSTORE_PASSWORD || 'axtrader2025' }} \
+            -storepass ${{ secrets.KEYSTORE_PASSWORD }} \
             | grep SHA256
           echo ""
           echo "Copy this fingerprint into .well-known/assetlinks.json"
@@ -109,7 +140,8 @@ jobs:
           name: AxTrader-release-aab
           path: android/app/build/outputs/bundle/release/*.aab
 
-      - name: Upload Keystore (for Play Store)
+      - name: Upload Keystore (first run only — save this permanently, then discard from Actions)
+        if: steps.restore_keystore.outputs.restored != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: signing-keystore
