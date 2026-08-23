@@ -17,6 +17,7 @@ const ARCHIVE_TOTAL = 'arch-total';
 
 export function initSignals() {
   attachSignalsListeners();
+  store.resolveExpiredArchive();
   // Initial fetch
   fetchSignals();
 }
@@ -72,6 +73,7 @@ export async function fetchSignals() {
 
     // Archive
     signalsData.filter(s => s.ts).forEach(s => store.addSignalToArchive(s));
+    store.resolveExpiredArchive();
 
     // Update last update time
     const el = document.getElementById('signal-last-update');
