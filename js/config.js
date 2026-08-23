@@ -33,9 +33,9 @@ export const PAYMENT = {
 // ── Auth ────────────────────────────────────────────────────────────
 export const AUTH = {
   google_client_id: '688135725461-su1l15k9biemu8ki48apbth1gd6vhh9m.apps.googleusercontent.com',
-  // Supabase (placeholder — wire up when Supabase project is created)
-  supabase_url: '',
-  supabase_anon_key: '',
+  // Supabase — project: axtrader (Europe region)
+  supabase_url: 'https://bbytiihhhzhmaqyaewvo.supabase.co',
+  supabase_anon_key: 'sb_publishable_u9tiUHyQBit9txQdKv5ZBQ_wA6v8p9W',
 };
 
 // ── Partner Exchanges ───────────────────────────────────────────────
