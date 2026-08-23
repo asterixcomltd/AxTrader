@@ -8,7 +8,7 @@ import { navigate } from '../router.js';
 import { openOverlay, closeOverlay, showToast } from '../utils/dom.js';
 import { validateField, validateForm, showFieldErrors, clearFieldError } from '../utils/validate.js';
 import { initSupabase } from './supabase.js';
-import { GOOGLE_CLIENT_ID } from '../config.js';
+import { AUTH, SUPPORT_EMAIL } from '../config.js';
 import { boot, showApp, showAuth } from '../app.js';
 
 // ── Auth State ────────────────────────────────────────────────
@@ -133,15 +133,19 @@ async function handlePasswordReset(e) {
   if (!email) return;
 
   const supabase = await initSupabase();
+  let sent = false;
   if (supabase) {
     try {
       await supabase.auth.resetPasswordForEmail(email);
+      sent = true;
     } catch {
-      // Fall through to local notification
+      // Fall through to honest local-mode message below
     }
   }
 
-  showToast('Reset link sent to your email');
+  showToast(sent
+    ? 'Reset link sent to your email'
+    : `Password reset isn't available yet — contact ${SUPPORT_EMAIL} for help signing in.`);
   closeOverlay('forgot-overlay');
 }
 
@@ -160,7 +164,7 @@ async function handleGoogleSignIn() {
   // Fallback: use Google Identity Services
   if (window.google?.accounts?.id) {
     window.google.accounts.id.initialize({
-      client_id: GOOGLE_CLIENT_ID,
+      client_id: AUTH.google_client_id,
       callback: (response) => {
         const payload = JSON.parse(atob(response.credential.split('.')[1]));
         loginUser({ name: payload.name || payload.email, email: payload.email });
