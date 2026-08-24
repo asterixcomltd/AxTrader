@@ -75,10 +75,17 @@ export const PARTNERS = [
 ];
 
 // ── Signal Bots ─────────────────────────────────────────────────────
+// "pairs" is display copy only — keep it in sync with each gwp-bots
+// sub-bot's actual SYMBOLS list (bots/<name>/config.js in the gwp-bots
+// repo). Previous copy here listed a fabricated "OIL" pair no engine
+// tracks, and undersold real coverage (crypto is 20 pairs, not 6;
+// forex is 14, not 3-4; stocks is 18, not 5) — fixed to name the
+// standout symbols per market and give the real total count instead of
+// implying the list is exhaustive.
 export const SIGNAL_BOTS = [
-  { name: 'Crypto Signals Bot', handle: '@gwp_crypto_bot', url: 'https://t.me/gwp_crypto_bot', bg: '#fef3c7', emoji: '\u{1F7E1}', pairs: 'BTC · SOL · UNI · COMP · LINK · DEXE', bot_key: 'crypto' },
-  { name: 'Forex Signals Bot', handle: '@gwp_forex_bot', url: 'https://t.me/gwp_forex_bot', bg: '#fdf0ee', emoji: '\u{1F534}', pairs: 'XAU/USD · EUR/USD · GBP/USD · OIL', bot_key: 'forex' },
-  { name: 'Stocks Signals Bot', handle: '@gwp_stocks_bot', url: 'https://t.me/gwp_stocks_bot', bg: '#eff6ff', emoji: '\u{1F535}', pairs: 'TSLA · NVDA · MSTR · PLTR · AMD', bot_key: 'stocks' },
+  { name: 'Crypto Signals Bot', handle: '@gwp_crypto_bot', url: 'https://t.me/gwp_crypto_bot', bg: '#fef3c7', emoji: '\u{1F7E1}', pairs: 'BTC · ETH · SOL · LINK · BNB +15 more (20 pairs)', bot_key: 'crypto' },
+  { name: 'Forex Signals Bot', handle: '@gwp_forex_bot', url: 'https://t.me/gwp_forex_bot', bg: '#fdf0ee', emoji: '\u{1F534}', pairs: 'XAU/USD · EUR/USD · GBP/USD +11 more (14 pairs)', bot_key: 'forex' },
+  { name: 'Stocks Signals Bot', handle: '@gwp_stocks_bot', url: 'https://t.me/gwp_stocks_bot', bg: '#eff6ff', emoji: '\u{1F535}', pairs: 'AAPL · TSLA · NVDA · MSFT +14 more (18 tickers)', bot_key: 'stocks' },
 ];
 
 // ── CoinGecko IDs ────────────────────────────────────────────────────
