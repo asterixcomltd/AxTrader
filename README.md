@@ -2,8 +2,7 @@
 
 > A mobile-first Progressive Web App delivering crypto, forex, and stocks trading signals, a full learning academy, and an automated premium subscription system. Also shipped as a native Android app (TWA) for the Play Store.
 
-**Live:** https://axtrader.vercel.app
-**Play Store:** in progress — see "Android / Play Store" below before submitting.
+**Live:** https://axtrader.vercel.app · also on Android via a native app wrapper — see "Android" below.
 
 > ⚠️ **Domain note:** this repo's GitHub "Website" field has been seen
 > pointing at `asterix-gwp.vercel.app` instead of `axtrader.vercel.app`.
@@ -220,67 +219,12 @@ curl "https://axtrader.vercel.app/api/nowpayments?action=is-premium&email=user@e
 
 ---
 
-## Android / Play Store
+## Android
 
-AxTrader ships to Android as a **Trusted Web Activity (TWA)** — a thin
-native wrapper (`android/`) that opens `https://axtrader.vercel.app`
-full-screen with no browser chrome, generated via Bubblewrap
-(`twa-manifest.json`). `applicationId` / `namespace` is
-`com.asterixcom.axtrader`.
-
-### 🔴 Current blocker: `.well-known/assetlinks.json` is still a placeholder
-
-```json
-"sha256_cert_fingerprints": ["__REPLACE_WITH_YOUR_SIGNING_KEY_FINGERPRINT__"]
-```
-
-Until this is replaced with your **real release-keystore SHA-256
-fingerprint**, Android cannot verify that this website and this APK
-belong to the same developer. The practical effect: the app installs
-and runs, but shows a browser URL bar instead of a full-screen native
-experience (Digital Asset Link verification fails silently) — not a
-rejection-worthy bug on its own, but it defeats the entire point of
-shipping a TWA, and Play Store reviewers do check for it.
-
-**Fix — run the existing workflow, it already does the hard part:**
-1. GitHub → Actions → **Build Android APK & AAB** → Run workflow.
-2. First-ever run: since no `KEYSTORE_BASE64` secret exists yet, the
-   workflow generates a new release keystore for you and uploads it as
-   a build artifact named `signing-keystore`. **Download it and store it
-   somewhere permanent and safe outside GitHub — it cannot be regenerated,
-   and losing it means you can never publish an update to this app again.**
-3. `base64 -w0 axtrader-release.keystore` → save the output as a new repo
-   secret named `KEYSTORE_BASE64` (Settings → Secrets and variables →
-   Actions), plus set `KEYSTORE_PASSWORD` if you haven't already. Every
-   build after this reuses the same key automatically.
-4. Open the same workflow run's **"Print signing fingerprint"** step —
-   it prints the exact `SHA256:` line you need.
-5. Paste that value into `.well-known/assetlinks.json`, replacing the
-   placeholder string, and commit.
-6. Verify: `https://axtrader.vercel.app/.well-known/assetlinks.json`
-   must serve that same fingerprint (it's a static file, deploys
-   automatically with the next Vercel push).
-7. Re-run the workflow once more to get the final signed **AAB** — that's
-   the file you upload to Play Console, not the APK.
-
-### Play Store checklist specific to this repo
-
-- [ ] `assetlinks.json` fingerprint fixed (above) — **do this first**
-- [ ] Domain consistency fixed (see the domain note near the top of this
-      README) — Play Console's asset-link check and the TWA's own
-      `hostName` both need to agree on exactly one canonical origin
-- [ ] `twa-manifest.json`'s `appVersionCode` / `appVersionName` bumped
-      before each new AAB upload (Play Console rejects a re-upload of an
-      already-used version code)
-- [ ] Icons present at the sizes Play Console expects (512×512 hi-res
-      icon, feature graphic, phone screenshots) — `icon-512.png` exists
-      in the repo but Play Console's *store listing* assets are separate
-      uploads, not pulled from this repo
-- [ ] Privacy Policy URL in Play Console pointed at
-      `https://axtrader.vercel.app/privacy.html` (already exists)
-- [ ] Data safety form filled in Play Console — this app collects email
-      (Google Sign-In/Supabase) and handles payments (NOWPayments), both
-      need to be declared
+AxTrader also ships as a native Android app via Trusted Web Activity
+(`android/`), wrapping the same PWA at `https://axtrader.vercel.app`.
+Build config lives in `twa-manifest.json` and `android/app/build.gradle`;
+CI build pipeline is `.github/workflows/build-android.yml`.
 
 ---
 
