@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-AxTrader Signal Bot v3.7 — Pure Price Action / Smart Money Concepts
+AxTrader Signal Bot v3.8 — Pure Price Action / Smart Money Concepts
 Runs every 30 min via GitHub Actions.
 
 ZERO LAGGING INDICATORS. No EMA. No RSI. No MACD. No Bollinger.
@@ -51,24 +51,34 @@ BINANCE_URL = "https://api.binance.com/api/v3/klines"
 YAHOO_URL   = "https://query1.finance.yahoo.com/v8/finance/chart/{}"
 
 CRYPTO_PAIRS = [
-    # v3.6: 16 pairs — removed SUSHI (0% WR), aligned with gwp-bots v3.6
-    ("BTCUSDT",  "BTC/USDT",  "crypto", "4h"),
-    ("ETHUSDT",  "ETH/USDT",  "crypto", "4h"),
-    ("SOLUSDT",  "SOL/USDT",  "crypto", "4h"),
-    ("LINKUSDT", "LINK/USDT", "crypto", "4h"),
-    ("BNBUSDT",  "BNB/USDT",  "crypto", "4h"),
-    ("DEXEUSDT", "DEXE/USDT", "crypto", "4h"),
-    ("UNIUSDT",  "UNI/USDT",  "crypto", "4h"),
-    ("COMPUSDT", "COMP/USDT", "crypto", "4h"),
-    ("NEARUSDT", "NEAR/USDT", "crypto", "4h"),
-    ("AVAXUSDT", "AVAX/USDT", "crypto", "4h"),
-    ("AAVEUSDT", "AAVE/USDT", "crypto", "4h"),
-    ("ARBUSDT",  "ARB/USDT",  "crypto", "4h"),
-    ("INJUSDT",  "INJ/USDT",  "crypto", "4h"),
-    ("DOTUSDT",  "DOT/USDT",  "crypto", "4h"),
-    ("FILUSDT",  "FIL/USDT",  "crypto", "4h"),
-    ("SUIUSDT",  "SUI/USDT",  "crypto", "4h"),
-    ("ATOMUSDT", "ATOM/USDT", "crypto", "4h"),
+    # v3.8: switched from Binance to Yahoo Finance. Run 88966290681
+    # confirmed Binance's spot API returns HTTP 451 for EVERY crypto
+    # pair from GitHub Actions' hosted-runner IPs — not a bad symbol,
+    # the whole exchange is geo-blocked from this infra, so crypto had
+    # been producing zero signals from this bot since inception.
+    # Yahoo prices crypto in USD (not USDT) — pair labels below changed
+    # from "/USDT" to "/USD" to reflect the real data source (price
+    # difference between USD and USDT is negligible for signal purposes,
+    # but the label should be honest about what's actually being read).
+    # Yahoo has no native 4h candle; fetch_yahoo_crypto() below builds
+    # 4h bars from 60m bars.
+    (["BTC-USD"],  "BTC/USD",  "crypto", "4h"),
+    (["ETH-USD"],  "ETH/USD",  "crypto", "4h"),
+    (["SOL-USD"],  "SOL/USD",  "crypto", "4h"),
+    (["LINK-USD"], "LINK/USD", "crypto", "4h"),
+    (["BNB-USD"],  "BNB/USD",  "crypto", "4h"),
+    (["DEXE-USD"], "DEXE/USD", "crypto", "4h"),
+    (["UNI-USD"],  "UNI/USD",  "crypto", "4h"),
+    (["COMP-USD"], "COMP/USD", "crypto", "4h"),
+    (["NEAR-USD"], "NEAR/USD", "crypto", "4h"),
+    (["AVAX-USD"], "AVAX/USD", "crypto", "4h"),
+    (["AAVE-USD"], "AAVE/USD", "crypto", "4h"),
+    (["ARB-USD"],  "ARB/USD",  "crypto", "4h"),
+    (["INJ-USD"],  "INJ/USD",  "crypto", "4h"),
+    (["DOT-USD"],  "DOT/USD",  "crypto", "4h"),
+    (["FIL-USD"],  "FIL/USD",  "crypto", "4h"),
+    (["SUI-USD"],  "SUI/USD",  "crypto", "4h"),
+    (["ATOM-USD"], "ATOM/USD", "crypto", "4h"),
 ]
 FOREX_PAIRS = [
     # v3.7: switched from Binance (XAUUSDT/EURUSDT/GBPUSDT — unreliable/
@@ -94,6 +104,13 @@ EXPIRY_HOURS = {"1H": 4, "4H": 16, "1D": 78}  # v3.6: 1D raised 72→78 (aligned
 
 # ── Data Fetching (with retry + validation) ──────────────────────────────────
 def fetch_binance(symbol, interval, limit=150, retries=2):
+    """
+    v3.8: no longer called anywhere in this file by default — Binance's
+    spot API is geo-blocked (HTTP 451) from GitHub Actions' hosted
+    runners (see CRYPTO_PAIRS/FOREX_PAIRS comments above). Left in place
+    only in case this bot ever runs from infra Binance doesn't block
+    (e.g. a self-hosted runner) and someone wants it back.
+    """
     for attempt in range(retries + 1):
         try:
             r = requests.get(BINANCE_URL,
@@ -179,6 +196,47 @@ def fetch_yahoo_fx(symbol_candidates, limit=150, retries=2, interval="60m", rang
             return candles
     print(f"  ⚠ Yahoo fetch failed for all candidates: {symbol_candidates}")
     return []
+
+def resample_candles(candles, group_size):
+    """
+    v3.8: Aggregate consecutive same-size candles into larger bars
+    (e.g. 4× 60m → 1× 4h). Assumes candles arrive in chronological
+    order with even spacing (true for a single Yahoo chart response).
+    A trailing partial group (fewer than group_size bars left) is
+    dropped rather than emitted as a short/incomplete bar.
+    """
+    out = []
+    for i in range(0, len(candles) - group_size + 1, group_size):
+        chunk = candles[i:i + group_size]
+        out.append({
+            "t": chunk[0]["t"],
+            "o": chunk[0]["o"],
+            "h": max(c["h"] for c in chunk),
+            "l": min(c["l"] for c in chunk),
+            "c": chunk[-1]["c"],
+            "v": sum(c["v"] for c in chunk),
+        })
+    return out
+
+def fetch_yahoo_crypto(symbol_candidates, tf, limit=150, retries=2):
+    """
+    v3.8: Crypto fetch via Yahoo Finance instead of Binance — Binance's
+    spot API returns HTTP 451 (region-blocked) from GitHub Actions'
+    hosted-runner IPs (confirmed in run 88966290681: every single
+    crypto pair failed this way), so crypto had been silently producing
+    zero signals from this bot. Yahoo has no native 4h interval, so 4h
+    bars are built by fetching 60m bars and aggregating 4-at-a-time via
+    resample_candles(). 1d (used for daily bias) is fetched directly —
+    Yahoo does support a native 1d interval.
+    """
+    if tf == "1d":
+        return fetch_yahoo_fx(symbol_candidates, limit=limit, retries=retries, interval="1d", range_="6mo")
+    if tf == "4h":
+        hourly = fetch_yahoo_fx(symbol_candidates, limit=(limit * 4) + 4, retries=retries, interval="60m", range_="3mo")
+        return resample_candles(hourly, 4)[-limit:]
+    # Any other tf string is passed straight through as a Yahoo interval —
+    # covers future additions without needing another branch here.
+    return fetch_yahoo_fx(symbol_candidates, limit=limit, retries=retries, interval=tf, range_="3mo")
 
 # ── ATR — geometric ruler only, NOT a signal ──────────────────────────────────
 def atr(candles, period=14):
@@ -808,7 +866,7 @@ def main():
     utc_h     = now_utc.hour
     kz_active = (2 <= utc_h < 6) or (13 <= utc_h < 17)
 
-    print(f"🤖 AxTrader Signal Bot v3.7 — {now_utc.strftime('%Y-%m-%d %H:%M')} UTC")
+    print(f"🤖 AxTrader Signal Bot v3.8 — {now_utc.strftime('%Y-%m-%d %H:%M')} UTC")
     print(f"   Mode: Pure Price Action | Zero Lagging Indicators")
     print(f"   Engine: Market Structure → BOS/CHoCH → Order Block → FVG → GWP Sweep")
     print(f"   Kill Zone: {'✅ London/NY active' if kz_active else '⏳ Off-hours'}\n")
@@ -817,9 +875,9 @@ def main():
 
     # ── Crypto ────────────────────────────────────────────────────────────────
     print("📊 Scanning crypto pairs…")
-    for sym, pair, bot, tf in CRYPTO_PAIRS:
-        candles = fetch_binance(sym, tf, limit=150)
-        bias    = get_daily_bias(sym)
+    for symbols, pair, bot, tf in CRYPTO_PAIRS:
+        candles = fetch_yahoo_crypto(symbols, tf, limit=150)
+        bias    = get_daily_bias(symbols[0], yahoo_candidates=symbols)
         bias_lbl = {1: "↑Bull", 0: "→Neut", -1: "↓Bear"}.get(bias, "?")
 
         sig = generate(candles, pair, bot, tf, daily_bias=bias)
