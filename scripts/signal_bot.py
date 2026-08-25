@@ -71,9 +71,16 @@ CRYPTO_PAIRS = [
     ("ATOMUSDT", "ATOM/USDT", "crypto", "4h"),
 ]
 FOREX_PAIRS = [
-    ("XAUUSDT", "XAU/USD", "forex", "1h"),
-    ("EURUSDT", "EUR/USD", "forex", "1h"),
-    ("GBPUSDT", "GBP/USD", "forex", "1h"),
+    # v3.7: switched from Binance (XAUUSDT/EURUSDT/GBPUSDT — unreliable/
+    # unverified as real spot pairs there) to Yahoo Finance, confirmed
+    # working for EURUSD=X and GBPUSD=X directly against
+    # query1.finance.yahoo.com. Gold's exact Yahoo ticker couldn't be
+    # independently confirmed, so it carries a fallback candidate
+    # (GC=F, the COMEX futures proxy) — fetch_yahoo_fx tries each in
+    # order and logs which one actually worked.
+    (["XAUUSD=X", "GC=F"], "XAU/USD", "forex", "1h"),
+    (["EURUSD=X"],         "EUR/USD", "forex", "1h"),
+    (["GBPUSD=X"],         "GBP/USD", "forex", "1h"),
 ]
 STOCK_SYMBOLS = [
     ("TSLA",  "TSLA",  "stocks"),
@@ -114,12 +121,12 @@ def fetch_binance(symbol, interval, limit=150, retries=2):
             print(f"  ⚠ Binance fetch failed for {symbol} {interval}: {e}")
             return []
 
-def fetch_yahoo(symbol, limit=80, retries=2):
+def fetch_yahoo(symbol, limit=80, retries=2, interval="1d", range_="6mo"):
     for attempt in range(retries + 1):
         try:
             url = YAHOO_URL.format(symbol)
             r = requests.get(url,
-                             params={"interval": "1d", "range": "6mo"},
+                             params={"interval": interval, "range": range_},
                              headers={"User-Agent": "Mozilla/5.0"},
                              timeout=10)
             r.raise_for_status()
@@ -153,6 +160,25 @@ def fetch_yahoo(symbol, limit=80, retries=2):
                 continue
             print(f"  ⚠ Yahoo fetch failed for {symbol}: {e}")
             return []
+
+def fetch_yahoo_fx(symbol_candidates, limit=150, retries=2, interval="60m", range_="1mo"):
+    """
+    v3.7: Forex/commodity fetch with automatic ticker fallback. Gold in
+    particular has been observed under different tickers ("XAUUSD=X" vs
+    the futures proxy "GC=F") depending on Yahoo's current listings —
+    rather than hardcoding a guess, try each candidate in order and use
+    whichever actually returns data. symbol_candidates is a list;
+    logs which one worked so future runs/maintainers know the truth
+    without needing to test it by hand again.
+    """
+    for i, sym in enumerate(symbol_candidates):
+        candles = fetch_yahoo(sym, limit=limit, retries=retries, interval=interval, range_=range_)
+        if candles:
+            if i > 0:
+                print(f"  ℹ using fallback ticker {sym} (primary {symbol_candidates[0]} returned no data)")
+            return candles
+    print(f"  ⚠ Yahoo fetch failed for all candidates: {symbol_candidates}")
+    return []
 
 # ── ATR — geometric ruler only, NOT a signal ──────────────────────────────────
 def atr(candles, period=14):
@@ -485,28 +511,38 @@ def in_kill_zone(ts_ms):
     return (2 <= h < 6) or (13 <= h < 17)
 
 # ── HTF Daily Bias — from STRUCTURE, zero indicators ─────────────────────────
-def get_daily_bias(symbol):
+def get_daily_bias(symbol, yahoo_candidates=None):
     """
     Daily directional bias from PRICE STRUCTURE only (cached per symbol).
     HH + HL pattern → bullish bias (+1)
     LH + LL pattern → bearish bias (-1)
     Mixed / not enough swings → neutral (0)
+
+    v3.7: yahoo_candidates (list of Yahoo tickers, primary first) routes
+    forex/commodity symbols through fetch_yahoo_fx instead of Binance —
+    Binance doesn't reliably list true forex/commodity spot pairs, so
+    forex bias was silently defaulting to neutral (0) for every pair
+    before this. Crypto symbols (yahoo_candidates=None) are unaffected.
     """
-    if symbol in _daily_bias_cache:
-        return _daily_bias_cache[symbol]
-    candles = fetch_binance(symbol, "1d", limit=80)
+    cache_key = symbol if yahoo_candidates is None else yahoo_candidates[0]
+    if cache_key in _daily_bias_cache:
+        return _daily_bias_cache[cache_key]
+    if yahoo_candidates is not None:
+        candles = fetch_yahoo_fx(yahoo_candidates, limit=80, interval="1d", range_="6mo")
+    else:
+        candles = fetch_binance(symbol, "1d", limit=80)
     if len(candles) < 20:
-        _daily_bias_cache[symbol] = 0
+        _daily_bias_cache[cache_key] = 0
         return 0
     swings = find_swings(candles, pivot=3)
     struct = get_structure(swings)
     if struct == "bullish":
-        _daily_bias_cache[symbol] = 1
+        _daily_bias_cache[cache_key] = 1
         return 1
     if struct == "bearish":
-        _daily_bias_cache[symbol] = -1
+        _daily_bias_cache[cache_key] = -1
         return -1
-    _daily_bias_cache[symbol] = 0
+    _daily_bias_cache[cache_key] = 0
     return 0
 
 # ── Main Signal Generator v3.6 ────────────────────────────────────────────────
@@ -797,9 +833,9 @@ def main():
 
     # ── Forex ─────────────────────────────────────────────────────────────────
     print("\n💱 Scanning forex pairs…")
-    for sym, pair, bot, tf in FOREX_PAIRS:
-        candles = fetch_binance(sym, tf, limit=150)
-        bias    = get_daily_bias(sym)
+    for symbols, pair, bot, tf in FOREX_PAIRS:
+        candles = fetch_yahoo_fx(symbols, limit=150, interval="60m", range_="1mo")
+        bias    = get_daily_bias(symbols[0], yahoo_candidates=symbols)
         bias_lbl = {1: "↑Bull", 0: "→Neut", -1: "↓Bear"}.get(bias, "?")
 
         sig = generate(candles, pair, bot, tf, daily_bias=bias)
