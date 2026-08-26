@@ -51,57 +51,45 @@ BINANCE_URL = "https://api.binance.com/api/v3/klines"
 YAHOO_URL   = "https://query1.finance.yahoo.com/v8/finance/chart/{}"
 
 CRYPTO_PAIRS = [
-    # v3.8: switched from Binance to Yahoo Finance. Run 88966290681
-    # confirmed Binance's spot API returns HTTP 451 for EVERY crypto
-    # pair from GitHub Actions' hosted-runner IPs — not a bad symbol,
-    # the whole exchange is geo-blocked from this infra, so crypto had
-    # been producing zero signals from this bot since inception.
-    # Yahoo prices crypto in USD (not USDT) — pair labels below changed
-    # from "/USDT" to "/USD" to reflect the real data source (price
-    # difference between USD and USDT is negligible for signal purposes,
-    # but the label should be honest about what's actually being read).
-    # Yahoo has no native 4h candle; fetch_yahoo_crypto() below builds
-    # 4h bars from 60m bars.
+    # v3.8: switched from Binance to Yahoo Finance — Binance's spot API
+    # returns HTTP 451 (region-blocked) for EVERY crypto pair from
+    # GitHub Actions' hosted-runner IPs (confirmed run 88966290681), so
+    # crypto had produced zero signals from this bot since inception.
+    # Yahoo prices crypto in USD (not USDT), hence "/USD" labels below.
+    # Yahoo has no native 4h candle; fetch_yahoo_crypto() builds 4h bars
+    # from 60m bars.
     #
-    # v3.9: 5th element is a price floor passed to fetch_yahoo_crypto's
-    # min_price guard (see fetch_yahoo() docstring). Run 89067006085
-    # confirmed UNI-USD/COMP-USD/SUI-USD are ticker collisions on Yahoo
-    # — those exact symbols belong to unrelated near-worthless coins,
-    # not Uniswap/Compound/Sui. They currently 404 for us (safe), but
-    # the floor protects against Yahoo ever serving that wrong data
-    # under the right label, silently, for these or any other pair here.
-    # Floors are set conservatively below any realistic price for the
-    # real asset, comfortably above the confirmed imposters (which
-    # trade at $0.00000005–$0.0003).
+    # 5th element is a price floor passed to fetch_yahoo_crypto's
+    # min_price guard: Yahoo's crypto tickers can collide with unrelated
+    # near-worthless coins squatting on the same symbol (confirmed real,
+    # not hypothetical — see fetch_yahoo()'s docstring), so a fetch
+    # returning a price wildly below the floor is rejected rather than
+    # silently mislabeled. Floors are rough sanity checks, not exact
+    # thresholds — if a real crash ever pushes a legit asset below its
+    # floor, verify the actual current price before assuming it's an
+    # imposter (this happened once with DOT, see git history).
     #
-    # v3.9.1: run 89214736896 confirmed the guard caught a REAL
-    # imposter on ARB-USD too (Yahoo returned $0.00063; real Arbitrum
-    # trades ~$0.08–0.19 — ~150x off, definitely not the real asset;
-    # floor left as-is, it did its job). It also caught a FALSE
-    # POSITIVE on DOT-USD: real Polkadot has genuinely crashed to
-    # ~$0.85–0.90 (confirmed against CoinGecko/CoinMarketCap/Coinbase,
-    # all agreeing, near DOT's real all-time low of $0.727) — the
-    # original $1 floor was too conservative and blocked legitimate
-    # data. Lowered to $0.3. Lesson: these floors are estimates, not
-    # verified thresholds — if a real crypto crash pushes a legit asset
-    # below its floor, check the actual current price (a couple of
-    # independent sources agreeing) before assuming it's an imposter.
+    # UNI, COMP, ARB, and SUI are deliberately NOT in this list. Yahoo's
+    # plain tickers for all four ("UNI-USD", "COMP-USD", "ARB-USD",
+    # "SUI-USD") are confirmed squatted by unrelated coins — the real
+    # assets sit behind unstable numeric-suffixed IDs Yahoo reassigns
+    # over time, not safe to hardcode. They contributed zero signals the
+    # entire time they were listed (safely rejected, never wrong data)
+    # — removed for quieter logs, not because anything broke by adding
+    # them back. Re-add only with a confirmed-stable ticker, or once
+    # KuCoin/Bybit access is available from wherever this runs.
     (["BTC-USD"],  "BTC/USD",  "crypto", "4h", 1000),
     (["ETH-USD"],  "ETH/USD",  "crypto", "4h", 50),
     (["SOL-USD"],  "SOL/USD",  "crypto", "4h", 5),
     (["LINK-USD"], "LINK/USD", "crypto", "4h", 1),
     (["BNB-USD"],  "BNB/USD",  "crypto", "4h", 50),
     (["DEXE-USD"], "DEXE/USD", "crypto", "4h", 1),
-    (["UNI-USD"],  "UNI/USD",  "crypto", "4h", 0.5),
-    (["COMP-USD"], "COMP/USD", "crypto", "4h", 5),
     (["NEAR-USD"], "NEAR/USD", "crypto", "4h", 0.2),
     (["AVAX-USD"], "AVAX/USD", "crypto", "4h", 1),
     (["AAVE-USD"], "AAVE/USD", "crypto", "4h", 10),
-    (["ARB-USD"],  "ARB/USD",  "crypto", "4h", 0.05),
     (["INJ-USD"],  "INJ/USD",  "crypto", "4h", 0.2),
     (["DOT-USD"],  "DOT/USD",  "crypto", "4h", 0.3),
     (["FIL-USD"],  "FIL/USD",  "crypto", "4h", 0.5),
-    (["SUI-USD"],  "SUI/USD",  "crypto", "4h", 0.1),
     (["ATOM-USD"], "ATOM/USD", "crypto", "4h", 1),
 ]
 FOREX_PAIRS = [
