@@ -185,7 +185,7 @@ clobbers the other's entries (matched by `source` tag):
 | Source | Repo | Markets | Cadence | Method |
 |---|---|---|---|---|
 | `gwp-bots` | separate `gwp-bots` repo | Crypto (20 pairs, KuCoin), Forex (14 pairs, Twelve Data), Stocks (18 tickers, Twelve Data) | every 15 min | Volume Profile POC/VAH/VAL + Fibonacci, D1/2H/30M/15M 4-timeframe vote |
-| `ict-smc` | this repo, `scripts/signal_bot.py` | Crypto (17 pairs, Binance), Forex (XAU/USD, EUR/USD, GBP/USD, Binance-sourced), Stocks (TSLA, NVDA, MSTR, AMD, PLTR, Yahoo Finance) | every 30 min (`.github/workflows/signal-bot.yml`) | Pure price action — market structure, BOS/CHoCH, order blocks, FVGs, GWP sweeps |
+| `ict-smc` | this repo, `scripts/signal_bot.py` | Crypto (13 pairs, Yahoo Finance), Forex (XAU/USD, EUR/USD, GBP/USD, Yahoo Finance), Stocks (TSLA, NVDA, MSTR, AMD, PLTR, Yahoo Finance) | every 30 min (`.github/workflows/signal-bot.yml`) | Pure price action — market structure, BOS/CHoCH, order blocks, FVGs, GWP sweeps |
 
 `/api/signals.js` (Vercel Edge Function) fetches all three Gist files
 and serves them combined, sorted newest-first, with a cache-busting
