@@ -73,6 +73,19 @@ CRYPTO_PAIRS = [
     # Floors are set conservatively below any realistic price for the
     # real asset, comfortably above the confirmed imposters (which
     # trade at $0.00000005–$0.0003).
+    #
+    # v3.9.1: run 89214736896 confirmed the guard caught a REAL
+    # imposter on ARB-USD too (Yahoo returned $0.00063; real Arbitrum
+    # trades ~$0.08–0.19 — ~150x off, definitely not the real asset;
+    # floor left as-is, it did its job). It also caught a FALSE
+    # POSITIVE on DOT-USD: real Polkadot has genuinely crashed to
+    # ~$0.85–0.90 (confirmed against CoinGecko/CoinMarketCap/Coinbase,
+    # all agreeing, near DOT's real all-time low of $0.727) — the
+    # original $1 floor was too conservative and blocked legitimate
+    # data. Lowered to $0.3. Lesson: these floors are estimates, not
+    # verified thresholds — if a real crypto crash pushes a legit asset
+    # below its floor, check the actual current price (a couple of
+    # independent sources agreeing) before assuming it's an imposter.
     (["BTC-USD"],  "BTC/USD",  "crypto", "4h", 1000),
     (["ETH-USD"],  "ETH/USD",  "crypto", "4h", 50),
     (["SOL-USD"],  "SOL/USD",  "crypto", "4h", 5),
@@ -86,7 +99,7 @@ CRYPTO_PAIRS = [
     (["AAVE-USD"], "AAVE/USD", "crypto", "4h", 10),
     (["ARB-USD"],  "ARB/USD",  "crypto", "4h", 0.05),
     (["INJ-USD"],  "INJ/USD",  "crypto", "4h", 0.2),
-    (["DOT-USD"],  "DOT/USD",  "crypto", "4h", 1),
+    (["DOT-USD"],  "DOT/USD",  "crypto", "4h", 0.3),
     (["FIL-USD"],  "FIL/USD",  "crypto", "4h", 0.5),
     (["SUI-USD"],  "SUI/USD",  "crypto", "4h", 0.1),
     (["ATOM-USD"], "ATOM/USD", "crypto", "4h", 1),
