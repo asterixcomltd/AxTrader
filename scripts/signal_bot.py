@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-AxTrader Signal Bot v3.8 — Pure Price Action / Smart Money Concepts
+AxTrader Signal Bot v3.9 — Pure Price Action / Smart Money Concepts
 Runs every 30 min via GitHub Actions.
 
 ZERO LAGGING INDICATORS. No EMA. No RSI. No MACD. No Bollinger.
@@ -62,23 +62,34 @@ CRYPTO_PAIRS = [
     # but the label should be honest about what's actually being read).
     # Yahoo has no native 4h candle; fetch_yahoo_crypto() below builds
     # 4h bars from 60m bars.
-    (["BTC-USD"],  "BTC/USD",  "crypto", "4h"),
-    (["ETH-USD"],  "ETH/USD",  "crypto", "4h"),
-    (["SOL-USD"],  "SOL/USD",  "crypto", "4h"),
-    (["LINK-USD"], "LINK/USD", "crypto", "4h"),
-    (["BNB-USD"],  "BNB/USD",  "crypto", "4h"),
-    (["DEXE-USD"], "DEXE/USD", "crypto", "4h"),
-    (["UNI-USD"],  "UNI/USD",  "crypto", "4h"),
-    (["COMP-USD"], "COMP/USD", "crypto", "4h"),
-    (["NEAR-USD"], "NEAR/USD", "crypto", "4h"),
-    (["AVAX-USD"], "AVAX/USD", "crypto", "4h"),
-    (["AAVE-USD"], "AAVE/USD", "crypto", "4h"),
-    (["ARB-USD"],  "ARB/USD",  "crypto", "4h"),
-    (["INJ-USD"],  "INJ/USD",  "crypto", "4h"),
-    (["DOT-USD"],  "DOT/USD",  "crypto", "4h"),
-    (["FIL-USD"],  "FIL/USD",  "crypto", "4h"),
-    (["SUI-USD"],  "SUI/USD",  "crypto", "4h"),
-    (["ATOM-USD"], "ATOM/USD", "crypto", "4h"),
+    #
+    # v3.9: 5th element is a price floor passed to fetch_yahoo_crypto's
+    # min_price guard (see fetch_yahoo() docstring). Run 89067006085
+    # confirmed UNI-USD/COMP-USD/SUI-USD are ticker collisions on Yahoo
+    # — those exact symbols belong to unrelated near-worthless coins,
+    # not Uniswap/Compound/Sui. They currently 404 for us (safe), but
+    # the floor protects against Yahoo ever serving that wrong data
+    # under the right label, silently, for these or any other pair here.
+    # Floors are set conservatively below any realistic price for the
+    # real asset, comfortably above the confirmed imposters (which
+    # trade at $0.00000005–$0.0003).
+    (["BTC-USD"],  "BTC/USD",  "crypto", "4h", 1000),
+    (["ETH-USD"],  "ETH/USD",  "crypto", "4h", 50),
+    (["SOL-USD"],  "SOL/USD",  "crypto", "4h", 5),
+    (["LINK-USD"], "LINK/USD", "crypto", "4h", 1),
+    (["BNB-USD"],  "BNB/USD",  "crypto", "4h", 50),
+    (["DEXE-USD"], "DEXE/USD", "crypto", "4h", 1),
+    (["UNI-USD"],  "UNI/USD",  "crypto", "4h", 0.5),
+    (["COMP-USD"], "COMP/USD", "crypto", "4h", 5),
+    (["NEAR-USD"], "NEAR/USD", "crypto", "4h", 0.2),
+    (["AVAX-USD"], "AVAX/USD", "crypto", "4h", 1),
+    (["AAVE-USD"], "AAVE/USD", "crypto", "4h", 10),
+    (["ARB-USD"],  "ARB/USD",  "crypto", "4h", 0.05),
+    (["INJ-USD"],  "INJ/USD",  "crypto", "4h", 0.2),
+    (["DOT-USD"],  "DOT/USD",  "crypto", "4h", 1),
+    (["FIL-USD"],  "FIL/USD",  "crypto", "4h", 0.5),
+    (["SUI-USD"],  "SUI/USD",  "crypto", "4h", 0.1),
+    (["ATOM-USD"], "ATOM/USD", "crypto", "4h", 1),
 ]
 FOREX_PAIRS = [
     # v3.7: switched from Binance (XAUUSDT/EURUSDT/GBPUSDT — unreliable/
@@ -138,7 +149,27 @@ def fetch_binance(symbol, interval, limit=150, retries=2):
             print(f"  ⚠ Binance fetch failed for {symbol} {interval}: {e}")
             return []
 
-def fetch_yahoo(symbol, limit=80, retries=2, interval="1d", range_="6mo"):
+def fetch_yahoo(symbol, limit=80, retries=2, interval="1d", range_="6mo", min_price=None):
+    """
+    min_price (v3.9): if given, reject the fetch (return []) when the
+    most recent close is below it. This exists because Yahoo's crypto
+    tickers collide: the plain "UNI-USD"/"COMP-USD"/"SUI-USD" symbols
+    are NOT Uniswap/Compound/Sui — they're unrelated coins that happen
+    to share the ticker ("UNICORN Token" @ $0.00016, "Compound Coin" @
+    $0.00000005, "Salmonation" @ $0.0003) sitting on an otherwise-
+    unclaimed symbol, while the real assets sit behind an unstable
+    numeric-suffixed ID (UNI7083-USD today, something else next month
+    per Yahoo's own listings) that isn't safe to hardcode. A name check
+    was tried first and rejected — "Compound" is literally a substring
+    of the impostor's own name "Compound Coin", so it wouldn't have
+    caught this. Price is the reliable signal: every real token in
+    CRYPTO_PAIRS trades comfortably above any of these imposters, which
+    are near-worthless by construction (that's why the ticker was free
+    to squat on). A 404 is a safe, loud failure; silently accepting the
+    WRONG coin's real price data under the right label is worse and
+    wouldn't show up in the logs — this check turns that failure mode
+    back into a loud one too.
+    """
     for attempt in range(retries + 1):
         try:
             url = YAHOO_URL.format(symbol)
@@ -170,6 +201,11 @@ def fetch_yahoo(symbol, limit=80, retries=2, interval="1d", range_="6mo"):
                     candles.append({"t": ts[i]*1000, "o": o, "h": h, "l": l, "c": c, "v": v})
                 except (KeyError, IndexError, TypeError):
                     continue
+            if min_price is not None and candles and candles[-1]["c"] < min_price:
+                print(f"  ⚠ Yahoo ticker {symbol} looks like the WRONG asset (last close "
+                      f"{candles[-1]['c']} is far below the expected price floor {min_price} — "
+                      f"this ticker is likely squatted by an unrelated coin) — rejecting, not using this data.")
+                return []
             return candles[-limit:]
         except Exception as e:
             if attempt < retries:
@@ -178,7 +214,7 @@ def fetch_yahoo(symbol, limit=80, retries=2, interval="1d", range_="6mo"):
             print(f"  ⚠ Yahoo fetch failed for {symbol}: {e}")
             return []
 
-def fetch_yahoo_fx(symbol_candidates, limit=150, retries=2, interval="60m", range_="1mo"):
+def fetch_yahoo_fx(symbol_candidates, limit=150, retries=2, interval="60m", range_="1mo", min_price=None):
     """
     v3.7: Forex/commodity fetch with automatic ticker fallback. Gold in
     particular has been observed under different tickers ("XAUUSD=X" vs
@@ -187,9 +223,11 @@ def fetch_yahoo_fx(symbol_candidates, limit=150, retries=2, interval="60m", rang
     whichever actually returns data. symbol_candidates is a list;
     logs which one worked so future runs/maintainers know the truth
     without needing to test it by hand again.
+    v3.9: min_price passed through to fetch_yahoo() — see its
+    docstring. Optional; omit for pairs with no known collision risk.
     """
     for i, sym in enumerate(symbol_candidates):
-        candles = fetch_yahoo(sym, limit=limit, retries=retries, interval=interval, range_=range_)
+        candles = fetch_yahoo(sym, limit=limit, retries=retries, interval=interval, range_=range_, min_price=min_price)
         if candles:
             if i > 0:
                 print(f"  ℹ using fallback ticker {sym} (primary {symbol_candidates[0]} returned no data)")
@@ -218,7 +256,7 @@ def resample_candles(candles, group_size):
         })
     return out
 
-def fetch_yahoo_crypto(symbol_candidates, tf, limit=150, retries=2):
+def fetch_yahoo_crypto(symbol_candidates, tf, limit=150, retries=2, min_price=None):
     """
     v3.8: Crypto fetch via Yahoo Finance instead of Binance — Binance's
     spot API returns HTTP 451 (region-blocked) from GitHub Actions'
@@ -228,15 +266,19 @@ def fetch_yahoo_crypto(symbol_candidates, tf, limit=150, retries=2):
     bars are built by fetching 60m bars and aggregating 4-at-a-time via
     resample_candles(). 1d (used for daily bias) is fetched directly —
     Yahoo does support a native 1d interval.
+    v3.9: min_price passed straight through to fetch_yahoo_fx/
+    fetch_yahoo — see fetch_yahoo()'s docstring for why this matters
+    for crypto specifically (confirmed real ticker collisions on
+    UNI-USD/COMP-USD/SUI-USD, run 89067006085).
     """
     if tf == "1d":
-        return fetch_yahoo_fx(symbol_candidates, limit=limit, retries=retries, interval="1d", range_="6mo")
+        return fetch_yahoo_fx(symbol_candidates, limit=limit, retries=retries, interval="1d", range_="6mo", min_price=min_price)
     if tf == "4h":
-        hourly = fetch_yahoo_fx(symbol_candidates, limit=(limit * 4) + 4, retries=retries, interval="60m", range_="3mo")
+        hourly = fetch_yahoo_fx(symbol_candidates, limit=(limit * 4) + 4, retries=retries, interval="60m", range_="3mo", min_price=min_price)
         return resample_candles(hourly, 4)[-limit:]
     # Any other tf string is passed straight through as a Yahoo interval —
     # covers future additions without needing another branch here.
-    return fetch_yahoo_fx(symbol_candidates, limit=limit, retries=retries, interval=tf, range_="3mo")
+    return fetch_yahoo_fx(symbol_candidates, limit=limit, retries=retries, interval=tf, range_="3mo", min_price=min_price)
 
 # ── ATR — geometric ruler only, NOT a signal ──────────────────────────────────
 def atr(candles, period=14):
@@ -569,7 +611,7 @@ def in_kill_zone(ts_ms):
     return (2 <= h < 6) or (13 <= h < 17)
 
 # ── HTF Daily Bias — from STRUCTURE, zero indicators ─────────────────────────
-def get_daily_bias(symbol, yahoo_candidates=None):
+def get_daily_bias(symbol, yahoo_candidates=None, min_price=None):
     """
     Daily directional bias from PRICE STRUCTURE only (cached per symbol).
     HH + HL pattern → bullish bias (+1)
@@ -581,12 +623,14 @@ def get_daily_bias(symbol, yahoo_candidates=None):
     Binance doesn't reliably list true forex/commodity spot pairs, so
     forex bias was silently defaulting to neutral (0) for every pair
     before this. Crypto symbols (yahoo_candidates=None) are unaffected.
+    v3.9: min_price passed through to fetch_yahoo_fx for the same
+    ticker-collision protection as the main candle fetch.
     """
     cache_key = symbol if yahoo_candidates is None else yahoo_candidates[0]
     if cache_key in _daily_bias_cache:
         return _daily_bias_cache[cache_key]
     if yahoo_candidates is not None:
-        candles = fetch_yahoo_fx(yahoo_candidates, limit=80, interval="1d", range_="6mo")
+        candles = fetch_yahoo_fx(yahoo_candidates, limit=80, interval="1d", range_="6mo", min_price=min_price)
     else:
         candles = fetch_binance(symbol, "1d", limit=80)
     if len(candles) < 20:
@@ -866,7 +910,7 @@ def main():
     utc_h     = now_utc.hour
     kz_active = (2 <= utc_h < 6) or (13 <= utc_h < 17)
 
-    print(f"🤖 AxTrader Signal Bot v3.8 — {now_utc.strftime('%Y-%m-%d %H:%M')} UTC")
+    print(f"🤖 AxTrader Signal Bot v3.9 — {now_utc.strftime('%Y-%m-%d %H:%M')} UTC")
     print(f"   Mode: Pure Price Action | Zero Lagging Indicators")
     print(f"   Engine: Market Structure → BOS/CHoCH → Order Block → FVG → GWP Sweep")
     print(f"   Kill Zone: {'✅ London/NY active' if kz_active else '⏳ Off-hours'}\n")
@@ -875,9 +919,9 @@ def main():
 
     # ── Crypto ────────────────────────────────────────────────────────────────
     print("📊 Scanning crypto pairs…")
-    for symbols, pair, bot, tf in CRYPTO_PAIRS:
-        candles = fetch_yahoo_crypto(symbols, tf, limit=150)
-        bias    = get_daily_bias(symbols[0], yahoo_candidates=symbols)
+    for symbols, pair, bot, tf, min_price in CRYPTO_PAIRS:
+        candles = fetch_yahoo_crypto(symbols, tf, limit=150, min_price=min_price)
+        bias    = get_daily_bias(symbols[0], yahoo_candidates=symbols, min_price=min_price)
         bias_lbl = {1: "↑Bull", 0: "→Neut", -1: "↓Bear"}.get(bias, "?")
 
         sig = generate(candles, pair, bot, tf, daily_bias=bias)
