@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-AxTrader Signal Bot v3.9 — Pure Price Action / Smart Money Concepts
+AxTrader Signal Bot v3.10 — Pure Price Action / Smart Money Concepts
 Runs every 30 min via GitHub Actions.
 
 ZERO LAGGING INDICATORS. No EMA. No RSI. No MACD. No Bollinger.
@@ -784,16 +784,32 @@ def generate(candles, pair, bot, tf, daily_bias=0):
         tp3 = entry - 4.5 * a
 
     # R:R validation
+    # v3.10 FIX: rr_display was computed from tp2, but the "Signal
+    # Archive" card in the frontend (js/features/signals.js) only ever
+    # renders TP1 — it has no TP2/TP3 row at all, unlike the main live
+    # feed card. That mismatch meant the R:R badge shown next to a
+    # signal (and the "Avg R:R" headline stat computed from the same
+    # field, both signals.js) didn't correspond to any price the user
+    # could actually see: e.g. a real NEAR/USD SHORT showed "R:R 33.1"
+    # next to a TP1 that only yields ~18R on its own, and a real
+    # AAVE/USD SHORT showed "R:R 1.7" next to a TP1 that yields under 1R
+    # — both roughly half their displayed number, because TP2 sits
+    # roughly twice as far from entry as TP1 (2.8×ATR vs 1.5×ATR) by
+    # design. rr_display now matches TP1, the one target every card
+    # layout actually shows. rr_check (the internal minimum-quality
+    # gate, never shown to users) is intentionally left based on tp3 —
+    # that's a strategy-design choice about which setups fire at all,
+    # not a display-accuracy bug, and out of scope for this fix.
     if direction == "LONG":
         risk = entry - sl
         if risk <= 0: return None
         rr_check   = (tp3 - entry) / risk
-        rr_display = round((tp2 - entry) / risk, 1)
+        rr_display = round((tp1 - entry) / risk, 1)
     else:
         risk = sl - entry
         if risk <= 0: return None
         rr_check   = (entry - tp3) / risk
-        rr_display = round((entry - tp2) / risk, 1)
+        rr_display = round((entry - tp1) / risk, 1)
 
     if rr_check < 1.5:
         return None  # minimum acceptable R:R
@@ -911,7 +927,7 @@ def main():
     utc_h     = now_utc.hour
     kz_active = (2 <= utc_h < 6) or (13 <= utc_h < 17)
 
-    print(f"🤖 AxTrader Signal Bot v3.9 — {now_utc.strftime('%Y-%m-%d %H:%M')} UTC")
+    print(f"🤖 AxTrader Signal Bot v3.10 — {now_utc.strftime('%Y-%m-%d %H:%M')} UTC")
     print(f"   Mode: Pure Price Action | Zero Lagging Indicators")
     print(f"   Engine: Market Structure → BOS/CHoCH → Order Block → FVG → GWP Sweep")
     print(f"   Kill Zone: {'✅ London/NY active' if kz_active else '⏳ Off-hours'}\n")
