@@ -128,6 +128,19 @@ function buildSignalsArray(merged) {
       conviction: s.conviction || '',
       rr: s.rr || '',
       bot: s.bot || '',
+      // v3.11 FIX: source was already set correctly by both backends
+      // (gwp-bots' publish-gist.js tags every entry source:'gwp-bots';
+      // this repo's own scripts/signal_bot.py tags every entry
+      // source:"ict-smc") but was silently dropped here — never
+      // normalized, never rendered anywhere. 9 of signal_bot.py's 13
+      // crypto symbols (BTC, ETH, SOL, LINK, BNB, AVAX, DOT, ATOM,
+      // NEAR) are ALSO independently covered by gwp-bots, so the same
+      // coin can get two real, independently-computed signals —
+      // sometimes agreeing, sometimes not — with previously no way for
+      // a user to tell they're even from different engines, let alone
+      // why two cards for the same symbol might disagree.
+      source: s.source || '',
+      sourceLabel: s.source === 'gwp-bots' ? 'GWP · Volume Profile' : (s.source === 'ict-smc' ? 'ICT/SMC · Price Action' : ''),
       time: s.time || '--:--',
       premium: isPremium,
       ts: base || null,
@@ -263,7 +276,7 @@ function buildSignalCard(s, index) {
       <div class="sig-top" style="margin-bottom:8px">
         <div>
           <div class="sig-pair">${s.pair} <span class="grade-badge ${grade.cls}">${grade.g}</span></div>
-          <span style="font-size:.72rem;color:var(--text3)">${s.tf}${s.rr ? ' · R:R ' + s.rr : ''}</span>
+          <span style="font-size:.72rem;color:var(--text3)">${s.tf}${s.rr ? ' · R:R ' + s.rr : ''}${s.sourceLabel ? ' · ' + s.sourceLabel : ''}</span>
           <div class="sig-time-row">
             <span class="sig-fired-time" style="display:inline-flex;align-items:center;gap:4px">
               ${ICONS.clock} ${s.time && s.time !== '--:--' ? s.time + ' · ' : ''}${age}
@@ -344,7 +357,7 @@ async function renderArchiveSection() {
         <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px">
           <div class="sig-pair">${s.pair}</div>
           <span class="sig-badge ${s.dir === 'LONG' ? 'badge-long' : 'badge-short'}" style="font-size:.68rem">${s.dir}</span>
-          <span style="font-size:.7rem;color:var(--text3)">${s.tf}${s.rr ? ' · R:R ' + s.rr : ''}</span>
+          <span style="font-size:.7rem;color:var(--text3)">${s.tf}${s.rr ? ' · R:R ' + s.rr : ''}${s.sourceLabel ? ' · ' + s.sourceLabel : ''}</span>
         </div>
         <div class="sig-row" style="margin-bottom:6px">
           <div class="sig-cell"><div class="sig-cell-label">Entry</div><div class="sig-cell-val">${s.entry}</div></div>
